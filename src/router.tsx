@@ -13,15 +13,17 @@ import {
 
 // layer one
 import Main from "./pages/Main/Main";
-import NotFound from "./pages/NotFound/NotFound";
 
 // layer two
+import Home from "./pages/Main/Home/Home";
 
 export default function MyRouter() {
     return (
         <Routes>
-            <Route path="" element={<Main />}></Route>
-            <Route path="*" element={<NotFound />} />
+            <Route path="" element={<Main />}>
+                <Route path="" element={<Home />}></Route>
+            </Route>
+            <Route path="*" element={<Navigate to="" />} />
         </Routes>
     );
 }

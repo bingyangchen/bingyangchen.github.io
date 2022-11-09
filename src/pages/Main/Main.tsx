@@ -1,15 +1,16 @@
 import styles from "./Main.module.scss";
 
 import React from "react";
+import { Outlet } from "react-router-dom";
 
-interface PropsInterface {}
+import Header from "../../components/Header/Header";
+import { RouterInterface, withRouter } from "../../router";
+
+interface PropsInterface extends RouterInterface {}
 
 interface StateInterface {}
 
-export default class Main extends React.Component<
-    PropsInterface,
-    StateInterface
-> {
+class Main extends React.Component<PropsInterface, StateInterface> {
     public state: StateInterface;
     public constructor(props: PropsInterface) {
         super(props);
@@ -17,6 +18,13 @@ export default class Main extends React.Component<
     }
     public componentDidMount(): void {}
     public render(): React.ReactNode {
-        return <div className={styles.main}>Main</div>;
+        return (
+            <main className={styles.main}>
+                <Header />
+                <Outlet />
+            </main>
+        );
     }
 }
+
+export default withRouter(Main);
