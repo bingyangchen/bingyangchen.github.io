@@ -34,22 +34,22 @@ export default class Header extends React.Component<
                 {
                     tab_icon: <IconHouseDoorFill side_length="100%" />,
                     tab_name: "HOME",
-                    path: ".#home",
+                    path: "#home",
                 },
                 {
                     tab_icon: <IconJournalText side_length="95%" />,
                     tab_name: "ABOUT",
-                    path: ".#about",
+                    path: "#about",
                 },
                 {
                     tab_icon: <IconJournalText side_length="95%" />,
                     tab_name: "PROJECTS",
-                    path: ".#projects",
+                    path: "#projects",
                 },
                 {
                     tab_icon: <IconJournalText side_length="95%" />,
                     tab_name: "BLOG",
-                    path: ".#",
+                    path: ".",
                 },
             ],
         };

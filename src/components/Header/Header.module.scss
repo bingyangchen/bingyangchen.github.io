@@ -27,6 +27,12 @@
             width: 103px;
             font-size: 0.9 * _.$base-font-size;
             font-family: Verdana, Geneva, Tahoma, sans-serif;
+            transition-duration: 150ms;
+            @media (hover: hover) {
+                &:hover {
+                    color: _.$black;
+                }
+            }
         }
     }
     .list_button_outer {

@@ -17,6 +17,7 @@ code {
 *,
 *:before,
 *:after {
+    scroll-behavior: smooth;
     box-sizing: border-box;
     user-select: none;
     letter-spacing: _.$base-letter-spacing;

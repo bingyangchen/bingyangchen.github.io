@@ -3,7 +3,7 @@
 .main {
     position: fixed;
     top: 0;
-    left: 0;
+    right: 0;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -11,7 +11,7 @@
     background-color: _.$white;
     overflow-y: auto;
     border-right: 0.5px solid _.$light-gray;
-    transform: translateX(-100%);
+    transform: translateX(100%);
     transition-duration: 300ms;
     z-index: 4;
     &.active {

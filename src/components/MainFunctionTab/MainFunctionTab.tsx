@@ -1,7 +1,7 @@
 import styles from "./MainFunctionTab.module.scss";
 
 import React, { MouseEventHandler } from "react";
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 interface PropsInterface {
     tab_icon?: any;
@@ -23,18 +23,14 @@ export default class MainFunctionTab extends React.Component<
     }
     public render(): React.ReactNode {
         return (
-            <NavLink
+            <Link
                 to={this.props.to}
-                className={({ isActive }) => {
-                    let className: string = styles.tab + " ";
-                    className += isActive ? styles.active : undefined;
-                    return className;
-                }}
+                className={styles.tab}
                 onClick={this.props.onClick}
             >
                 <div className={styles.icon_outer}> {this.props.tab_icon}</div>
                 {this.props.tab_name}
-            </NavLink>
+            </Link>
         );
     }
 }
