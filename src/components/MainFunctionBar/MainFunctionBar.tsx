@@ -2,20 +2,17 @@ import styles from "./MainFunctionBar.module.scss";
 
 import React from "react";
 
-interface PropsInterface {
+interface Props {
     children: React.ReactNode[];
     is_active_in_short_screen: boolean;
     hide: () => void;
 }
 
-interface StateInterface {}
+interface State {}
 
-export default class MainFunctionBar extends React.Component<
-    PropsInterface,
-    StateInterface
-> {
-    public state: StateInterface;
-    public constructor(props: PropsInterface) {
+export default class MainFunctionBar extends React.Component<Props, State> {
+    public state: State;
+    public constructor(props: Props) {
         super(props);
         this.state = {};
     }

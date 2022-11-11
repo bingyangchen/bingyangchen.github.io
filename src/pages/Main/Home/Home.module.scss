@@ -9,6 +9,9 @@
     }
     & > .home {
         position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
         height: 100vh;
         background-image: url("../../../assets/cover.jpeg");
         background-size: cover;
@@ -22,9 +25,100 @@
             height: 100%;
             background: linear-gradient(
                 to bottom,
-                transparent 0%,
+                _.$transparent-black 0%,
                 rgba(0, 0, 0, 0.7) 100%
             );
+            z-index: 1;
+        }
+        & > .upper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 10%;
+            width: 100%;
+            z-index: 2;
+            & > .cta_button_list {
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
+                margin: 0 calc(25% - 20px);
+                & > .cta_button {
+                    border: 3px solid _.$white;
+                    border-radius: 0.1rem;
+                    text-align: center;
+                    padding: 12px 0;
+                    width: max(15vw, 150px);
+                    font-size: 0.9 * _.$base-font-size;
+                    letter-spacing: 2 * _.$base-letter-spacing;
+                    color: _.$white;
+                    cursor: pointer;
+                    transition-duration: 150ms;
+                    @media (hover: hover) {
+                        &:hover {
+                            background-color: _.$white;
+                            color: _.$deep-gray;
+                            font-weight: bold;
+                        }
+                    }
+                }
+            }
+            & > .social_media_list {
+                display: flex;
+                flex-direction: column;
+                color: _.$black;
+                gap: 15px;
+                & > .social_media {
+                    cursor: pointer;
+                }
+            }
+        }
+        & > .middle {
+            display: flex;
+            flex-direction: column;
+            font-size: 3.6 * _.$base-font-size;
+            color: _.$noisy-white;
+            font-family: Cambria, Cochin, Georgia, Times, "Times New Roman",
+                serif;
+            font-weight: bold;
+            padding: 8vh 0 8vh 5%;
+            min-width: 530px;
+            max-width: 70%;
+            z-index: 2;
+        }
+    }
+}
+
+@media screen and (max-width: _.$hide-function-bar-boundry) {
+    .main {
+        & > .home {
+            position: relative;
+            & > .upper {
+                position: absolute;
+                bottom: 0;
+                flex-direction: column;
+                & > .cta_button_list {
+                    & > .cta_button {
+                        width: 61.8vw;
+                    }
+                }
+                & > .social_media_list {
+                    flex-direction: row;
+                    margin: min(20vw, 60px) 0;
+                    gap: 40px;
+                    color: _.$noisy-white;
+                }
+            }
+            & > .middle {
+                position: absolute;
+                bottom: max(50vw, 35vh);
+                right: 0;
+                font-size: max(8vw, 2.2 * _.$base-font-size);
+                margin-right: 5%;
+                max-width: unset;
+                min-width: unset;
+                text-align: end;
+                text-shadow: 2px 2px 5px _.$gray;
+            }
         }
     }
 }

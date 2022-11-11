@@ -10,9 +10,9 @@ import MainFunctionTab from "../MainFunctionTab/MainFunctionTab";
 import IconHouseDoorFill from "../Icons/IconHouseDoorFill";
 import IconJournalText from "../Icons/IconJournalText";
 
-interface PropsInterface {}
+interface Props {}
 
-interface StateInterface {
+interface State {
     is_hidden_bar_active: boolean;
     subpage_list: {
         tab_icon: any;
@@ -21,12 +21,9 @@ interface StateInterface {
     }[];
 }
 
-export default class Header extends React.Component<
-    PropsInterface,
-    StateInterface
-> {
-    public state: StateInterface;
-    public constructor(props: PropsInterface) {
+export default class Header extends React.Component<Props, State> {
+    public state: State;
+    public constructor(props: Props) {
         super(props);
         this.state = {
             is_hidden_bar_active: false,

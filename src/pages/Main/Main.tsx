@@ -6,13 +6,13 @@ import { Outlet } from "react-router-dom";
 import Header from "../../components/Header/Header";
 import { RouterInterface, withRouter } from "../../router";
 
-interface PropsInterface extends RouterInterface {}
+interface Props extends RouterInterface {}
 
-interface StateInterface {}
+interface State {}
 
-class Main extends React.Component<PropsInterface, StateInterface> {
-    public state: StateInterface;
-    public constructor(props: PropsInterface) {
+class Main extends React.Component<Props, State> {
+    public state: State;
+    public constructor(props: Props) {
         super(props);
         this.state = {};
     }
