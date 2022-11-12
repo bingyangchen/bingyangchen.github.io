@@ -6,6 +6,50 @@
     width: 100%;
     .section {
         min-height: 100vh;
+        &:nth-child(odd) {
+            background-color: _.$noisy-white;
+        }
+        h2 {
+            margin: calc(_.$header-height + 30px) 0 20px;
+            font-family: Cambria, Cochin, Georgia, Times, "Times New Roman",
+                serif;
+            text-align: center;
+            font-size: 2.8 * _.$base-font-size;
+            @media screen and (max-width: _.$hide-function-bar-boundry) {
+                font-size: 2 * _.$base-font-size;
+            }
+        }
+        .subtitle {
+            margin: 30px auto;
+            padding: 0 50px;
+            text-align: center;
+            max-width: _.$hide-function-bar-boundry;
+            line-height: 2.2 * _.$base-font-size;
+            font-size: 1.1 * _.$base-font-size;
+            @media screen and (max-width: _.$hide-function-bar-boundry) {
+                padding: 0 30px;
+                font-size: _.$base-font-size;
+            }
+        }
+        hr {
+            margin: 30px auto;
+            width: 150px;
+            border: none;
+            border-top: 2px solid _.$light-gray;
+            border-radius: 5px;
+        }
+        h3 {
+            margin: calc(_.$header-height + 30px) 0 20px;
+            font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
+                sans-serif;
+            text-align: center;
+            font-size: 1.6 * _.$base-font-size;
+            font-weight: normal;
+            color: _.$black;
+            @media screen and (max-width: _.$hide-function-bar-boundry) {
+                font-size: 1.4 * _.$base-font-size;
+            }
+        }
     }
     & > .home {
         position: relative;
@@ -34,14 +78,14 @@
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding: 0 10%;
+            padding: 0 5%;
             width: 100%;
             z-index: 2;
             & > .cta_button_list {
                 display: flex;
                 flex-direction: column;
                 gap: 25px;
-                margin: 0 calc(25% - 20px);
+                margin: 0 25%;
                 & > .cta_button {
                     border: 3px solid _.$white;
                     border-radius: 0.1rem;
@@ -51,6 +95,7 @@
                     font-size: 0.9 * _.$base-font-size;
                     letter-spacing: 2 * _.$base-letter-spacing;
                     color: _.$white;
+                    box-shadow: 0 0 0 0 _.$gray;
                     cursor: pointer;
                     transition-duration: 150ms;
                     @media (hover: hover) {
@@ -58,6 +103,7 @@
                             background-color: _.$white;
                             color: _.$deep-gray;
                             font-weight: bold;
+                            box-shadow: 8px 8px 0 0 _.$gray;
                         }
                     }
                 }
@@ -66,7 +112,7 @@
                 display: flex;
                 flex-direction: column;
                 color: _.$black;
-                gap: 15px;
+                gap: 20px;
                 & > .social_media {
                     cursor: pointer;
                 }
@@ -82,7 +128,7 @@
             font-weight: bold;
             padding: 8vh 0 8vh 5%;
             min-width: 530px;
-            max-width: 70%;
+            max-width: 700px;
             z-index: 2;
         }
     }
@@ -110,9 +156,9 @@
             }
             & > .middle {
                 position: absolute;
-                bottom: max(50vw, 35vh);
+                bottom: max(50vw, 36vh);
                 right: 0;
-                font-size: max(8vw, 2.2 * _.$base-font-size);
+                font-size: max(8vw, 2 * _.$base-font-size);
                 margin-right: 5%;
                 max-width: unset;
                 min-width: unset;

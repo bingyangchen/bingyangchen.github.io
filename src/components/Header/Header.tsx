@@ -8,7 +8,9 @@ import IconList from "../Icons/IconList";
 import MainFunctionBar from "../MainFunctionBar/MainFunctionBar";
 import MainFunctionTab from "../MainFunctionTab/MainFunctionTab";
 import IconHouseDoorFill from "../Icons/IconHouseDoorFill";
-import IconJournalText from "../Icons/IconJournalText";
+import IconLayoutWtf from "../Icons/IconLayoutWtf";
+import IconJournalBookmark from "../Icons/IconJournalBookmark";
+import IconPerson from "../Icons/IconPerson";
 
 interface Props {}
 
@@ -34,17 +36,17 @@ export default class Header extends React.Component<Props, State> {
                     path: "#home",
                 },
                 {
-                    tab_icon: <IconJournalText side_length="95%" />,
+                    tab_icon: <IconPerson side_length="95%" />,
                     tab_name: "ABOUT",
                     path: "#about",
                 },
                 {
-                    tab_icon: <IconJournalText side_length="95%" />,
+                    tab_icon: <IconLayoutWtf side_length="95%" />,
                     tab_name: "PROJECTS",
                     path: "#projects",
                 },
                 {
-                    tab_icon: <IconJournalText side_length="95%" />,
+                    tab_icon: <IconJournalBookmark side_length="95%" />,
                     tab_name: "BLOG",
                     path: ".",
                 },

@@ -51,24 +51,38 @@ class Home extends React.Component<Props, State> {
                     <div className={styles.upper}>
                         <div className={styles.cta_button_list}>
                             <div className={styles.cta_button}>BLOG</div>
-                            <div className={styles.cta_button}>PROJECTS</div>
+                            <a href="#projects" className={styles.cta_button}>
+                                PROJECTS
+                            </a>
                         </div>
                         <div className={styles.social_media_list}>
-                            <div className={styles.social_media} title="GitHub">
+                            <a
+                                href="https://github.com/Jamison-Chen"
+                                target="_blank"
+                                rel="noreferrer"
+                                className={styles.social_media}
+                                title="GitHub"
+                            >
                                 <IconGitHub side_length="20" />
-                            </div>
-                            <div
+                            </a>
+                            <a
+                                href="https://www.linkedin.com/in/jamison-chen-3937851a5/"
+                                target="_blank"
+                                rel="noreferrer"
                                 className={styles.social_media}
                                 title="LinkedIn"
                             >
                                 <IconLinkedIn side_length="20" />
-                            </div>
-                            <div
+                            </a>
+                            <a
+                                href="https://www.cakeresume.com/me/BingYangChen"
+                                target="_blank"
+                                rel="noreferrer"
                                 className={styles.social_media}
                                 title="CakeResume"
                             >
                                 <IconCSquareFill side_length="20" />
-                            </div>
+                            </a>
                         </div>
                     </div>
                     <div className={styles.middle}>
@@ -80,12 +94,26 @@ class Home extends React.Component<Props, State> {
                     id="about"
                     className={styles.about + " " + styles.section}
                     ref={this.about_ref}
-                ></div>
+                >
+                    <h2>ABOUT</h2>
+                    <div className={styles.subtitle}>
+                        大學主修經濟的我，因緣際會碰上了程式設計，軟體開發過程中的樂趣及成就感讓我決定成為一名軟體工程師。
+                    </div>
+                    <hr />
+                    <h3>My Work Experience</h3>
+                </div>
                 <div
                     id="projects"
                     className={styles.about + " " + styles.section}
                     ref={this.projects_ref}
-                ></div>
+                >
+                    <h2>PROJECTS</h2>
+                    <div className={styles.subtitle}>
+                        由於不想讓自己因為工作而逐漸失去創造力，當新點子冒出來時，我也會抓緊閒暇時間做一些
+                        side projects，你或許會有興趣！
+                    </div>
+                    <hr />
+                </div>
             </div>
         );
     }
