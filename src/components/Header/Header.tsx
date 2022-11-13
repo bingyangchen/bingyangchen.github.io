@@ -11,6 +11,7 @@ import IconHouseDoorFill from "../Icons/IconHouseDoorFill";
 import IconLayoutWtf from "../Icons/IconLayoutWtf";
 import IconJournalBookmark from "../Icons/IconJournalBookmark";
 import IconPerson from "../Icons/IconPerson";
+import { Link } from "react-router-dom";
 
 interface Props {}
 
@@ -61,9 +62,9 @@ export default class Header extends React.Component<Props, State> {
                     <div className={styles.subpage_list}>
                         {this.state.subpage_list.map((each, idx) => {
                             return (
-                                <a key={idx} href={each.path}>
+                                <Link key={idx} to={each.path}>
                                     {each.tab_name}
-                                </a>
+                                </Link>
                             );
                         })}
                     </div>

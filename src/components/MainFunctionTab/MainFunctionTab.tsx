@@ -25,7 +25,7 @@ export default class MainFunctionTab extends React.Component<Props, State> {
                 className={styles.tab}
                 onClick={this.props.onClick}
             >
-                <div className={styles.icon_outer}> {this.props.tab_icon}</div>
+                <div className={styles.icon_outer}>{this.props.tab_icon}</div>
                 {this.props.tab_name}
             </Link>
         );
