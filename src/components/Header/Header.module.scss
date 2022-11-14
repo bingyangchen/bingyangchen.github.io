@@ -10,7 +10,13 @@
     height: _.$header-height;
     width: 100%;
     padding: 0 15px;
+    background-color: _.$white;
+    border-bottom: 1px solid _.$noisy-white;
     z-index: 3;
+    &.transparent {
+        background-color: transparent;
+        border-bottom: none;
+    }
     .subpage_list {
         display: flex;
         gap: 10px;

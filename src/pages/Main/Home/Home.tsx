@@ -6,6 +6,7 @@ import { RouterInterface, withRouter } from "../../../router";
 import IconGitHub from "../../../components/Icons/IconGitHub";
 import IconLinkedIn from "../../../components/Icons/IconLinkedIn";
 import IconCSquareFill from "../../../components/Icons/IconCSquareFill";
+import { Link } from "react-router-dom";
 
 interface Props extends RouterInterface {}
 
@@ -33,11 +34,7 @@ class Home extends React.Component<Props, State> {
             )}px`;
         });
     }
-    public componentDidUpdate(
-        prevProps: Readonly<Props>,
-        prevState: Readonly<State>,
-        snapshot?: any
-    ): void {
+    public componentDidUpdate(): void {
         this.mobile_go_to_hash();
     }
     public render(): React.ReactNode {
@@ -250,6 +247,11 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </div>
                     </div>
+                    <div className={styles.resume_outer}>
+                        <Link to={`/resume`} className={styles.resume_button}>
+                            My Resume
+                        </Link>
+                    </div>
                 </div>
                 <div
                     id="projects"
@@ -258,8 +260,8 @@ class Home extends React.Component<Props, State> {
                 >
                     <h2>PROJECTS</h2>
                     <div className={styles.subtitle}>
-                        由於不想讓自己因為工作而逐漸失去創造力，當新點子冒出來時，當然是抓緊閒暇時間做一些
-                        side projects，你或許會有興趣！
+                        不想讓自己因為工作而逐漸失去創造力，當新點子冒出來時，當然是抓緊閒暇時間做一些
+                        side projects，你或許會對它們感興趣！
                     </div>
                     <hr />
                 </div>

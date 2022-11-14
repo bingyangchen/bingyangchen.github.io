@@ -13,7 +13,9 @@ import IconJournalBookmark from "../Icons/IconJournalBookmark";
 import IconPerson from "../Icons/IconPerson";
 import { Link } from "react-router-dom";
 
-interface Props {}
+interface Props {
+    transparent?: boolean;
+}
 
 interface State {
     is_hidden_bar_active: boolean;
@@ -57,7 +59,7 @@ export default class Header extends React.Component<Props, State> {
     public render(): React.ReactNode {
         return (
             <>
-                <header className={styles.main}>
+                <header className={this.main_class}>
                     <FullLogo size="s" />
                     <div className={styles.subpage_list}>
                         {this.state.subpage_list.map((each, idx) => {
@@ -92,6 +94,12 @@ export default class Header extends React.Component<Props, State> {
                 </MainFunctionBar>
             </>
         );
+    }
+    private get main_class(): string {
+        if (this.props.transparent) {
+            return styles.main + " " + styles.transparent;
+        }
+        return styles.main;
     }
     private show_main_function_var = (): void => {
         this.setState({ is_hidden_bar_active: true });

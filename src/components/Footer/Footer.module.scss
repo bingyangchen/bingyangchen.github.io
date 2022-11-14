@@ -1,0 +1,13 @@
+@use "../../global_variables" as _;
+
+.main {
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 30px;
+    width: 100%;
+    min-height: 38.2vh;
+    background-color: _.$black;
+    color: _.$light-gray;
+    font-family: Georgia, "Times New Roman", Times, serif;
+}

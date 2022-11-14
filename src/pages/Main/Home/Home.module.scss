@@ -188,6 +188,7 @@
                         & > .description {
                             text-align: justify;
                             text-justify: inter-ideograph;
+                            line-height: 1.5 * _.$base-font-size;
                             padding: 15px 0;
                         }
                         & > .tech_stack {
@@ -196,6 +197,7 @@
                             }
                             & > .list {
                                 display: block;
+                                padding: 3px 0;
                                 & > .technology {
                                     display: inline-block;
                                     font-size: 0.8rem;
@@ -207,6 +209,27 @@
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+        & > .resume_outer {
+            display: flex;
+            justify-content: center;
+            padding-bottom: 30px;
+            & > .resume_button {
+                border-radius: 3px;
+                border: 1px solid _.$gray;
+                padding: 12px 20px;
+                background-color: _.$transparent-black;
+                font-size: 1.1 * _.$base-font-size;
+                font-family: Georgia, "Times New Roman", Times, serif;
+                transition-duration: 150ms;
+                @media (hover: hover) {
+                    &:hover {
+                        border: 1px solid _.$deep-gray;
+                        background-color: _.$deep-gray;
+                        color: _.$noisy-white;
                     }
                 }
             }
