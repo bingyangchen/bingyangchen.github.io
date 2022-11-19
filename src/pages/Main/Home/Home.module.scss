@@ -19,13 +19,15 @@
                 font-size: 2 * _.$base-font-size;
             }
         }
-        .subtitle {
+        & > .subtitle {
             margin: 30px auto;
             padding: 0 50px;
             text-align: center;
             max-width: _.$hide-function-bar-boundry;
             line-height: 2.2 * _.$base-font-size;
             font-size: 1.1 * _.$base-font-size;
+            font-family: Cambria, Cochin, Georgia, Times, "Times New Roman",
+                serif;
             @media screen and (max-width: _.$hide-function-bar-boundry) {
                 padding: 0 30px;
                 font-size: _.$base-font-size;
@@ -213,23 +215,110 @@
                 }
             }
         }
-        & > .resume_outer {
-            display: flex;
-            justify-content: center;
-            padding-bottom: 30px;
-            & > .resume_button {
-                border-radius: 3px;
-                border: 1px solid _.$gray;
-                padding: 12px 20px;
-                background-color: _.$transparent-black;
-                font-size: 1.1 * _.$base-font-size;
-                font-family: Georgia, "Times New Roman", Times, serif;
-                transition-duration: 150ms;
+    }
+    & > .projects {
+        & > .project_list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            padding: 30px 90px;
+            & > .project {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                aspect-ratio: 1;
+                border-radius: 10px;
+                background-size: cover;
+                background-repeat: no-repeat;
+                overflow: hidden;
                 @media (hover: hover) {
                     &:hover {
-                        border: 1px solid _.$deep-gray;
-                        background-color: _.$deep-gray;
-                        color: _.$noisy-white;
+                        & > .background {
+                            transform: scale(1.2);
+                        }
+                    }
+                }
+                & > .title {
+                    color: _.$white;
+                    font-size: 1.2 * _.$base-font-size;
+                    padding: 10px 20px;
+                    z-index: 1;
+                }
+                & > .subtitle {
+                    color: _.$light-gray;
+                    font-size: 0.85 * _.$base-font-size;
+                    padding: 0 20px;
+                    margin-bottom: 10%;
+                    z-index: 1;
+                }
+                & > .background {
+                    position: absolute;
+                    top: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-size: cover;
+                    background-repeat: no-repeat;
+                    transition-duration: 500ms;
+                }
+                &.trade_smartly {
+                    background-color: _.$light-gray;
+                    & > .background {
+                        background-image: url("../../../assets/trade_smartly.png");
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: _.$black;
+                            opacity: 0.5;
+                        }
+                    }
+                }
+                &.path_finding {
+                    & > .background {
+                        background-image: url("../../../assets/path_finding.jpg");
+                    }
+                }
+                &.virus_spread {
+                    & > .background {
+                        background-image: url("../../../assets/virus_spread.jpg");
+                        background-position: -70px 0;
+                    }
+                }
+                &.wiki_prettier {
+                    & > .background {
+                        background-image: url("../../../assets/wiki_prettier.png");
+                    }
+                }
+                &.market_simulate {
+                    & > .background {
+                        background-image: url("../../../assets/market.jpg");
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: _.$black;
+                            opacity: 0.3;
+                        }
+                    }
+                }
+                &.inventory_control {
+                    & > .background {
+                        background-image: url("../../../assets/warehouse.jpg");
+                        background-position: -120px 0;
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 0;
+                            width: 100%;
+                            height: 100%;
+                            background-color: _.$black;
+                            opacity: 0.4;
+                        }
                     }
                 }
             }
@@ -280,6 +369,11 @@
                         }
                     }
                 }
+            }
+        }
+        & > .projects {
+            & > .project_list {
+                padding: 30px;
             }
         }
     }

@@ -10,7 +10,11 @@ import { Link } from "react-router-dom";
 
 interface Props extends RouterInterface {}
 
-interface State {}
+interface State {
+    lates_window_scroll_y: number;
+    touch_start_y_pos: number | null;
+    touch_end_y_pos: number | null;
+}
 
 class Home extends React.Component<Props, State> {
     public state: State;
@@ -19,23 +23,20 @@ class Home extends React.Component<Props, State> {
     private projects_ref: React.RefObject<HTMLDivElement>;
     public constructor(props: Props) {
         super(props);
-        this.state = {};
+        this.state = {
+            lates_window_scroll_y: 0,
+            touch_start_y_pos: null,
+            touch_end_y_pos: null,
+        };
         this.home_ref = React.createRef();
         this.about_ref = React.createRef();
         this.projects_ref = React.createRef();
     }
     public componentDidMount(): void {
-        window.addEventListener("scroll", () => {
-            let target = this.home_ref.current!;
-            let h = target.getBoundingClientRect().height;
-            let bottom = target.getBoundingClientRect().bottom;
-            target.style.backgroundPosition = `45% ${Math.abs(
-                0.5 * (bottom - h)
-            )}px`;
-        });
+        this.make_cover_photo_slow();
     }
     public componentDidUpdate(): void {
-        this.mobile_go_to_hash();
+        // this.mobile_go_to_hash();
     }
     public render(): React.ReactNode {
         return (
@@ -47,10 +48,12 @@ class Home extends React.Component<Props, State> {
                 >
                     <div className={styles.upper}>
                         <div className={styles.cta_button_list}>
-                            <div className={styles.cta_button}>BLOG</div>
                             <a href="#projects" className={styles.cta_button}>
                                 PROJECTS
                             </a>
+                            <Link to="" className={styles.cta_button}>
+                                BLOG
+                            </Link>
                         </div>
                         <div className={styles.social_media_list}>
                             <a
@@ -247,36 +250,106 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </div>
                     </div>
-                    <div className={styles.resume_outer}>
-                        <Link to={`/resume`} className={styles.resume_button}>
-                            My Resume
-                        </Link>
-                    </div>
                 </div>
                 <div
                     id="projects"
-                    className={styles.about + " " + styles.section}
+                    className={styles.projects + " " + styles.section}
                     ref={this.projects_ref}
                 >
                     <h2>PROJECTS</h2>
                     <div className={styles.subtitle}>
                         不想讓自己因為工作而逐漸失去創造力，當新點子冒出來時，當然是抓緊閒暇時間做一些
-                        side projects，你或許會對它們感興趣！
+                        side projects，你或許會喜歡！
                     </div>
                     <hr />
+                    <div className={styles.project_list}>
+                        <div
+                            className={
+                                styles.project + " " + styles.trade_smartly
+                            }
+                        >
+                            <div className={styles.background} />
+                            <div className={styles.title}>TradeSmartly</div>
+                            <div className={styles.subtitle}>
+                                投資記帳小幫手，幫助你詳實紀錄與觀察自己的投資績效。
+                            </div>
+                        </div>
+                        <div
+                            className={
+                                styles.project + " " + styles.path_finding
+                            }
+                        >
+                            <div className={styles.background} />
+                            <div className={styles.title}>
+                                Path Finding Visualize
+                            </div>
+                            <div className={styles.subtitle}>
+                                使用 Dijkstra
+                                演算法搜尋兩個物體間的最短路徑，順便拿來解迷宮。
+                            </div>
+                        </div>
+                        <div
+                            className={
+                                styles.project + " " + styles.virus_spread
+                            }
+                        >
+                            <div className={styles.background} />
+                            <div className={styles.title}>
+                                Virus Spread Simulate
+                            </div>
+                            <div className={styles.subtitle}>
+                                簡單模擬不同參數下病毒擴散的狀況，並將統計結果視覺化。
+                            </div>
+                        </div>
+                        <div
+                            className={
+                                styles.project + " " + styles.wiki_prettier
+                            }
+                        >
+                            <div className={styles.background} />
+                            <div className={styles.title}>Wiki Prettier</div>
+                            <div className={styles.subtitle}>
+                                你也覺得維基百科的排版使你閱讀起來不太舒服嗎？試試這個！
+                            </div>
+                        </div>
+                        <div
+                            className={
+                                styles.project + " " + styles.market_simulate
+                            }
+                        >
+                            <div className={styles.background} />
+                            <div className={styles.title}>Market Simulate</div>
+                            <div className={styles.subtitle}>
+                                透過程式模擬經濟學課本裡的供需理論，市場均衡是怎麼達成的？
+                            </div>
+                        </div>
+                        <div
+                            className={
+                                styles.project + " " + styles.inventory_control
+                            }
+                        >
+                            <div className={styles.background} />
+                            <div className={styles.title}>
+                                Inventory Control
+                            </div>
+                            <div className={styles.subtitle}>
+                                存貨管理其實就是一個最佳化問題，什麼存貨策略最適合你呢？
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         );
     }
-    private mobile_go_to_hash(): void {
-        let hash = this.props.router.location.hash;
-        if (["#home", ""].includes(hash)) {
-            this.home_ref.current!.scrollIntoView();
-        } else if (hash === "#about") {
-            this.about_ref.current!.scrollIntoView();
-        } else if (hash === "#projects") {
-            this.projects_ref.current!.scrollIntoView();
-        }
+    private make_cover_photo_slow(): void {
+        window.addEventListener("scroll", () => {
+            let target = this.home_ref.current!;
+            let h = target.getBoundingClientRect().height;
+            let bottom = target.getBoundingClientRect().bottom;
+            target.style.backgroundPosition = `45% ${Math.abs(
+                0.5 * (bottom - h)
+            )}px`;
+        });
     }
 }
 
