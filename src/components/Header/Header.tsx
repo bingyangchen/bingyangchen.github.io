@@ -35,22 +35,22 @@ export default class Header extends React.Component<Props, State> {
                 {
                     tab_icon: <IconHouseDoorFill side_length="100%" />,
                     tab_name: "HOME",
-                    path: "#home",
+                    path: "/#home",
                 },
                 {
                     tab_icon: <IconPerson side_length="95%" />,
                     tab_name: "ABOUT",
-                    path: "#about",
+                    path: "/#about",
                 },
                 {
                     tab_icon: <IconLayoutWtf side_length="95%" />,
                     tab_name: "PROJECTS",
-                    path: "#projects",
+                    path: "/#projects",
                 },
                 {
                     tab_icon: <IconJournalBookmark side_length="95%" />,
                     tab_name: "BLOG",
-                    path: ".",
+                    path: "/blog",
                 },
             ],
         };

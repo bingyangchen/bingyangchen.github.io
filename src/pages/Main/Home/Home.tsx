@@ -7,13 +7,15 @@ import IconGitHub from "../../../components/Icons/IconGitHub";
 import IconLinkedIn from "../../../components/Icons/IconLinkedIn";
 import IconCSquareFill from "../../../components/Icons/IconCSquareFill";
 import { Link } from "react-router-dom";
+import Button from "../../../components/Button/Button";
+import IconChevronDown from "../../../components/Icons/IconChevronDown";
+import IconChevronUp from "../../../components/Icons/IconChevronUp";
+import IconBook from "../../../components/Icons/IconBook";
 
 interface Props extends RouterInterface {}
 
 interface State {
-    lates_window_scroll_y: number;
-    touch_start_y_pos: number | null;
-    touch_end_y_pos: number | null;
+    is_showing_all_projects: boolean;
 }
 
 class Home extends React.Component<Props, State> {
@@ -24,9 +26,7 @@ class Home extends React.Component<Props, State> {
     public constructor(props: Props) {
         super(props);
         this.state = {
-            lates_window_scroll_y: 0,
-            touch_start_y_pos: null,
-            touch_end_y_pos: null,
+            is_showing_all_projects: false,
         };
         this.home_ref = React.createRef();
         this.about_ref = React.createRef();
@@ -35,9 +35,7 @@ class Home extends React.Component<Props, State> {
     public componentDidMount(): void {
         this.make_cover_photo_slow();
     }
-    public componentDidUpdate(): void {
-        // this.mobile_go_to_hash();
-    }
+    public componentDidUpdate(): void {}
     public render(): React.ReactNode {
         return (
             <div className={styles.main}>
@@ -51,7 +49,7 @@ class Home extends React.Component<Props, State> {
                             <a href="#projects" className={styles.cta_button}>
                                 PROJECTS
                             </a>
-                            <Link to="" className={styles.cta_button}>
+                            <Link to="/blog" className={styles.cta_button}>
                                 BLOG
                             </Link>
                         </div>
@@ -333,9 +331,73 @@ class Home extends React.Component<Props, State> {
                                 Inventory Control
                             </div>
                             <div className={styles.subtitle}>
-                                存貨管理其實就是一個最佳化問題，什麼存貨策略最適合你呢？
+                                存貨管理其實就是一個最佳化問題，不同的成本結構與銷售狀況所適合的存貨策略可能截然不同！
                             </div>
                         </div>
+                        {this.state.is_showing_all_projects ? (
+                            <>
+                                <div
+                                    className={
+                                        styles.project +
+                                        " " +
+                                        styles.market_simulate
+                                    }
+                                >
+                                    <div className={styles.background} />
+                                    <div className={styles.title}>
+                                        Market Simulate
+                                    </div>
+                                    <div className={styles.subtitle}>
+                                        透過程式模擬經濟學課本裡的供需理論，市場均衡是怎麼達成的？
+                                    </div>
+                                </div>
+                                <div
+                                    className={
+                                        styles.project +
+                                        " " +
+                                        styles.inventory_control
+                                    }
+                                >
+                                    <div className={styles.background} />
+                                    <div className={styles.title}>
+                                        Inventory Control
+                                    </div>
+                                    <div className={styles.subtitle}>
+                                        存貨管理其實就是一個最佳化問題，不同的成本結構與銷售狀況所適合的存貨策略可能截然不同！
+                                    </div>
+                                </div>
+                            </>
+                        ) : null}
+                    </div>
+                    <div className={styles.show_all_project_button_container}>
+                        <Button
+                            className="clean l p8-15"
+                            onClick={this.toggle_show_all_project_button}
+                        >
+                            {this.state.is_showing_all_projects ? (
+                                <IconChevronUp side_length="16" />
+                            ) : (
+                                <IconChevronDown side_length="16" />
+                            )}
+                            {this.state.is_showing_all_projects
+                                ? "收合"
+                                : "顯示更多"}
+                        </Button>
+                    </div>
+                </div>
+                <div id="blog" className={styles.blog + " " + styles.section}>
+                    <h2>BLOG</h2>
+                    <div className={styles.subtitle}>
+                        「輸入與輸出並重」是學習的的不二法門，這裡整理了一些我覺得值得分享的學習筆記，如內容有謬誤，請不吝指教。
+                    </div>
+                    <hr />
+                    <div className={styles.blog_button_container}>
+                        <Link to="/blog">
+                            <Button className="black_fill border l">
+                                <IconBook side_length="16" />
+                                去看看
+                            </Button>
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -343,14 +405,23 @@ class Home extends React.Component<Props, State> {
     }
     private make_cover_photo_slow(): void {
         window.addEventListener("scroll", () => {
-            let target = this.home_ref.current!;
-            let h = target.getBoundingClientRect().height;
-            let bottom = target.getBoundingClientRect().bottom;
-            target.style.backgroundPosition = `45% ${Math.abs(
-                0.5 * (bottom - h)
-            )}px`;
+            let target = this.home_ref.current;
+            if (target) {
+                let h = target.getBoundingClientRect().height;
+                let bottom = target.getBoundingClientRect().bottom;
+                target.style.backgroundPosition = `45% ${Math.abs(
+                    0.5 * (bottom - h)
+                )}px`;
+            }
         });
     }
+    private toggle_show_all_project_button = (): void => {
+        this.setState((state, props) => {
+            return {
+                is_showing_all_projects: !state.is_showing_all_projects,
+            };
+        });
+    };
 }
 
 export default withRouter(Home);

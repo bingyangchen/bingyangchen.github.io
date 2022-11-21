@@ -16,12 +16,14 @@ import Main from "./pages/Main/Main";
 
 // layer two
 import Home from "./pages/Main/Home/Home";
+import Blog from "./pages/Main/Blog/Blog";
 
 export default function MyRouter() {
     return (
         <Routes>
             <Route path="" element={<Main />}>
                 <Route path="" element={<Home />}></Route>
+                <Route path="blog" element={<Blog />}></Route>
             </Route>
             <Route path="*" element={<Navigate to="" />} />
         </Routes>
