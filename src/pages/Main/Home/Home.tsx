@@ -261,18 +261,28 @@ class Home extends React.Component<Props, State> {
                     </div>
                     <hr />
                     <div className={styles.project_list}>
-                        <div
+                        <a
+                            href="https://jamison-chen.github.io/investment"
+                            target="_blank"
+                            rel="noreferrer"
                             className={
                                 styles.project + " " + styles.trade_smartly
                             }
                         >
-                            <div className={styles.background} />
+                            <div
+                                className={
+                                    styles.background + " " + styles.mask
+                                }
+                            />
                             <div className={styles.title}>TradeSmartly</div>
                             <div className={styles.subtitle}>
                                 投資記帳小幫手，幫助你詳實紀錄與觀察自己的投資績效。
                             </div>
-                        </div>
-                        <div
+                        </a>
+                        <a
+                            href="https://jamison-chen.github.io/PathFindingVisualize"
+                            target="_blank"
+                            rel="noreferrer"
                             className={
                                 styles.project + " " + styles.path_finding
                             }
@@ -285,8 +295,11 @@ class Home extends React.Component<Props, State> {
                                 使用 Dijkstra
                                 演算法搜尋兩個物體間的最短路徑，順便拿來解迷宮。
                             </div>
-                        </div>
-                        <div
+                        </a>
+                        <a
+                            href="https://jamison-chen.github.io/VirusSpread"
+                            target="_blank"
+                            rel="noreferrer"
                             className={
                                 styles.project + " " + styles.virus_spread
                             }
@@ -298,8 +311,11 @@ class Home extends React.Component<Props, State> {
                             <div className={styles.subtitle}>
                                 簡單模擬不同參數下病毒擴散的狀況，並將統計結果視覺化。
                             </div>
-                        </div>
-                        <div
+                        </a>
+                        <a
+                            href="https://jamison-chen.github.io/WikiPrettier"
+                            target="_blank"
+                            rel="noreferrer"
                             className={
                                 styles.project + " " + styles.wiki_prettier
                             }
@@ -309,63 +325,114 @@ class Home extends React.Component<Props, State> {
                             <div className={styles.subtitle}>
                                 你也覺得維基百科的排版使你閱讀起來不太舒服嗎？試試這個！
                             </div>
-                        </div>
-                        <div
+                        </a>
+                        <a
+                            href="https://jamison-chen.github.io/DemandSupplySimulator"
+                            target="_blank"
+                            rel="noreferrer"
                             className={
                                 styles.project + " " + styles.market_simulate
                             }
                         >
-                            <div className={styles.background} />
+                            <div
+                                className={
+                                    styles.background + " " + styles.mask
+                                }
+                            />
                             <div className={styles.title}>Market Simulate</div>
                             <div className={styles.subtitle}>
-                                透過程式模擬經濟學課本裡的供需理論，市場均衡是怎麼達成的？
+                                使用程式模擬經濟學課本裡的供需理論，讓我們一起看看市場均衡是怎麼達成的！
                             </div>
-                        </div>
-                        <div
+                        </a>
+                        <a
+                            href="https://jamison-chen.github.io/Inventory"
+                            target="_blank"
+                            rel="noreferrer"
                             className={
                                 styles.project + " " + styles.inventory_control
                             }
                         >
-                            <div className={styles.background} />
+                            <div
+                                className={
+                                    styles.background + " " + styles.mask
+                                }
+                            />
                             <div className={styles.title}>
                                 Inventory Control
                             </div>
                             <div className={styles.subtitle}>
                                 存貨管理其實就是一個最佳化問題，不同的成本結構與銷售狀況所適合的存貨策略可能截然不同！
                             </div>
-                        </div>
+                        </a>
                         {this.state.is_showing_all_projects ? (
                             <>
-                                <div
+                                <a
+                                    href="https://jamison-chen.github.io/Game_Snake"
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className={
+                                        styles.project + " " + styles.snake
+                                    }
+                                >
+                                    <div
+                                        className={
+                                            styles.background +
+                                            " " +
+                                            styles.mask
+                                        }
+                                    />
+                                    <div className={styles.title}>Snake</div>
+                                    <div className={styles.subtitle}>
+                                        智障型手機時代的經典遊戲，你是否能贏過
+                                        Dijkstra 演算法？
+                                    </div>
+                                </a>
+                                <a
+                                    href="https://jamison-chen.github.io/Game_TicTacToe"
+                                    target="_blank"
+                                    rel="noreferrer"
                                     className={
                                         styles.project +
                                         " " +
-                                        styles.market_simulate
+                                        styles.tic_tac_toe
                                     }
                                 >
-                                    <div className={styles.background} />
+                                    <div
+                                        className={
+                                            styles.background +
+                                            " " +
+                                            styles.mask
+                                        }
+                                    />
                                     <div className={styles.title}>
-                                        Market Simulate
+                                        Tic Tac Toe
                                     </div>
                                     <div className={styles.subtitle}>
-                                        透過程式模擬經濟學課本裡的供需理論，市場均衡是怎麼達成的？
+                                        簡單的機器學習就能讓你贏不了電腦！還記得小時候上課都跟隔壁的女同學在數學課本上玩圈圈叉叉...
                                     </div>
-                                </div>
-                                <div
+                                </a>
+                                <a
+                                    href="https://jamison-chen.github.io/Game_PickCoins"
+                                    target="_blank"
+                                    rel="noreferrer"
                                     className={
-                                        styles.project +
-                                        " " +
-                                        styles.inventory_control
+                                        styles.project + " " + styles.pick_coins
                                     }
                                 >
-                                    <div className={styles.background} />
+                                    <div
+                                        className={
+                                            styles.background +
+                                            " " +
+                                            styles.mask
+                                        }
+                                    />
                                     <div className={styles.title}>
-                                        Inventory Control
+                                        Pick Coins
                                     </div>
                                     <div className={styles.subtitle}>
-                                        存貨管理其實就是一個最佳化問題，不同的成本結構與銷售狀況所適合的存貨策略可能截然不同！
+                                        其實這是一個結合經濟學的賽局理論的小遊戲，你能想到必勝的玩法嗎？
                                     </div>
-                                </div>
+                                </a>
                             </>
                         ) : null}
                     </div>

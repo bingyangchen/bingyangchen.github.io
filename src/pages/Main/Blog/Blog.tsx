@@ -17,7 +17,16 @@ class Blog extends React.Component<Props, State> {
     public componentDidMount(): void {}
     public componentDidUpdate(): void {}
     public render(): React.ReactNode {
-        return <div className={styles.main}></div>;
+        return (
+            <div className={styles.main}>
+                <div className={styles.category_list}>
+                    <div className={styles.category_tab}>ALL</div>
+                    <div className={styles.category_tab}>ECONOMICS</div>
+                    <div className={styles.category_tab}>SOFTWARE</div>
+                    <div className={styles.category_tab}>OTHERS</div>
+                </div>
+            </div>
+        );
     }
 }
 

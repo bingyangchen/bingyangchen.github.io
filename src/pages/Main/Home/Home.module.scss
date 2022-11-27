@@ -260,11 +260,7 @@
                     background-size: cover;
                     background-repeat: no-repeat;
                     transition-duration: 500ms;
-                }
-                &.trade_smartly {
-                    background-color: _.$light-gray;
-                    & > .background {
-                        background-image: url("../../../assets/trade_smartly.png");
+                    &.mask {
                         &::before {
                             content: "";
                             position: absolute;
@@ -274,6 +270,11 @@
                             background-color: _.$black;
                             opacity: 0.5;
                         }
+                    }
+                }
+                &.trade_smartly {
+                    & > .background {
+                        background-image: url("../../../assets/trade_smartly.png");
                     }
                 }
                 &.path_finding {
@@ -295,30 +296,27 @@
                 &.market_simulate {
                     & > .background {
                         background-image: url("../../../assets/market.jpg");
-                        &::before {
-                            content: "";
-                            position: absolute;
-                            top: 0;
-                            width: 100%;
-                            height: 100%;
-                            background-color: _.$black;
-                            opacity: 0.3;
-                        }
                     }
                 }
                 &.inventory_control {
                     & > .background {
                         background-image: url("../../../assets/warehouse.jpg");
                         background-position: -120px 0;
-                        &::before {
-                            content: "";
-                            position: absolute;
-                            top: 0;
-                            width: 100%;
-                            height: 100%;
-                            background-color: _.$black;
-                            opacity: 0.4;
-                        }
+                    }
+                }
+                &.snake {
+                    & > .background {
+                        background-image: url("../../../assets/snake.png");
+                    }
+                }
+                &.tic_tac_toe {
+                    & > .background {
+                        background-image: url("../../../assets/tictactoe.png");
+                    }
+                }
+                &.pick_coins {
+                    & > .background {
+                        background-image: url("../../../assets/coins.jpg");
                     }
                 }
             }
