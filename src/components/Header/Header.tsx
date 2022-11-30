@@ -50,7 +50,7 @@ export default class Header extends React.Component<Props, State> {
                 {
                     tab_icon: <IconJournalBookmark side_length="95%" />,
                     tab_name: "BLOG",
-                    path: "/blog",
+                    path: "/#blog",
                 },
             ],
         };

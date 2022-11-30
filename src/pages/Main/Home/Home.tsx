@@ -6,7 +6,6 @@ import { RouterInterface, withRouter } from "../../../router";
 import IconGitHub from "../../../components/Icons/IconGitHub";
 import IconLinkedIn from "../../../components/Icons/IconLinkedIn";
 import IconCSquareFill from "../../../components/Icons/IconCSquareFill";
-import { Link } from "react-router-dom";
 import Button from "../../../components/Button/Button";
 import IconChevronDown from "../../../components/Icons/IconChevronDown";
 import IconChevronUp from "../../../components/Icons/IconChevronUp";
@@ -49,9 +48,12 @@ class Home extends React.Component<Props, State> {
                             <a href="#projects" className={styles.cta_button}>
                                 PROJECTS
                             </a>
-                            <Link to="/blog" className={styles.cta_button}>
+                            <a
+                                href="https://jamison-chen.github.io/Article"
+                                className={styles.cta_button}
+                            >
                                 BLOG
-                            </Link>
+                            </a>
                         </div>
                         <div className={styles.social_media_list}>
                             <a
@@ -459,12 +461,12 @@ class Home extends React.Component<Props, State> {
                     </div>
                     <hr />
                     <div className={styles.blog_button_container}>
-                        <Link to="/blog">
+                        <a href="https://jamison-chen.github.io/Article">
                             <Button className="black_fill border l">
                                 <IconBook side_length="16" />
                                 去看看
                             </Button>
-                        </Link>
+                        </a>
                     </div>
                 </div>
             </div>
