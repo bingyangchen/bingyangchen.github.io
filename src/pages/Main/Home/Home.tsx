@@ -49,7 +49,7 @@ class Home extends React.Component<Props, State> {
                                 PROJECTS
                             </a>
                             <a
-                                href="https://jamison-chen.github.io/Article"
+                                href="https://jamison-chen.github.io/blogs"
                                 className={styles.cta_button}
                             >
                                 BLOG
@@ -461,7 +461,7 @@ class Home extends React.Component<Props, State> {
                     </div>
                     <hr />
                     <div className={styles.blog_button_container}>
-                        <a href="https://jamison-chen.github.io/Article">
+                        <a href="https://jamison-chen.github.io/blogs">
                             <Button className="black_fill border l">
                                 <IconBook side_length="16" />
                                 去看看

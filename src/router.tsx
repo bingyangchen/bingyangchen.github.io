@@ -22,7 +22,6 @@ export default function MyRouter() {
         <Routes>
             <Route path="" element={<Main />}>
                 <Route path="" element={<Home />}></Route>
-                {/* <Route path="blog" element={<Blog />}></Route> */}
             </Route>
             <Route path="*" element={<Navigate to="" />} />
         </Routes>
