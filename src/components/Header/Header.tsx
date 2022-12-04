@@ -12,9 +12,7 @@ import IconLayoutWtf from "../Icons/IconLayoutWtf";
 import IconJournalBookmark from "../Icons/IconJournalBookmark";
 import IconPerson from "../Icons/IconPerson";
 
-interface Props {
-    transparent?: boolean;
-}
+interface Props {}
 
 interface State {
     is_hidden_bar_active: boolean;
@@ -23,6 +21,7 @@ interface State {
         tab_name: string;
         path: string;
     }[];
+    should_header_transparent: boolean;
 }
 
 export default class Header extends React.Component<Props, State> {
@@ -53,7 +52,15 @@ export default class Header extends React.Component<Props, State> {
                     path: "/#blog",
                 },
             ],
+            should_header_transparent: true,
         };
+    }
+    public componentDidMount(): void {
+        window.addEventListener("scroll", () => {
+            this.setState({
+                should_header_transparent: window.scrollY < window.innerHeight,
+            });
+        });
     }
     public render(): React.ReactNode {
         return (
@@ -95,7 +102,7 @@ export default class Header extends React.Component<Props, State> {
         );
     }
     private get main_class(): string {
-        if (this.props.transparent) {
+        if (this.state.should_header_transparent) {
             return styles.main + " " + styles.transparent;
         }
         return styles.main;

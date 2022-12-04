@@ -15,7 +15,7 @@
     z-index: 3;
     &.transparent {
         background-color: transparent;
-        border-bottom: none;
+        border-bottom: 1px solid transparent;
     }
     .subpage_list {
         display: flex;

@@ -9,29 +9,19 @@ import Footer from "../../components/Footer/Footer";
 
 interface Props extends RouterInterface {}
 
-interface State {
-    should_header_transparent: boolean;
-}
+interface State {}
 
 class Main extends React.Component<Props, State> {
     public state: State;
     public constructor(props: Props) {
         super(props);
-        this.state = {
-            should_header_transparent: true,
-        };
+        this.state = {};
     }
-    public componentDidMount(): void {
-        window.addEventListener("scroll", () => {
-            this.setState({
-                should_header_transparent: window.scrollY < window.innerHeight,
-            });
-        });
-    }
+    public componentDidMount(): void {}
     public render(): React.ReactNode {
         return (
             <main className={styles.main}>
-                <Header transparent={this.state.should_header_transparent} />
+                <Header />
                 <Outlet />
                 <Footer />
             </main>
