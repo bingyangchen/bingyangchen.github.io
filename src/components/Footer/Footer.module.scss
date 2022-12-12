@@ -13,7 +13,7 @@
     color: _.$light-gray;
     font-family: Georgia, "Times New Roman", Times, serif;
     font-size: 0.8 * _.$base-font-size;
-    .social_media_list {
+    & > .social_media_list {
         display: block;
         & > .social_media {
             display: inline-flex;
@@ -36,5 +36,14 @@
             border-left: 2px solid _.$deep-gray;
             padding-top: 6px;
         }
+    }
+    & > .copy_right {
+        line-height: 1.2 * _.$base-font-size;
+    }
+}
+
+@media screen and (max-width: _.$hide-function-bar-boundry) {
+    .main > .copy_right {
+        font-size: 0.7 * _.$base-font-size;
     }
 }

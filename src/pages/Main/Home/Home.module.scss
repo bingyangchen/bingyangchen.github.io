@@ -399,8 +399,18 @@
                 & > .block {
                     width: 100%;
                     & > .work_experience {
+                        $head-height: 25px;
                         & > .left {
-                            padding-left: 0;
+                            padding: 0 10px 0 0;
+                            & > .head {
+                                width: $head-height;
+                                &::before {
+                                    width: 10px;
+                                }
+                            }
+                        }
+                        & > .main > .time {
+                            height: $head-height;
                         }
                     }
                 }
