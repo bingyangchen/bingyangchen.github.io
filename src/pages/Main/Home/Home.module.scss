@@ -89,17 +89,20 @@
                 gap: 25px;
                 margin: 0 25%;
                 & > .cta_button {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
                     border: 3px solid _.$white;
                     border-radius: 0.1rem;
                     text-align: center;
-                    padding: 12px 0;
                     width: max(15vw, 150px);
                     font-size: 0.9 * _.$base-font-size;
+                    height: 50px;
                     letter-spacing: 2 * _.$base-letter-spacing;
                     color: _.$white;
                     box-shadow: 0 0 0 0 _.$gray;
                     cursor: pointer;
-                    transition-duration: 150ms;
+                    transition-duration: 200ms;
                     @media (hover: hover) {
                         &:hover {
                             background-color: _.$white;
@@ -135,6 +138,7 @@
         }
     }
     & > .about {
+        padding-bottom: 20px;
         & > .work_experience_outer {
             display: flex;
             padding: 30px;
@@ -212,6 +216,26 @@
                             }
                         }
                     }
+                }
+            }
+        }
+        & > .education_outer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            padding: 30px;
+            font-family: Georgia, "Times New Roman", Times, serif;
+            font-size: 1.25 * _.$base-font-size;
+            color: _.$gray;
+            & > .school_logo {
+                width: 220px;
+            }
+            & > div {
+                width: min(380px, 100%);
+                &:last-child {
+                    width: min(380px, 100%);
+                    text-align: end;
                 }
             }
         }
@@ -378,6 +402,19 @@
                         & > .left {
                             padding-left: 0;
                         }
+                    }
+                }
+            }
+            & > .education_outer {
+                gap: 25px;
+                font-size: _.$base-font-size;
+                & > .school_logo {
+                    width: 200px;
+                }
+                & > div {
+                    width: min(320px, 100%);
+                    &:last-child {
+                        width: min(320px, 100%);
                     }
                 }
             }

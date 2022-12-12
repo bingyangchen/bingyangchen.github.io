@@ -1,4 +1,5 @@
 import styles from "./Home.module.scss";
+import nccu_logo from "../../../assets/nccu_logo.png";
 
 import React from "react";
 
@@ -249,6 +250,16 @@ class Home extends React.Component<Props, State> {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <h3>Education</h3>
+                    <div className={styles.education_outer}>
+                        <img
+                            className={styles.school_logo}
+                            src={nccu_logo}
+                            alt="NCCU logo"
+                        />
+                        <div>國立政治大學經濟學系</div>
+                        <div>國立政治大學金融科技學士學程</div>
                     </div>
                 </div>
                 <div
