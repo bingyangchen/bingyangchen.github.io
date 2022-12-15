@@ -1,5 +1,4 @@
 ﻿https://jamison-chen.github.io/
-https://jamison-chen.github.io/blog/
 https://jamison-chen.github.io/investment/
 https://jamison-chen.github.io/PathFindingVisualize/
 https://jamison-chen.github.io/VirusSpread/
