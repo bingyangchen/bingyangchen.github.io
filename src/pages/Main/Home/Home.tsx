@@ -52,6 +52,8 @@ class Home extends React.Component<Props, State> {
                             <a
                                 href="https://jamison-chen.gitbook.io/blog/"
                                 className={styles.cta_button}
+                                target="_blank"
+                                rel="noreferrer"
                             >
                                 BLOG
                             </a>
@@ -472,7 +474,11 @@ class Home extends React.Component<Props, State> {
                     </div>
                     <hr />
                     <div className={styles.blog_button_container}>
-                        <a href="https://jamison-chen.gitbook.io/blog/">
+                        <a
+                            href="https://jamison-chen.gitbook.io/blog/"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
                             <Button className="black_fill border l">
                                 <IconBook side_length="16" />
                                 去看看
