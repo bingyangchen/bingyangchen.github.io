@@ -276,13 +276,17 @@ class Home extends React.Component<Props, State> {
                     </div>
                     <hr />
                     <div className={styles.project_list}>
-                        <a
-                            href="https://jamison-chen.github.io/investment"
-                            target="_blank"
-                            rel="noreferrer"
+                        <div
                             className={
                                 styles.project + " " + styles.trade_smartly
                             }
+                            onClick={() => {
+                                window.open(
+                                    "https://jamison-chen.github.io/investment",
+                                    "_blank",
+                                    "popup=true,height=570,width=520"
+                                );
+                            }}
                         >
                             <div
                                 className={
@@ -293,7 +297,7 @@ class Home extends React.Component<Props, State> {
                             <div className={styles.subtitle}>
                                 投資記帳小幫手，幫助你詳實紀錄與觀察自己的投資績效。
                             </div>
-                        </a>
+                        </div>
                         <a
                             href="https://jamison-chen.github.io/path-finding-visualize"
                             target="_blank"
