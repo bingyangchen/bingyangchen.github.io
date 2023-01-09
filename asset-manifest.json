@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.05310fbd.css",
-    "main.js": "/static/js/main.4104850a.js",
+    "main.css": "/static/css/main.3505347a.css",
+    "main.js": "/static/js/main.9e44905b.js",
     "static/js/787.f8a0dea2.chunk.js": "/static/js/787.f8a0dea2.chunk.js",
     "static/media/cover.jpeg": "/static/media/cover.9f0549194c63dee30077.jpeg",
     "static/media/market.jpg": "/static/media/market.240e75a76f77d919c85d.jpg",
@@ -17,12 +17,12 @@
     "static/media/nccu_logo.png": "/static/media/nccu_logo.3b0c2763fdde3204be76.png",
     "static/media/logo.png": "/static/media/logo.152958e29f927e1e9d54.png",
     "index.html": "/index.html",
-    "main.05310fbd.css.map": "/static/css/main.05310fbd.css.map",
-    "main.4104850a.js.map": "/static/js/main.4104850a.js.map",
+    "main.3505347a.css.map": "/static/css/main.3505347a.css.map",
+    "main.9e44905b.js.map": "/static/js/main.9e44905b.js.map",
     "787.f8a0dea2.chunk.js.map": "/static/js/787.f8a0dea2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.05310fbd.css",
-    "static/js/main.4104850a.js"
+    "static/css/main.3505347a.css",
+    "static/js/main.9e44905b.js"
   ]
 }
