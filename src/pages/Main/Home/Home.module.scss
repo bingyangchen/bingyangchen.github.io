@@ -322,7 +322,7 @@
                         background-image: url("../../../assets/market.jpg");
                     }
                 }
-                &.inventory_control {
+                &.inventory_analyzer {
                     & > .background {
                         background-image: url("../../../assets/warehouse.jpg");
                         background-position: -120px 0;
@@ -356,7 +356,7 @@
         & > .blog_button_container {
             display: flex;
             justify-content: center;
-            padding: 80px 0 110px;
+            padding: 50px 0 110px;
         }
     }
 }

@@ -87,6 +87,11 @@
     &.p8-15 {
         padding: 8px 15px !important;
     }
+    &.xl {
+        font-size: 1.1 * _.$base-font-size;
+        padding: 12px 25px;
+        gap: 12px;
+    }
     &.l {
         font-size: 1 * _.$base-font-size;
         padding: 8px 20px;

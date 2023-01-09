@@ -295,7 +295,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/PathFindingVisualize"
+                            href="https://jamison-chen.github.io/path-finding-visualize"
                             target="_blank"
                             rel="noreferrer"
                             className={
@@ -312,7 +312,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/VirusSpread"
+                            href="https://jamison-chen.github.io/virus-spread"
                             target="_blank"
                             rel="noreferrer"
                             className={
@@ -328,7 +328,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/WikiPrettier"
+                            href="https://jamison-chen.github.io/wiki-prettier"
                             target="_blank"
                             rel="noreferrer"
                             className={
@@ -342,7 +342,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/DemandSupplySimulator"
+                            href="https://jamison-chen.github.io/demand-supply-simulator"
                             target="_blank"
                             rel="noreferrer"
                             className={
@@ -360,11 +360,11 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/Inventory"
+                            href="https://jamison-chen.github.io/inventory-analyzer"
                             target="_blank"
                             rel="noreferrer"
                             className={
-                                styles.project + " " + styles.inventory_control
+                                styles.project + " " + styles.inventory_analyzer
                             }
                         >
                             <div
@@ -373,7 +373,7 @@ class Home extends React.Component<Props, State> {
                                 }
                             />
                             <div className={styles.title}>
-                                Inventory Control
+                                Inventory Analyzer
                             </div>
                             <div className={styles.subtitle}>
                                 存貨管理其實就是一個最佳化問題，不同的成本結構與銷售狀況所適合的存貨策略可能截然不同！
@@ -382,7 +382,7 @@ class Home extends React.Component<Props, State> {
                         {this.state.is_showing_all_projects ? (
                             <>
                                 <a
-                                    href="https://jamison-chen.github.io/Game_Snake"
+                                    href="https://jamison-chen.github.io/snake"
                                     target="_blank"
                                     rel="noreferrer"
                                     className={
@@ -403,7 +403,7 @@ class Home extends React.Component<Props, State> {
                                     </div>
                                 </a>
                                 <a
-                                    href="https://jamison-chen.github.io/Game_TicTacToe"
+                                    href="https://jamison-chen.github.io/tic-tac-toe"
                                     target="_blank"
                                     rel="noreferrer"
                                     className={
@@ -427,7 +427,7 @@ class Home extends React.Component<Props, State> {
                                     </div>
                                 </a>
                                 <a
-                                    href="https://jamison-chen.github.io/Game_PickCoins"
+                                    href="https://jamison-chen.github.io/pick-coins"
                                     target="_blank"
                                     rel="noreferrer"
                                     className={
@@ -479,8 +479,8 @@ class Home extends React.Component<Props, State> {
                             target="_blank"
                             rel="noreferrer"
                         >
-                            <Button className="black_fill border l">
-                                <IconBook side_length="16" />
+                            <Button className="black_fill border xl">
+                                <IconBook side_length="28" />
                                 去看看
                             </Button>
                         </a>
