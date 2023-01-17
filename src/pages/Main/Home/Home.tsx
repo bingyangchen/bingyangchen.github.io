@@ -216,7 +216,7 @@ class Home extends React.Component<Props, State> {
                                 </div>
                                 <div className={styles.main}>
                                     <div className={styles.time}>
-                                        2020年2月－2021年6月
+                                        2020年2月－2020年6月
                                     </div>
                                     <div className={styles.job_title}>
                                         經濟學外聘講師
