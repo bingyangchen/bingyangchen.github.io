@@ -277,7 +277,7 @@ class Home extends React.Component<Props, State> {
                     <hr />
                     <div className={styles.project_list}>
                         <a
-                            href="https://jamison-chen.github.io/investment"
+                            href="https://jamison-chen.github.io/trade-smartly"
                             target="_blank"
                             rel="noreferrer"
                             className={
