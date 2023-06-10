@@ -1,5 +1,7 @@
 import styles from "./Home.module.scss";
-import nccu_logo from "../../../assets/nccu_logo.png";
+import sysfeatherLogo from "../../../assets/sysfeather_logo.svg";
+import pinkoiLogo from "../../../assets/pinkoi_logo.svg";
+import nccuLogo from "../../../assets/nccu_logo.png";
 
 import React from "react";
 
@@ -15,25 +17,25 @@ import IconBook from "../../../components/Icons/IconBook";
 interface Props extends RouterInterface {}
 
 interface State {
-    is_showing_all_projects: boolean;
+    isShowingAllProjects: boolean;
 }
 
 class Home extends React.Component<Props, State> {
     public state: State;
-    private home_ref: React.RefObject<HTMLDivElement>;
-    private about_ref: React.RefObject<HTMLDivElement>;
-    private projects_ref: React.RefObject<HTMLDivElement>;
+    private homeRef: React.RefObject<HTMLDivElement>;
+    private aboutRef: React.RefObject<HTMLDivElement>;
+    private projectsRef: React.RefObject<HTMLDivElement>;
     public constructor(props: Props) {
         super(props);
         this.state = {
-            is_showing_all_projects: false,
+            isShowingAllProjects: false,
         };
-        this.home_ref = React.createRef();
-        this.about_ref = React.createRef();
-        this.projects_ref = React.createRef();
+        this.homeRef = React.createRef();
+        this.aboutRef = React.createRef();
+        this.projectsRef = React.createRef();
     }
     public componentDidMount(): void {
-        this.make_cover_photo_slow();
+        this.makeCoverPhotoSlow();
     }
     public componentDidUpdate(): void {}
     public render(): React.ReactNode {
@@ -41,8 +43,8 @@ class Home extends React.Component<Props, State> {
             <div className={styles.main}>
                 <div
                     id="home"
-                    className={styles.home + " " + styles.section}
-                    ref={this.home_ref}
+                    className={`${styles.home} ${styles.section}`}
+                    ref={this.homeRef}
                 >
                     <div className={styles.upper}>
                         <div className={styles.cta_button_list}>
@@ -66,7 +68,7 @@ class Home extends React.Component<Props, State> {
                                 className={styles.social_media}
                                 title="GitHub"
                             >
-                                <IconGitHub side_length="20" />
+                                <IconGitHub sideLength="20" />
                             </a>
                             <a
                                 href="https://www.linkedin.com/in/jamison-chen-3937851a5/"
@@ -75,7 +77,7 @@ class Home extends React.Component<Props, State> {
                                 className={styles.social_media}
                                 title="LinkedIn"
                             >
-                                <IconLinkedIn side_length="20" />
+                                <IconLinkedIn sideLength="20" />
                             </a>
                             <a
                                 href="https://www.cakeresume.com/me/BingYangChen"
@@ -84,7 +86,7 @@ class Home extends React.Component<Props, State> {
                                 className={styles.social_media}
                                 title="CakeResume"
                             >
-                                <IconCSquareFill side_length="20" />
+                                <IconCSquareFill sideLength="20" />
                             </a>
                         </div>
                     </div>
@@ -95,12 +97,12 @@ class Home extends React.Component<Props, State> {
                 </div>
                 <div
                     id="about"
-                    className={styles.about + " " + styles.section}
-                    ref={this.about_ref}
+                    className={`${styles.about} ${styles.section}`}
+                    ref={this.aboutRef}
                 >
                     <h2>ABOUT</h2>
                     <div className={styles.subtitle}>
-                        大學主修經濟的我，因緣際會碰上了程式設計，軟體開發過程中的樂趣及成就感讓我決定成為一名軟體工程師。
+                        大學主修經濟的我，因緣際會碰上了程式設計，學習軟體開發的過程中，樂趣及成就感讓我決定成為一名軟體工程師。
                     </div>
                     <hr />
                     <h3>My Work Experience</h3>
@@ -113,14 +115,84 @@ class Home extends React.Component<Props, State> {
                                 </div>
                                 <div className={styles.main}>
                                     <div className={styles.time}>
-                                        2022年3月至今
+                                        2023年3月至今
+                                    </div>
+                                    <div className={styles.job_title}>
+                                        後端工程師
+                                    </div>
+                                    <a
+                                        className={styles.company_name}
+                                        href="https://www.pinkoi.com"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        <img
+                                            className={styles.company_logo}
+                                            src={pinkoiLogo}
+                                            alt="Pinkoi logo"
+                                        />
+                                        Pinkoi
+                                    </a>
+                                    <div className={styles.description}>
+                                        負責開發與維護內部系統管理工具，有效提升商業團隊效率。並參與推行創新策略如主題訂閱制，增強品牌影響力及市場佔有率。利用
+                                        AI 工具實施網站 SEO
+                                        優化，提升商品在搜尋引擎的可見度及排名。
+                                    </div>
+                                    <div className={styles.tech_stack}>
+                                        <div className={styles.title}>
+                                            技術堆疊
+                                        </div>
+                                        <div className={styles.list}>
+                                            <code className={styles.technology}>
+                                                Python
+                                            </code>
+                                            <code className={styles.technology}>
+                                                Elasticsearch
+                                            </code>
+                                            <code className={styles.technology}>
+                                                MySQL
+                                            </code>
+                                            <code className={styles.technology}>
+                                                Redis
+                                            </code>
+                                            <code className={styles.technology}>
+                                                RabbitMQ
+                                            </code>
+                                            <code className={styles.technology}>
+                                                Celery
+                                            </code>
+                                            <code className={styles.technology}>
+                                                Vue
+                                            </code>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.work_experience}>
+                                <div className={styles.left}>
+                                    <div className={styles.head} />
+                                    <div className={styles.line} />
+                                </div>
+                                <div className={styles.main}>
+                                    <div className={styles.time}>
+                                        2022年3月~2023年3月
                                     </div>
                                     <div className={styles.job_title}>
                                         Python 後端工程師
                                     </div>
-                                    <div className={styles.company_name}>
+                                    <a
+                                        className={styles.company_name}
+                                        href="https://www.sysfeather.com"
+                                        target="_blank"
+                                        rel="noreferrer"
+                                    >
+                                        <img
+                                            className={styles.company_logo}
+                                            src={sysfeatherLogo}
+                                            alt="Sysfeather logo"
+                                        />
                                         矽羽科技
-                                    </div>
+                                    </a>
                                     <div className={styles.description}>
                                         參與開發多租戶架構之電商自動開店系統後端，主要負責身份驗證機制，以及
                                         Request rate limit
@@ -158,55 +230,6 @@ class Home extends React.Component<Props, State> {
                                     </div>
                                 </div>
                             </div>
-                            <div className={styles.work_experience}>
-                                <div className={styles.left}>
-                                    <div className={styles.head} />
-                                    <div className={styles.line} />
-                                </div>
-                                <div className={styles.main}>
-                                    <div className={styles.time}>
-                                        2020年7月－2021年1月
-                                    </div>
-                                    <div className={styles.job_title}>
-                                        實習全端工程師
-                                    </div>
-                                    <div className={styles.company_name}>
-                                        巨跡資訊
-                                    </div>
-                                    <div className={styles.description}>
-                                        參與設計新產品的系統架構以及資料庫之 ER
-                                        Model，同時擔任統整報告之角色。
-                                        協助開發電商網站後台管理系統之「產品分類」功能以及「會員分級」功能。
-                                        開發能夠辨識護照內容之影像辨識軟體，在使用者填寫個人護照相關資料時，提供其自動填入之功能。
-                                        實作聊天機器人，處理與客戶間的基本問答。
-                                    </div>
-                                    <div className={styles.tech_stack}>
-                                        <div className={styles.title}>
-                                            技術堆疊
-                                        </div>
-                                        <div className={styles.list}>
-                                            <code className={styles.technology}>
-                                                Vue
-                                            </code>
-                                            <code className={styles.technology}>
-                                                Bootstrap
-                                            </code>
-                                            <code className={styles.technology}>
-                                                Python
-                                            </code>
-                                            <code className={styles.technology}>
-                                                Google Tesseract
-                                            </code>
-                                            <code className={styles.technology}>
-                                                Microsoft LUIS
-                                            </code>
-                                            <code className={styles.technology}>
-                                                Line API
-                                            </code>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div className={styles.block}>
                             <div className={styles.work_experience}>
@@ -216,7 +239,7 @@ class Home extends React.Component<Props, State> {
                                 </div>
                                 <div className={styles.main}>
                                     <div className={styles.time}>
-                                        2020年2月－2020年6月
+                                        2020年2月~2020年6月
                                     </div>
                                     <div className={styles.job_title}>
                                         經濟學外聘講師
@@ -238,7 +261,7 @@ class Home extends React.Component<Props, State> {
                                 </div>
                                 <div className={styles.main}>
                                     <div className={styles.time}>
-                                        2019年7月－2021年7月
+                                        2019年7月~2021年7月
                                     </div>
                                     <div className={styles.job_title}>
                                         程式設計外聘講師
@@ -257,7 +280,7 @@ class Home extends React.Component<Props, State> {
                     <div className={styles.education_outer}>
                         <img
                             className={styles.school_logo}
-                            src={nccu_logo}
+                            src={nccuLogo}
                             alt="NCCU logo"
                         />
                         <div>國立政治大學經濟學系</div>
@@ -266,8 +289,8 @@ class Home extends React.Component<Props, State> {
                 </div>
                 <div
                     id="projects"
-                    className={styles.projects + " " + styles.section}
-                    ref={this.projects_ref}
+                    className={`${styles.projects} ${styles.section}`}
+                    ref={this.projectsRef}
                 >
                     <h2>PROJECTS</h2>
                     <div className={styles.subtitle}>
@@ -280,14 +303,10 @@ class Home extends React.Component<Props, State> {
                             href="https://jamison-chen.github.io/trade-smartly"
                             target="_blank"
                             rel="noreferrer"
-                            className={
-                                styles.project + " " + styles.trade_smartly
-                            }
+                            className={`${styles.project} ${styles.trade_smartly}`}
                         >
                             <div
-                                className={
-                                    styles.background + " " + styles.mask
-                                }
+                                className={`${styles.background} ${styles.mask}`}
                             />
                             <div className={styles.title}>TradeSmartly</div>
                             <div className={styles.subtitle}>
@@ -298,9 +317,7 @@ class Home extends React.Component<Props, State> {
                             href="https://jamison-chen.github.io/path-finding-visualize"
                             target="_blank"
                             rel="noreferrer"
-                            className={
-                                styles.project + " " + styles.path_finding
-                            }
+                            className={`${styles.project} ${styles.path_finding}`}
                         >
                             <div className={styles.background} />
                             <div className={styles.title}>
@@ -315,9 +332,7 @@ class Home extends React.Component<Props, State> {
                             href="https://jamison-chen.github.io/virus-spread"
                             target="_blank"
                             rel="noreferrer"
-                            className={
-                                styles.project + " " + styles.virus_spread
-                            }
+                            className={`${styles.project} ${styles.virus_spread}`}
                         >
                             <div className={styles.background} />
                             <div className={styles.title}>
@@ -331,9 +346,7 @@ class Home extends React.Component<Props, State> {
                             href="https://jamison-chen.github.io/wiki-prettier"
                             target="_blank"
                             rel="noreferrer"
-                            className={
-                                styles.project + " " + styles.wiki_prettier
-                            }
+                            className={`${styles.project} ${styles.wiki_prettier}`}
                         >
                             <div className={styles.background} />
                             <div className={styles.title}>Wiki Prettier</div>
@@ -345,14 +358,10 @@ class Home extends React.Component<Props, State> {
                             href="https://jamison-chen.github.io/demand-supply-simulator"
                             target="_blank"
                             rel="noreferrer"
-                            className={
-                                styles.project + " " + styles.market_simulate
-                            }
+                            className={`${styles.project} ${styles.market_simulate}`}
                         >
                             <div
-                                className={
-                                    styles.background + " " + styles.mask
-                                }
+                                className={`${styles.background} ${styles.mask}`}
                             />
                             <div className={styles.title}>Market Simulate</div>
                             <div className={styles.subtitle}>
@@ -363,14 +372,10 @@ class Home extends React.Component<Props, State> {
                             href="https://jamison-chen.github.io/inventory-analyzer"
                             target="_blank"
                             rel="noreferrer"
-                            className={
-                                styles.project + " " + styles.inventory_analyzer
-                            }
+                            className={`${styles.project} ${styles.inventory_analyzer}`}
                         >
                             <div
-                                className={
-                                    styles.background + " " + styles.mask
-                                }
+                                className={`${styles.background} ${styles.mask}`}
                             />
                             <div className={styles.title}>
                                 Inventory Analyzer
@@ -379,22 +384,16 @@ class Home extends React.Component<Props, State> {
                                 存貨管理其實就是一個最佳化問題，不同的成本結構與銷售狀況所適合的存貨策略可能截然不同！
                             </div>
                         </a>
-                        {this.state.is_showing_all_projects ? (
+                        {this.state.isShowingAllProjects ? (
                             <>
                                 <a
                                     href="https://jamison-chen.github.io/snake"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className={
-                                        styles.project + " " + styles.snake
-                                    }
+                                    className={`${styles.project} ${styles.snake}`}
                                 >
                                     <div
-                                        className={
-                                            styles.background +
-                                            " " +
-                                            styles.mask
-                                        }
+                                        className={`${styles.background} ${styles.mask}`}
                                     />
                                     <div className={styles.title}>Snake</div>
                                     <div className={styles.subtitle}>
@@ -406,18 +405,10 @@ class Home extends React.Component<Props, State> {
                                     href="https://jamison-chen.github.io/tic-tac-toe"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className={
-                                        styles.project +
-                                        " " +
-                                        styles.tic_tac_toe
-                                    }
+                                    className={`${styles.project} ${styles.tic_tac_toe}`}
                                 >
                                     <div
-                                        className={
-                                            styles.background +
-                                            " " +
-                                            styles.mask
-                                        }
+                                        className={`${styles.background} ${styles.mask}`}
                                     />
                                     <div className={styles.title}>
                                         Tic Tac Toe
@@ -430,16 +421,10 @@ class Home extends React.Component<Props, State> {
                                     href="https://jamison-chen.github.io/pick-coins"
                                     target="_blank"
                                     rel="noreferrer"
-                                    className={
-                                        styles.project + " " + styles.pick_coins
-                                    }
+                                    className={`${styles.project} ${styles.pick_coins}`}
                                 >
                                     <div
-                                        className={
-                                            styles.background +
-                                            " " +
-                                            styles.mask
-                                        }
+                                        className={`${styles.background} ${styles.mask}`}
                                     />
                                     <div className={styles.title}>
                                         Pick Coins
@@ -454,20 +439,20 @@ class Home extends React.Component<Props, State> {
                     <div className={styles.show_all_project_button_container}>
                         <Button
                             className="clean l p8-15"
-                            onClick={this.toggle_show_all_project_button}
+                            onClick={this.toggleShowAllProjectButton}
                         >
-                            {this.state.is_showing_all_projects ? (
-                                <IconChevronUp side_length="16" />
+                            {this.state.isShowingAllProjects ? (
+                                <IconChevronUp sideLength="16" />
                             ) : (
-                                <IconChevronDown side_length="16" />
+                                <IconChevronDown sideLength="16" />
                             )}
-                            {this.state.is_showing_all_projects
+                            {this.state.isShowingAllProjects
                                 ? "收合"
                                 : "顯示更多"}
                         </Button>
                     </div>
                 </div>
-                <div id="blog" className={styles.blog + " " + styles.section}>
+                <div id="blog" className={`${styles.blog} ${styles.section}`}>
                     <h2>BLOG</h2>
                     <div className={styles.subtitle}>
                         「輸入與輸出並重」是學習的的不二法門，這裡整理了一些我覺得值得分享的學習筆記，如內容有謬誤，請不吝指教。
@@ -480,7 +465,7 @@ class Home extends React.Component<Props, State> {
                             rel="noreferrer"
                         >
                             <Button className="black_fill border xl">
-                                <IconBook side_length="28" />
+                                <IconBook sideLength="28" />
                                 去看看
                             </Button>
                         </a>
@@ -489,22 +474,20 @@ class Home extends React.Component<Props, State> {
             </div>
         );
     }
-    private make_cover_photo_slow(): void {
+    private makeCoverPhotoSlow(): void {
+        let target: HTMLDivElement = this.homeRef.current!;
         window.addEventListener("scroll", () => {
-            let target = this.home_ref.current;
-            if (target) {
-                let h = target.getBoundingClientRect().height;
-                let bottom = target.getBoundingClientRect().bottom;
-                target.style.backgroundPosition = `45% ${Math.abs(
-                    0.5 * (bottom - h)
-                )}px`;
-            }
+            const h: number = target.getBoundingClientRect().height;
+            const bottom: number = target.getBoundingClientRect().bottom;
+            target.style.backgroundPosition = `45% ${Math.abs(
+                0.5 * (bottom - h)
+            )}px`;
         });
     }
-    private toggle_show_all_project_button = (): void => {
+    private toggleShowAllProjectButton = (): void => {
         this.setState((state, props) => {
             return {
-                is_showing_all_projects: !state.is_showing_all_projects,
+                isShowingAllProjects: !state.isShowingAllProjects,
             };
         });
     };

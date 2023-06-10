@@ -33,8 +33,8 @@ export interface RouterInterface {
         location: Location;
         navigate: NavigateFunction;
         params: Params;
-        search_params: URLSearchParams;
-        set_search_params: ReturnType<typeof useSearchParams>[1];
+        searchParams: URLSearchParams;
+        setSearchParams: ReturnType<typeof useSearchParams>[1];
     };
 }
 
@@ -43,7 +43,7 @@ export function withRouter(Component: any) {
         let location = useLocation();
         let navigate = useNavigate();
         let params = useParams();
-        let [search_params, set_search_params] = useSearchParams();
+        let [searchParams, setSearchParams] = useSearchParams();
         return (
             <Component
                 {...props}
@@ -51,8 +51,8 @@ export function withRouter(Component: any) {
                     location,
                     navigate,
                     params,
-                    search_params,
-                    set_search_params,
+                    searchParams,
+                    setSearchParams,
                 }}
             />
         );

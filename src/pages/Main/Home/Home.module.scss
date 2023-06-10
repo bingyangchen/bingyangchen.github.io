@@ -150,7 +150,7 @@
                     & > .left {
                         display: flex;
                         flex-direction: column;
-                        padding: 0 20px;
+                        padding: 0 12px 0 20px;
                         & > .head {
                             position: relative;
                             width: $head-height;
@@ -185,11 +185,22 @@
                         }
                         & > .job_title {
                             font-size: 1.4 * _.$base-font-size;
+                            height: $head-height;
                             font-weight: bold;
                             color: _.$black;
                         }
                         & > .company_name {
-                            font-weight: bold;
+                            display: flex;
+                            align-items: center;
+                            gap: 2px;
+                            width: fit-content;
+                            color: _.$gray;
+                            & > img.company_logo {
+                                height: 20px;
+                                object-fit: contain;
+                                border-radius: 5px;
+                                margin: 3px;
+                            }
                         }
                         & > .description {
                             text-align: justify;
@@ -199,6 +210,8 @@
                         }
                         & > .tech_stack {
                             & > .title {
+                                margin-left: 5px;
+                                font-size: 0.9 * _.$base-font-size;
                                 color: _.$gray;
                             }
                             & > .list {
@@ -206,7 +219,7 @@
                                 padding: 3px 0;
                                 & > .technology {
                                     display: inline-block;
-                                    font-size: 0.8rem;
+                                    font-size: 0.8 * _.$base-font-size;
                                     color: _.$gray;
                                     padding: 3px 8px;
                                     margin: 5px;

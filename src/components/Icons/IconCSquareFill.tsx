@@ -1,7 +1,7 @@
 import React from "react";
 
 interface Props {
-    side_length: string;
+    sideLength: string;
     color?: string;
 }
 
@@ -21,8 +21,8 @@ export default class IconCSquareFill extends React.Component<Props, State> {
         return (
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width={this.props.side_length}
-                height={this.props.side_length}
+                width={this.props.sideLength}
+                height={this.props.sideLength}
                 fill={this.props.color || "currentColor"}
                 className="bi bi-c-square-fill"
                 viewBox="0 0 16 16"

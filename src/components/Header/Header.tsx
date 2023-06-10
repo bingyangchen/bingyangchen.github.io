@@ -15,13 +15,13 @@ import IconPerson from "../Icons/IconPerson";
 interface Props {}
 
 interface State {
-    is_hidden_bar_active: boolean;
-    subpage_list: {
-        tab_icon: any;
-        tab_name: string;
+    isHiddenBarActive: boolean;
+    subpageList: {
+        tabIcon: any;
+        tabName: string;
         path: string;
     }[];
-    should_header_transparent: boolean;
+    shouldHeaderTransparent: boolean;
 }
 
 export default class Header extends React.Component<Props, State> {
@@ -29,70 +29,70 @@ export default class Header extends React.Component<Props, State> {
     public constructor(props: Props) {
         super(props);
         this.state = {
-            is_hidden_bar_active: false,
-            subpage_list: [
+            isHiddenBarActive: false,
+            subpageList: [
                 {
-                    tab_icon: <IconHouseDoorFill side_length="100%" />,
-                    tab_name: "HOME",
+                    tabIcon: <IconHouseDoorFill sideLength="100%" />,
+                    tabName: "HOME",
                     path: "/#home",
                 },
                 {
-                    tab_icon: <IconPerson side_length="95%" />,
-                    tab_name: "ABOUT",
+                    tabIcon: <IconPerson sideLength="95%" />,
+                    tabName: "ABOUT",
                     path: "/#about",
                 },
                 {
-                    tab_icon: <IconLayoutWtf side_length="95%" />,
-                    tab_name: "PROJECTS",
+                    tabIcon: <IconLayoutWtf sideLength="95%" />,
+                    tabName: "PROJECTS",
                     path: "/#projects",
                 },
                 {
-                    tab_icon: <IconJournalBookmark side_length="95%" />,
-                    tab_name: "BLOG",
+                    tabIcon: <IconJournalBookmark sideLength="95%" />,
+                    tabName: "BLOG",
                     path: "/#blog",
                 },
             ],
-            should_header_transparent: true,
+            shouldHeaderTransparent: true,
         };
     }
     public componentDidMount(): void {
         window.addEventListener("scroll", () => {
             this.setState({
-                should_header_transparent: window.scrollY < window.innerHeight,
+                shouldHeaderTransparent: window.scrollY < window.innerHeight,
             });
         });
     }
     public render(): React.ReactNode {
         return (
             <>
-                <header className={this.main_class}>
+                <header className={this.mainClass}>
                     <FullLogo size="s" />
                     <div className={styles.subpage_list}>
-                        {this.state.subpage_list.map((each, idx) => {
+                        {this.state.subpageList.map((each, idx) => {
                             return (
                                 <a key={idx} href={each.path}>
-                                    {each.tab_name}
+                                    {each.tabName}
                                 </a>
                             );
                         })}
                     </div>
                     <div className={styles.list_button_outer}>
-                        <RoundButton onClick={this.show_main_function_var}>
-                            <IconList side_length="30" />
+                        <RoundButton onClick={this.showMainFunctionBar}>
+                            <IconList sideLength="30" />
                         </RoundButton>
                     </div>
                 </header>
                 <MainFunctionBar
-                    is_active_in_short_screen={this.state.is_hidden_bar_active}
-                    hide={this.hide_main_function_bar}
+                    isActiveInShortScreen={this.state.isHiddenBarActive}
+                    hide={this.hideMainFunctionBar}
                 >
-                    {this.state.subpage_list.map((each, idx) => {
+                    {this.state.subpageList.map((each, idx) => {
                         return (
                             <MainFunctionTab
-                                tab_icon={each.tab_icon}
-                                tab_name={each.tab_name}
+                                tabIcon={each.tabIcon}
+                                tabName={each.tabName}
                                 to={`${each.path}`}
-                                onClick={this.hide_main_function_bar}
+                                onClick={this.hideMainFunctionBar}
                                 key={idx}
                             />
                         );
@@ -101,16 +101,16 @@ export default class Header extends React.Component<Props, State> {
             </>
         );
     }
-    private get main_class(): string {
-        if (this.state.should_header_transparent) {
-            return styles.main + " " + styles.transparent;
+    private get mainClass(): string {
+        if (this.state.shouldHeaderTransparent) {
+            return `${styles.main} ${styles.transparent}`;
         }
         return styles.main;
     }
-    private show_main_function_var = (): void => {
-        this.setState({ is_hidden_bar_active: true });
+    private showMainFunctionBar = (): void => {
+        this.setState({ isHiddenBarActive: true });
     };
-    private hide_main_function_bar = (): void => {
-        this.setState({ is_hidden_bar_active: false });
+    private hideMainFunctionBar = (): void => {
+        this.setState({ isHiddenBarActive: false });
     };
 }

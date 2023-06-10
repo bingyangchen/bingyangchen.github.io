@@ -8,7 +8,7 @@ interface Props {
     onClick?: MouseEventHandler;
     className?: string;
     disabled?: boolean;
-    hint_text?: string;
+    hintText?: string;
 }
 
 interface State {}
@@ -36,9 +36,9 @@ export default class RoundButton extends React.Component<Props, State> {
                 }
             >
                 {this.props.children}
-                {this.props.hint_text ? (
+                {this.props.hintText ? (
                     <div className={styles.hint_text}>
-                        {this.props.hint_text}
+                        {this.props.hintText}
                     </div>
                 ) : null}
             </div>

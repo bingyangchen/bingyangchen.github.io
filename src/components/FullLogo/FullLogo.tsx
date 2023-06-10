@@ -17,13 +17,13 @@ export default class FullLogo extends React.Component<Props, State> {
     }
     public render(): React.ReactNode {
         return (
-            <div className={this.class_name}>
+            <div className={this.className}>
                 <img className={styles.logo} src={logo} alt="" />
                 <div className={styles.product_name}>JamisonChen</div>
             </div>
         );
     }
-    private get class_name(): string {
+    private get className(): string {
         return (
             styles.main +
             " " +

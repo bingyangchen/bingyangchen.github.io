@@ -7,9 +7,6 @@ else
     # git config user.email "106208004@g.nccu.edu.tw"
     git add .
     git commit -m "$1"
-    # Remember to switch to the corresponding ssh key for this repo
-    # ssh-add -D
-    # ssh-add ~/.ssh/id_rsa
     git push origin master
     npm run deploy
 fi

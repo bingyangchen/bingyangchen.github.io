@@ -4,7 +4,7 @@ import React from "react";
 
 interface Props {
     children: React.ReactNode[];
-    is_active_in_short_screen: boolean;
+    isActiveInShortScreen: boolean;
     hide: () => void;
 }
 
@@ -22,7 +22,7 @@ export default class MainFunctionBar extends React.Component<Props, State> {
                 <div
                     className={
                         styles.main +
-                        (this.props.is_active_in_short_screen
+                        (this.props.isActiveInShortScreen
                             ? " " + styles.active
                             : "")
                     }
@@ -32,7 +32,7 @@ export default class MainFunctionBar extends React.Component<Props, State> {
                 <div
                     className={
                         styles.small_screen_active_background +
-                        (this.props.is_active_in_short_screen
+                        (this.props.isActiveInShortScreen
                             ? " " + styles.active
                             : "")
                     }

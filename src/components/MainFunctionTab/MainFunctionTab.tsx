@@ -3,8 +3,8 @@ import styles from "./MainFunctionTab.module.scss";
 import React, { MouseEventHandler } from "react";
 
 interface Props {
-    tab_icon?: any;
-    tab_name: string;
+    tabIcon?: any;
+    tabName: string;
     to: string;
     onClick: MouseEventHandler;
 }
@@ -24,8 +24,8 @@ export default class MainFunctionTab extends React.Component<Props, State> {
                 className={styles.tab}
                 onClick={this.props.onClick}
             >
-                <div className={styles.icon_outer}>{this.props.tab_icon}</div>
-                {this.props.tab_name}
+                <div className={styles.icon_outer}>{this.props.tabIcon}</div>
+                {this.props.tabName}
             </a>
         );
     }

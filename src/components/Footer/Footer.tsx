@@ -26,7 +26,7 @@ export default class Footer extends React.Component<Props, State> {
                         className={styles.social_media}
                         title="GitHub"
                     >
-                        <IconGitHub side_length="18" />
+                        <IconGitHub sideLength="18" />
                         <span>GitHub</span>
                     </a>
                     <hr />
@@ -37,7 +37,7 @@ export default class Footer extends React.Component<Props, State> {
                         className={styles.social_media}
                         title="LinkedIn"
                     >
-                        <IconLinkedIn side_length="18" />
+                        <IconLinkedIn sideLength="18" />
                         <span>LinkedIn</span>
                     </a>
                     <hr />
@@ -48,7 +48,7 @@ export default class Footer extends React.Component<Props, State> {
                         className={styles.social_media}
                         title="CakeResume"
                     >
-                        <IconCSquareFill side_length="18" />
+                        <IconCSquareFill sideLength="18" />
                         <span>CakeResume</span>
                     </a>
                 </div>
