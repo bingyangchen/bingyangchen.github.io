@@ -25,6 +25,7 @@ class Home extends React.Component<Props, State> {
     private homeRef: React.RefObject<HTMLDivElement>;
     private aboutRef: React.RefObject<HTMLDivElement>;
     private projectsRef: React.RefObject<HTMLDivElement>;
+    private blogRef: React.RefObject<HTMLDivElement>;
     public constructor(props: Props) {
         super(props);
         this.state = {
@@ -33,6 +34,7 @@ class Home extends React.Component<Props, State> {
         this.homeRef = React.createRef();
         this.aboutRef = React.createRef();
         this.projectsRef = React.createRef();
+        this.blogRef = React.createRef();
     }
     public componentDidMount(): void {
         this.makeCoverPhotoSlow();
@@ -452,7 +454,11 @@ class Home extends React.Component<Props, State> {
                         </Button>
                     </div>
                 </div>
-                <div id="blog" className={`${styles.blog} ${styles.section}`}>
+                <div
+                    id="blog"
+                    className={`${styles.blog} ${styles.section}`}
+                    ref={this.blogRef}
+                >
                     <h2>BLOG</h2>
                     <div className={styles.subtitle}>
                         「輸入與輸出並重」是學習的的不二法門，這裡整理了一些我覺得值得分享的學習筆記，如內容有謬誤，請不吝指教。
@@ -475,12 +481,11 @@ class Home extends React.Component<Props, State> {
         );
     }
     private makeCoverPhotoSlow(): void {
-        let target: HTMLDivElement = this.homeRef.current!;
+        const target: HTMLDivElement = this.homeRef.current!;
         window.addEventListener("scroll", () => {
-            const h: number = target.getBoundingClientRect().height;
-            const bottom: number = target.getBoundingClientRect().bottom;
+            const rect = target.getBoundingClientRect();
             target.style.backgroundPosition = `45% ${Math.abs(
-                0.5 * (bottom - h)
+                0.5 * (rect.bottom - rect.height)
             )}px`;
         });
     }

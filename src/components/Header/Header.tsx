@@ -5,7 +5,7 @@ import React from "react";
 import RoundButton from "../RoundButton/RoundButton";
 import FullLogo from "../FullLogo/FullLogo";
 import IconList from "../Icons/IconList";
-import MainFunctionBar from "../MainFunctionBar/MainFunctionBar";
+import NavigationBar from "../NavigationBar/NavigationBar";
 import MainFunctionTab from "../MainFunctionTab/MainFunctionTab";
 import IconHouseDoorFill from "../Icons/IconHouseDoorFill";
 import IconLayoutWtf from "../Icons/IconLayoutWtf";
@@ -16,44 +16,44 @@ interface Props {}
 
 interface State {
     isHiddenBarActive: boolean;
-    subpageList: {
-        tabIcon: any;
-        tabName: string;
-        path: string;
-    }[];
     shouldHeaderTransparent: boolean;
 }
 
 export default class Header extends React.Component<Props, State> {
     public state: State;
+    private subpageList: {
+        tabIcon: any;
+        tabName: string;
+        path: string;
+    }[];
     public constructor(props: Props) {
         super(props);
         this.state = {
             isHiddenBarActive: false,
-            subpageList: [
-                {
-                    tabIcon: <IconHouseDoorFill sideLength="100%" />,
-                    tabName: "HOME",
-                    path: "/#home",
-                },
-                {
-                    tabIcon: <IconPerson sideLength="95%" />,
-                    tabName: "ABOUT",
-                    path: "/#about",
-                },
-                {
-                    tabIcon: <IconLayoutWtf sideLength="95%" />,
-                    tabName: "PROJECTS",
-                    path: "/#projects",
-                },
-                {
-                    tabIcon: <IconJournalBookmark sideLength="95%" />,
-                    tabName: "BLOG",
-                    path: "/#blog",
-                },
-            ],
             shouldHeaderTransparent: true,
         };
+        this.subpageList = [
+            {
+                tabIcon: <IconHouseDoorFill sideLength="100%" />,
+                tabName: "HOME",
+                path: "#home",
+            },
+            {
+                tabIcon: <IconPerson sideLength="95%" />,
+                tabName: "ABOUT",
+                path: "#about",
+            },
+            {
+                tabIcon: <IconLayoutWtf sideLength="95%" />,
+                tabName: "PROJECTS",
+                path: "#projects",
+            },
+            {
+                tabIcon: <IconJournalBookmark sideLength="95%" />,
+                tabName: "BLOG",
+                path: "#blog",
+            },
+        ];
     }
     public componentDidMount(): void {
         window.addEventListener("scroll", () => {
@@ -68,7 +68,7 @@ export default class Header extends React.Component<Props, State> {
                 <header className={this.mainClass}>
                     <FullLogo size="s" />
                     <div className={styles.subpage_list}>
-                        {this.state.subpageList.map((each, idx) => {
+                        {this.subpageList.map((each, idx) => {
                             return (
                                 <a key={idx} href={each.path}>
                                     {each.tabName}
@@ -82,11 +82,11 @@ export default class Header extends React.Component<Props, State> {
                         </RoundButton>
                     </div>
                 </header>
-                <MainFunctionBar
-                    isActiveInShortScreen={this.state.isHiddenBarActive}
+                <NavigationBar
+                    isActive={this.state.isHiddenBarActive}
                     hide={this.hideMainFunctionBar}
                 >
-                    {this.state.subpageList.map((each, idx) => {
+                    {this.subpageList.map((each, idx) => {
                         return (
                             <MainFunctionTab
                                 tabIcon={each.tabIcon}
@@ -97,7 +97,7 @@ export default class Header extends React.Component<Props, State> {
                             />
                         );
                     })}
-                </MainFunctionBar>
+                </NavigationBar>
             </>
         );
     }
