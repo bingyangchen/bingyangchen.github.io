@@ -302,7 +302,7 @@ class Home extends React.Component<Props, State> {
                     <hr />
                     <div className={styles.project_list}>
                         <a
-                            href="https://jamison-chen.github.io/trade-smartly"
+                            href="https://trade-smartly.github.io/"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.trade_smartly}`}
