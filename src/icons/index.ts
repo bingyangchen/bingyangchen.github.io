@@ -1,0 +1,11 @@
+export { default as IconBook } from "./IconBook";
+export { default as IconChevronDown } from "./IconChevronDown";
+export { default as IconChevronUp } from "./IconChevronUp";
+export { default as IconCSquareFill } from "./IconCSquareFill";
+export { default as IconGitHub } from "./IconGitHub";
+export { default as IconHouseDoorFill } from "./IconHouseDoorFill";
+export { default as IconJournalBookmark } from "./IconJournalBookmark";
+export { default as IconLayoutWtf } from "./IconLayoutWtf";
+export { default as IconLinkedIn } from "./IconLinkedIn";
+export { default as IconList } from "./IconList";
+export { default as IconPerson } from "./IconPerson";

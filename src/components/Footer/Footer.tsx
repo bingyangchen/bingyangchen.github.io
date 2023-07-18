@@ -1,9 +1,7 @@
 import styles from "./Footer.module.scss";
 
 import React from "react";
-import IconGitHub from "../Icons/IconGitHub";
-import IconLinkedIn from "../Icons/IconLinkedIn";
-import IconCSquareFill from "../Icons/IconCSquareFill";
+import { IconCSquareFill, IconGitHub, IconLinkedIn } from "../../icons";
 
 interface Props {}
 

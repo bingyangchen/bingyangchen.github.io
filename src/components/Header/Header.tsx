@@ -2,15 +2,14 @@ import styles from "./Header.module.scss";
 
 import React from "react";
 
-import RoundButton from "../RoundButton/RoundButton";
-import FullLogo from "../FullLogo/FullLogo";
-import IconList from "../Icons/IconList";
-import NavigationBar from "../NavigationBar/NavigationBar";
-import MainFunctionTab from "../MainFunctionTab/MainFunctionTab";
-import IconHouseDoorFill from "../Icons/IconHouseDoorFill";
-import IconLayoutWtf from "../Icons/IconLayoutWtf";
-import IconJournalBookmark from "../Icons/IconJournalBookmark";
-import IconPerson from "../Icons/IconPerson";
+import { RoundButton, FullLogo, NavigationBar, MainFunctionTab } from "..";
+import {
+    IconList,
+    IconHouseDoorFill,
+    IconLayoutWtf,
+    IconJournalBookmark,
+    IconPerson,
+} from "../../icons";
 
 interface Props {}
 

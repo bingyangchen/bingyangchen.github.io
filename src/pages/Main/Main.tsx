@@ -3,11 +3,10 @@ import styles from "./Main.module.scss";
 import React from "react";
 import { Outlet } from "react-router-dom";
 
-import Header from "../../components/Header/Header";
-import Footer from "../../components/Footer/Footer";
-import { RouterInterface, withRouter } from "../../router";
+import { Header, Footer } from "../../components";
+import { IRouter, withRouter } from "../../router";
 
-interface Props extends RouterInterface {}
+interface Props extends IRouter {}
 
 interface State {}
 

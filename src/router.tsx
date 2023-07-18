@@ -28,7 +28,7 @@ export default function MyRouter() {
     );
 }
 
-export interface RouterInterface {
+export interface IRouter {
     router: {
         location: Location;
         navigate: NavigateFunction;

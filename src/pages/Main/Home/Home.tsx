@@ -5,16 +5,18 @@ import nccuLogo from "../../../assets/nccu_logo.png";
 
 import React from "react";
 
-import { RouterInterface, withRouter } from "../../../router";
-import IconGitHub from "../../../components/Icons/IconGitHub";
-import IconLinkedIn from "../../../components/Icons/IconLinkedIn";
-import IconCSquareFill from "../../../components/Icons/IconCSquareFill";
-import Button from "../../../components/Button/Button";
-import IconChevronDown from "../../../components/Icons/IconChevronDown";
-import IconChevronUp from "../../../components/Icons/IconChevronUp";
-import IconBook from "../../../components/Icons/IconBook";
+import { IRouter, withRouter } from "../../../router";
+import { Button } from "../../../components";
+import {
+    IconBook,
+    IconGitHub,
+    IconLinkedIn,
+    IconCSquareFill,
+    IconChevronDown,
+    IconChevronUp,
+} from "../../../icons";
 
-interface Props extends RouterInterface {}
+interface Props extends IRouter {}
 
 interface State {
     isShowingAllProjects: boolean;
