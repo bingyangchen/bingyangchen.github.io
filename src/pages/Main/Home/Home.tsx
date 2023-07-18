@@ -131,7 +131,7 @@ class Home extends React.Component<Props, State> {
                                         <img
                                             className={styles.company_logo}
                                             src={pinkoiLogo}
-                                            alt="Pinkoi logo"
+                                            alt="Pinkoi"
                                         />
                                         Pinkoi
                                     </a>
@@ -191,7 +191,7 @@ class Home extends React.Component<Props, State> {
                                         <img
                                             className={styles.company_logo}
                                             src={sysfeatherLogo}
-                                            alt="Sysfeather logo"
+                                            alt="Sysfeather,矽羽科技"
                                         />
                                         矽羽科技
                                     </a>
@@ -283,7 +283,7 @@ class Home extends React.Component<Props, State> {
                         <img
                             className={styles.school_logo}
                             src={nccuLogo}
-                            alt="NCCU logo"
+                            alt="NCCU,國立政治大學,經濟學系,金融科技學士學程"
                         />
                         <div>國立政治大學經濟學系</div>
                         <div>國立政治大學金融科技學士學程</div>
