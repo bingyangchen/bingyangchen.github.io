@@ -106,7 +106,7 @@ class Home extends React.Component<Props, State> {
                 >
                     <h2>ABOUT</h2>
                     <div className={styles.subtitle}>
-                        大學主修經濟的我，因緣際會碰上了程式設計，學習軟體開發的過程中，樂趣及成就感讓我決定成為一名軟體工程師。
+                        我是一名熱愛學習與創作的軟體工程師，大學主修經濟，卻與程式設計狹路相逢，軟體開發過程中的樂趣及成就感，讓我決定往這條路持續深耕。
                     </div>
                     <hr />
                     <h3>My Work Experience</h3>
