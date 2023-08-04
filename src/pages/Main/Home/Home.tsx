@@ -472,7 +472,7 @@ class Home extends React.Component<Props, State> {
                             target="_blank"
                             rel="noreferrer"
                         >
-                            <Button className="black_fill border xl">
+                            <Button className="black_fill xl">
                                 <IconBook sideLength="28" />
                                 去看看
                             </Button>

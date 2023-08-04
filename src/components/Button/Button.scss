@@ -53,12 +53,6 @@
     &.black_fill {
         background-color: _.$black;
         color: _.$white;
-        @media (hover: hover) {
-            &:hover:not(:disabled) {
-                background-color: _.$white;
-                color: _.$black;
-            }
-        }
     }
     &.primary_fill {
         background-color: _.$blue;
