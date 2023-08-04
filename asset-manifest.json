@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.578acd26.css",
-    "main.js": "/static/js/main.1ba8731b.js",
+    "main.css": "/static/css/main.708f84cf.css",
+    "main.js": "/static/js/main.039d6350.js",
     "static/js/787.f8a0dea2.chunk.js": "/static/js/787.f8a0dea2.chunk.js",
     "static/media/cover.jpeg": "/static/media/cover.1ad40288e3b60b9c51f1.jpeg",
     "static/media/market.jpg": "/static/media/market.240e75a76f77d919c85d.jpg",
@@ -17,14 +17,15 @@
     "static/media/nccu_logo.png": "/static/media/nccu_logo.3b0c2763fdde3204be76.png",
     "static/media/logo.png": "/static/media/logo.152958e29f927e1e9d54.png",
     "static/media/sysfeather_logo.svg": "/static/media/sysfeather_logo.daca169e592c52af5f59ba2851e2d332.svg",
+    "static/media/gitbook.svg": "/static/media/gitbook.73cb29d4c7e58a8cc923.svg",
     "index.html": "/index.html",
     "static/media/pinkoi_logo.svg": "/static/media/pinkoi_logo.5ceff3e48658098d6c285d52e496b475.svg",
-    "main.578acd26.css.map": "/static/css/main.578acd26.css.map",
-    "main.1ba8731b.js.map": "/static/js/main.1ba8731b.js.map",
+    "main.708f84cf.css.map": "/static/css/main.708f84cf.css.map",
+    "main.039d6350.js.map": "/static/js/main.039d6350.js.map",
     "787.f8a0dea2.chunk.js.map": "/static/js/787.f8a0dea2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.578acd26.css",
-    "static/js/main.1ba8731b.js"
+    "static/css/main.708f84cf.css",
+    "static/js/main.039d6350.js"
   ]
 }
