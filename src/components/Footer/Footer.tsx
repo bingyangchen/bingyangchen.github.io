@@ -15,7 +15,7 @@ export default class Footer extends React.Component<Props, State> {
     }
     public render(): React.ReactNode {
         return (
-            <div className={styles.main}>
+            <footer className={styles.main}>
                 <div className={styles.social_media_list}>
                     <a
                         href="https://github.com/Jamison-Chen"
@@ -54,7 +54,7 @@ export default class Footer extends React.Component<Props, State> {
                     Copyright © {new Date().getFullYear()} 陳秉洋 (Jamison Chen)
                     All rights reserved
                 </div>
-            </div>
+            </footer>
         );
     }
 }
