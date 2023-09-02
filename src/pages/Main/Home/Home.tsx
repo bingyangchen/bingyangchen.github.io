@@ -1,20 +1,20 @@
-import styles from "./Home.module.scss";
-import sysfeatherLogo from "../../../assets/sysfeather_logo.svg";
-import pinkoiLogo from "../../../assets/pinkoi_logo.svg";
 import nccuLogo from "../../../assets/nccu_logo.png";
+import pinkoiLogo from "../../../assets/pinkoi_logo.svg";
+import sysfeatherLogo from "../../../assets/sysfeather_logo.svg";
+import styles from "./Home.module.scss";
 
 import React from "react";
 
-import { IRouter, withRouter } from "../../../router";
 import { Button } from "../../../components";
 import {
     IconBook,
-    IconGitHub,
-    IconLinkedIn,
-    IconCSquareFill,
     IconChevronDown,
     IconChevronUp,
+    IconCSquareFill,
+    IconGitHub,
+    IconLinkedIn,
 } from "../../../icons";
+import { IRouter, withRouter } from "../../../router";
 
 interface Props extends IRouter {}
 
@@ -138,9 +138,9 @@ class Home extends React.Component<Props, State> {
                                         Pinkoi
                                     </a>
                                     <div className={styles.description}>
-                                        負責開發與維護內部系統管理工具，有效提升商業團隊效率。並參與推行創新策略如主題訂閱制，增強品牌影響力及市場佔有率。利用
-                                        AI 工具實施網站 SEO
-                                        優化，提升商品在搜尋引擎的可見度及排名。
+                                        開發與維護公司內部系統管理員工具，有效提升商業團隊的操作效率，並協助實現新的商業策略。重構老舊程式碼並撰寫測試，有效降低系統負擔、減少錯誤率，以及增加程式碼的可維護性。運用
+                                        AI 工具，成功優化網站
+                                        SEO，提升站內商品的可見度與搜尋引擎排名。
                                     </div>
                                     <div className={styles.tech_stack}>
                                         <div className={styles.title}>
@@ -160,13 +160,10 @@ class Home extends React.Component<Props, State> {
                                                 Redis
                                             </code>
                                             <code className={styles.technology}>
-                                                RabbitMQ
-                                            </code>
-                                            <code className={styles.technology}>
-                                                Celery
-                                            </code>
-                                            <code className={styles.technology}>
                                                 Vue
+                                            </code>
+                                            <code className={styles.technology}>
+                                                Cypress
                                             </code>
                                         </div>
                                     </div>
