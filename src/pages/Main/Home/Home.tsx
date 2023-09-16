@@ -143,9 +143,7 @@ class Home extends React.Component<Props, State> {
                                         SEO，提升站內商品的可見度與搜尋引擎排名。
                                     </div>
                                     <div className={styles.tech_stack}>
-                                        <div className={styles.title}>
-                                            技術堆疊
-                                        </div>
+                                        <div className={styles.title}>技能</div>
                                         <div className={styles.list}>
                                             <code className={styles.technology}>
                                                 Python
@@ -202,9 +200,7 @@ class Home extends React.Component<Props, State> {
                                         API，提供商家直播管理、商品管理、訊息管理以及抽獎等功能。
                                     </div>
                                     <div className={styles.tech_stack}>
-                                        <div className={styles.title}>
-                                            技術堆疊
-                                        </div>
+                                        <div className={styles.title}>技能</div>
                                         <div className={styles.list}>
                                             <code className={styles.technology}>
                                                 Python/Django
@@ -271,7 +267,7 @@ class Home extends React.Component<Props, State> {
                                         猿創力程式設計學校
                                     </div>
                                     <div className={styles.description}>
-                                        其實起初只是抱著想賺外快的心態，獲得錄取後發現學生的年齡層是小學，內容必須簡單，起初還有些沮喪，沒想到可愛的小學生們讓我還是愛上了這份兼職工作，
+                                        其實起初只是抱著想賺外快的心態，獲得錄取後發現學生的年齡層是小學，內容必須簡單，起初還有些沮喪，沒想到可愛的小學生們讓我還是愛上了這份兼職工作。
                                     </div>
                                 </div>
                             </div>

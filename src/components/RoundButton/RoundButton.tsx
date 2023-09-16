@@ -24,9 +24,9 @@ export default class RoundButton extends React.Component<Props, State> {
             <div
                 className={
                     styles.main +
-                    (this.props.disabled ? " " + styles.disabled : "") +
+                    (this.props.disabled ? ` ${styles.disabled}` : "") +
                     (this.props.className
-                        ? " round_button " + this.props.className
+                        ? ` round_button ${this.props.className}`
                         : "")
                 }
                 onClick={

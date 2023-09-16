@@ -1,5 +1,5 @@
-import styles from "./FullLogo.module.scss";
 import logo from "../../assets/logo.png";
+import styles from "./FullLogo.module.scss";
 
 import React from "react";
 import { NavLink } from "react-router-dom";
@@ -26,8 +26,7 @@ export default class FullLogo extends React.Component<Props, State> {
     }
     private get className(): string {
         return (
-            styles.main +
-            " " +
+            `${styles.main} ` +
             (this.props.size === "s"
                 ? styles.s
                 : this.props.size === "m"

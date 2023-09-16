@@ -1,4 +1,4 @@
-import styles from "./MainFunctionTab.module.scss";
+import styles from "./NavTab.module.scss";
 
 import React, { MouseEventHandler } from "react";
 
@@ -11,7 +11,7 @@ interface Props {
 
 interface State {}
 
-export default class MainFunctionTab extends React.Component<Props, State> {
+export default class NavTab extends React.Component<Props, State> {
     public state: State;
     public constructor(props: Props) {
         super(props);

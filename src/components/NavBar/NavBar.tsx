@@ -1,4 +1,4 @@
-import styles from "./NavigationBar.module.scss";
+import styles from "./NavBar.module.scss";
 
 import React from "react";
 
@@ -10,7 +10,7 @@ interface Props {
 
 interface State {}
 
-export default class NavigationBar extends React.Component<Props, State> {
+export default class NavBar extends React.Component<Props, State> {
     public state: State;
     public constructor(props: Props) {
         super(props);
@@ -22,7 +22,7 @@ export default class NavigationBar extends React.Component<Props, State> {
                 <div
                     className={
                         styles.main +
-                        (this.props.isActive ? " " + styles.active : "")
+                        (this.props.isActive ? ` ${styles.active}` : "")
                     }
                 >
                     {this.props.children}
@@ -30,7 +30,7 @@ export default class NavigationBar extends React.Component<Props, State> {
                 <div
                     className={
                         styles.small_screen_active_background +
-                        (this.props.isActive ? " " + styles.active : "")
+                        (this.props.isActive ? ` ${styles.active}` : "")
                     }
                     onClick={this.props.hide}
                 ></div>

@@ -2,12 +2,12 @@ import styles from "./Header.module.scss";
 
 import React from "react";
 
-import { RoundButton, FullLogo, NavigationBar, MainFunctionTab } from "..";
+import { FullLogo, NavBar, NavTab, RoundButton } from "..";
 import {
-    IconList,
     IconHouseDoorFill,
-    IconLayoutWtf,
     IconJournalBookmark,
+    IconLayoutWtf,
+    IconList,
     IconPerson,
 } from "../../icons";
 
@@ -81,13 +81,13 @@ export default class Header extends React.Component<Props, State> {
                         </RoundButton>
                     </div>
                 </header>
-                <NavigationBar
+                <NavBar
                     isActive={this.state.isHiddenBarActive}
                     hide={this.hideMainFunctionBar}
                 >
                     {this.subpageList.map((each, idx) => {
                         return (
-                            <MainFunctionTab
+                            <NavTab
                                 tabIcon={each.tabIcon}
                                 tabName={each.tabName}
                                 to={`${each.path}`}
@@ -96,7 +96,7 @@ export default class Header extends React.Component<Props, State> {
                             />
                         );
                     })}
-                </NavigationBar>
+                </NavBar>
             </>
         );
     }
