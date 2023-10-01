@@ -138,8 +138,8 @@ class Home extends React.Component<Props, State> {
                                         Pinkoi
                                     </a>
                                     <div className={styles.description}>
-                                        開發與維護公司內部系統管理員工具，有效提升商業團隊的操作效率，並協助實現新的商業策略。重構老舊程式碼並撰寫測試，有效降低系統負擔、減少錯誤率，以及增加程式碼的可維護性。運用
-                                        AI 工具，成功優化網站
+                                        開發與維護內部系統管理員工具，協助提升活動設定、商品推廣、訊息推播…等操作效率。主導設計與實作數項全新商業策略的後端服務，實現如主題訂閱、活動登錄…等機制。重構老舊程式碼並為其撰寫測試，有效降低系統負擔、減少錯誤，同時增加程式碼之可維護性。運用
+                                        AI 工具成功優化網站
                                         SEO，提升站內商品的可見度與搜尋引擎排名。
                                     </div>
                                     <div className={styles.tech_stack}>
@@ -193,17 +193,20 @@ class Home extends React.Component<Props, State> {
                                         矽羽科技
                                     </a>
                                     <div className={styles.description}>
-                                        參與開發多租戶架構之電商自動開店系統後端，主要負責身份驗證機制，以及
-                                        Request rate limit
-                                        機制。主導社群購物後台管理系統之
-                                        POC，串接 Facebook
-                                        API，提供商家直播管理、商品管理、訊息管理以及抽獎等功能。
+                                        參與開發多租戶架構的電商自動開店系統後端，負責
+                                        Authentication 與 Rate Limit
+                                        機制，確保系統的安全性與效能。負責社群購物後台管理系統的概念驗證，串接
+                                        Facebook
+                                        API，整合用戶的電商網站與社群帳號，提供直播管理、留言分析、訊息中心、貼文抽獎…等功能，藉此優化商家的社群平台管理體驗。
                                     </div>
                                     <div className={styles.tech_stack}>
                                         <div className={styles.title}>技能</div>
                                         <div className={styles.list}>
                                             <code className={styles.technology}>
-                                                Python/Django
+                                                Python
+                                            </code>
+                                            <code className={styles.technology}>
+                                                Django
                                             </code>
                                             <code className={styles.technology}>
                                                 PostgreSQL
