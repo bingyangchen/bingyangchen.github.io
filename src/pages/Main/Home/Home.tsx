@@ -355,7 +355,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/demand-supply-simulator"
+                            href="https://jamison-chen.github.io/market-sim"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.market_simulate}`}
