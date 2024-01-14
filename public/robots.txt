@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: hhttps://jamison-chen.github.io/sitemap.txt
+Sitemap: https://jamison-chen.github.io/sitemap.txt
