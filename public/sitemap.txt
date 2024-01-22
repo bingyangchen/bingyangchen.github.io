@@ -2,7 +2,7 @@
 https://jamison-chen.github.io/path-finding-visualize/
 https://jamison-chen.github.io/virus-spread/
 https://jamison-chen.github.io/wiki-prettier/
-https://jamison-chen.github.io/demand-supply-simulator/
+https://jamison-chen.github.io/market-sim/
 https://jamison-chen.github.io/inventory-analyzer/
 https://jamison-chen.github.io/snake/
 https://jamison-chen.github.io/tic-tac-toe/
