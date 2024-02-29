@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.1304205b.css",
-    "main.js": "/static/js/main.c66b66ba.js",
+    "main.css": "/static/css/main.eaf2c532.css",
+    "main.js": "/static/js/main.966b6ddd.js",
     "static/js/787.f8a0dea2.chunk.js": "/static/js/787.f8a0dea2.chunk.js",
     "static/media/cover.jpeg": "/static/media/cover.1ad40288e3b60b9c51f1.jpeg",
     "static/media/market.jpg": "/static/media/market.240e75a76f77d919c85d.jpg",
     "static/media/snake.png": "/static/media/snake.ba82f6329db27dcded21.png",
     "static/media/coins.jpg": "/static/media/coins.c49a3743bfaec4986735.jpg",
     "static/media/warehouse.jpg": "/static/media/warehouse.60e6ae1f2d4b4151d878.jpg",
+    "static/media/trade_smartly.png": "/static/media/trade_smartly.1b8107f35444274d535e.png",
     "static/media/virus_spread.jpg": "/static/media/virus_spread.c25cffe4b309b81b8d68.jpg",
-    "static/media/trade_smartly.png": "/static/media/trade_smartly.9ab78d18d031c927a7a4.png",
     "static/media/wiki_prettier.png": "/static/media/wiki_prettier.b0299cbcbb29e37b8b90.png",
     "service-worker.js": "/service-worker.js",
     "static/media/tictactoe.png": "/static/media/tictactoe.510ba71e579fb24a29d6.png",
@@ -20,12 +20,12 @@
     "index.html": "/index.html",
     "static/media/gitbook.svg": "/static/media/gitbook.73cb29d4c7e58a8cc923.svg",
     "static/media/pinkoi_logo.svg": "/static/media/pinkoi_logo.5ceff3e48658098d6c285d52e496b475.svg",
-    "main.1304205b.css.map": "/static/css/main.1304205b.css.map",
-    "main.c66b66ba.js.map": "/static/js/main.c66b66ba.js.map",
+    "main.eaf2c532.css.map": "/static/css/main.eaf2c532.css.map",
+    "main.966b6ddd.js.map": "/static/js/main.966b6ddd.js.map",
     "787.f8a0dea2.chunk.js.map": "/static/js/787.f8a0dea2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.1304205b.css",
-    "static/js/main.c66b66ba.js"
+    "static/css/main.eaf2c532.css",
+    "static/js/main.966b6ddd.js"
   ]
 }
