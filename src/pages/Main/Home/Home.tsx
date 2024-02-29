@@ -300,7 +300,7 @@ class Home extends React.Component<Props, State> {
                     <hr />
                     <div className={styles.project_list}>
                         <a
-                            href="https://trade-smartly.com/"
+                            href="https://trade-smartly.com/welcome"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.trade_smartly}`}
