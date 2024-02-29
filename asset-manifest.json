@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.1304205b.css",
-    "main.js": "/static/js/main.bc54ce9b.js",
+    "main.js": "/static/js/main.c66b66ba.js",
     "static/js/787.f8a0dea2.chunk.js": "/static/js/787.f8a0dea2.chunk.js",
     "static/media/cover.jpeg": "/static/media/cover.1ad40288e3b60b9c51f1.jpeg",
     "static/media/market.jpg": "/static/media/market.240e75a76f77d919c85d.jpg",
@@ -21,11 +21,11 @@
     "static/media/gitbook.svg": "/static/media/gitbook.73cb29d4c7e58a8cc923.svg",
     "static/media/pinkoi_logo.svg": "/static/media/pinkoi_logo.5ceff3e48658098d6c285d52e496b475.svg",
     "main.1304205b.css.map": "/static/css/main.1304205b.css.map",
-    "main.bc54ce9b.js.map": "/static/js/main.bc54ce9b.js.map",
+    "main.c66b66ba.js.map": "/static/js/main.c66b66ba.js.map",
     "787.f8a0dea2.chunk.js.map": "/static/js/787.f8a0dea2.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.1304205b.css",
-    "static/js/main.bc54ce9b.js"
+    "static/js/main.c66b66ba.js"
   ]
 }
