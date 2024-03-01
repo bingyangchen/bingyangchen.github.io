@@ -2,6 +2,7 @@ import styles from "./Footer.module.scss";
 
 import React from "react";
 import { IconCSquareFill, IconGitHub, IconLinkedIn } from "../../icons";
+import FullLogo from "../FullLogo/FullLogo";
 
 interface Props {}
 
@@ -50,7 +51,10 @@ export default class Footer extends React.Component<Props, State> {
                         <span>CakeResume</span>
                     </a>
                 </div>
-                <div className={styles.copy_right}>
+                <div className={styles.logo_container}>
+                    <FullLogo size="s" />
+                </div>
+                <div className={styles.copyright}>
                     Copyright © {new Date().getFullYear()} 陳秉洋 (Jamison Chen)
                     All rights reserved
                 </div>

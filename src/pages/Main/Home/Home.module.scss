@@ -15,7 +15,7 @@
                 serif;
             text-align: center;
             font-size: 2.8 * _.$base-font-size;
-            @media screen and (max-width: _.$hide-function-bar-boundry) {
+            @media screen and (max-width: _.$small-screen-boundary) {
                 font-size: 2 * _.$base-font-size;
             }
         }
@@ -23,12 +23,12 @@
             margin: 30px auto;
             padding: 0 50px;
             text-align: center;
-            max-width: _.$hide-function-bar-boundry;
+            max-width: _.$small-screen-boundary;
             line-height: 2.2 * _.$base-font-size;
             font-size: 1.1 * _.$base-font-size;
             font-family: Cambria, Cochin, Georgia, Times, "Times New Roman",
                 serif;
-            @media screen and (max-width: _.$hide-function-bar-boundry) {
+            @media screen and (max-width: _.$small-screen-boundary) {
                 padding: 0 30px;
                 font-size: _.$base-font-size;
             }
@@ -48,7 +48,7 @@
             font-size: 1.6 * _.$base-font-size;
             font-weight: normal;
             color: _.$black;
-            @media screen and (max-width: _.$hide-function-bar-boundry) {
+            @media screen and (max-width: _.$small-screen-boundary) {
                 font-size: 1.4 * _.$base-font-size;
             }
         }
@@ -83,6 +83,11 @@
             padding: 0 5%;
             width: 100%;
             z-index: 2;
+            @media (max-width: _.$small-screen-boundary) {
+                position: absolute;
+                bottom: 0;
+                flex-direction: column;
+            }
             & > .cta_button_list {
                 display: flex;
                 flex-direction: column;
@@ -103,6 +108,9 @@
                     box-shadow: 0 0 0 0 _.$gray;
                     cursor: pointer;
                     transition-duration: 200ms;
+                    @media (max-width: _.$small-screen-boundary) {
+                        width: 61.8vw;
+                    }
                     @media (hover: hover) {
                         &:hover {
                             background-color: _.$white;
@@ -116,9 +124,17 @@
             & > .social_media_list {
                 display: flex;
                 flex-direction: column;
-                color: _.$black;
-                gap: 20px;
+                align-items: center;
+                color: _.$noisy-white;
+                gap: 30px;
+                @media (max-width: _.$small-screen-boundary) {
+                    flex-direction: row;
+                    margin: min(20vw, 60px) 0;
+                    gap: 40px;
+                }
                 & > .social_media {
+                    display: flex;
+                    align-items: center;
                     cursor: pointer;
                 }
             }
@@ -135,6 +151,17 @@
             min-width: 530px;
             max-width: 700px;
             z-index: 2;
+            @media (max-width: _.$small-screen-boundary) {
+                position: absolute;
+                bottom: max(50vw, 36vh);
+                right: 0;
+                font-size: max(8vw, 2 * _.$base-font-size);
+                margin-right: 5%;
+                max-width: unset;
+                min-width: unset;
+                text-align: end;
+                text-shadow: 2px 2px 5px _.$gray;
+            }
         }
     }
     & > .about {
@@ -142,21 +169,32 @@
         & > .work_experience_outer {
             display: flex;
             padding: 30px;
+            @media (max-width: _.$small-screen-boundary) {
+                flex-direction: column;
+            }
             & > .block {
                 width: 50%;
+                @media (max-width: _.$small-screen-boundary) {
+                    width: 100%;
+                }
                 & > .work_experience {
-                    $head-height: 35px;
                     display: flex;
                     & > .left {
                         display: flex;
                         flex-direction: column;
                         padding: 0 12px 0 20px;
+                        @media (max-width: _.$small-screen-boundary) {
+                            padding: 0 10px 0 0;
+                        }
                         & > .head {
                             position: relative;
-                            width: $head-height;
+                            width: 35px;
                             aspect-ratio: 1;
                             border-radius: 100px;
                             background-color: _.$transparent-black;
+                            @media (max-width: _.$small-screen-boundary) {
+                                width: 25px;
+                            }
                             &::before {
                                 content: "";
                                 position: absolute;
@@ -167,6 +205,9 @@
                                 aspect-ratio: 1;
                                 border-radius: 100px;
                                 background-color: _.$black;
+                                @media (max-width: _.$small-screen-boundary) {
+                                    width: 10px;
+                                }
                             }
                         }
                         & > .line {
@@ -180,12 +221,15 @@
                         & > .time {
                             display: flex;
                             align-items: center;
-                            height: $head-height;
+                            height: 35px;
                             color: _.$gray;
+                            @media (max-width: _.$small-screen-boundary) {
+                                height: 25px;
+                            }
                         }
                         & > .job_title {
                             font-size: 1.4 * _.$base-font-size;
-                            height: $head-height;
+                            height: 35px;
                             font-weight: bold;
                             color: _.$black;
                         }
@@ -241,14 +285,27 @@
             font-family: Georgia, "Times New Roman", Times, serif;
             font-size: 1.25 * _.$base-font-size;
             color: _.$gray;
+            @media (max-width: _.$small-screen-boundary) {
+                gap: 25px;
+                font-size: _.$base-font-size;
+            }
             & > .school_logo {
                 width: 220px;
+                @media (max-width: _.$small-screen-boundary) {
+                    width: 200px;
+                }
             }
             & > div {
                 width: min(380px, 100%);
+                @media (max-width: _.$small-screen-boundary) {
+                    width: min(320px, 100%);
+                }
                 &:last-child {
                     width: min(380px, 100%);
                     text-align: end;
+                    @media (max-width: _.$small-screen-boundary) {
+                        width: min(320px, 100%);
+                    }
                 }
             }
         }
@@ -259,6 +316,9 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 1rem;
             padding: 30px 90px;
+            @media (max-width: _.$small-screen-boundary) {
+                padding: 30px;
+            }
             & > .project {
                 position: relative;
                 display: flex;
@@ -371,89 +431,13 @@
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 105% 100px;
+        @media (max-width: _.$small-screen-boundary) {
+            background-size: cover;
+        }
         & > .blog_button_container {
             display: flex;
             justify-content: center;
             padding: 50px 0 110px;
-        }
-    }
-}
-
-@media screen and (max-width: _.$hide-function-bar-boundry) {
-    .main {
-        & > .home {
-            position: relative;
-            & > .upper {
-                position: absolute;
-                bottom: 0;
-                flex-direction: column;
-                & > .cta_button_list {
-                    & > .cta_button {
-                        width: 61.8vw;
-                    }
-                }
-                & > .social_media_list {
-                    flex-direction: row;
-                    margin: min(20vw, 60px) 0;
-                    gap: 40px;
-                    color: _.$noisy-white;
-                }
-            }
-            & > .middle {
-                position: absolute;
-                bottom: max(50vw, 36vh);
-                right: 0;
-                font-size: max(8vw, 2 * _.$base-font-size);
-                margin-right: 5%;
-                max-width: unset;
-                min-width: unset;
-                text-align: end;
-                text-shadow: 2px 2px 5px _.$gray;
-            }
-        }
-        & > .about {
-            & > .work_experience_outer {
-                flex-direction: column;
-                & > .block {
-                    width: 100%;
-                    & > .work_experience {
-                        $head-height: 25px;
-                        & > .left {
-                            padding: 0 10px 0 0;
-                            & > .head {
-                                width: $head-height;
-                                &::before {
-                                    width: 10px;
-                                }
-                            }
-                        }
-                        & > .main > .time {
-                            height: $head-height;
-                        }
-                    }
-                }
-            }
-            & > .education_outer {
-                gap: 25px;
-                font-size: _.$base-font-size;
-                & > .school_logo {
-                    width: 200px;
-                }
-                & > div {
-                    width: min(320px, 100%);
-                    &:last-child {
-                        width: min(320px, 100%);
-                    }
-                }
-            }
-        }
-        & > .projects {
-            & > .project_list {
-                padding: 30px;
-            }
-        }
-        & > .blog {
-            background-size: cover;
         }
     }
 }

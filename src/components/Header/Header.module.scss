@@ -17,14 +17,17 @@
         background-color: transparent;
         border-bottom: 1px solid transparent;
     }
-    .subpage_list {
+    & > .subpage_list {
         display: flex;
         gap: 10px;
         align-items: center;
         justify-content: flex-end;
         flex-grow: 1;
         height: 100%;
-        a {
+        @media (max-width: _.$small-screen-boundary) {
+            display: none;
+        }
+        & > a {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,16 +44,10 @@
             }
         }
     }
-    .list_button_outer {
+    & > .list_button_outer {
         display: none;
-    }
-}
-
-@media screen and (max-width: _.$hide-function-bar-boundry) {
-    .subpage_list {
-        display: none !important;
-    }
-    .list_button_outer {
-        display: initial !important;
+        @media (max-width: _.$small-screen-boundary) {
+            display: initial;
+        }
     }
 }

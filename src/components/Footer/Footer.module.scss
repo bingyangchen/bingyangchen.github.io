@@ -13,19 +13,27 @@
     color: _.$light-gray;
     font-family: Georgia, "Times New Roman", Times, serif;
     font-size: 0.8 * _.$base-font-size;
+    & > .logo_container {
+        padding: 15px;
+        border-radius: 10px;
+        background-color: _.$white;
+    }
     & > .social_media_list {
         display: block;
         & > .social_media {
             display: inline-flex;
             align-items: center;
-            padding: 8px 18px;
+            padding: 8px 0;
             transition-duration: 150ms;
-            span {
-                margin-left: 12px;
-            }
             @media (hover: hover) {
                 &:hover {
                     color: _.$white;
+                }
+            }
+            span {
+                margin-left: 12px;
+                @media (max-width: _.$small-screen-boundary) {
+                    margin-left: 10px;
                 }
             }
         }
@@ -35,15 +43,17 @@
             border: none;
             border-left: 2px solid _.$deep-gray;
             padding-top: 6px;
+            margin: 0 18px;
+            @media (max-width: _.$small-screen-boundary) {
+                margin: 0 10px;
+            }
         }
     }
-    & > .copy_right {
+    & > .copyright {
+        text-align: center;
         line-height: 1.2 * _.$base-font-size;
-    }
-}
-
-@media screen and (max-width: _.$hide-function-bar-boundry) {
-    .main > .copy_right {
-        font-size: 0.7 * _.$base-font-size;
+        @media (max-width: _.$small-screen-boundary) {
+            font-size: 0.7 * _.$base-font-size;
+        }
     }
 }

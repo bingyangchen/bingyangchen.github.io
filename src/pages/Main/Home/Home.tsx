@@ -72,7 +72,7 @@ class Home extends React.Component<Props, State> {
                                 className={styles.social_media}
                                 title="GitHub"
                             >
-                                <IconGitHub sideLength="20" />
+                                <IconGitHub sideLength="21" />
                             </a>
                             <a
                                 href="https://www.linkedin.com/in/jamison-chen-3937851a5/"
@@ -459,7 +459,7 @@ class Home extends React.Component<Props, State> {
                 >
                     <h2>BLOG</h2>
                     <div className={styles.subtitle}>
-                        「輸入與輸出並重」是學習的的不二法門，這裡整理了一些我覺得值得分享的學習筆記，如內容有謬誤，請不吝指教。
+                        「輸入與輸出並重」是學習與進步的關鍵。我整理了一些學習筆記，希望與大家分享。如有謬誤，敬請指正。
                     </div>
                     <hr />
                     <div className={styles.blog_button_container}>
