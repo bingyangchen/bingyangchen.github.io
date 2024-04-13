@@ -21,7 +21,7 @@ export default class NavTab extends React.Component<Props, State> {
         return (
             <a
                 href={this.props.to}
-                className={styles.tab}
+                className={styles.main}
                 onClick={this.props.onClick}
             >
                 <div className={styles.icon_outer}>{this.props.tabIcon}</div>

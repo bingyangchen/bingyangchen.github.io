@@ -1,26 +1,46 @@
 @use "../../global_variables" as _;
 
-.tab {
-    height: 65px;
-    padding: 0 20px;
-    color: _.$gray;
-    font-size: 0.9 * _.$base-font-size;
+.main {
     display: flex;
     align-items: center;
-    gap: 15px;
-    &.active {
-        color: _.$blue;
-        background-color: #4c8bf520;
+    font-size: 0.9 * _.$base-font-size;
+    @media (min-width: _.$small-screen-boundary) {
+        justify-content: center;
+        padding: 0 10px;
+        height: 100%;
+        width: 103px;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        transition-duration: 150ms;
+        @media (hover: hover) {
+            &:hover {
+                color: _.$black;
+            }
+        }
     }
-    @media (hover: hover) {
-        &:not(.active):hover {
-            background-color: _.$noisy-white;
+    @media (max-width: _.$small-screen-boundary) {
+        gap: 15px;
+        height: 65px;
+        padding: 0 20px;
+        color: _.$gray;
+        @media (hover: hover) {
+            &:not(.active):hover {
+                background-color: _.$noisy-white;
+            }
+        }
+        &.active {
+            color: _.$blue;
+            background-color: #4c8bf520;
         }
     }
     & > .icon_outer {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 20px;
+        @media (min-width: _.$small-screen-boundary) {
+            display: none;
+        }
+        @media (max-width: _.$small-screen-boundary) {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+        }
     }
 }

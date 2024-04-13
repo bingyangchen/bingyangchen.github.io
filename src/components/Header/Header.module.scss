@@ -9,15 +9,18 @@
     justify-content: space-between;
     height: _.$header-height;
     width: 100%;
-    padding: 0 15px;
+    padding: 0 20px;
     background-color: _.$white;
     border-bottom: 1px solid _.$noisy-white;
     z-index: 3;
+    @media (max-width: _.$small-screen-boundary) {
+        padding: 0 15px;
+    }
     &.transparent {
         background-color: transparent;
         border-bottom: 1px solid transparent;
     }
-    & > .subpage_list {
+    & > .nav_bar_tab_container {
         display: flex;
         gap: 10px;
         align-items: center;
@@ -27,27 +30,56 @@
         @media (max-width: _.$small-screen-boundary) {
             display: none;
         }
-        & > a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 10px;
-            height: 100%;
-            width: 103px;
-            font-size: 0.9 * _.$base-font-size;
-            font-family: Verdana, Geneva, Tahoma, sans-serif;
-            transition-duration: 150ms;
-            @media (hover: hover) {
-                &:hover {
-                    color: _.$black;
-                }
-            }
-        }
     }
     & > .list_button_outer {
         display: none;
         @media (max-width: _.$small-screen-boundary) {
             display: initial;
         }
+    }
+}
+
+.side_menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 200px;
+    padding: 10px 0;
+    background-color: _.$white;
+    overflow-y: auto;
+    border-right: 0.5px solid _.$light-gray;
+    transform: translateX(100%);
+    transition-duration: 300ms;
+    z-index: 4;
+    &.active {
+        transform: translateX(0);
+    }
+}
+
+.small_screen_active_background {
+    animation: 300ms fadein ease;
+    display: none;
+    &.active {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        display: block;
+        background-color: _.$black;
+        opacity: 0.5;
+        z-index: 3;
+    }
+}
+
+@keyframes fadein {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 0.5;
     }
 }

@@ -1,8 +1,8 @@
 import styles from "./Header.module.scss";
 
-import React from "react";
+import React, { ReactElement } from "react";
 
-import { FullLogo, NavBar, NavTab, RoundButton } from "..";
+import { Logo, NavTab, RoundButton } from "..";
 import {
     IconHouseDoorFill,
     IconJournalBookmark,
@@ -14,50 +14,54 @@ import {
 interface Props {}
 
 interface State {
-    isHiddenBarActive: boolean;
-    shouldHeaderTransparent: boolean;
+    isSideMenuActive: boolean;
+    isHeaderTransparent: boolean;
 }
 
 export default class Header extends React.Component<Props, State> {
     public state: State;
-    private subpageList: {
-        tabIcon: any;
-        tabName: string;
-        path: string;
-    }[];
+    private subpageTabs: ReactElement[];
     public constructor(props: Props) {
         super(props);
         this.state = {
-            isHiddenBarActive: false,
-            shouldHeaderTransparent: true,
+            isSideMenuActive: false,
+            isHeaderTransparent: true,
         };
-        this.subpageList = [
-            {
-                tabIcon: <IconHouseDoorFill sideLength="100%" />,
-                tabName: "HOME",
-                path: "#home",
-            },
-            {
-                tabIcon: <IconPerson sideLength="95%" />,
-                tabName: "ABOUT",
-                path: "#about",
-            },
-            {
-                tabIcon: <IconLayoutWtf sideLength="95%" />,
-                tabName: "PROJECTS",
-                path: "#projects",
-            },
-            {
-                tabIcon: <IconJournalBookmark sideLength="95%" />,
-                tabName: "BLOG",
-                path: "#blog",
-            },
+        this.subpageTabs = [
+            <NavTab
+                tabIcon={<IconHouseDoorFill sideLength="100%" />}
+                tabName="HOME"
+                to="#home"
+                onClick={this.hideSideMenu}
+                key="home"
+            />,
+            <NavTab
+                tabIcon={<IconPerson sideLength="95%" />}
+                tabName="ABOUT"
+                to="#about"
+                onClick={this.hideSideMenu}
+                key="about"
+            />,
+            <NavTab
+                tabIcon={<IconLayoutWtf sideLength="95%" />}
+                tabName="PROJECTS"
+                to="#projects"
+                onClick={this.hideSideMenu}
+                key="projects"
+            />,
+            <NavTab
+                tabIcon={<IconJournalBookmark sideLength="95%" />}
+                tabName="BLOG"
+                to="#blog"
+                onClick={this.hideSideMenu}
+                key="blog"
+            />,
         ];
     }
     public componentDidMount(): void {
         window.addEventListener("scroll", () => {
             this.setState({
-                shouldHeaderTransparent: window.scrollY < window.innerHeight,
+                isHeaderTransparent: window.scrollY < window.innerHeight,
             });
         });
     }
@@ -65,51 +69,43 @@ export default class Header extends React.Component<Props, State> {
         return (
             <>
                 <header className={this.mainClass}>
-                    <FullLogo size="s" />
-                    <div className={styles.subpage_list}>
-                        {this.subpageList.map((each, idx) => {
-                            return (
-                                <a key={idx} href={each.path}>
-                                    {each.tabName}
-                                </a>
-                            );
-                        })}
+                    <Logo size="s" />
+                    <div className={styles.nav_bar_tab_container}>
+                        {this.subpageTabs}
                     </div>
                     <div className={styles.list_button_outer}>
-                        <RoundButton onClick={this.showMainFunctionBar}>
+                        <RoundButton onClick={this.showSideMenu}>
                             <IconList sideLength="30" />
                         </RoundButton>
                     </div>
                 </header>
-                <NavBar
-                    isActive={this.state.isHiddenBarActive}
-                    hide={this.hideMainFunctionBar}
+                <div
+                    className={
+                        styles.side_menu +
+                        (this.state.isSideMenuActive ? ` ${styles.active}` : "")
+                    }
                 >
-                    {this.subpageList.map((each, idx) => {
-                        return (
-                            <NavTab
-                                tabIcon={each.tabIcon}
-                                tabName={each.tabName}
-                                to={`${each.path}`}
-                                onClick={this.hideMainFunctionBar}
-                                key={idx}
-                            />
-                        );
-                    })}
-                </NavBar>
+                    {this.subpageTabs}
+                </div>
+                <div
+                    className={
+                        styles.small_screen_active_background +
+                        (this.state.isSideMenuActive ? ` ${styles.active}` : "")
+                    }
+                    onClick={this.hideSideMenu}
+                />
             </>
         );
     }
     private get mainClass(): string {
-        if (this.state.shouldHeaderTransparent) {
-            return `${styles.main} ${styles.transparent}`;
-        }
-        return styles.main;
+        return this.state.isHeaderTransparent
+            ? `${styles.main} ${styles.transparent}`
+            : styles.main;
     }
-    private showMainFunctionBar = (): void => {
-        this.setState({ isHiddenBarActive: true });
+    private showSideMenu = (): void => {
+        this.setState({ isSideMenuActive: true });
     };
-    private hideMainFunctionBar = (): void => {
-        this.setState({ isHiddenBarActive: false });
+    private hideSideMenu = (): void => {
+        this.setState({ isSideMenuActive: false });
     };
 }

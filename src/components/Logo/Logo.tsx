@@ -1,16 +1,17 @@
 import logo from "../../assets/logo.png";
-import styles from "./FullLogo.module.scss";
+import styles from "./Logo.module.scss";
 
 import React from "react";
 import { NavLink } from "react-router-dom";
 
 interface Props {
     size: "s" | "m" | "l";
+    full?: boolean;
 }
 
 interface State {}
 
-export default class FullLogo extends React.Component<Props, State> {
+export default class Logo extends React.Component<Props, State> {
     public state: State;
     public constructor(props: Props) {
         super(props);
@@ -18,9 +19,15 @@ export default class FullLogo extends React.Component<Props, State> {
     }
     public render(): React.ReactNode {
         return (
-            <NavLink to="/" className={this.className}>
+            <NavLink
+                to="/"
+                className={this.className}
+                onClick={() => window.scrollTo({ top: 0 })}
+            >
                 <img className={styles.logo} src={logo} alt="Jamison Chen" />
-                <div className={styles.product_name}>JamisonChen</div>
+                {this.props.full && (
+                    <div className={styles.product_name}>JamisonChen</div>
+                )}
             </NavLink>
         );
     }

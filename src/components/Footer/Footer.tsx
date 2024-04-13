@@ -2,7 +2,7 @@ import styles from "./Footer.module.scss";
 
 import React from "react";
 import { IconCSquareFill, IconGitHub, IconLinkedIn } from "../../icons";
-import FullLogo from "../FullLogo/FullLogo";
+import Logo from "../Logo/Logo";
 
 interface Props {}
 
@@ -52,7 +52,7 @@ export default class Footer extends React.Component<Props, State> {
                     </a>
                 </div>
                 <div className={styles.logo_container}>
-                    <FullLogo size="s" />
+                    <Logo size="s" full />
                 </div>
                 <div className={styles.copyright}>
                     Copyright © {new Date().getFullYear()} 陳秉洋 (Jamison Chen)

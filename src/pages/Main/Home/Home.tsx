@@ -40,6 +40,36 @@ class Home extends React.Component<Props, State> {
     }
     public componentDidMount(): void {
         this.makeCoverPhotoSlow();
+        window.addEventListener("scroll", () => {
+            document.documentElement.style.backgroundColor =
+                document.documentElement.scrollTop >
+                document.documentElement.clientHeight
+                    ? "#000"
+                    : "#fff";
+        });
+        window.addEventListener("scroll", () => {
+            let maxY = -Infinity;
+            let maxAnchor: HTMLDivElement | null = null;
+            [
+                this.homeRef.current,
+                this.aboutRef.current,
+                this.projectsRef.current,
+                this.blogRef.current,
+            ]
+                .filter((e) => e && e.getBoundingClientRect().y <= 0)
+                .forEach((e) => {
+                    const y = e!.getBoundingClientRect().y;
+                    if (y > maxY) {
+                        maxY = y;
+                        maxAnchor = e;
+                    }
+                });
+            maxAnchor = maxAnchor || this.homeRef.current!;
+            const newHash = `#${maxAnchor.id}`;
+            if (window.location.hash !== newHash) {
+                window.history.replaceState({}, "", newHash);
+            }
+        });
     }
     public componentDidUpdate(): void {}
     public render(): React.ReactNode {
