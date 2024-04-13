@@ -1,3 +1,5 @@
+import avatar_1 from "../../../assets/avatar_1.png";
+import avatar_2 from "../../../assets/avatar_2.jpeg";
 import nccuLogo from "../../../assets/nccu_logo.png";
 import pinkoiLogo from "../../../assets/pinkoi_logo.svg";
 import sysfeatherLogo from "../../../assets/sysfeather_logo.svg";
@@ -7,23 +9,25 @@ import React from "react";
 
 import { Button } from "../../../components";
 import {
-    IconBook,
+    IconBlueprint,
+    IconChevronDoubleDown,
     IconChevronDown,
     IconChevronUp,
-    IconCSquareFill,
-    IconGitHub,
-    IconLinkedIn,
+    IconFilePerson,
+    IconMedia,
 } from "../../../icons";
 import { IRouter, withRouter } from "../../../router";
 
 interface Props extends IRouter {}
 
 interface State {
+    typedGreetingText: string;
     isShowingAllProjects: boolean;
 }
 
 class Home extends React.Component<Props, State> {
     public state: State;
+    private fullGreetingText: string;
     private homeRef: React.RefObject<HTMLDivElement>;
     private aboutRef: React.RefObject<HTMLDivElement>;
     private projectsRef: React.RefObject<HTMLDivElement>;
@@ -31,15 +35,18 @@ class Home extends React.Component<Props, State> {
     public constructor(props: Props) {
         super(props);
         this.state = {
+            typedGreetingText: "",
             isShowingAllProjects: false,
         };
+        this.fullGreetingText =
+            "Hi, my name is Jamison. I am currently a software engineer specializing in web application development, but I aspire to be more than that. Scroll down to know more about me!";
         this.homeRef = React.createRef();
         this.aboutRef = React.createRef();
         this.projectsRef = React.createRef();
         this.blogRef = React.createRef();
     }
     public componentDidMount(): void {
-        this.makeCoverPhotoSlow();
+        this.typeGreetingText();
         window.addEventListener("scroll", () => {
             document.documentElement.style.backgroundColor =
                 document.documentElement.scrollTop >
@@ -56,7 +63,7 @@ class Home extends React.Component<Props, State> {
                 this.projectsRef.current,
                 this.blogRef.current,
             ]
-                .filter((e) => e && e.getBoundingClientRect().y <= 0)
+                .filter((e) => e && e.getBoundingClientRect().y <= 1)
                 .forEach((e) => {
                     const y = e!.getBoundingClientRect().y;
                     if (y > maxY) {
@@ -80,53 +87,45 @@ class Home extends React.Component<Props, State> {
                     className={`${styles.home} ${styles.section}`}
                     ref={this.homeRef}
                 >
-                    <div className={styles.upper}>
-                        <div className={styles.cta_button_list}>
-                            <a href="#projects" className={styles.cta_button}>
-                                PROJECTS
-                            </a>
-                            <a
-                                href="https://jamison-chen.gitbook.io/blog/"
-                                className={styles.cta_button}
-                                target="_blank"
-                                rel="noreferrer"
-                            >
-                                BLOG
-                            </a>
-                        </div>
-                        <div className={styles.social_media_list}>
-                            <a
-                                href="https://github.com/Jamison-Chen"
-                                target="_blank"
-                                rel="noreferrer"
-                                className={styles.social_media}
-                                title="GitHub"
-                            >
-                                <IconGitHub sideLength="21" />
-                            </a>
-                            <a
-                                href="https://www.linkedin.com/in/jamison-chen-3937851a5/"
-                                target="_blank"
-                                rel="noreferrer"
-                                className={styles.social_media}
-                                title="LinkedIn"
-                            >
-                                <IconLinkedIn sideLength="20" />
-                            </a>
-                            <a
-                                href="https://www.cakeresume.com/me/BingYangChen"
-                                target="_blank"
-                                rel="noreferrer"
-                                className={styles.social_media}
-                                title="CakeResume"
-                            >
-                                <IconCSquareFill sideLength="20" />
-                            </a>
-                        </div>
+                    <div className={styles.avatar_container}>
+                        <img
+                            className={`${styles.avatar} ${styles.front}`}
+                            src={avatar_2}
+                            alt="avatar"
+                        />
+                        <img
+                            className={`${styles.avatar} ${styles.back}`}
+                            src={avatar_1}
+                            alt="avatar"
+                        />
                     </div>
-                    <div className={styles.middle}>
-                        <div>I'm Jamison Chen,</div>
-                        <div>a full-stack Web App developer.</div>
+                    <div className={styles.name}>Jamison</div>
+                    <div className={styles.greeting}>
+                        {this.state.typedGreetingText}
+                    </div>
+                    <div className={styles.cta_list}>
+                        <a href="#about" className={styles.cta}>
+                            <div className={styles.icon_container}>
+                                <IconFilePerson sideLength="32" />
+                            </div>
+                            <div className={styles.cta_text}>About</div>
+                        </a>
+                        <a href="#projects" className={styles.cta}>
+                            <div className={styles.icon_container}>
+                                <IconMedia sideLength="30" />
+                            </div>
+                            <div className={styles.cta_text}>Projects</div>
+                        </a>
+                        <a href="#blog" className={styles.cta}>
+                            <div className={styles.icon_container}>
+                                <IconBlueprint sideLength="30" />
+                            </div>
+                            <div className={styles.cta_text}>Blog</div>
+                        </a>
+                    </div>
+                    <div className={styles.scroll_down_hint}>
+                        <IconChevronDoubleDown sideLength="14" />
+                        Scroll down
                     </div>
                 </div>
                 <div
@@ -139,7 +138,7 @@ class Home extends React.Component<Props, State> {
                         我是一名熱愛學習與創作的軟體工程師，大學主修經濟，卻與程式設計狹路相逢，軟體開發過程中的樂趣及成就感，讓我決定往這條路持續深耕。
                     </div>
                     <hr />
-                    <h3>My Work Experience</h3>
+                    <h3>Work Experience</h3>
                     <div className={styles.work_experience_outer}>
                         <div className={styles.block}>
                             <div className={styles.work_experience}>
@@ -472,9 +471,9 @@ class Home extends React.Component<Props, State> {
                             onClick={this.toggleShowAllProjectButton}
                         >
                             {this.state.isShowingAllProjects ? (
-                                <IconChevronUp sideLength="16" />
+                                <IconChevronUp />
                             ) : (
-                                <IconChevronDown sideLength="16" />
+                                <IconChevronDown />
                             )}
                             {this.state.isShowingAllProjects
                                 ? "收合"
@@ -499,7 +498,7 @@ class Home extends React.Component<Props, State> {
                             rel="noreferrer"
                         >
                             <Button className="black_fill xl">
-                                <IconBook sideLength="28" />
+                                <IconBlueprint sideLength="28" />
                                 去看看
                             </Button>
                         </a>
@@ -508,14 +507,26 @@ class Home extends React.Component<Props, State> {
             </div>
         );
     }
-    private makeCoverPhotoSlow(): void {
-        const target: HTMLDivElement = this.homeRef.current!;
-        window.addEventListener("scroll", () => {
-            const rect = target.getBoundingClientRect();
-            target.style.backgroundPosition = `45% ${Math.abs(
-                0.5 * (rect.bottom - rect.height)
-            )}px`;
-        });
+    private typeGreetingText(): void {
+        let accumulatedDelayMs = 0;
+        for (let i = 0; i < this.fullGreetingText.length; i++) {
+            accumulatedDelayMs += this.getGreetingTextDelayMs(i);
+            setTimeout(() => {
+                this.setState((state, props) => {
+                    return {
+                        typedGreetingText:
+                            state.typedGreetingText + this.fullGreetingText[i],
+                    };
+                });
+            }, accumulatedDelayMs);
+        }
+    }
+    private getGreetingTextDelayMs(index: number): number {
+        if (index !== 0) {
+            if (this.fullGreetingText[index - 1] === ".") return 550;
+            else if (this.fullGreetingText[index - 1] === ",") return 300;
+        }
+        return (0.2 + Math.random()) * 70;
     }
     private toggleShowAllProjectButton = (): void => {
         this.setState((state, props) => {

@@ -10,10 +10,10 @@ export function asIcon<T>(Component: React.ComponentType<T>) {
         return (
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width={props.sideLength || "16"}
-                height={props.sideLength || "16"}
+                width={props.sideLength || "24"}
+                height={props.sideLength || "24"}
                 fill={props.color || "currentColor"}
-                viewBox="0 0 16 16"
+                viewBox="0 0 24 24"
             >
                 <Component {...props} />
             </svg>

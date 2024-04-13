@@ -13,10 +13,18 @@
     color: _.$light-gray;
     font-family: Georgia, "Times New Roman", Times, serif;
     font-size: 0.8 * _.$base-font-size;
-    & > .logo_container {
-        padding: 15px;
-        border-radius: 10px;
-        background-color: _.$white;
+    & > .contact_me {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        & > .title {
+            text-align: center;
+            font-size: 1.5 * _.$base-font-size;
+        }
+        & > .body {
+            user-select: text;
+            font-size: _.$base-font-size;
+        }
     }
     & > .social_media_list {
         display: block;
@@ -43,11 +51,17 @@
             border: none;
             border-left: 2px solid _.$deep-gray;
             padding-top: 6px;
-            margin: 0 18px;
+            margin: 0 15px;
             @media (max-width: _.$small-screen-boundary) {
-                margin: 0 10px;
+                opacity: 0;
+                margin: 0 8px;
             }
         }
+    }
+    & > .logo_container {
+        padding: 15px;
+        border-radius: 10px;
+        background-color: _.$white;
     }
     & > .copyright {
         text-align: center;

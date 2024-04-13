@@ -3,13 +3,13 @@
 .main {
     display: flex;
     align-items: center;
-    font-size: 0.9 * _.$base-font-size;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
     @media (min-width: _.$small-screen-boundary) {
         justify-content: center;
         padding: 0 10px;
         height: 100%;
         width: 103px;
-        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        font-size: 0.9 * _.$base-font-size;
         transition-duration: 150ms;
         @media (hover: hover) {
             &:hover {
@@ -18,7 +18,7 @@
         }
     }
     @media (max-width: _.$small-screen-boundary) {
-        gap: 15px;
+        gap: 20px;
         height: 65px;
         padding: 0 20px;
         color: _.$gray;

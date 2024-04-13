@@ -4,11 +4,11 @@ import React, { ReactElement } from "react";
 
 import { Logo, NavTab, RoundButton } from "..";
 import {
-    IconHouseDoorFill,
-    IconJournalBookmark,
-    IconLayoutWtf,
+    IconBlueprint,
+    IconFilePerson,
+    IconHomeblank,
     IconList,
-    IconPerson,
+    IconMedia,
 } from "../../icons";
 
 interface Props {}
@@ -29,28 +29,28 @@ export default class Header extends React.Component<Props, State> {
         };
         this.subpageTabs = [
             <NavTab
-                tabIcon={<IconHouseDoorFill sideLength="100%" />}
+                tabIcon={<IconHomeblank sideLength="100%" />}
                 tabName="HOME"
                 to="#home"
                 onClick={this.hideSideMenu}
                 key="home"
             />,
             <NavTab
-                tabIcon={<IconPerson sideLength="95%" />}
+                tabIcon={<IconFilePerson sideLength="100%" />}
                 tabName="ABOUT"
                 to="#about"
                 onClick={this.hideSideMenu}
                 key="about"
             />,
             <NavTab
-                tabIcon={<IconLayoutWtf sideLength="95%" />}
+                tabIcon={<IconMedia sideLength="100%" />}
                 tabName="PROJECTS"
                 to="#projects"
                 onClick={this.hideSideMenu}
                 key="projects"
             />,
             <NavTab
-                tabIcon={<IconJournalBookmark sideLength="95%" />}
+                tabIcon={<IconBlueprint sideLength="100%" />}
                 tabName="BLOG"
                 to="#blog"
                 onClick={this.hideSideMenu}
@@ -75,7 +75,7 @@ export default class Header extends React.Component<Props, State> {
                     </div>
                     <div className={styles.list_button_outer}>
                         <RoundButton onClick={this.showSideMenu}>
-                            <IconList sideLength="30" />
+                            <IconList />
                         </RoundButton>
                     </div>
                 </header>

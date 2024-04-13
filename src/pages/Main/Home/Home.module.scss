@@ -57,115 +57,114 @@
         position: relative;
         display: flex;
         flex-direction: column;
-        justify-content: flex-end;
-        height: 100vh;
-        background-image: url("../../../assets/cover.jpeg");
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: 45% 0;
-        &::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(
-                to bottom,
-                _.$transparent-black 0%,
-                rgba(0, 0, 0, 0.7) 100%
-            );
-            z-index: 1;
-        }
-        & > .upper {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            padding: 0 5%;
-            width: 100%;
-            z-index: 2;
-            @media (max-width: _.$small-screen-boundary) {
+        align-items: center;
+        gap: 15px;
+        padding: 18vh 30px 10px;
+        & > .avatar_container {
+            position: relative;
+            width: min(150px, max(15vw, 100px));
+            aspect-ratio: 1;
+            & > .avatar {
                 position: absolute;
-                bottom: 0;
-                flex-direction: column;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                border-radius: 50%;
+                overflow: hidden;
+                backface-visibility: hidden;
+                transition-duration: 0.3s;
+                &.back {
+                    transform: rotateY(180deg);
+                }
             }
-            & > .cta_button_list {
-                display: flex;
-                flex-direction: column;
-                gap: 25px;
-                margin: 0 25%;
-                & > .cta_button {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    border: 3px solid _.$white;
-                    border-radius: 0.1rem;
-                    text-align: center;
-                    width: max(15vw, 150px);
-                    font-size: 0.9 * _.$base-font-size;
-                    height: 50px;
-                    letter-spacing: 2 * _.$base-letter-spacing;
-                    color: _.$white;
-                    box-shadow: 0 0 0 0 _.$gray;
-                    cursor: pointer;
-                    transition-duration: 200ms;
-                    @media (max-width: _.$small-screen-boundary) {
-                        width: 61.8vw;
-                    }
-                    @media (hover: hover) {
-                        &:hover {
-                            background-color: _.$white;
-                            color: _.$deep-gray;
-                            font-weight: bold;
-                            box-shadow: 8px 8px 0 0 _.$gray;
+            @media (hover: hover) {
+                &:hover {
+                    & > .avatar {
+                        &.front {
+                            transform: rotateY(180deg);
+                        }
+                        &.back {
+                            transform: rotateY(0deg);
                         }
                     }
                 }
             }
-            & > .social_media_list {
+        }
+        & > .name {
+            font-size: 1.4 * _.$base-font-size;
+            font-weight: bold;
+            font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+                "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+        }
+        & > .greeting {
+            margin: 10px 0;
+            padding: 15px 25px;
+            width: min(100%, 500px);
+            font-size: 1.4 * _.$base-font-size;
+            line-height: 1.8 * _.$base-font-size;
+            border-radius: 30px;
+            background-color: _.$light-gray;
+            @media screen and (max-width: _.$small-screen-boundary) {
+                padding: 15px 20px;
+                font-size: 1.25 * _.$base-font-size;
+                line-height: 1.5 * _.$base-font-size;
+            }
+        }
+        & > .cta_list {
+            position: absolute;
+            bottom: 12vh;
+            left: 50%;
+            display: flex;
+            gap: 50px;
+            transform: translateX(-50%);
+            @media screen and (max-width: _.$small-screen-boundary) {
+                bottom: 20vh;
+            }
+            & > .cta {
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                color: _.$noisy-white;
-                gap: 30px;
-                @media (max-width: _.$small-screen-boundary) {
-                    flex-direction: row;
-                    margin: min(20vw, 60px) 0;
-                    gap: 40px;
-                }
-                & > .social_media {
+                & > .icon_container {
                     display: flex;
                     align-items: center;
-                    cursor: pointer;
+                    justify-content: center;
+                    width: 60px;
+                    aspect-ratio: 1;
+                    border-radius: 50%;
+                    @media (hover: hover) {
+                        &:hover {
+                            background-color: _.$transparent-black;
+                            transition-duration: 300ms;
+                        }
+                    }
                 }
             }
         }
-        & > .middle {
+        & > .scroll_down_hint {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
             display: flex;
-            flex-direction: column;
-            font-size: 3.6 * _.$base-font-size;
-            color: _.$noisy-white;
-            font-family: Cambria, Cochin, Georgia, Times, "Times New Roman",
-                serif;
-            font-weight: bold;
-            padding: 8vh 0 8vh 5%;
-            min-width: 530px;
-            max-width: 700px;
-            z-index: 2;
-            @media (max-width: _.$small-screen-boundary) {
-                position: absolute;
-                bottom: max(50vw, 36vh);
-                right: 0;
-                font-size: max(8vw, 2 * _.$base-font-size);
-                margin-right: 5%;
-                max-width: unset;
-                min-width: unset;
-                text-align: end;
-                text-shadow: 2px 2px 5px _.$gray;
+            gap: 10px;
+            color: _.$gray;
+            transform: translateX(-50%);
+            animation: 1s float infinite;
+        }
+        @keyframes float {
+            from {
+                bottom: 10px;
+            }
+            50% {
+                bottom: 20px;
+            }
+            to {
+                bottom: 10px;
             }
         }
     }
     & > .about {
-        padding-bottom: 20px;
+        padding-bottom: 30px;
         & > .work_experience_outer {
             display: flex;
             padding: 30px;
