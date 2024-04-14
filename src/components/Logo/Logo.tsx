@@ -6,6 +6,7 @@ import { NavLink } from "react-router-dom";
 
 interface Props {
     size: "s" | "m" | "l";
+    invert?: boolean;
     full?: boolean;
 }
 
@@ -33,12 +34,15 @@ export default class Logo extends React.Component<Props, State> {
     }
     private get className(): string {
         return (
-            `${styles.main} ` +
+            styles.main +
+            " " +
             (this.props.size === "s"
                 ? styles.s
                 : this.props.size === "m"
                 ? styles.m
-                : styles.l)
+                : styles.l) +
+            " " +
+            (this.props.invert ? styles.invert : "")
         );
     }
 }

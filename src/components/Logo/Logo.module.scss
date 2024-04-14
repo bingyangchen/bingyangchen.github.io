@@ -3,36 +3,44 @@
 .main {
     display: flex;
     align-items: flex-end;
-    .product_name {
+    & > .product_name {
         color: _.$black;
         white-space: nowrap;
-        font-family: Verdana, Geneva, Tahoma, sans-serif;
-        font-weight: bold;
+        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+            "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+    }
+    &.invert {
+        & > .logo {
+            filter: invert(1);
+        }
+        & > .product_name {
+            color: _.$white;
+        }
     }
     &.s {
-        gap: 5px;
-        .logo {
-            width: 25px;
+        gap: 8px;
+        & > .logo {
+            width: 35px;
         }
-        .product_name {
-            font-size: 0.75 * _.$base-font-size;
+        & > .product_name {
+            font-size: _.$base-font-size;
         }
     }
     &.m {
-        gap: 7px;
-        .logo {
+        gap: 8px;
+        & > .logo {
             width: 50px;
         }
-        .product_name {
+        & > .product_name {
             font-size: 1.25 * _.$base-font-size;
         }
     }
     &.l {
         gap: 10px;
-        .logo {
+        & > .logo {
             width: 100px;
         }
-        .product_name {
+        & > .product_name {
             font-size: 2.5 * _.$base-font-size;
         }
     }
