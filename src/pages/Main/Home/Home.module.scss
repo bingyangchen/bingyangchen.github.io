@@ -358,6 +358,9 @@
                         font-size: 1.1 * _.$base-font-size;
                         padding: 20px 10px;
                     }
+                    @media (max-width: _.$small) {
+                        font-size: _.$base-font-size;
+                    }
                 }
                 & > .subtitle {
                     color: _.$white;

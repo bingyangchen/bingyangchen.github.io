@@ -36,7 +36,7 @@ class Home extends React.Component<Props, State> {
         super(props);
         this.state = {
             typedGreetingText: "",
-            isShowingAllProjects: false,
+            isShowingAllProjects: true,
         };
         this.fullGreetingText =
             "Hi, my name is Jamison. I am currently a software engineer specializing in web application development, but I aspire to be more than that. Scroll down to know more about me!";
