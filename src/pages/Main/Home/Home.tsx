@@ -174,22 +174,22 @@ class Home extends React.Component<Props, State> {
                                     <div className={styles.tech_stack}>
                                         <div className={styles.title}>技能</div>
                                         <div className={styles.list}>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Python
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Elasticsearch
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 MySQL
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Redis
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Vue
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Cypress
                                             </code>
                                         </div>
@@ -206,7 +206,7 @@ class Home extends React.Component<Props, State> {
                                         2022年3月~2023年3月
                                     </div>
                                     <div className={styles.job_title}>
-                                        Python 後端工程師
+                                        後端工程師
                                     </div>
                                     <a
                                         className={styles.company_name}
@@ -231,28 +231,28 @@ class Home extends React.Component<Props, State> {
                                     <div className={styles.tech_stack}>
                                         <div className={styles.title}>技能</div>
                                         <div className={styles.list}>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Python
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Django
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 PostgreSQL
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Redis
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 GraphQL
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 React
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Docker
                                             </code>
-                                            <code className={styles.technology}>
+                                            <code className={styles.skill_tag}>
                                                 Facebook API
                                             </code>
                                         </div>
@@ -312,8 +312,22 @@ class Home extends React.Component<Props, State> {
                             src={nccuLogo}
                             alt="NCCU,國立政治大學,經濟學系,金融科技學士學程"
                         />
-                        <div>國立政治大學經濟學系</div>
-                        <div>國立政治大學金融科技學士學程</div>
+                        <a
+                            className={styles.name}
+                            href="https://econo.nccu.edu.tw/"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            國立政治大學經濟學系
+                        </a>
+                        <a
+                            className={styles.name}
+                            href="https://www.ftrc.nccu.edu.tw/wordpresseng/?page_id=3053"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            國立政治大學金融科技學士學程
+                        </a>
                     </div>
                 </div>
                 <div
@@ -339,7 +353,7 @@ class Home extends React.Component<Props, State> {
                             />
                             <div className={styles.title}>TradeSmartly</div>
                             <div className={styles.subtitle}>
-                                投資記帳小幫手，幫助你詳實紀錄與觀察自己的投資績效。
+                                你最佳的投資記帳小幫手，幫助你詳實紀錄與觀察自己的投資績效。
                             </div>
                         </a>
                         <a
@@ -410,7 +424,7 @@ class Home extends React.Component<Props, State> {
                                 Inventory Analyzer
                             </div>
                             <div className={styles.subtitle}>
-                                存貨管理其實就是一個最佳化問題，不同的成本結構與銷售狀況所適合的存貨策略可能截然不同！
+                                存貨管理其實就是個最佳化問題，不同成本結構與銷售狀況所適合的存貨策略可能截然不同！
                             </div>
                         </a>
                         {this.state.isShowingAllProjects ? (

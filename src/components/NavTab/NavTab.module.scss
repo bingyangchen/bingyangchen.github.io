@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    @media (min-width: _.$small-screen-boundary) {
+    @media (min-width: _.$small) {
         justify-content: center;
         padding: 0 10px;
         height: 100%;
@@ -17,7 +17,7 @@
             }
         }
     }
-    @media (max-width: _.$small-screen-boundary) {
+    @media (max-width: _.$small) {
         gap: 20px;
         height: 65px;
         padding: 0 20px;
@@ -33,10 +33,10 @@
         }
     }
     & > .icon_outer {
-        @media (min-width: _.$small-screen-boundary) {
+        @media (min-width: _.$small) {
             display: none;
         }
-        @media (max-width: _.$small-screen-boundary) {
+        @media (max-width: _.$small) {
             display: flex;
             align-items: center;
             justify-content: center;

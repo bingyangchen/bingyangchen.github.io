@@ -43,7 +43,7 @@
                 }
                 span {
                     margin-left: 8px;
-                    @media (max-width: _.$small-screen-boundary) {
+                    @media (max-width: _.$small) {
                         margin-left: 7px;
                     }
                 }
@@ -55,7 +55,7 @@
                 border-left: 2px solid _.$deep-gray;
                 padding: 3px 0;
                 margin: 0 15px;
-                @media (max-width: _.$small-screen-boundary) {
+                @media (max-width: _.$small) {
                     opacity: 0;
                     margin: 0 8px;
                 }
@@ -67,7 +67,7 @@
         &.copyright {
             text-align: center;
             line-height: 1.2 * _.$base-font-size;
-            @media (max-width: _.$small-screen-boundary) {
+            @media (max-width: _.$small) {
                 font-size: 0.7 * _.$base-font-size;
             }
         }

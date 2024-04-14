@@ -15,7 +15,7 @@
                 serif;
             text-align: center;
             font-size: 2.8 * _.$base-font-size;
-            @media screen and (max-width: _.$small-screen-boundary) {
+            @media screen and (max-width: _.$small) {
                 font-size: 2 * _.$base-font-size;
             }
         }
@@ -23,12 +23,12 @@
             margin: 30px auto;
             padding: 0 50px;
             text-align: center;
-            max-width: _.$small-screen-boundary;
+            max-width: _.$small;
             line-height: 2.2 * _.$base-font-size;
             font-size: 1.1 * _.$base-font-size;
             font-family: Cambria, Cochin, Georgia, Times, "Times New Roman",
                 serif;
-            @media screen and (max-width: _.$small-screen-boundary) {
+            @media screen and (max-width: _.$small) {
                 padding: 0 30px;
                 font-size: _.$base-font-size;
             }
@@ -48,7 +48,7 @@
             font-size: 1.6 * _.$base-font-size;
             font-weight: normal;
             color: _.$black;
-            @media screen and (max-width: _.$small-screen-boundary) {
+            @media screen and (max-width: _.$small) {
                 font-size: 1.4 * _.$base-font-size;
             }
         }
@@ -59,7 +59,7 @@
         flex-direction: column;
         align-items: center;
         gap: 15px;
-        padding: 18vh 30px 10px;
+        padding: 16vh 30px 10px;
         & > .avatar_container {
             position: relative;
             width: min(150px, max(15vw, 100px));
@@ -105,7 +105,7 @@
             line-height: 1.8 * _.$base-font-size;
             border-radius: 30px;
             background-color: _.$light-gray;
-            @media screen and (max-width: _.$small-screen-boundary) {
+            @media screen and (max-width: _.$small) {
                 padding: 15px 20px;
                 font-size: 1.25 * _.$base-font-size;
                 line-height: 1.5 * _.$base-font-size;
@@ -118,7 +118,7 @@
             display: flex;
             gap: 50px;
             transform: translateX(-50%);
-            @media screen and (max-width: _.$small-screen-boundary) {
+            @media screen and (max-width: _.$small) {
                 bottom: 15vh;
             }
             & > .cta {
@@ -138,6 +138,9 @@
                             transition-duration: 300ms;
                         }
                     }
+                }
+                & > .cta_text {
+                    font-size: 0.9 * _.$base-font-size;
                 }
             }
         }
@@ -167,13 +170,15 @@
         padding-bottom: 30px;
         & > .work_experience_outer {
             display: flex;
+            width: min(100%, _.$large);
             padding: 30px;
-            @media (max-width: _.$small-screen-boundary) {
+            margin: 0 auto;
+            @media (max-width: _.$medium) {
                 flex-direction: column;
             }
             & > .block {
                 width: 50%;
-                @media (max-width: _.$small-screen-boundary) {
+                @media (max-width: _.$medium) {
                     width: 100%;
                 }
                 & > .work_experience {
@@ -182,7 +187,7 @@
                         display: flex;
                         flex-direction: column;
                         padding: 0 12px 0 20px;
-                        @media (max-width: _.$small-screen-boundary) {
+                        @media (max-width: _.$medium) {
                             padding: 0 10px 0 0;
                         }
                         & > .head {
@@ -191,7 +196,7 @@
                             aspect-ratio: 1;
                             border-radius: 100px;
                             background-color: _.$transparent-black;
-                            @media (max-width: _.$small-screen-boundary) {
+                            @media (max-width: _.$medium) {
                                 width: 25px;
                             }
                             &::before {
@@ -204,7 +209,7 @@
                                 aspect-ratio: 1;
                                 border-radius: 100px;
                                 background-color: _.$black;
-                                @media (max-width: _.$small-screen-boundary) {
+                                @media (max-width: _.$medium) {
                                     width: 10px;
                                 }
                             }
@@ -222,8 +227,9 @@
                             align-items: center;
                             height: 35px;
                             color: _.$gray;
-                            @media (max-width: _.$small-screen-boundary) {
+                            @media (max-width: _.$medium) {
                                 height: 25px;
+                                margin-bottom: 5px;
                             }
                         }
                         & > .job_title {
@@ -260,14 +266,15 @@
                             & > .list {
                                 display: block;
                                 padding: 3px 0;
-                                & > .technology {
+                                & > .skill_tag {
                                     display: inline-block;
                                     font-size: 0.8 * _.$base-font-size;
-                                    color: _.$gray;
-                                    padding: 3px 8px;
-                                    margin: 5px;
-                                    border-radius: 3px;
-                                    background-color: _.$light-gray;
+                                    color: _.$white;
+                                    padding: 5px 8px;
+                                    margin: 4px;
+                                    border-radius: 5px;
+                                    background-color: _.$yellow;
+                                    opacity: 0.8;
                                 }
                             }
                         }
@@ -284,25 +291,26 @@
             font-family: Georgia, "Times New Roman", Times, serif;
             font-size: 1.25 * _.$base-font-size;
             color: _.$gray;
-            @media (max-width: _.$small-screen-boundary) {
+            @media (max-width: _.$small) {
                 gap: 25px;
                 font-size: _.$base-font-size;
             }
             & > .school_logo {
                 width: 220px;
-                @media (max-width: _.$small-screen-boundary) {
+                margin-bottom: 15px;
+                @media (max-width: _.$small) {
                     width: 200px;
                 }
             }
-            & > div {
+            & > .name {
                 width: min(380px, 100%);
-                @media (max-width: _.$small-screen-boundary) {
+                @media (max-width: _.$small) {
                     width: min(320px, 100%);
                 }
                 &:last-child {
                     width: min(380px, 100%);
                     text-align: end;
-                    @media (max-width: _.$small-screen-boundary) {
+                    @media (max-width: _.$small) {
                         width: min(320px, 100%);
                     }
                 }
@@ -312,11 +320,16 @@
     & > .projects {
         & > .project_list {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            padding: 30px 90px;
-            @media (max-width: _.$small-screen-boundary) {
-                padding: 30px;
+            grid-template-columns: repeat(3, calc(100% / 3));
+            gap: 4px;
+            width: min(100%, _.$large);
+            padding: 30px;
+            margin: 0 auto;
+            @media (max-width: _.$medium) {
+                padding: 30px 0;
+            }
+            @media (max-width: _.$small) {
+                gap: 2px;
             }
             & > .project {
                 position: relative;
@@ -324,7 +337,7 @@
                 flex-direction: column;
                 justify-content: flex-end;
                 aspect-ratio: 1;
-                border-radius: 10px;
+                border-radius: 3px;
                 background-size: cover;
                 background-repeat: no-repeat;
                 overflow: hidden;
@@ -338,16 +351,23 @@
                 }
                 & > .title {
                     color: _.$white;
-                    font-size: 1.2 * _.$base-font-size;
+                    font-size: 1.25 * _.$base-font-size;
                     padding: 10px 20px;
                     z-index: 1;
+                    @media (max-width: _.$medium) {
+                        font-size: 1.1 * _.$base-font-size;
+                        padding: 20px 10px;
+                    }
                 }
                 & > .subtitle {
-                    color: _.$light-gray;
+                    color: _.$white;
                     font-size: 0.85 * _.$base-font-size;
                     padding: 0 20px;
                     margin-bottom: 10%;
                     z-index: 1;
+                    @media (max-width: _.$medium) {
+                        display: none;
+                    }
                 }
                 & > .background {
                     position: absolute;
@@ -356,7 +376,7 @@
                     height: 100%;
                     background-size: cover;
                     background-repeat: no-repeat;
-                    transition-duration: 500ms;
+                    transition-duration: 1.5s;
                     &.mask {
                         &::before {
                             content: "";
@@ -365,13 +385,16 @@
                             width: 100%;
                             height: 100%;
                             background-color: _.$black;
-                            opacity: 0.5;
+                            opacity: 0.4;
                         }
                     }
                 }
                 &.trade_smartly {
                     & > .background {
                         background-image: url("../../../assets/trade_smartly.png");
+                        background-size: 50%;
+                        background-color: _.$white;
+                        background-position: 50% 50%;
                     }
                 }
                 &.path_finding {
@@ -382,7 +405,6 @@
                 &.virus_spread {
                     & > .background {
                         background-image: url("../../../assets/virus_spread.jpg");
-                        background-position: -70px 0;
                     }
                 }
                 &.wiki_prettier {
@@ -398,7 +420,6 @@
                 &.inventory_analyzer {
                     & > .background {
                         background-image: url("../../../assets/warehouse.jpg");
-                        background-position: -120px 0;
                     }
                 }
                 &.snake {
@@ -430,7 +451,7 @@
         background-repeat: no-repeat;
         background-size: contain;
         background-position: 105% 100px;
-        @media (max-width: _.$small-screen-boundary) {
+        @media (max-width: _.$small) {
             background-size: cover;
         }
         & > .blog_button_container {

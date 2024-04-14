@@ -12,13 +12,13 @@
     padding: 0 20px;
     background-color: _.$white;
     border-bottom: 1px solid _.$noisy-white;
+    animation: 300ms fadein ease;
     z-index: 3;
-    @media (max-width: _.$small-screen-boundary) {
+    @media (max-width: _.$small) {
         padding: 0 15px;
     }
     &.transparent {
-        background-color: transparent;
-        border-bottom: 1px solid transparent;
+        display: none;
     }
     & > .nav_bar_tab_container {
         display: flex;
@@ -27,13 +27,13 @@
         justify-content: flex-end;
         flex-grow: 1;
         height: 100%;
-        @media (max-width: _.$small-screen-boundary) {
+        @media (max-width: _.$small) {
             display: none;
         }
     }
     & > .list_button_outer {
         display: none;
-        @media (max-width: _.$small-screen-boundary) {
+        @media (max-width: _.$small) {
             display: initial;
         }
     }
@@ -80,6 +80,6 @@
         opacity: 0;
     }
     to {
-        opacity: 0.5;
+        opacity: 1;
     }
 }
