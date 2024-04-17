@@ -11,8 +11,6 @@ import { Button } from "../../../components";
 import {
     IconBlueprint,
     IconChevronDoubleDown,
-    IconChevronDown,
-    IconChevronUp,
     IconFilePerson,
     IconMedia,
 } from "../../../icons";
@@ -479,7 +477,7 @@ class Home extends React.Component<Props, State> {
                             </>
                         ) : null}
                     </div>
-                    <div className={styles.show_all_project_button_container}>
+                    {/* <div className={styles.show_all_project_button_container}>
                         <Button
                             className="clean l p8-15"
                             onClick={this.toggleShowAllProjectButton}
@@ -490,10 +488,10 @@ class Home extends React.Component<Props, State> {
                                 <IconChevronDown />
                             )}
                             {this.state.isShowingAllProjects
-                                ? "收合"
+                                ? "顯示較少"
                                 : "顯示更多"}
                         </Button>
-                    </div>
+                    </div> */}
                 </div>
                 <div
                     id="blog"

@@ -320,7 +320,7 @@
     & > .projects {
         & > .project_list {
             display: grid;
-            grid-template-columns: repeat(3, calc(100% / 3));
+            grid-template-columns: repeat(3, 1fr);
             gap: 4px;
             width: min(100%, _.$large);
             padding: 30px;
@@ -351,15 +351,17 @@
                 }
                 & > .title {
                     color: _.$white;
-                    font-size: 1.25 * _.$base-font-size;
+                    font-size: max(
+                        min(3vw, 1.25 * _.$base-font-size),
+                        0.9 * _.$base-font-size
+                    );
                     padding: 10px 20px;
                     z-index: 1;
                     @media (max-width: _.$medium) {
-                        font-size: 1.1 * _.$base-font-size;
                         padding: 20px 10px;
                     }
                     @media (max-width: _.$small) {
-                        font-size: _.$base-font-size;
+                        padding: 10px 10px;
                     }
                 }
                 & > .subtitle {
