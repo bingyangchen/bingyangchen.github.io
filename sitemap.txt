@@ -1,5 +1,5 @@
 ﻿https://jamison-chen.github.io/
-https://jamison-chen.github.io/path-finding-visualize/
+https://jamison-chen.github.io/path-finding-visualizer/
 https://jamison-chen.github.io/virus-spread/
 https://jamison-chen.github.io/wiki-prettier/
 https://jamison-chen.github.io/market-sim/
