@@ -1,4 +1,4 @@
-import logo from "../../assets/logo.png";
+import logo from "../../assets/logo.webp";
 import styles from "./Logo.module.scss";
 
 import React from "react";

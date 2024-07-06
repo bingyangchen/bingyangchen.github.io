@@ -1,8 +1,8 @@
-import avatar_1 from "../../../assets/avatar_1.png";
-import avatar_2 from "../../../assets/avatar_2.jpeg";
-import nccuLogo from "../../../assets/nccu_logo.png";
+import avatar_1 from "../../../assets/avatar_1.webp";
+import avatar_2 from "../../../assets/avatar_2.webp";
+import nccuLogo from "../../../assets/nccu_logo.webp";
 import pinkoiLogo from "../../../assets/pinkoi_logo.svg";
-import sysfeatherLogo from "../../../assets/sysfeather_logo.svg";
+import sysfeatherLogo from "../../../assets/sysfeather_logo.webp";
 import styles from "./Home.module.scss";
 
 import React from "react";
