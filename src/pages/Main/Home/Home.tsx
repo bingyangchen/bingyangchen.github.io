@@ -355,14 +355,14 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/path-finding-visualize"
+                            href="https://jamison-chen.github.io/path-finding-visualizer"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.path_finding}`}
                         >
                             <div className={styles.background} />
                             <div className={styles.title}>
-                                Path Finding Visualize
+                                Path-Finding Visualizer
                             </div>
                             <div className={styles.subtitle}>
                                 使用 Dijkstra
