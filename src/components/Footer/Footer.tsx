@@ -71,7 +71,7 @@ export default class Footer extends React.Component<Props, State> {
                             title="Cake"
                         >
                             <IconCSquareFill sideLength="18.5" />
-                            <span>CakeResume</span>
+                            <span>Cake</span>
                         </a>
                         <hr />
                     </div>

@@ -241,9 +241,10 @@
                         & > .company_name {
                             display: flex;
                             align-items: center;
-                            gap: 2px;
+                            gap: 4px;
                             width: fit-content;
                             color: _.$gray;
+                            font-size: 0.9 * _.$base-font-size;
                             & > img.company_logo {
                                 height: 20px;
                                 object-fit: contain;
