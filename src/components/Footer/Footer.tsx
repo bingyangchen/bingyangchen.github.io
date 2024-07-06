@@ -68,7 +68,7 @@ export default class Footer extends React.Component<Props, State> {
                             target="_blank"
                             rel="noreferrer"
                             className={styles.item}
-                            title="CakeResume"
+                            title="Cake"
                         >
                             <IconCSquareFill sideLength="18.5" />
                             <span>CakeResume</span>
