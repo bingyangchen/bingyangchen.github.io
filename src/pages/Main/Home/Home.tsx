@@ -365,8 +365,7 @@ class Home extends React.Component<Props, State> {
                                 Path-Finding Visualizer
                             </div>
                             <div className={styles.subtitle}>
-                                使用 Dijkstra
-                                演算法搜尋兩個物體間的最短路徑，順便拿來解迷宮。
+                                探索各種路徑搜尋演算法與迷宮生成演算法的視覺化工具。
                             </div>
                         </a>
                         <a
