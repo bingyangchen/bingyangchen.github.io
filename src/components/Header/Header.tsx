@@ -32,28 +32,28 @@ export default class Header extends React.Component<Props, State> {
                 tabIcon={<IconHomeblank sideLength="100%" />}
                 tabName="HOME"
                 to="#home"
-                onClick={this.hideSideMenu}
+                onClick={() => {}}
                 key="home"
             />,
             <NavTab
                 tabIcon={<IconFilePerson sideLength="100%" />}
                 tabName="ABOUT"
                 to="#about"
-                onClick={this.hideSideMenu}
+                onClick={() => {}}
                 key="about"
             />,
             <NavTab
                 tabIcon={<IconMedia sideLength="100%" />}
                 tabName="PROJECTS"
                 to="#projects"
-                onClick={this.hideSideMenu}
+                onClick={() => {}}
                 key="projects"
             />,
             <NavTab
                 tabIcon={<IconBlueprint sideLength="100%" />}
                 tabName="BLOG"
                 to="#blog"
-                onClick={this.hideSideMenu}
+                onClick={() => {}}
                 key="blog"
             />,
         ];
@@ -84,12 +84,13 @@ export default class Header extends React.Component<Props, State> {
                         styles.side_menu +
                         (this.state.isSideMenuActive ? ` ${styles.active}` : "")
                     }
+                    onClick={this.hideSideMenu}
                 >
                     {this.subpageTabs}
                 </div>
                 <div
                     className={
-                        styles.small_screen_active_background +
+                        styles.side_menu_background +
                         (this.state.isSideMenuActive ? ` ${styles.active}` : "")
                     }
                     onClick={this.hideSideMenu}

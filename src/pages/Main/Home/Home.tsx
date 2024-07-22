@@ -37,7 +37,7 @@ class Home extends React.Component<Props, State> {
             isShowingAllProjects: true,
         };
         this.fullGreetingText =
-            "Hi, my name is Jamison. I am currently a software engineer specializing in web application development, but I aspire to be more than that. Scroll down to know more about me!";
+            "Hi, my name is Jamison.\nI am currently a software engineer specializing in web application development, but I aspire to be more than that.\nScroll down to know more about me!";
         this.homeRef = React.createRef();
         this.aboutRef = React.createRef();
         this.projectsRef = React.createRef();
@@ -97,7 +97,7 @@ class Home extends React.Component<Props, State> {
                             alt="avatar"
                         />
                     </div>
-                    <div className={styles.name}>Jamison</div>
+                    <h1 className={styles.name}>Jamison</h1>
                     <div className={styles.greeting}>
                         {this.state.typedGreetingText}
                     </div>
@@ -269,7 +269,7 @@ class Home extends React.Component<Props, State> {
                                         2020年2月~2020年6月
                                     </div>
                                     <div className={styles.job_title}>
-                                        經濟學外聘講師
+                                        經濟學課程講師
                                     </div>
                                     <div className={styles.company_name}>
                                         新北市立北大高中
@@ -291,7 +291,7 @@ class Home extends React.Component<Props, State> {
                                         2019年7月~2021年7月
                                     </div>
                                     <div className={styles.job_title}>
-                                        程式設計外聘講師
+                                        程式設計課程講師
                                     </div>
                                     <div className={styles.company_name}>
                                         猿創力程式設計學校
