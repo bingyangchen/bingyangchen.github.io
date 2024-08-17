@@ -1,0 +1,13 @@
+@use "../../global_variables" as _;
+
+.main {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: _.$gray;
+    & > .logo {
+        height: 50px;
+        object-fit: contain;
+        margin: 3px;
+    }
+}

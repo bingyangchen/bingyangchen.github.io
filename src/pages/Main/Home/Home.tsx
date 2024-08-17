@@ -1,13 +1,33 @@
+import airflowLogo from "../../../assets/airflow_logo.svg";
 import avatar_1 from "../../../assets/avatar_1.webp";
 import avatar_2 from "../../../assets/avatar_2.webp";
+import awsLogo from "../../../assets/aws_logo.svg";
+import cypressLogo from "../../../assets/cypress_logo.svg";
+import djangoLogo from "../../../assets/django_logo.svg";
+import dockerLogo from "../../../assets/docker_logo.svg";
+import elasticsearchLogo from "../../../assets/elasticsearch_logo.svg";
+import fastapiLogo from "../../../assets/fastapi_logo.svg";
+import gitLogo from "../../../assets/git_logo.svg";
+import graphqlLogo from "../../../assets/graphql_logo.svg";
+import javascriptLogo from "../../../assets/javascript_logo.svg";
+import metaLogo from "../../../assets/meta_logo.svg";
+import mysqlLogo from "../../../assets/mysql_logo.svg";
 import nccuLogo from "../../../assets/nccu_logo.webp";
 import pinkoiLogo from "../../../assets/pinkoi_logo.svg";
+import postgresqlLogo from "../../../assets/postgresql_logo.svg";
+import pythonLogo from "../../../assets/python_logo.svg";
+import rabbitmqLogo from "../../../assets/rabbitmq_logo.svg";
+import reactLogo from "../../../assets/react_logo.svg";
+import redisLogo from "../../../assets/redis_logo.svg";
 import sysfeatherLogo from "../../../assets/sysfeather_logo.webp";
+import typescriptLogo from "../../../assets/typescript_logo.svg";
+import vueLogo from "../../../assets/vue_logo.svg";
+
 import styles from "./Home.module.scss";
 
 import React from "react";
 
-import { Button, WorkExperience } from "../../../components";
+import { Button, Skill, WorkExperience } from "../../../components";
 import {
     IconBlueprint,
     IconChevronDoubleDown,
@@ -15,6 +35,8 @@ import {
     IconMedia,
 } from "../../../icons";
 import { IRouter, withRouter } from "../../../router";
+
+type SkillData = { title: string; logo: string };
 
 interface Props extends IRouter {}
 
@@ -26,6 +48,7 @@ interface State {
 class Home extends React.Component<Props, State> {
     public state: State;
     private fullGreetingText: string;
+    private skills: SkillData[];
     private homeRef: React.RefObject<HTMLDivElement>;
     private aboutRef: React.RefObject<HTMLDivElement>;
     private projectsRef: React.RefObject<HTMLDivElement>;
@@ -36,6 +59,27 @@ class Home extends React.Component<Props, State> {
             typedGreetingText: "",
             isShowingAllProjects: true,
         };
+        this.skills = [
+            { title: "Python", logo: pythonLogo },
+            { title: "TypeScript", logo: typescriptLogo },
+            { title: "JavaScript", logo: javascriptLogo },
+            { title: "MySQL", logo: mysqlLogo },
+            { title: "PostgreSQL", logo: postgresqlLogo },
+            { title: "Redis", logo: redisLogo },
+            { title: "Elasticsearch", logo: elasticsearchLogo },
+            { title: "RabbitMQ", logo: rabbitmqLogo },
+            { title: "Airflow", logo: airflowLogo },
+            { title: "Django", logo: djangoLogo },
+            { title: "FastAPI", logo: fastapiLogo },
+            { title: "React", logo: reactLogo },
+            { title: "Vue", logo: vueLogo },
+            { title: "Git", logo: gitLogo },
+            { title: "Docker", logo: dockerLogo },
+            { title: "AWS", logo: awsLogo },
+            { title: "GraphQL", logo: graphqlLogo },
+            { title: "Cypress", logo: cypressLogo },
+            { title: "Meta API", logo: metaLogo },
+        ];
         this.fullGreetingText =
             "Hi, my name is Jamison.\nI am currently a software engineer specializing in web application development, but I aspire to be more than that.\nScroll down to know more about me!";
         this.homeRef = React.createRef();
@@ -146,15 +190,15 @@ class Home extends React.Component<Props, State> {
                                 company_logo={pinkoiLogo}
                                 company_link="https://www.pinkoi.com"
                                 description="開發與維護內部系統管理員工具，協助提升活動設定、商品推廣、訊息推播…等操作效率。主導設計與實作數項全新商業策略的後端服務，實現如主題訂閱、活動登錄…等機制。重構老舊程式碼並為其撰寫測試，有效降低系統負擔、減少錯誤，同時增加程式碼之可維護性。運用 AI 工具成功優化網站 SEO，提升站內商品的可見度與搜尋引擎排名。"
-                                skills={[
-                                    "Python",
-                                    "MySQL",
-                                    "Redis",
-                                    "Elasticsearch",
-                                    "RabbitMQ",
-                                    "Vue",
-                                    "Cypress",
-                                ]}
+                                // skills={[
+                                //     "Python",
+                                //     "MySQL",
+                                //     "Redis",
+                                //     "Elasticsearch",
+                                //     "RabbitMQ",
+                                //     "Vue",
+                                //     "Cypress",
+                                // ]}
                             />
                             <WorkExperience
                                 work_duration="2022年3月~2023年3月"
@@ -163,16 +207,16 @@ class Home extends React.Component<Props, State> {
                                 company_logo={sysfeatherLogo}
                                 company_link="https://www.sysfeather.com"
                                 description="參與開發多租戶架構的電商自動開店系統後端，負責 Authentication 與 Rate Limit 機制，確保系統的安全性與效能。負責社群購物後台管理系統的概念驗證，串接 Facebook API，整合用戶的電商網站與社群帳號，提供直播管理、留言分析、訊息中心、貼文抽獎…等功能，藉此優化商家的社群平台管理體驗。"
-                                skills={[
-                                    "Python",
-                                    "Django",
-                                    "PostgreSQL",
-                                    "Redis",
-                                    "GraphQL",
-                                    "Docker",
-                                    "React",
-                                    "Facebook API",
-                                ]}
+                                // skills={[
+                                //     "Python",
+                                //     "Django",
+                                //     "PostgreSQL",
+                                //     "Redis",
+                                //     "GraphQL",
+                                //     "Docker",
+                                //     "React",
+                                //     "Facebook API",
+                                // ]}
                             />
                         </div>
                         <div className={styles.block}>
@@ -188,6 +232,28 @@ class Home extends React.Component<Props, State> {
                                 company_name="猿創力程式設計學校"
                                 description="其實起初只是抱著想賺外快的心態，獲得錄取後發現學生的年齡層是小學，內容必須簡單，起初還有些沮喪，沒想到可愛的小學生們讓我還是愛上了這份兼職工作。"
                             />
+                        </div>
+                    </div>
+                    <h3>Skills</h3>
+                    <div className={styles.skills_outer}>
+                        <div className={styles.skills_inner}>
+                            {[1, 2].map((number) => {
+                                return (
+                                    <div className={styles.screen} key={number}>
+                                        {this.skills.map(
+                                            ({ title, logo }, idx) => {
+                                                return (
+                                                    <Skill
+                                                        logo={logo}
+                                                        title={title}
+                                                        key={idx}
+                                                    />
+                                                );
+                                            }
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                     <h3>Education</h3>
