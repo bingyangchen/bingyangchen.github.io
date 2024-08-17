@@ -13,6 +13,10 @@
     color: _.$light-gray;
     font-family: Georgia, "Times New Roman", Times, serif;
     font-size: 0.8 * _.$base-font-size;
+    &,
+    & * {
+        user-select: text;
+    }
     & > .section {
         display: flex;
         flex-direction: column;
@@ -23,7 +27,6 @@
             font-size: 1.5 * _.$base-font-size;
         }
         &.contact_me > .body {
-            user-select: text;
             font-size: _.$base-font-size;
         }
         &.social_media > .list,

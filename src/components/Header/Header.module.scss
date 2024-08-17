@@ -1,5 +1,18 @@
 @use "../../global_variables" as _;
 
+@mixin create-keyframe($name, $end) {
+    @keyframes #{$name} {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: $end;
+        }
+    }
+}
+@include create-keyframe(fadein100, 1);
+@include create-keyframe(fadein50, 0.5);
+
 .main {
     position: fixed;
     top: 0;
@@ -12,7 +25,7 @@
     padding: 0 20px;
     background-color: _.$white;
     border-bottom: 1px solid _.$noisy-white;
-    animation: 300ms fadein ease;
+    animation: 300ms fadein100 ease;
     z-index: 3;
     @media (max-width: _.$small) {
         padding: 0 15px;
@@ -58,7 +71,7 @@
         transform: translateX(0);
     }
     & + .side_menu_background {
-        animation: 300ms fadein ease;
+        animation: 300ms fadein50 ease;
         display: none;
         &.active {
             position: fixed;
@@ -71,14 +84,5 @@
             opacity: 0.5;
             z-index: 3;
         }
-    }
-}
-
-@keyframes fadein {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 0.5;
     }
 }
