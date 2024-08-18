@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.7c293ea7.css",
-    "main.js": "/static/js/main.8feff0b5.js",
+    "main.css": "/static/css/main.dce22fa5.css",
+    "main.js": "/static/js/main.eb6c34f6.js",
     "static/js/787.f8a0dea2.chunk.js": "/static/js/787.f8a0dea2.chunk.js",
     "static/media/avatar_2.webp": "/static/media/avatar_2.61e4200cc3ece25c9bb3.webp",
     "static/media/market.webp": "/static/media/market.8577cd6a56f449be1e4d.webp",
@@ -40,12 +40,12 @@
     "static/media/javascript_logo.svg": "/static/media/javascript_logo.7bb08cdbe94fc2dfc1b51be8c2dae551.svg",
     "static/media/fastapi_logo.svg": "/static/media/fastapi_logo.1536093a1656eaee7a8d589641ff2803.svg",
     "static/media/vue_logo.svg": "/static/media/vue_logo.2b520303788d88b4e0c3776cd07cd61f.svg",
-    "main.7c293ea7.css.map": "/static/css/main.7c293ea7.css.map",
-    "main.8feff0b5.js.map": "/static/js/main.8feff0b5.js.map",
+    "main.dce22fa5.css.map": "/static/css/main.dce22fa5.css.map",
+    "main.eb6c34f6.js.map": "/static/js/main.eb6c34f6.js.map",
     "787.f8a0dea2.chunk.js.map": "/static/js/787.f8a0dea2.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.7c293ea7.css",
-    "static/js/main.8feff0b5.js"
+    "static/css/main.dce22fa5.css",
+    "static/js/main.eb6c34f6.js"
   ]
 }
