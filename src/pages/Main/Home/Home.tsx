@@ -48,7 +48,6 @@ interface State {
 class Home extends React.Component<Props, State> {
     public state: State;
     private fullGreetingText: string;
-    private skills: SkillData[];
     private homeRef: React.RefObject<HTMLDivElement>;
     private aboutRef: React.RefObject<HTMLDivElement>;
     private projectsRef: React.RefObject<HTMLDivElement>;
@@ -59,27 +58,6 @@ class Home extends React.Component<Props, State> {
             typedGreetingText: "",
             isShowingAllProjects: true,
         };
-        this.skills = [
-            { title: "Python", logo: pythonLogo },
-            { title: "TypeScript", logo: typescriptLogo },
-            { title: "JavaScript", logo: javascriptLogo },
-            { title: "MySQL", logo: mysqlLogo },
-            { title: "PostgreSQL", logo: postgresqlLogo },
-            { title: "Redis", logo: redisLogo },
-            { title: "Elasticsearch", logo: elasticsearchLogo },
-            { title: "RabbitMQ", logo: rabbitmqLogo },
-            { title: "Airflow", logo: airflowLogo },
-            { title: "Django", logo: djangoLogo },
-            { title: "FastAPI", logo: fastapiLogo },
-            { title: "React", logo: reactLogo },
-            { title: "Vue", logo: vueLogo },
-            { title: "Git", logo: gitLogo },
-            { title: "Docker", logo: dockerLogo },
-            { title: "AWS", logo: awsLogo },
-            { title: "GraphQL", logo: graphqlLogo },
-            { title: "Cypress", logo: cypressLogo },
-            { title: "Meta API", logo: metaLogo },
-        ];
         this.fullGreetingText =
             "Hi, my name is Jamison.\nI am currently a software engineer specializing in web application development, but I aspire to be more than that.\nScroll down to know more about me!";
         this.homeRef = React.createRef();
@@ -189,7 +167,7 @@ class Home extends React.Component<Props, State> {
                                 company_name="Pinkoi"
                                 company_logo={pinkoiLogo}
                                 company_link="https://www.pinkoi.com"
-                                description="開發與維護內部系統管理員工具，協助提升活動設定、商品推廣、訊息推播…等操作效率。主導設計與實作數項全新商業策略的後端服務，實現如主題訂閱、活動登錄…等機制。重構老舊程式碼並為其撰寫測試，有效降低系統負擔、減少錯誤，同時增加程式碼之可維護性。運用 AI 工具成功優化網站 SEO，提升站內商品的可見度與搜尋引擎排名。"
+                                description="開設 API、串接整合第三方服務，並與前端、App 團隊協作，交付多項全新系統機制；重新設計資料庫 Schema 與系統流程、重構老舊程式碼，有效降低系統負擔並提高穩定性；開發與維護內部系統管理員工具，協助其他團隊提升工作效率；迅速排查並解決突發性系統錯誤；執行 Code Review，共同維護程式碼品質。"
                                 // skills={[
                                 //     "Python",
                                 //     "MySQL",
@@ -221,16 +199,16 @@ class Home extends React.Component<Props, State> {
                         </div>
                         <div className={styles.block}>
                             <WorkExperience
+                                work_duration="2020年7月~2021年1月"
+                                job_title="實習全端工程師"
+                                company_name="巨跡資訊"
+                                description="繪製 ER Diagram、設計資料庫 Schema，並對系統設計進行優劣勢分析；結合 Azure 語意辨識服務技術，開發 LINE 聊天機器人；結合開源 OCR 套件，建立能夠辨識護照內容之服務，提供用戶自動填寫之功能。"
+                            />
+                            <WorkExperience
                                 work_duration="2020年2月~2020年6月"
                                 job_title="經濟學課程講師"
                                 company_name="新北市立北大高中"
                                 description="為了讓即將畢業的高中生對經濟學有進一步認識，我親自設計了為期 15 周的經濟學原理課程，課程內容包括時事探討、基本原理，與個體進階理論。教學不但能帶來成就感，也能讓自己真正了解那個領域。製作課堂簡報也使我的簡報設計能力大幅提升。"
-                            />
-                            <WorkExperience
-                                work_duration="2019年7月~2021年7月"
-                                job_title="程式設計課程講師"
-                                company_name="猿創力程式設計學校"
-                                description="其實起初只是抱著想賺外快的心態，獲得錄取後發現學生的年齡層是小學，內容必須簡單，起初還有些沮喪，沒想到可愛的小學生們讓我還是愛上了這份兼職工作。"
                             />
                         </div>
                     </div>
@@ -240,17 +218,64 @@ class Home extends React.Component<Props, State> {
                             {[1, 2].map((number) => {
                                 return (
                                     <div className={styles.screen} key={number}>
-                                        {this.skills.map(
-                                            ({ title, logo }, idx) => {
-                                                return (
-                                                    <Skill
-                                                        logo={logo}
-                                                        title={title}
-                                                        key={idx}
-                                                    />
-                                                );
-                                            }
-                                        )}
+                                        <Skill
+                                            logo={pythonLogo}
+                                            title="Python"
+                                        />
+                                        <Skill
+                                            logo={typescriptLogo}
+                                            title="TypeScript"
+                                        />
+                                        <Skill
+                                            logo={javascriptLogo}
+                                            title="JavaScript"
+                                        />
+                                        <Skill logo={mysqlLogo} title="MySQL" />
+                                        <Skill
+                                            logo={postgresqlLogo}
+                                            title="PostgreSQL"
+                                        />
+                                        <Skill logo={redisLogo} title="Redis" />
+                                        <Skill
+                                            logo={elasticsearchLogo}
+                                            title="Elasticsearch"
+                                        />
+                                        <Skill
+                                            logo={rabbitmqLogo}
+                                            title="RabbitMQ"
+                                        />
+                                        <Skill
+                                            logo={airflowLogo}
+                                            title="Airflow"
+                                        />
+                                        <Skill
+                                            logo={djangoLogo}
+                                            title="Django"
+                                        />
+                                        <Skill
+                                            logo={fastapiLogo}
+                                            title="FastAPI"
+                                        />
+                                        <Skill logo={reactLogo} title="React" />
+                                        <Skill logo={vueLogo} title="Vue" />
+                                        <Skill logo={gitLogo} title="Git" />
+                                        <Skill
+                                            logo={dockerLogo}
+                                            title="Docker"
+                                        />
+                                        <Skill logo={awsLogo} title="AWS" />
+                                        <Skill
+                                            logo={graphqlLogo}
+                                            title="GraphQL"
+                                        />
+                                        <Skill
+                                            logo={cypressLogo}
+                                            title="Cypress"
+                                        />
+                                        <Skill
+                                            logo={metaLogo}
+                                            title="Meta API"
+                                        />
                                     </div>
                                 );
                             })}
@@ -263,22 +288,24 @@ class Home extends React.Component<Props, State> {
                             src={nccuLogo}
                             alt="NCCU,國立政治大學,經濟學系,金融科技學士學程"
                         />
-                        <a
-                            className={styles.name}
-                            href="https://econo.nccu.edu.tw/"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            國立政治大學經濟學系
-                        </a>
-                        <a
-                            className={styles.name}
-                            href="https://www.ftrc.nccu.edu.tw/wordpresseng/?page_id=3053"
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            國立政治大學金融科技學士學程
-                        </a>
+                        <div className={styles.degree_list}>
+                            <a
+                                className={styles.degree}
+                                href="https://econo.nccu.edu.tw/"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                國立政治大學經濟學系
+                            </a>
+                            <a
+                                className={styles.degree}
+                                href="https://www.ftrc.nccu.edu.tw/wordpresseng/?page_id=3053"
+                                target="_blank"
+                                rel="noreferrer"
+                            >
+                                國立政治大學金融科技學士學程
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div

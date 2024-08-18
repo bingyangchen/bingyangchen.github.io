@@ -170,7 +170,7 @@
         }
     }
     & > .about {
-        padding-bottom: 30px;
+        padding-bottom: 50px;
         & > .work_experience_outer {
             display: flex;
             width: min(100%, _.$large);
@@ -216,40 +216,35 @@
         }
         & > .education_outer {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 25px;
+            justify-content: center;
+            gap: 50px;
             padding: 30px;
-            font-family: Georgia, "Times New Roman", Times, serif;
-            font-size: 1.25 * _.$base-font-size;
-            color: _.$gray;
             @media (max-width: _.$small) {
-                gap: 25px;
-                font-size: _.$base-font-size;
+                flex-direction: column;
+                gap: 40px;
             }
             & > .school_logo {
-                width: 220px;
-                margin-bottom: 15px;
+                width: 260px;
                 @media (max-width: _.$small) {
-                    width: 200px;
+                    width: 220px;
                 }
             }
-            & > .name {
-                width: min(380px, 100%);
+            & > .degree_list {
+                display: flex;
+                flex-direction: column;
+                gap: 25px;
+                font-family: Georgia, "Times New Roman", Times, serif;
+                font-size: 1.25 * _.$base-font-size;
+                color: _.$gray;
                 @media (max-width: _.$small) {
-                    width: min(320px, 100%);
-                }
-                &:last-child {
-                    width: min(380px, 100%);
-                    text-align: end;
-                    @media (max-width: _.$small) {
-                        width: min(320px, 100%);
-                    }
+                    font-size: _.$base-font-size;
                 }
             }
         }
     }
     & > .projects {
+        padding-bottom: 30px;
         & > .project_list {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
