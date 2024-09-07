@@ -25,9 +25,9 @@ export default class Logo extends React.Component<Props, State> {
                 className={this.className}
                 onClick={() => window.scrollTo({ top: 0 })}
             >
-                <img className={styles.logo} src={logo} alt="Jamison Chen" />
+                <img className={styles.logo} src={logo} alt="Bing-Yang Chen" />
                 {this.props.full && (
-                    <div className={styles.product_name}>JamisonChen</div>
+                    <div className={styles.product_name}>byc1999</div>
                 )}
             </NavLink>
         );

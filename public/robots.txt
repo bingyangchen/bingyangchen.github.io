@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://jamison-chen.github.io/sitemap.txt
+Sitemap: https://me.byc1999.com/sitemap.txt

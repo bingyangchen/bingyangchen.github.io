@@ -1,7 +1,7 @@
 {
-  "name": "my-personal-website",
+  "name": "my-site",
   "version": "1.0.0",
-  "homepage": "https://jamison-chen.github.io",
+  "homepage": "https://me.byc1999.com",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.5",

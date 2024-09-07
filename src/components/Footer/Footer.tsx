@@ -78,8 +78,8 @@ export default class Footer extends React.Component<Props, State> {
                 </div>
                 <Logo size="s" full invert />
                 <div className={`${styles.section} ${styles.copyright}`}>
-                    Copyright © {new Date().getFullYear()} 陳秉洋 (Jamison Chen)
-                    All rights reserved
+                    Copyright © {new Date().getFullYear()} 陳秉洋 (Bing-Yang
+                    Chen) All rights reserved
                 </div>
             </footer>
         );

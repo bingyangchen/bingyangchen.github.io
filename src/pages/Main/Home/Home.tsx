@@ -59,7 +59,7 @@ class Home extends React.Component<Props, State> {
             isShowingAllProjects: true,
         };
         this.fullGreetingText =
-            "Hi, my name is Jamison.\nI am currently a software engineer specializing in web application development, but I aspire to be more than that.\nScroll down to know more about me!";
+            "Hi, my name is Bing-Yang.\nI am currently a software engineer specializing in web application development, but I aspire to be more than that.\nScroll down to know more about me!";
         this.homeRef = React.createRef();
         this.aboutRef = React.createRef();
         this.projectsRef = React.createRef();
@@ -119,7 +119,7 @@ class Home extends React.Component<Props, State> {
                             alt="avatar"
                         />
                     </div>
-                    <h1 className={styles.name}>Jamison</h1>
+                    <h1 className={styles.name}>Bing-Yang Chen</h1>
                     <div className={styles.greeting}>
                         {this.state.typedGreetingText}
                     </div>
@@ -484,7 +484,7 @@ class Home extends React.Component<Props, State> {
                     <hr />
                     <div className={styles.blog_button_container}>
                         <a
-                            href="https://jamison-chen.gitbook.io/blog/"
+                            href="https://blog.all.byc1999.com/"
                             target="_blank"
                             rel="noreferrer"
                         >
