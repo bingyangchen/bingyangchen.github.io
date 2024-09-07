@@ -1,3 +1,3 @@
-# My Personal Website
+# My Site
 
-Please visit <https://jamison-chen.github.io/>
+Please visit <https://me.byc1999.com/>
