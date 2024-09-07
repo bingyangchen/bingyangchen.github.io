@@ -1,9 +1,9 @@
 ﻿https://me.byc1999.com/
-https://jamison-chen.github.io/path-finding-visualizer/
-https://jamison-chen.github.io/virus-spread/
-https://jamison-chen.github.io/wiki-prettier/
-https://jamison-chen.github.io/market-sim/
-https://jamison-chen.github.io/inventory-analyzer/
-https://jamison-chen.github.io/snake/
-https://jamison-chen.github.io/tic-tac-toe/
-https://jamison-chen.github.io/pick-coins/
+https://me.byc1999.com/path-finding-visualizer/
+https://me.byc1999.com/virus-spread/
+https://me.byc1999.com/wiki-prettier/
+https://me.byc1999.com/market-sim/
+https://me.byc1999.com/inventory-analyzer/
+https://me.byc1999.com/snake/
+https://me.byc1999.com/tic-tac-toe/
+https://me.byc1999.com/pick-coins/
