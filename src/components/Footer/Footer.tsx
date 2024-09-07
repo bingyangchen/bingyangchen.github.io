@@ -53,7 +53,7 @@ export default class Footer extends React.Component<Props, State> {
                         </a>
                         <hr />
                         <a
-                            href="https://www.linkedin.com/in/jamison-chen-3937851a5/"
+                            href="https://www.linkedin.com/in/bing-yang-chen-3937851a5/"
                             target="_blank"
                             rel="noreferrer"
                             className={styles.item}
