@@ -19,7 +19,7 @@ export default class Footer extends React.Component<Props, State> {
             <footer className={styles.main}>
                 <div className={`${styles.section} ${styles.contact_me}`}>
                     <div className={styles.title}>合作邀約</div>
-                    <div className={styles.body}>106208004@g.nccu.edu.tw</div>
+                    <div className={styles.body}>bryan.chen.429@gmail.com</div>
                 </div>
                 <div className={`${styles.section} ${styles.services}`}>
                     <div className={styles.title}>服務項目</div>
