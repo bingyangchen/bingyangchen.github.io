@@ -36,8 +36,6 @@ import {
 } from "../../../icons";
 import { IRouter, withRouter } from "../../../router";
 
-type SkillData = { title: string; logo: string };
-
 interface Props extends IRouter {}
 
 interface State {
