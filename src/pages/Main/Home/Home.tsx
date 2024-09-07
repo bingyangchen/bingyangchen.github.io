@@ -482,7 +482,7 @@ class Home extends React.Component<Props, State> {
                     <hr />
                     <div className={styles.blog_button_container}>
                         <a
-                            href="https://blog.all.byc1999.com/"
+                            href="https://blog.byc1999.com/list"
                             target="_blank"
                             rel="noreferrer"
                         >
