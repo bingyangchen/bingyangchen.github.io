@@ -333,7 +333,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/path-finding-visualizer"
+                            href="https://me.byc1999.com/path-finding-visualizer"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.path_finding}`}
@@ -347,7 +347,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/virus-spread"
+                            href="https://me.byc1999.com/virus-spread"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.virus_spread}`}
@@ -361,7 +361,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/wiki-prettier"
+                            href="https://me.byc1999.com/wiki-prettier"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.wiki_prettier}`}
@@ -373,7 +373,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/market-sim"
+                            href="https://me.byc1999.com/market-sim"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.market_simulate}`}
@@ -387,7 +387,7 @@ class Home extends React.Component<Props, State> {
                             </div>
                         </a>
                         <a
-                            href="https://jamison-chen.github.io/inventory-analyzer"
+                            href="https://me.byc1999.com/inventory-analyzer"
                             target="_blank"
                             rel="noreferrer"
                             className={`${styles.project} ${styles.inventory_analyzer}`}
@@ -405,7 +405,7 @@ class Home extends React.Component<Props, State> {
                         {this.state.isShowingAllProjects ? (
                             <>
                                 <a
-                                    href="https://jamison-chen.github.io/snake"
+                                    href="https://me.byc1999.com/snake"
                                     target="_blank"
                                     rel="noreferrer"
                                     className={`${styles.project} ${styles.snake}`}
@@ -420,7 +420,7 @@ class Home extends React.Component<Props, State> {
                                     </div>
                                 </a>
                                 <a
-                                    href="https://jamison-chen.github.io/tic-tac-toe"
+                                    href="https://me.byc1999.com/tic-tac-toe"
                                     target="_blank"
                                     rel="noreferrer"
                                     className={`${styles.project} ${styles.tic_tac_toe}`}
@@ -436,7 +436,7 @@ class Home extends React.Component<Props, State> {
                                     </div>
                                 </a>
                                 <a
-                                    href="https://jamison-chen.github.io/pick-coins"
+                                    href="https://me.byc1999.com/pick-coins"
                                     target="_blank"
                                     rel="noreferrer"
                                     className={`${styles.project} ${styles.pick_coins}`}
