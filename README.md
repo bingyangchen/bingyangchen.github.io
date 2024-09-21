@@ -1,3 +1,3 @@
 # My Site
 
-Please visit <https://me.byc1999.com/>
+Please visit <https://byc1999.com/>
