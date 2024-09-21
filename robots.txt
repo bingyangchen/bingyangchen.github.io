@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://me.byc1999.com/sitemap.txt
+Sitemap: https://byc1999.com/sitemap.txt
