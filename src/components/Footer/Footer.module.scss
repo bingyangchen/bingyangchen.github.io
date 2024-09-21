@@ -39,11 +39,11 @@
                 align-items: flex-end;
                 padding: 8px 0;
                 transition-duration: 150ms;
-                @media (hover: hover) {
-                    &:hover {
-                        color: _.$white;
-                    }
-                }
+                // @media (hover: hover) {
+                //     &:hover {
+                //         color: _.$white;
+                //     }
+                // }
                 span {
                     margin-left: 8px;
                     @media (max-width: _.$small) {

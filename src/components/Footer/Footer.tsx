@@ -44,7 +44,7 @@ export default class Footer extends React.Component<Props, State> {
                         <a
                             href="https://github.com/Jamison-Chen"
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noreferrer noopener"
                             className={styles.item}
                             title="GitHub"
                         >
@@ -55,7 +55,7 @@ export default class Footer extends React.Component<Props, State> {
                         <a
                             href="https://www.linkedin.com/in/bing-yang-chen-3937851a5/"
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noreferrer noopener"
                             className={styles.item}
                             title="LinkedIn"
                         >
@@ -64,9 +64,9 @@ export default class Footer extends React.Component<Props, State> {
                         </a>
                         <hr />
                         <a
-                            href="https://www.cakeresume.com/me/BingYangChen"
+                            href="https://www.cake.me/me/BingYangChen"
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noreferrer noopener"
                             className={styles.item}
                             title="Cake"
                         >

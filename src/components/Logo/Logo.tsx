@@ -27,7 +27,7 @@ export default class Logo extends React.Component<Props, State> {
             >
                 <img className={styles.logo} src={logo} alt="Bing-Yang Chen" />
                 {this.props.full && (
-                    <div className={styles.product_name}>byc1999</div>
+                    <div className={styles.product_name}>byc1999.com</div>
                 )}
             </NavLink>
         );

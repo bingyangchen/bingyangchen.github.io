@@ -23,7 +23,7 @@
             width: 35px;
         }
         & > .product_name {
-            font-size: _.$base-font-size;
+            font-size: 0.9 * _.$base-font-size;
         }
     }
     &.m {
