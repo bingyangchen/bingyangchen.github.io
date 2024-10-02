@@ -22,6 +22,6 @@ fi
 git push origin master
 npm run deploy
 
-printf "${GREEN}SUCCESS!${RESET}\n"
+printf "${GREEN}Done!${RESET}\n"
 
 set +e
