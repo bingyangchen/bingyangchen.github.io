@@ -109,12 +109,12 @@ class Home extends React.Component<Props, State> {
                         <img
                             className={`${styles.avatar} ${styles.front}`}
                             src={avatar_2}
-                            alt="avatar"
+                            alt="陳秉洋"
                         />
                         <img
                             className={`${styles.avatar} ${styles.back}`}
                             src={avatar_1}
-                            alt="avatar"
+                            alt="Bing-Yang Chen"
                         />
                     </div>
                     <h1 className={styles.name}>Bing-Yang Chen</h1>
