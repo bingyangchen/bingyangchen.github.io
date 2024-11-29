@@ -42,7 +42,7 @@ export default class Footer extends React.Component<Props, State> {
                     <div className={styles.title}>Social Media</div>
                     <div className={styles.list}>
                         <a
-                            href="https://github.com/Jamison-Chen"
+                            href="https://github.com/bingyangchen"
                             target="_blank"
                             rel="noreferrer noopener"
                             className={styles.item}
