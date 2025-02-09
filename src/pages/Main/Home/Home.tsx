@@ -29,7 +29,7 @@ import React from "react";
 
 import { Button, Skill, WorkExperience } from "../../../components";
 import {
-    IconBlueprint,
+    IconBlogText,
     IconChevronDoubleDown,
     IconFilePerson,
     IconMedia,
@@ -136,7 +136,7 @@ class Home extends React.Component<Props, State> {
                         </a>
                         <a href="#blog" className={styles.cta}>
                             <div className={styles.icon_container}>
-                                <IconBlueprint sideLength="30" />
+                                <IconBlogText sideLength="30" />
                             </div>
                             <div className={styles.cta_text}>Blog</div>
                         </a>
@@ -487,7 +487,7 @@ class Home extends React.Component<Props, State> {
                             rel="noreferrer"
                         >
                             <Button className="black_fill xl">
-                                <IconBlueprint sideLength="28" />
+                                <IconBlogText sideLength="28" />
                                 去看看
                             </Button>
                         </a>

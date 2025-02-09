@@ -4,7 +4,7 @@ import React, { ReactElement } from "react";
 
 import { Logo, NavTab, RoundButton } from "..";
 import {
-    IconBlueprint,
+    IconBlogText,
     IconFilePerson,
     IconHomeblank,
     IconList,
@@ -50,7 +50,7 @@ export default class Header extends React.Component<Props, State> {
                 key="projects"
             />,
             <NavTab
-                tabIcon={<IconBlueprint sideLength="100%" />}
+                tabIcon={<IconBlogText sideLength="100%" />}
                 tabName="BLOG"
                 to="#blog"
                 onClick={() => {}}
