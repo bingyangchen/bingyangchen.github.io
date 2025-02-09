@@ -1,6 +1,6 @@
 import airflowLogo from "../../../assets/airflow_logo.svg";
 import avatar_1 from "../../../assets/avatar_1.webp";
-import avatar_2 from "../../../assets/avatar_2.webp";
+import avatar_2 from "../../../assets/avatar_2.jpg";
 import awsLogo from "../../../assets/aws_logo.svg";
 import cypressLogo from "../../../assets/cypress_logo.svg";
 import djangoLogo from "../../../assets/django_logo.svg";
