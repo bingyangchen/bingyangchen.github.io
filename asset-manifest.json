@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.1a16a080.css",
-    "main.js": "/static/js/main.48bec426.js",
+    "main.js": "/static/js/main.64bf37b6.js",
     "static/js/27.e02355b6.chunk.js": "/static/js/27.e02355b6.chunk.js",
     "static/media/market.webp": "/static/media/market.8577cd6a56f449be1e4d.webp",
     "static/media/coins.webp": "/static/media/coins.1f1854f4abb1a3ee6528.webp",
@@ -43,6 +43,6 @@
   },
   "entrypoints": [
     "static/css/main.1a16a080.css",
-    "static/js/main.48bec426.js"
+    "static/js/main.64bf37b6.js"
   ]
 }
