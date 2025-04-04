@@ -18,23 +18,35 @@ export default class Footer extends React.Component<Props, State> {
         return (
             <footer className={styles.main}>
                 <div className={`${styles.section} ${styles.contact_me}`}>
-                    <div className={styles.title}>合作邀約</div>
+                    <div className={styles.title}>Contact Me</div>
                     <div className={styles.body}>bryan.chen.429@gmail.com</div>
                 </div>
                 <div className={`${styles.section} ${styles.services}`}>
-                    <div className={styles.title}>服務項目</div>
+                    <div className={styles.title}>Services</div>
                     <div className={styles.list}>
-                        <div className={styles.item}>個人形象網站製作</div>
+                        <div className={styles.item}>
+                            Personal Branding Website Development
+                        </div>
                         <hr />
-                        <div className={styles.item}>公司形象網站製作</div>
+                        <div className={styles.item}>
+                            Corporate Branding Website Development
+                        </div>
                         <hr />
-                        <div className={styles.item}>公司內部管理系統</div>
+                        <div className={styles.item}>
+                            Corporate Internal Management Systems
+                        </div>
                         <hr />
-                        <div className={styles.item}>其它應用程式開發</div>
+                        <div className={styles.item}>
+                            Other Web Application Development
+                        </div>
                         <hr />
-                        <div className={styles.item}>基礎程式設計教學</div>
+                        <div className={styles.item}>
+                            Programming Instruction
+                        </div>
                         <hr />
-                        <div className={styles.item}>經濟學原理與實務</div>
+                        <div className={styles.item}>
+                            Principles of Economics Instruction
+                        </div>
                         <hr />
                     </div>
                 </div>

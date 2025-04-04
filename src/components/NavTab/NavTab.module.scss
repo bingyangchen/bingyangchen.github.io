@@ -3,7 +3,7 @@
 .main {
     display: flex;
     align-items: center;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-family: Verdana;
     @media (min-width: _.$small) {
         justify-content: center;
         padding: 0 10px;

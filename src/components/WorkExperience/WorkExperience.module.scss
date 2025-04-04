@@ -45,6 +45,7 @@
             display: flex;
             align-items: center;
             height: 35px;
+            font-size: 0.9 * _.$base-font-size;
             color: _.$gray;
             @media (max-width: _.$medium) {
                 height: 25px;
@@ -54,17 +55,16 @@
         & > .job_title {
             display: flex;
             align-items: center;
-            font-size: 1.4 * _.$base-font-size;
-            height: 35px;
+            font-size: 1.3 * _.$base-font-size;
             font-weight: bold;
             color: _.$black;
+            padding-bottom: 5px;
         }
         & > .company_name {
             display: flex;
             align-items: center;
             gap: 4px;
             width: fit-content;
-            height: 30px;
             color: _.$gray;
             font-size: 0.9 * _.$base-font-size;
             & > img.company_logo {
@@ -77,6 +77,8 @@
         & > .description {
             text-align: justify;
             text-justify: inter-ideograph;
+            font-size: 0.95 * _.$base-font-size;
+            letter-spacing: 0.5px;
             line-height: 1.5 * _.$base-font-size;
             padding: 10px 0 15px;
             @media (max-width: _.$small) {

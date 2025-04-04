@@ -13,13 +13,11 @@ import javascriptLogo from "../../../assets/javascript_logo.svg";
 import metaLogo from "../../../assets/meta_logo.svg";
 import mysqlLogo from "../../../assets/mysql_logo.svg";
 import nccuLogo from "../../../assets/nccu_logo.webp";
-import pinkoiLogo from "../../../assets/pinkoi_logo.svg";
 import postgresqlLogo from "../../../assets/postgresql_logo.svg";
 import pythonLogo from "../../../assets/python_logo.svg";
 import rabbitmqLogo from "../../../assets/rabbitmq_logo.svg";
 import reactLogo from "../../../assets/react_logo.svg";
 import redisLogo from "../../../assets/redis_logo.svg";
-import sysfeatherLogo from "../../../assets/sysfeather_logo.webp";
 import typescriptLogo from "../../../assets/typescript_logo.svg";
 import vueLogo from "../../../assets/vue_logo.svg";
 
@@ -57,7 +55,7 @@ class Home extends React.Component<Props, State> {
             isShowingAllProjects: true,
         };
         this.fullGreetingText =
-            "Hi, my name is Bing-Yang.\nI am currently a software engineer specializing in web application development, but I aspire to be more than that.\nScroll down to know more about me!";
+            "Hi there. I'm Bing-Yang Chen.\nI'm a software engineer with a focus on web application development, but I aim to expand my expertise further.\nKeep scrolling to learn more about me!";
         this.homeRef = React.createRef();
         this.aboutRef = React.createRef();
         this.projectsRef = React.createRef();
@@ -153,19 +151,29 @@ class Home extends React.Component<Props, State> {
                 >
                     <h2>ABOUT</h2>
                     <div className={styles.subtitle}>
-                        我是一名熱愛學習與創作的軟體工程師，大學主修經濟，卻與程式設計狹路相逢，軟體開發過程中的樂趣及成就感，讓我決定往這條路持續深耕。
+                        Software engineer with a background in Economics, driven
+                        by curiosity and a strong sense of purpose found in
+                        building through code.
                     </div>
                     <hr />
                     <h3>Work Experience</h3>
                     <div className={styles.work_experience_outer}>
                         <div className={styles.block}>
                             <WorkExperience
-                                work_duration="2023年3月至今"
-                                job_title="後端工程師"
+                                work_duration="Dec 2024 ~ Present"
+                                job_title="Backend Engineer"
+                                company_name="Gaia"
+                                company_logo="https://www.gaia.net/images/ci/apple-icon-152x152.png"
+                                company_link="https://www.gaia.net/"
+                                description="Developed an enterprise-grade knowledge management tool integrating LLMs and RAG to enhance information retrieval and collaboration. Refined containerization practices, achieving a nearly 50% reduction in image size and boosting CI/CD pipeline efficiency by over 60%. Established robust engineering standards by integrating unit testing, linting, and code review processes, improving system reliability and maintainability. Proactively mitigated security vulnerabilities, fortifying the system against potential threats and ensuring compliance with best practices."
+                            />
+                            <WorkExperience
+                                work_duration="Mar 2023 ~ Dec 2024．1 yr 10 mos"
+                                job_title="Backend Engineer"
                                 company_name="Pinkoi"
-                                company_logo={pinkoiLogo}
-                                company_link="https://www.pinkoi.com"
-                                description="開設 API、串接整合第三方服務，並與前端、App 團隊協作，交付多項全新系統機制；重新設計資料庫 Schema 與系統流程、重構老舊程式碼，有效降低系統負擔並提高穩定性；開發與維護內部系統管理員工具，協助其他團隊提升工作效率；迅速排查並解決突發性系統錯誤；執行 Code Review，共同維護程式碼品質。"
+                                company_logo="https://cdn04.pinkoi.com/pinkoi.site/general/favicon/favicon_192x192.png"
+                                company_link="https://www.pinkoi.com/"
+                                description="Designed and built scalable APIs, integrated third-party services, and collaborated with client-side teams to deliver new, efficient, and bug-free e-commerce features. Redesigned database schemas, revamped the system communication processes, and refactored legacy code to optimize performance and enhance stability. Optimized website SEO using AI services, achieving double-digit growth in search engine ranking. Developed internal system administration tools to enhance the efficiency of overall workflow."
                                 // skills={[
                                 //     "Python",
                                 //     "MySQL",
@@ -176,13 +184,15 @@ class Home extends React.Component<Props, State> {
                                 //     "Cypress",
                                 // ]}
                             />
+                        </div>
+                        <div className={styles.block}>
                             <WorkExperience
-                                work_duration="2022年3月~2023年3月"
-                                job_title="後端工程師"
-                                company_name="矽羽科技"
-                                company_logo={sysfeatherLogo}
-                                company_link="https://www.sysfeather.com"
-                                description="參與開發多租戶架構的電商自動開店系統後端，負責 Authentication 與 Rate Limit 機制，確保系統的安全性與效能。負責社群購物後台管理系統的概念驗證，串接 Facebook API，整合用戶的電商網站與社群帳號，提供直播管理、留言分析、訊息中心、貼文抽獎…等功能，藉此優化商家的社群平台管理體驗。"
+                                work_duration="Mar 2022 ~ Mar 2023．1 yr 1 mo"
+                                job_title="Backend Engineer"
+                                company_name="Sysfeather"
+                                company_logo="https://www.sysfeather.com/en-US/logo-sysfeather.png"
+                                company_link="https://www.sysfeather.com/"
+                                description="Developed the backend for an e-commerce automated shop system with multi-tenant architecture. Spearheaded the POC for the Social Shopping Project, integrating the Facebook API to enable comment management and post lotteries, enhancing customers' social media management experience."
                                 // skills={[
                                 //     "Python",
                                 //     "Django",
@@ -194,19 +204,12 @@ class Home extends React.Component<Props, State> {
                                 //     "Facebook API",
                                 // ]}
                             />
-                        </div>
-                        <div className={styles.block}>
                             <WorkExperience
-                                work_duration="2020年7月~2021年1月"
-                                job_title="實習全端工程師"
-                                company_name="巨跡資訊"
-                                description="繪製 ER Diagram、設計資料庫 Schema，並對系統設計進行優劣勢分析；結合 Azure 語意辨識服務技術，開發 LINE 聊天機器人；結合開源 OCR 套件，建立能夠辨識護照內容之服務，提供用戶自動填寫之功能。"
-                            />
-                            <WorkExperience
-                                work_duration="2020年2月~2020年6月"
-                                job_title="經濟學課程講師"
-                                company_name="新北市立北大高中"
-                                description="為了讓即將畢業的高中生對經濟學有進一步認識，我親自設計了為期 15 周的經濟學原理課程，課程內容包括時事探討、基本原理，與個體進階理論。教學不但能帶來成就感，也能讓自己真正了解那個領域。製作課堂簡報也使我的簡報設計能力大幅提升。"
+                                work_duration="2020 Spring Semester"
+                                job_title="Economics Course Instructor"
+                                company_logo="https://www.bdsh.ntpc.edu.tw/var/file/0/1000/msys_1000_9064694_48923.png"
+                                company_name="New Taipei Municipal Beida High School"
+                                description="To provide graduating high school students with a deeper understanding of economics, I designed a 15-week course covering the principles of economics. The course content included discussions on current events, basic principles, and advanced microeconomic theory. This experience sharpened my presentation and slide design skills."
                             />
                         </div>
                     </div>
@@ -284,7 +287,7 @@ class Home extends React.Component<Props, State> {
                         <img
                             className={styles.school_logo}
                             src={nccuLogo}
-                            alt="NCCU,國立政治大學,經濟學系,金融科技學士學程"
+                            alt="NCCU,National Chengchi University,國立政治大學,經濟學系,Department of Economics,金融科技學士學程,Financial Technology Program,陳秉洋"
                         />
                         <div className={styles.degree_list}>
                             <a
@@ -293,7 +296,8 @@ class Home extends React.Component<Props, State> {
                                 target="_blank"
                                 rel="noreferrer"
                             >
-                                國立政治大學經濟學系
+                                National Chengchi University, Department of
+                                Economics
                             </a>
                             <a
                                 className={styles.degree}
@@ -301,7 +305,8 @@ class Home extends React.Component<Props, State> {
                                 target="_blank"
                                 rel="noreferrer"
                             >
-                                國立政治大學金融科技學士學程
+                                National Chengchi University, Financial
+                                Technology Program
                             </a>
                         </div>
                     </div>
@@ -313,8 +318,9 @@ class Home extends React.Component<Props, State> {
                 >
                     <h2>PROJECTS</h2>
                     <div className={styles.subtitle}>
-                        不想讓自己因為工作而逐漸失去創造力，當新點子冒出來時，當然是抓緊閒暇時間做一些
-                        side projects，你或許會喜歡！
+                        Keeping creativity alive through side projects -
+                        exploring new ideas and building things that matter in
+                        my free time. You might find something interesting here!
                     </div>
                     <hr />
                     <div className={styles.project_list}>
@@ -329,7 +335,8 @@ class Home extends React.Component<Props, State> {
                             />
                             <div className={styles.title}>TradeSmartly</div>
                             <div className={styles.subtitle}>
-                                你最佳的投資記帳小幫手，幫助你詳實紀錄與觀察自己的投資績效。
+                                Track and monitor your investment performance
+                                with detailed analytics.
                             </div>
                         </a>
                         <a
@@ -343,7 +350,8 @@ class Home extends React.Component<Props, State> {
                                 Path-Finding Visualizer
                             </div>
                             <div className={styles.subtitle}>
-                                探索各種路徑搜尋演算法與迷宮生成演算法的視覺化工具。
+                                Explore various pathfinding algorithms and maze
+                                generation algorithms.
                             </div>
                         </a>
                         <a
@@ -357,19 +365,23 @@ class Home extends React.Component<Props, State> {
                                 Virus Spread Simulate
                             </div>
                             <div className={styles.subtitle}>
-                                簡單模擬不同參數下病毒擴散的狀況，並將統計結果視覺化。
+                                Simulate the spread of viruses under different
+                                parameters and visualize the results.
                             </div>
                         </a>
                         <a
-                            href="https://byc1999.com/wiki-prettier"
+                            href="https://chromewebstore.google.com/detail/noads/mcdfnneilaagajpfcfiofdjibclkflhg"
                             target="_blank"
                             rel="noreferrer"
-                            className={`${styles.project} ${styles.wiki_prettier}`}
+                            className={`${styles.project} ${styles.noads}`}
                         >
-                            <div className={styles.background} />
-                            <div className={styles.title}>Wiki Prettier</div>
+                            <div
+                                className={`${styles.background} ${styles.mask}`}
+                            />
+                            <div className={styles.title}>Noads</div>
                             <div className={styles.subtitle}>
-                                你也覺得維基百科的排版使你閱讀起來不太舒服嗎？試試這個！
+                                A simple ad blocker that removes specific DOM
+                                elements using CSS selectors.
                             </div>
                         </a>
                         <a
@@ -383,7 +395,8 @@ class Home extends React.Component<Props, State> {
                             />
                             <div className={styles.title}>Market Simulate</div>
                             <div className={styles.subtitle}>
-                                使用程式模擬經濟學課本裡的供需理論，讓我們一起看看市場均衡是怎麼達成的！
+                                Simulate supply and demand theory to see how
+                                market equilibrium is achieved.
                             </div>
                         </a>
                         <a
@@ -399,7 +412,8 @@ class Home extends React.Component<Props, State> {
                                 Inventory Analyzer
                             </div>
                             <div className={styles.subtitle}>
-                                存貨管理其實就是個最佳化問題，不同成本結構與銷售狀況所適合的存貨策略可能截然不同！
+                                Optimize inventory management based on different
+                                cost structures and sales patterns.
                             </div>
                         </a>
                         {this.state.isShowingAllProjects ? (
@@ -415,8 +429,8 @@ class Home extends React.Component<Props, State> {
                                     />
                                     <div className={styles.title}>Snake</div>
                                     <div className={styles.subtitle}>
-                                        智障型手機時代的經典遊戲，你是否能贏過
-                                        Dijkstra 演算法？
+                                        A classic mobile game - can you beat the
+                                        Dijkstra algorithm?
                                     </div>
                                 </a>
                                 <a
@@ -432,7 +446,8 @@ class Home extends React.Component<Props, State> {
                                         Tic Tac Toe
                                     </div>
                                     <div className={styles.subtitle}>
-                                        簡單的機器學習就能讓你贏不了電腦！還記得小時候上課都跟隔壁的女同學在數學課本上玩圈圈叉叉...
+                                        Simple machine learning makes it
+                                        unbeatable!
                                     </div>
                                 </a>
                                 <a
@@ -448,7 +463,8 @@ class Home extends React.Component<Props, State> {
                                         Pick Coins
                                     </div>
                                     <div className={styles.subtitle}>
-                                        其實這是一個結合經濟學的賽局理論的小遊戲，你能想到必勝的玩法嗎？
+                                        A game theory puzzle - can you find the
+                                        winning strategy?
                                     </div>
                                 </a>
                             </>
@@ -477,7 +493,10 @@ class Home extends React.Component<Props, State> {
                 >
                     <h2>BLOG</h2>
                     <div className={styles.subtitle}>
-                        「輸入與輸出並重」是學習與進步的關鍵。我整理了一些學習筆記，希望與大家分享。如有謬誤，敬請指正。
+                        Learning is a two-way street - I believe in both
+                        absorbing knowledge and sharing insights. Here are my
+                        learning notes and thoughts. Feedback and corrections
+                        are always welcome!
                     </div>
                     <hr />
                     <div className={styles.blog_button_container}>
@@ -488,7 +507,7 @@ class Home extends React.Component<Props, State> {
                         >
                             <Button className="black_fill xl">
                                 <IconBlogText sideLength="28" />
-                                去看看
+                                Check it out
                             </Button>
                         </a>
                     </div>

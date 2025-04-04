@@ -6,8 +6,6 @@
     & > .product_name {
         color: _.$black;
         white-space: nowrap;
-        font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
-            "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
     }
     &.invert {
         & > .logo {
