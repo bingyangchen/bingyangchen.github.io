@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/static/css/main.df53066c.css",
+    "main.css": "/static/css/main.08d35e16.css",
     "main.js": "/static/js/main.dd3ed017.js",
     "static/js/27.8122d512.chunk.js": "/static/js/27.8122d512.chunk.js",
     "static/media/market.webp": "/static/media/market.8577cd6a56f449be1e4d.webp",
@@ -40,7 +40,7 @@
     "static/media/vue_logo.svg": "/static/media/vue_logo.2b520303788d88b4e0c3776cd07cd61f.svg"
   },
   "entrypoints": [
-    "static/css/main.df53066c.css",
+    "static/css/main.08d35e16.css",
     "static/js/main.dd3ed017.js"
   ]
 }
