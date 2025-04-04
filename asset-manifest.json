@@ -1,8 +1,8 @@
 {
   "files": {
-    "main.css": "/static/css/main.1a16a080.css",
-    "main.js": "/static/js/main.64bf37b6.js",
-    "static/js/27.e02355b6.chunk.js": "/static/js/27.e02355b6.chunk.js",
+    "main.css": "/static/css/main.df53066c.css",
+    "main.js": "/static/js/main.dd3ed017.js",
+    "static/js/27.8122d512.chunk.js": "/static/js/27.8122d512.chunk.js",
     "static/media/market.webp": "/static/media/market.8577cd6a56f449be1e4d.webp",
     "static/media/coins.webp": "/static/media/coins.1f1854f4abb1a3ee6528.webp",
     "static/media/snake.webp": "/static/media/snake.44de874d7d39d962e248.webp",
@@ -10,22 +10,21 @@
     "static/media/virus_spread.webp": "/static/media/virus_spread.2e958a77c318f250da91.webp",
     "static/media/avatar_2.jpg": "/static/media/avatar_2.ace3abacbad5bdc9e78d.jpg",
     "service-worker.js": "/service-worker.js",
+    "static/media/logo.webp": "/static/media/logo.86a7ed11bead8324dcef.webp",
     "static/media/avatar_1.webp": "/static/media/avatar_1.3a36e722e2618a0ceba2.webp",
-    "static/media/trade_smartly.webp": "/static/media/trade_smartly.1f1d5118ecdc0269f3e0.webp",
+    "static/media/trade_smartly.webp": "/static/media/trade_smartly.fbcbbe61e375c0d142ee.webp",
+    "static/media/noads.webp": "/static/media/noads.aabac879f1942b8133ac.webp",
     "static/media/path_finding.webp": "/static/media/path_finding.d5f1910d746a51b97772.webp",
     "static/media/tictactoe.webp": "/static/media/tictactoe.574238a1b9b6d0c743d2.webp",
-    "static/media/wiki_prettier.webp": "/static/media/wiki_prettier.99154a5b8bbe7cf56da7.webp",
     "static/media/nccu_logo.webp": "/static/media/nccu_logo.4bd43308a7e886e0fe77.webp",
     "static/media/airflow_logo.svg": "/static/media/airflow_logo.92c4f1e5992cb02c68c3ad344b264714.svg",
     "static/media/postgresql_logo.svg": "/static/media/postgresql_logo.5554dfac6639fb169614c251cd1f6bc0.svg",
     "static/media/mysql_logo.svg": "/static/media/mysql_logo.11e7f49f05b5eb4a5eae7bbe1907a332.svg",
     "static/media/redis_logo.svg": "/static/media/redis_logo.5e6c30d35d3d4dde40b6111214e5c0fd.svg",
-    "static/media/logo.webp": "/static/media/logo.c7929d88c67660fbda4a.webp",
     "static/media/meta_logo.svg": "/static/media/meta_logo.4291e1daaa6e8ebde2622a10fa39292f.svg",
     "static/media/graphql_logo.svg": "/static/media/graphql_logo.6e83b00ac420d294b6f06f2624e1dd32.svg",
     "static/media/react_logo.svg": "/static/media/react_logo.f57b349b4d9df56c9b48c916a8d5adfb.svg",
     "static/media/aws_logo.svg": "/static/media/aws_logo.7fa306c206a3302fdf64de3f212e8905.svg",
-    "static/media/sysfeather_logo.webp": "/static/media/sysfeather_logo.504aa2456278145aca8b.webp",
     "static/media/rabbitmq_logo.svg": "/static/media/rabbitmq_logo.8c5236ce044994ffd240bf30b39a356e.svg",
     "static/media/docker_logo.svg": "/static/media/docker_logo.0ba8fbbe5eccef740e0139854138aa32.svg",
     "static/media/python_logo.svg": "/static/media/python_logo.4298525c028749eb4fa154f8f5bd1931.svg",
@@ -36,13 +35,12 @@
     "static/media/typescript_logo.svg": "/static/media/typescript_logo.da47f77824fab48dafd99485194e6bae.svg",
     "static/media/gitbook.svg": "/static/media/gitbook.73cb29d4c7e58a8cc923.svg",
     "static/media/cypress_logo.svg": "/static/media/cypress_logo.71c34777c1bc1b5a696d86e96eedf18e.svg",
-    "static/media/pinkoi_logo.svg": "/static/media/pinkoi_logo.5ceff3e48658098d6c285d52e496b475.svg",
     "static/media/javascript_logo.svg": "/static/media/javascript_logo.7bb08cdbe94fc2dfc1b51be8c2dae551.svg",
     "static/media/fastapi_logo.svg": "/static/media/fastapi_logo.1536093a1656eaee7a8d589641ff2803.svg",
     "static/media/vue_logo.svg": "/static/media/vue_logo.2b520303788d88b4e0c3776cd07cd61f.svg"
   },
   "entrypoints": [
-    "static/css/main.1a16a080.css",
-    "static/js/main.64bf37b6.js"
+    "static/css/main.df53066c.css",
+    "static/js/main.dd3ed017.js"
   ]
 }
