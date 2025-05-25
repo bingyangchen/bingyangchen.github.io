@@ -1,8 +1,9 @@
 {
   "files": {
     "main.css": "/static/css/main.08d35e16.css",
-    "main.js": "/static/js/main.dd3ed017.js",
+    "main.js": "/static/js/main.6a131f75.js",
     "static/js/27.8122d512.chunk.js": "/static/js/27.8122d512.chunk.js",
+    "static/media/avatar_1.webp": "/static/media/avatar_1.d2f48a157e88f8c5eb7e.webp",
     "static/media/market.webp": "/static/media/market.8577cd6a56f449be1e4d.webp",
     "static/media/coins.webp": "/static/media/coins.1f1854f4abb1a3ee6528.webp",
     "static/media/snake.webp": "/static/media/snake.44de874d7d39d962e248.webp",
@@ -11,7 +12,6 @@
     "static/media/avatar_2.jpg": "/static/media/avatar_2.ace3abacbad5bdc9e78d.jpg",
     "service-worker.js": "/service-worker.js",
     "static/media/logo.webp": "/static/media/logo.86a7ed11bead8324dcef.webp",
-    "static/media/avatar_1.webp": "/static/media/avatar_1.3a36e722e2618a0ceba2.webp",
     "static/media/trade_smartly.webp": "/static/media/trade_smartly.fbcbbe61e375c0d142ee.webp",
     "static/media/noads.webp": "/static/media/noads.aabac879f1942b8133ac.webp",
     "static/media/path_finding.webp": "/static/media/path_finding.d5f1910d746a51b97772.webp",
@@ -41,6 +41,6 @@
   },
   "entrypoints": [
     "static/css/main.08d35e16.css",
-    "static/js/main.dd3ed017.js"
+    "static/js/main.6a131f75.js"
   ]
 }
