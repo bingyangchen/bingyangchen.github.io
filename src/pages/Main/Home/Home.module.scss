@@ -1,403 +1,286 @@
 @use "../../../global_variables" as _;
 
 .main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  .section {
+    min-height: 100vh;
+    &:nth-child(odd) {
+      background-color: _.$noisy-white;
+    }
+    h2 {
+      margin: calc(_.$header-height + 30px) 0 20px;
+      font-family: Georgia, Times, "Times New Roman", serif;
+      text-align: center;
+      font-size: 2.8 * _.$base-font-size;
+      @media screen and (max-width: _.$small) {
+        font-size: 2 * _.$base-font-size;
+      }
+    }
+    & > .subtitle {
+      margin: 30px auto;
+      padding: 0 50px;
+      text-align: center;
+      max-width: _.$medium;
+      line-height: 2.2 * _.$base-font-size;
+      font-size: 1.1 * _.$base-font-size;
+      letter-spacing: 0.8px;
+      font-family: Georgia, Times, "Times New Roman", serif;
+      @media screen and (max-width: _.$small) {
+        padding: 0 30px;
+        font-size: _.$base-font-size;
+      }
+    }
+    hr {
+      margin: 30px auto;
+      width: 150px;
+      border: none;
+      border-top: 2px solid _.$light-gray;
+      border-radius: 5px;
+    }
+    h3 {
+      margin: calc(_.$header-height + 30px) 0 20px;
+      text-align: center;
+      font-size: 1.6 * _.$base-font-size;
+      font-weight: normal;
+      color: _.$black;
+      @media screen and (max-width: _.$small) {
+        font-size: 1.4 * _.$base-font-size;
+      }
+    }
+  }
+  & > .home {
+    position: relative;
     display: flex;
     flex-direction: column;
-    width: 100%;
-    .section {
-        min-height: 100vh;
-        &:nth-child(odd) {
-            background-color: _.$noisy-white;
+    align-items: center;
+    gap: 15px;
+    padding: 16vh 30px 10px;
+    & > .avatar_container {
+      position: relative;
+      width: min(150px, max(15vw, 100px));
+      aspect-ratio: 1;
+      & > .avatar {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        overflow: hidden;
+        backface-visibility: hidden;
+        transition-duration: 0.3s;
+        &.back {
+          transform: rotateY(180deg);
         }
-        h2 {
-            margin: calc(_.$header-height + 30px) 0 20px;
-            font-family: Georgia, Times, "Times New Roman", serif;
-            text-align: center;
-            font-size: 2.8 * _.$base-font-size;
-            @media screen and (max-width: _.$small) {
-                font-size: 2 * _.$base-font-size;
+      }
+      @media (hover: hover) {
+        &:hover {
+          & > .avatar {
+            &.front {
+              transform: rotateY(180deg);
             }
-        }
-        & > .subtitle {
-            margin: 30px auto;
-            padding: 0 50px;
-            text-align: center;
-            max-width: _.$medium;
-            line-height: 2.2 * _.$base-font-size;
-            font-size: 1.1 * _.$base-font-size;
-            letter-spacing: 0.8px;
-            font-family: Georgia, Times, "Times New Roman", serif;
-            @media screen and (max-width: _.$small) {
-                padding: 0 30px;
-                font-size: _.$base-font-size;
+            &.back {
+              transform: rotateY(0deg);
             }
+          }
         }
-        hr {
-            margin: 30px auto;
-            width: 150px;
-            border: none;
-            border-top: 2px solid _.$light-gray;
-            border-radius: 5px;
-        }
-        h3 {
-            margin: calc(_.$header-height + 30px) 0 20px;
-            text-align: center;
-            font-size: 1.6 * _.$base-font-size;
-            font-weight: normal;
-            color: _.$black;
-            @media screen and (max-width: _.$small) {
-                font-size: 1.4 * _.$base-font-size;
-            }
-        }
+      }
     }
-    & > .home {
-        position: relative;
+    & > .name {
+      font-size: 1.4 * _.$base-font-size;
+      font-weight: bold;
+      font-family: sans-serif;
+      margin: 0 0 10px 0;
+      letter-spacing: 0;
+    }
+    & > .greeting {
+      margin: 10px 0;
+      padding: 15px 25px;
+      width: min(100%, 500px);
+      min-height: 55px;
+      font-family: sans-serif;
+      font-size: 1.2 * _.$base-font-size;
+      line-height: 1.8 * _.$base-font-size;
+      white-space: pre-wrap;
+      border-radius: 30px;
+      background-color: _.$light-gray;
+      @media screen and (max-width: _.$small) {
+        padding: 15px 20px;
+        font-size: 1.1 * _.$base-font-size;
+        line-height: 1.5 * _.$base-font-size;
+      }
+    }
+    & > .cta_list {
+      position: absolute;
+      bottom: 12vh;
+      left: 50%;
+      display: flex;
+      gap: 50px;
+      transform: translateX(-50%);
+      @media screen and (max-width: _.$small) {
+        bottom: 15vh;
+      }
+      & > .cta {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
-        padding: 16vh 30px 10px;
-        & > .avatar_container {
-            position: relative;
-            width: min(150px, max(15vw, 100px));
-            aspect-ratio: 1;
-            & > .avatar {
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-                overflow: hidden;
-                backface-visibility: hidden;
-                transition-duration: 0.3s;
-                &.back {
-                    transform: rotateY(180deg);
-                }
+        & > .icon_container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 60px;
+          aspect-ratio: 1;
+          border-radius: 50%;
+          @media (hover: hover) {
+            &:hover {
+              background-color: _.$transparent-black;
+              transition-duration: 300ms;
             }
-            @media (hover: hover) {
-                &:hover {
-                    & > .avatar {
-                        &.front {
-                            transform: rotateY(180deg);
-                        }
-                        &.back {
-                            transform: rotateY(0deg);
-                        }
-                    }
-                }
-            }
+          }
         }
-        & > .name {
-            font-size: 1.4 * _.$base-font-size;
-            font-weight: bold;
-            font-family: sans-serif;
-            margin: 0 0 10px 0;
-            letter-spacing: 0;
+        & > .cta_text {
+          font-size: 0.9 * _.$base-font-size;
         }
-        & > .greeting {
-            margin: 10px 0;
-            padding: 15px 25px;
-            width: min(100%, 500px);
-            min-height: 55px;
-            font-family: sans-serif;
-            font-size: 1.2 * _.$base-font-size;
-            line-height: 1.8 * _.$base-font-size;
-            white-space: pre-wrap;
-            border-radius: 30px;
-            background-color: _.$light-gray;
-            @media screen and (max-width: _.$small) {
-                padding: 15px 20px;
-                font-size: 1.1 * _.$base-font-size;
-                line-height: 1.5 * _.$base-font-size;
-            }
+      }
+    }
+    & > .scroll_down_hint {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      display: flex;
+      gap: 10px;
+      color: _.$gray;
+      transform: translateX(-50%);
+      animation: 1s float infinite;
+    }
+    @keyframes float {
+      from {
+        bottom: 10px;
+      }
+      50% {
+        bottom: 20px;
+      }
+      to {
+        bottom: 10px;
+      }
+    }
+  }
+  & > .about {
+    padding-bottom: 50px;
+    & > .work_experience_outer {
+      display: flex;
+      width: min(100%, _.$large);
+      padding: 30px;
+      margin: 0 auto;
+      @media (max-width: _.$medium) {
+        flex-direction: column;
+      }
+      @media (max-width: _.$small) {
+        padding-left: 20px;
+      }
+      & > .block {
+        width: 50%;
+        @media (max-width: _.$medium) {
+          width: 100%;
         }
-        & > .cta_list {
-            position: absolute;
-            bottom: 12vh;
-            left: 50%;
-            display: flex;
-            gap: 50px;
+      }
+    }
+    & > .skills_outer {
+      width: min(100%, _.$large);
+      margin: 0 auto;
+      padding: 30px 0;
+      overflow: hidden;
+      & > .skills_inner {
+        display: flex;
+        width: max-content;
+        animation: 25s moveleft linear infinite;
+        & > .screen {
+          $gap: 25px;
+          display: flex;
+          gap: $gap;
+          padding-right: $gap;
+        }
+        @keyframes moveleft {
+          from {
+            transform: translateX(0);
+          }
+          to {
             transform: translateX(-50%);
-            @media screen and (max-width: _.$small) {
-                bottom: 15vh;
-            }
-            & > .cta {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                & > .icon_container {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 60px;
-                    aspect-ratio: 1;
-                    border-radius: 50%;
-                    @media (hover: hover) {
-                        &:hover {
-                            background-color: _.$transparent-black;
-                            transition-duration: 300ms;
-                        }
-                    }
-                }
-                & > .cta_text {
-                    font-size: 0.9 * _.$base-font-size;
-                }
-            }
+          }
         }
-        & > .scroll_down_hint {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            display: flex;
-            gap: 10px;
-            color: _.$gray;
-            transform: translateX(-50%);
-            animation: 1s float infinite;
-        }
-        @keyframes float {
-            from {
-                bottom: 10px;
-            }
-            50% {
-                bottom: 20px;
-            }
-            to {
-                bottom: 10px;
-            }
-        }
+      }
     }
-    & > .about {
-        padding-bottom: 50px;
-        & > .work_experience_outer {
-            display: flex;
-            width: min(100%, _.$large);
-            padding: 30px;
-            margin: 0 auto;
-            @media (max-width: _.$medium) {
-                flex-direction: column;
-            }
-            @media (max-width: _.$small) {
-                padding-left: 20px;
-            }
-            & > .block {
-                width: 50%;
-                @media (max-width: _.$medium) {
-                    width: 100%;
-                }
-            }
-        }
-        & > .skills_outer {
-            width: min(100%, _.$large);
-            margin: 0 auto;
-            padding: 30px 0;
-            overflow: hidden;
-            & > .skills_inner {
-                display: flex;
-                width: max-content;
-                animation: 25s moveleft linear infinite;
-                & > .screen {
-                    $gap: 25px;
-                    display: flex;
-                    gap: $gap;
-                    padding-right: $gap;
-                }
-                @keyframes moveleft {
-                    from {
-                        transform: translateX(0);
-                    }
-                    to {
-                        transform: translateX(-50%);
-                    }
-                }
-            }
-        }
-        & > .education_outer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 50px;
-            padding: 30px;
-            @media (max-width: _.$small) {
-                flex-direction: column;
-                gap: 40px;
-            }
-            & > .school_logo {
-                width: 260px;
-                @media (max-width: _.$small) {
-                    width: 220px;
-                }
-            }
-            & > .degree_list {
-                display: flex;
-                flex-direction: column;
-                gap: 20px;
-                @media (max-width: _.$small) {
-                    font-size: _.$base-font-size;
-                }
-                & > .degree {
-                    font-family: Georgia, "Times New Roman", Times, serif;
-                    font-style: italic;
-                    line-height: 1.5 * _.$base-font-size;
-                    color: _.$gray;
-                    @media (hover: hover) {
-                        &:hover {
-                            text-decoration: underline;
-                        }
-                    }
-                }
-            }
-        }
-    }
-    & > .projects {
-        padding-bottom: 30px;
-        & > .project_list {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 4px;
-            width: min(100%, _.$large);
-            padding: 30px;
-            margin: 0 auto;
-            @media (max-width: _.$medium) {
-                padding: 30px 0;
-            }
-            @media (max-width: _.$small) {
-                gap: 2px;
-            }
-            & > .project {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                justify-content: flex-end;
-                aspect-ratio: 1;
-                border-radius: 3px;
-                background-size: cover;
-                background-repeat: no-repeat;
-                overflow: hidden;
-                cursor: pointer;
-                @media (hover: hover) {
-                    &:hover {
-                        & > .background {
-                            transform: scale(1.2);
-                        }
-                    }
-                }
-                & > .title {
-                    color: _.$white;
-                    font-size: max(
-                        min(3vw, 1.25 * _.$base-font-size),
-                        0.9 * _.$base-font-size
-                    );
-                    padding: 10px 20px;
-                    z-index: 1;
-                    @media (max-width: _.$medium) {
-                        padding: 20px 10px;
-                    }
-                    @media (max-width: _.$small) {
-                        padding: 10px 10px;
-                    }
-                }
-                & > .subtitle {
-                    color: _.$white;
-                    font-size: 0.85 * _.$base-font-size;
-                    padding: 0 20px;
-                    margin-bottom: 10%;
-                    z-index: 1;
-                    @media (max-width: _.$medium) {
-                        display: none;
-                    }
-                }
-                & > .background {
-                    position: absolute;
-                    top: 0;
-                    width: 100%;
-                    height: 100%;
-                    background-size: cover;
-                    background-repeat: no-repeat;
-                    transition-duration: 1.5s;
-                    &.mask {
-                        &::before {
-                            content: "";
-                            position: absolute;
-                            top: 0;
-                            width: 100%;
-                            height: 100%;
-                            background-color: _.$black;
-                            opacity: 0.4;
-                        }
-                    }
-                }
-                &.trade_smartly {
-                    & > .background {
-                        background-image: url("../../../assets/trade_smartly.webp");
-                        background-size: 75%;
-                        background-color: _.$deep-gray;
-                        background-position: 50% 50%;
-                    }
-                }
-                &.path_finding {
-                    & > .background {
-                        background-image: url("../../../assets/path_finding.webp");
-                    }
-                }
-                &.virus_spread {
-                    & > .background {
-                        background-image: url("../../../assets/virus_spread.webp");
-                    }
-                }
-                &.noads {
-                    & > .background {
-                        background-image: url("../../../assets/noads.webp");
-                        background-size: 75%;
-                        background-position: 50% 50%;
-                    }
-                }
-                &.market_simulate {
-                    & > .background {
-                        background-image: url("../../../assets/market.webp");
-                    }
-                }
-                &.inventory_analyzer {
-                    & > .background {
-                        background-image: url("../../../assets/warehouse.webp");
-                    }
-                }
-                &.snake {
-                    & > .background {
-                        background-image: url("../../../assets/snake.webp");
-                    }
-                }
-                &.tic_tac_toe {
-                    & > .background {
-                        background-image: url("../../../assets/tictactoe.webp");
-                    }
-                }
-                &.pick_coins {
-                    & > .background {
-                        background-image: url("../../../assets/coins.webp");
-                    }
-                }
-            }
-        }
-        & > .show_all_project_button_container {
-            display: flex;
-            justify-content: center;
-            padding-bottom: 30px;
-        }
-    }
-    & > .blog {
-        min-height: fit-content;
-        background-image: url("../../../assets/gitbook.svg");
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-position: 105% 100px;
+    & > .education_outer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 50px;
+      padding: 30px;
+      @media (max-width: _.$small) {
+        flex-direction: column;
+        gap: 40px;
+      }
+      & > .school_logo {
+        width: 260px;
         @media (max-width: _.$small) {
-            background-size: cover;
+          width: 220px;
         }
-        & > .blog_button_container {
-            display: flex;
-            justify-content: center;
-            padding: 50px 0 110px;
+      }
+      & > .degree_list {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        @media (max-width: _.$small) {
+          font-size: _.$base-font-size;
         }
+        & > .degree {
+          font-family: Georgia, "Times New Roman", Times, serif;
+          font-style: italic;
+          line-height: 1.5 * _.$base-font-size;
+          color: _.$gray;
+          @media (hover: hover) {
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
     }
+  }
+  & > .projects {
+    padding-bottom: 30px;
+    & > .container {
+      display: flex;
+      padding: 0 30px;
+      overflow: auto;
+      &::-webkit-scrollbar {
+        display: none;
+      }
+      @media (max-width: _.$small) {
+        flex-direction: column;
+      }
+    }
+    & > .footer {
+      display: flex;
+      justify-content: center;
+      margin: 30px 0;
+    }
+  }
+  & > .blog {
+    min-height: fit-content;
+    background-image: url("../../../assets/gitbook.svg");
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: 105% 100px;
+    @media (max-width: _.$small) {
+      background-size: cover;
+    }
+    & > .footer {
+      display: flex;
+      justify-content: center;
+      padding: 50px 0 110px;
+    }
+  }
 }

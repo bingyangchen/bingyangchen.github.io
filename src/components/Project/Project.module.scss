@@ -1,0 +1,93 @@
+@use "../../global_variables" as _;
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  min-width: 280px;
+  max-width: 480px;
+  padding: 16px;
+  border-radius: 12px;
+  transition-duration: 150ms;
+  @media (hover: hover) {
+    &:hover {
+      background-color: _.$transparent-black;
+      cursor: pointer;
+      & > .thumbnail_container {
+        box-shadow: none;
+      }
+    }
+  }
+  & > .thumbnail_container {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 5px 10px -10px _.$deep-gray;
+    transition-duration: 150ms;
+    & > img {
+      width: 100%;
+      object-fit: cover;
+    }
+  }
+  & > .lower {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    & > .icon_container {
+      width: 20%;
+      min-width: 56px;
+      aspect-ratio: 1;
+      border-radius: 25%;
+      overflow: hidden;
+      box-shadow: 0 0 10px -5px _.$deep-gray;
+      & > img {
+        width: 100%;
+        object-fit: cover;
+      }
+    }
+    & > .right {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1vw;
+      overflow: hidden;
+      @media (max-width: _.$small) {
+        gap: 0.3vw;
+      }
+      & > .title {
+        color: _.$black;
+        font-size: clamp(_.$base-font-size, 1.5vw, 1.1 * _.$base-font-size);
+        margin-bottom: 1%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        @media (max-width: _.$small) {
+          font-size: clamp(_.$base-font-size, 4.5vw, 1.1 * _.$base-font-size);
+        }
+      }
+      & > .tags {
+        display: flex;
+        color: _.$gray;
+        font-size: clamp(0.75 * _.$base-font-size, 1.2vw, 0.9 * _.$base-font-size);
+        @media (max-width: _.$small) {
+          font-size: clamp(0.75 * _.$base-font-size, 3.6vw, 0.9 * _.$base-font-size);
+        }
+        & > .tag {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          letter-spacing: 0.5 * _.$base-letter-spacing;
+        }
+      }
+      & > .time_range {
+        color: _.$gray;
+        font-size: clamp(0.75 * _.$base-font-size, 1.2vw, 0.9 * _.$base-font-size);
+        letter-spacing: 0;
+        @media (max-width: _.$small) {
+          font-size: clamp(0.75 * _.$base-font-size, 3.6vw, 0.9 * _.$base-font-size);
+        }
+      }
+    }
+  }
+}
