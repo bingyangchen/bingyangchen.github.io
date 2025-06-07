@@ -31,21 +31,31 @@ import styles from "./Home.module.scss";
 
 import React from "react";
 
-import { Button, Skill, WorkExperience } from "../../../components";
-import Project from "../../../components/Project/Project";
+import {
+  Button,
+  ProjectCard,
+  ProjectDetail,
+  RoundButton,
+  Skill,
+  WorkExperience,
+} from "../../../components";
 import {
   IconBlogText,
   IconChevronDoubleDown,
   IconFilePerson,
   IconGitHub,
   IconMedia,
+  IconXLarge,
 } from "../../../icons";
 import { IRouter, withRouter } from "../../../router";
+import type { Project } from "../../../types";
 
 interface Props extends IRouter {}
 
 interface State {
   typedGreetingText: string;
+  activeProject: Project | null;
+  projects: Project[];
 }
 
 class Home extends React.Component<Props, State> {
@@ -55,10 +65,48 @@ class Home extends React.Component<Props, State> {
   private aboutRef: React.RefObject<HTMLDivElement>;
   private projectsRef: React.RefObject<HTMLDivElement>;
   private blogRef: React.RefObject<HTMLDivElement>;
+  private projectDetailRef: React.RefObject<HTMLDivElement>;
   public constructor(props: Props) {
     super(props);
     this.state = {
       typedGreetingText: "",
+      activeProject: null,
+      projects: [
+        {
+          thumbnail: <img src={tradeSmartlyThumbnail} alt="TradeSmartly" />,
+          icon: <img src={tradeSmartlyLogo} alt="TradeSmartly" />,
+          title: "TradeSmartly",
+          tags: ["PWA", "Investment"],
+          maintaining_time_range: [new Date(2021, 1, 1)],
+          description:
+            "Track and monitor your investment performance with detailed analytics.",
+          source_code_url: "https://github.com/bingyangchen/trade-smartly",
+          demo_url: "https://trade-smartly.com/welcome",
+        },
+        {
+          thumbnail: <img src={noadsThumbnail} alt="Noads" />,
+          icon: <img src={noadsLogo} alt="Noads" />,
+          title: "Noads",
+          tags: ["Chrome Extension", "Ad Blocker"],
+          maintaining_time_range: [new Date(2024, 1, 1), new Date(2024, 1, 1)],
+          description:
+            "A simple ad blocker that removes specific DOM elements using CSS selectors.",
+          source_code_url: "https://github.com/bingyangchen/noads",
+          demo_url:
+            "https://chromewebstore.google.com/detail/noads/mcdfnneilaagajpfcfiofdjibclkflhg",
+        },
+        {
+          thumbnail: <img src={pathFindingThumbnail} alt="Path Finding Visualizer" />,
+          icon: <img src={pathFindingLogo} alt="Path Finding Visualizer" />,
+          title: "Path Finding Visualizer",
+          tags: ["Algorithm", "Visualization"],
+          maintaining_time_range: [new Date(2020, 1, 1), new Date(2021, 1, 1)],
+          description:
+            "Explore various pathfinding algorithms and maze generation algorithms.",
+          source_code_url: "https://github.com/bingyangchen/path-finding-visualizer",
+          demo_url: "https://byc1999.com/path-finding-visualizer",
+        },
+      ],
     };
     this.fullGreetingText =
       "Hi there. I'm Bing-Yang Chen.\nI'm a software engineer with a focus on web application development, but I aim to expand my expertise further.\nKeep scrolling to learn more about me!";
@@ -66,6 +114,7 @@ class Home extends React.Component<Props, State> {
     this.aboutRef = React.createRef();
     this.projectsRef = React.createRef();
     this.blogRef = React.createRef();
+    this.projectDetailRef = React.createRef();
   }
   public componentDidMount(): void {
     this.typeGreetingText();
@@ -284,142 +333,51 @@ class Home extends React.Component<Props, State> {
             interesting here!
           </div>
           <hr />
-          <div className={styles.container}>
-            <Project
-              thumbnail={<img src={tradeSmartlyThumbnail} alt="TradeSmartly" />}
-              icon={<img src={tradeSmartlyLogo} alt="TradeSmartly" />}
-              title="TradeSmartly"
-              tags={["PWA", "Investment"]}
-              maintaining_time_range={[new Date(2021, 1, 1)]}
-            />
-            <Project
-              thumbnail={<img src={noadsThumbnail} alt="Noads" />}
-              icon={<img src={noadsLogo} alt="Noads" />}
-              title="Noads"
-              tags={["Chrome Extension", "Ad Blocker"]}
-              maintaining_time_range={[new Date(2024, 1, 1), new Date(2024, 1, 1)]}
-            />
-            <Project
-              thumbnail={
-                <img src={pathFindingThumbnail} alt="Path Finding Visualizer" />
-              }
-              icon={<img src={pathFindingLogo} alt="Path Finding Visualizer" />}
-              title="Path Finding Visualizer"
-              tags={["Algorithm", "Visualization"]}
-              maintaining_time_range={[new Date(2020, 1, 1), new Date(2021, 1, 1)]}
-            />
-            {/* <a
-              href="https://trade-smartly.com/welcome"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.trade_smartly}`}
-            >
-              <div className={`${styles.background} ${styles.mask}`} />
-              <div className={styles.title}>TradeSmartly</div>
-              <div className={styles.subtitle}>
-                Track and monitor your investment performance with detailed analytics.
-              </div>
-            </a>
-            <a
-              href="https://byc1999.com/path-finding-visualizer"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.path_finding}`}
-            >
-              <div className={styles.background} />
-              <div className={styles.title}>Path-Finding Visualizer</div>
-              <div className={styles.subtitle}>
-                Explore various pathfinding algorithms and maze generation algorithms.
-              </div>
-            </a>
-            <a
-              href="https://byc1999.com/virus-spread"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.virus_spread}`}
-            >
-              <div className={styles.background} />
-              <div className={styles.title}>Virus Spread Simulate</div>
-              <div className={styles.subtitle}>
-                Simulate the spread of viruses under different parameters and visualize
-                the results.
-              </div>
-            </a>
-            <a
-              href="https://chromewebstore.google.com/detail/noads/mcdfnneilaagajpfcfiofdjibclkflhg"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.noads}`}
-            >
-              <div className={`${styles.background} ${styles.mask}`} />
-              <div className={styles.title}>Noads</div>
-              <div className={styles.subtitle}>
-                A simple ad blocker that removes specific DOM elements using CSS
-                selectors.
-              </div>
-            </a>
-            <a
-              href="https://byc1999.com/market-sim"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.market_simulate}`}
-            >
-              <div className={`${styles.background} ${styles.mask}`} />
-              <div className={styles.title}>Market Simulate</div>
-              <div className={styles.subtitle}>
-                Simulate supply and demand theory to see how market equilibrium is
-                achieved.
-              </div>
-            </a>
-            <a
-              href="https://byc1999.com/inventory-analyzer"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.inventory_analyzer}`}
-            >
-              <div className={`${styles.background} ${styles.mask}`} />
-              <div className={styles.title}>Inventory Analyzer</div>
-              <div className={styles.subtitle}>
-                Optimize inventory management based on different cost structures and
-                sales patterns.
-              </div>
-            </a>
-            <a
-              href="https://byc1999.com/snake"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.snake}`}
-            >
-              <div className={`${styles.background} ${styles.mask}`} />
-              <div className={styles.title}>Snake</div>
-              <div className={styles.subtitle}>
-                A classic mobile game - can you beat the Dijkstra algorithm?
-              </div>
-            </a>
-            <a
-              href="https://byc1999.com/tic-tac-toe"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.tic_tac_toe}`}
-            >
-              <div className={`${styles.background} ${styles.mask}`} />
-              <div className={styles.title}>Tic Tac Toe</div>
-              <div className={styles.subtitle}>
-                Simple machine learning makes it unbeatable!
-              </div>
-            </a>
-            <a
-              href="https://byc1999.com/pick-coins"
-              target="_blank"
-              rel="noreferrer"
-              className={`${styles.project} ${styles.pick_coins}`}
-            >
-              <div className={`${styles.background} ${styles.mask}`} />
-              <div className={styles.title}>Pick Coins</div>
-              <div className={styles.subtitle}>
-                A game theory puzzle - can you find the winning strategy?
-              </div>
-            </a> */}
+          <div
+            className={`${styles.project_detail_container} ${
+              this.state.activeProject ? styles.active : ""
+            }`}
+            ref={this.projectDetailRef}
+          >
+            {this.state.activeProject && (
+              <>
+                <div className={styles.button_container}>
+                  <RoundButton
+                    className="p-8"
+                    onClick={() => this.setState({ activeProject: null })}
+                  >
+                    <IconXLarge sideLength="18" />
+                  </RoundButton>
+                </div>
+                <ProjectDetail
+                  thumbnail={this.state.activeProject.thumbnail}
+                  icon={this.state.activeProject.icon}
+                  title={this.state.activeProject.title}
+                  description={this.state.activeProject.description}
+                  tags={this.state.activeProject.tags}
+                  maintaining_time_range={
+                    this.state.activeProject.maintaining_time_range
+                  }
+                  source_code_url={this.state.activeProject.source_code_url}
+                  demo_url={this.state.activeProject.demo_url}
+                />
+              </>
+            )}
+          </div>
+          <div className={styles.project_list_container}>
+            {this.state.projects.map((project) => {
+              return (
+                <div key={project.title} onClick={this.handleClickProjectCard(project)}>
+                  <ProjectCard
+                    thumbnail={this.state.activeProject ? undefined : project.thumbnail}
+                    icon={project.icon}
+                    title={project.title}
+                    tags={project.tags}
+                    maintaining_time_range={project.maintaining_time_range}
+                  />
+                </div>
+              );
+            })}
           </div>
           <div className={styles.footer}>
             <a
@@ -479,6 +437,18 @@ class Home extends React.Component<Props, State> {
     }
     return (0.2 + Math.random()) * 70;
   }
+  private handleClickProjectCard = (project: Project) => {
+    return () => {
+      setTimeout(() => {
+        this.setState({ activeProject: project }, () => {
+          this.projectDetailRef.current!.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        });
+      }, 250);
+    };
+  };
 }
 
 export default withRouter(Home);

@@ -188,7 +188,7 @@
       }
     }
     & > .skills_outer {
-      width: min(100%, _.$large);
+      width: min(100%, _.$extra-large);
       margin: 0 auto;
       padding: 30px 0;
       overflow: hidden;
@@ -251,8 +251,34 @@
   }
   & > .projects {
     padding-bottom: 30px;
-    & > .container {
+    & > .project_detail_container {
+      position: relative;
       display: flex;
+      flex-direction: column;
+      width: min(100%, _.$extra-large);
+      margin: 0 auto 30px;
+      padding-top: _.$header-height;
+      height: 0;
+      overflow: hidden;
+      transition: height 0.3s ease-in-out;
+      &.active {
+        height: calc(70vh + _.$header-height);
+      }
+      & > .button_container {
+        position: absolute;
+        top: calc(_.$header-height + 5px);
+        right: 5px;
+        width: fit-content;
+        height: fit-content;
+        z-index: 2;
+      }
+    }
+    & > .project_list_container {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      max-width: _.$extra-large;
+      margin: 0 auto;
       padding: 0 30px;
       overflow: auto;
       &::-webkit-scrollbar {
