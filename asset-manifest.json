@@ -1,10 +1,10 @@
 {
   "files": {
     "main.css": "/static/css/main.bb7f4aba.css",
-    "main.js": "/static/js/main.ff3a6e87.js",
+    "main.js": "/static/js/main.b593a842.js",
     "static/js/27.8122d512.chunk.js": "/static/js/27.8122d512.chunk.js",
     "static/media/avatar_1.webp": "/static/media/avatar_1.d2f48a157e88f8c5eb7e.webp",
-    "static/media/tradesmartly_thumbnail.webp": "/static/media/tradesmartly_thumbnail.5664efe157a1775e7ae9.webp",
+    "static/media/taigu_thumbnail.webp": "/static/media/taigu_thumbnail.5664efe157a1775e7ae9.webp",
     "static/media/path_finding_thumbnail.webp": "/static/media/path_finding_thumbnail.0cd3dee6f6b68970c1cc.webp",
     "static/media/avatar_2.jpg": "/static/media/avatar_2.ace3abacbad5bdc9e78d.jpg",
     "service-worker.js": "/service-worker.js",
@@ -12,7 +12,7 @@
     "static/media/noads_thumbnail.webp": "/static/media/noads_thumbnail.0cf01cd3ea6c91b44a61.webp",
     "static/media/noads_logo.webp": "/static/media/noads_logo.30e59d6c79b6b7f42d6e.webp",
     "static/media/path_finding_logo.webp": "/static/media/path_finding_logo.7af478de014a13f7cb77.webp",
-    "static/media/tradesmartly_logo.webp": "/static/media/tradesmartly_logo.30453a5b0b6ed242fe6a.webp",
+    "static/media/taigu_logo.webp": "/static/media/taigu_logo.30453a5b0b6ed242fe6a.webp",
     "static/media/nccu_logo.webp": "/static/media/nccu_logo.4bd43308a7e886e0fe77.webp",
     "static/media/airflow_logo.svg": "/static/media/airflow_logo.92c4f1e5992cb02c68c3ad344b264714.svg",
     "static/media/postgresql_logo.svg": "/static/media/postgresql_logo.5554dfac6639fb169614c251cd1f6bc0.svg",
@@ -38,6 +38,6 @@
   },
   "entrypoints": [
     "static/css/main.bb7f4aba.css",
-    "static/js/main.ff3a6e87.js"
+    "static/js/main.b593a842.js"
   ]
 }
