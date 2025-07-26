@@ -22,8 +22,8 @@ import pythonLogo from "../../../assets/python_logo.svg";
 import rabbitmqLogo from "../../../assets/rabbitmq_logo.svg";
 import reactLogo from "../../../assets/react_logo.svg";
 import redisLogo from "../../../assets/redis_logo.svg";
-import tradeSmartlyLogo from "../../../assets/tradesmartly_logo.webp";
-import tradeSmartlyThumbnail from "../../../assets/tradesmartly_thumbnail.webp";
+import taiguLogo from "../../../assets/taigu_logo.webp";
+import taiguThumbnail from "../../../assets/taigu_thumbnail.webp";
 import typescriptLogo from "../../../assets/typescript_logo.svg";
 import vueLogo from "../../../assets/vue_logo.svg";
 
@@ -73,15 +73,15 @@ class Home extends React.Component<Props, State> {
       activeProject: null,
       projects: [
         {
-          thumbnail: <img src={tradeSmartlyThumbnail} alt="TradeSmartly" />,
-          icon: <img src={tradeSmartlyLogo} alt="TradeSmartly" />,
-          title: "TradeSmartly",
+          thumbnail: <img src={taiguThumbnail} alt="Taigu" />,
+          icon: <img src={taiguLogo} alt="Taigu" />,
+          title: "Taigu",
           tags: ["PWA", "Investment"],
           maintaining_time_range: [new Date(2021, 1, 1)],
           description:
             "Track and monitor your investment performance with detailed analytics.",
-          source_code_url: "https://github.com/bingyangchen/trade-smartly",
-          demo_url: "https://trade-smartly.com/welcome",
+          source_code_url: "https://github.com/bingyangchen/taigu",
+          demo_url: "https://taigu.tw/welcome",
         },
         {
           thumbnail: <img src={noadsThumbnail} alt="Noads" />,
