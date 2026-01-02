@@ -1,7 +1,7 @@
 @use "../../global_variables" as _;
 
 .button {
-  $border-radius: 8px;
+  $border-radius: 15px;
   $transition-duration: 150ms;
   position: relative;
   display: flex;
@@ -55,12 +55,12 @@
     color: _.$white;
   }
   &.primary_fill {
-    background-color: _.$blue;
+    background-color: _.$theme-color;
     color: _.$white;
   }
   &.primary {
     background-color: _.$white;
-    color: _.$blue;
+    color: _.$theme-color;
   }
   &.success_fill {
     background-color: _.$green;

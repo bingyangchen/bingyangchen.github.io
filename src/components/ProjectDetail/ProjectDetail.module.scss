@@ -14,6 +14,9 @@
     height: 100%;
     overflow: hidden;
     z-index: 1;
+    @media (min-width: _.$extra-large) {
+      border-radius: 25px;
+    }
     & > img {
       width: 100%;
       height: 100%;

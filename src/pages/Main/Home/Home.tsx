@@ -54,6 +54,7 @@ interface Props extends IRouter {}
 
 interface State {
   typedGreetingText: string;
+  isTypingComplete: boolean;
   activeProject: Project | null;
   projects: Project[];
 }
@@ -70,6 +71,7 @@ class Home extends React.Component<Props, State> {
     super(props);
     this.state = {
       typedGreetingText: "",
+      isTypingComplete: false,
       activeProject: null,
       projects: [
         {
@@ -109,7 +111,7 @@ class Home extends React.Component<Props, State> {
       ],
     };
     this.fullGreetingText =
-      "Hi there. I'm Bing-Yang Chen.\nI'm a software engineer with a focus on web application development, but I aim to expand my expertise further.\nKeep scrolling to learn more about me!";
+      "Hi, I’m Bing-Yang Chen.\nI’m a software engineer who builds web applications and is always exploring what’s next.";
     this.homeRef = React.createRef();
     this.aboutRef = React.createRef();
     this.projectsRef = React.createRef();
@@ -118,12 +120,6 @@ class Home extends React.Component<Props, State> {
   }
   public componentDidMount(): void {
     this.typeGreetingText();
-    window.addEventListener("scroll", () => {
-      document.documentElement.style.backgroundColor =
-        document.documentElement.scrollTop > document.documentElement.clientHeight
-          ? "#000"
-          : "#fff";
-    });
     window.addEventListener("scroll", () => {
       let maxY = -Infinity;
       let maxAnchor: HTMLDivElement | null = null;
@@ -148,7 +144,7 @@ class Home extends React.Component<Props, State> {
       }
     });
   }
-  public componentDidUpdate(): void {}
+
   public render(): React.ReactNode {
     return (
       <div className={styles.main}>
@@ -170,7 +166,10 @@ class Home extends React.Component<Props, State> {
             />
           </div>
           <h1 className={styles.name}>Bing-Yang Chen</h1>
-          <div className={styles.greeting}>{this.state.typedGreetingText}</div>
+          <div className={styles.greeting}>
+            {this.state.typedGreetingText}
+            {!this.state.isTypingComplete && <span className={styles.cursor}>|</span>}
+          </div>
           <div className={styles.cta_list}>
             <a href="#about" className={styles.cta}>
               <div className={styles.icon_container}>
@@ -386,7 +385,7 @@ class Home extends React.Component<Props, State> {
               rel="noreferrer"
               title="Visit My GitHub"
             >
-              <Button className="black_fill xl">
+              <Button className="primary_fill xl">
                 <IconGitHub sideLength="28" />
                 Visit My GitHub
               </Button>
@@ -407,7 +406,7 @@ class Home extends React.Component<Props, State> {
           <hr />
           <div className={styles.footer}>
             <a href="https://blog.byc1999.com/list" target="_blank" rel="noreferrer">
-              <Button className="black_fill xl">
+              <Button className="primary_fill xl">
                 <IconBlogText sideLength="28" />
                 Check it out
               </Button>
@@ -423,8 +422,10 @@ class Home extends React.Component<Props, State> {
       accumulatedDelayMs += this.getGreetingTextDelayMs(i);
       setTimeout(() => {
         this.setState((state, props) => {
+          const isComplete = i === this.fullGreetingText.length - 1;
           return {
             typedGreetingText: state.typedGreetingText + this.fullGreetingText[i],
+            isTypingComplete: isComplete,
           };
         });
       }, accumulatedDelayMs);

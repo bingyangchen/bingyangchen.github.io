@@ -1,78 +1,74 @@
 @use "../../global_variables" as _;
 
 .main {
-    $gap: 45px;
+  $gap: 45px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: $gap;
+  padding: $gap 25px;
+  width: 100%;
+  background-color: _.$theme-color;
+  color: _.$noisy-white;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-size: 0.8 * _.$base-font-size;
+  &,
+  & * {
+    user-select: text;
+  }
+  & > .section {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    gap: $gap;
-    padding: $gap 25px;
-    width: 100%;
-    background-color: _.$black;
-    color: _.$light-gray;
-    font-family: Georgia, "Times New Roman", Times, serif;
-    font-size: 0.8 * _.$base-font-size;
-    &,
-    & * {
-        user-select: text;
+    gap: 10px;
+    max-width: min(100%, 660px);
+    & > .title {
+      text-align: center;
+      font-size: 1.5 * _.$base-font-size;
     }
-    & > .section {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        max-width: min(100%, 660px);
-        & > .title {
-            text-align: center;
-            font-size: 1.5 * _.$base-font-size;
-        }
-        &.contact_me > .body {
-            font-size: _.$base-font-size;
-        }
-        &.social_media > .list,
-        &.services > .list {
-            display: block;
-            text-align: center;
-            margin-left: 20px;
-            & > .item {
-                display: inline-flex;
-                align-items: flex-end;
-                padding: 8px 0;
-                transition-duration: 150ms;
-                // @media (hover: hover) {
-                //     &:hover {
-                //         color: _.$white;
-                //     }
-                // }
-                span {
-                    margin-left: 8px;
-                    @media (max-width: _.$small) {
-                        margin-left: 7px;
-                    }
-                }
-            }
-            & > hr {
-                display: inline;
-                border-radius: 5px;
-                border: none;
-                border-left: 2px solid _.$deep-gray;
-                padding: 3px 0;
-                margin: 0 15px;
-                @media (max-width: _.$small) {
-                    opacity: 0;
-                    margin: 0 8px;
-                }
-                &:last-of-type {
-                    opacity: 0;
-                }
-            }
-        }
-        &.copyright {
-            text-align: center;
-            line-height: 1.2 * _.$base-font-size;
-            @media (max-width: _.$small) {
-                font-size: 0.7 * _.$base-font-size;
-            }
-        }
+    &.contact_me > .body {
+      font-size: _.$base-font-size;
     }
+    &.social_media > .list,
+    &.services > .list {
+      display: block;
+      text-align: center;
+      margin-left: 20px;
+      & > .item {
+        display: inline-flex;
+        align-items: flex-end;
+        padding: 8px 0;
+        transition-duration: 150ms;
+        span {
+          margin-left: 8px;
+          @media (max-width: _.$small) {
+            margin-left: 7px;
+          }
+        }
+      }
+      & > hr {
+        display: inline;
+        border-radius: 5px;
+        border: none;
+        border-left: 2px solid _.$deep-gray;
+        border-color: _.$noisy-white;
+        padding: 3px 0;
+        margin: 0 15px;
+        @media (max-width: _.$small) {
+          opacity: 0;
+          margin: 0 8px;
+        }
+        &:last-of-type {
+          opacity: 0;
+        }
+      }
+    }
+    &.copyright {
+      text-align: center;
+      line-height: 1.2 * _.$base-font-size;
+      @media (max-width: _.$small) {
+        font-size: 0.7 * _.$base-font-size;
+      }
+    }
+  }
 }
