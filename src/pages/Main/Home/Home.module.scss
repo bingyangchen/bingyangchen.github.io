@@ -72,11 +72,11 @@
         backface-visibility: hidden;
         transition-duration: 300ms;
         &.front {
-          animation: autoFlipFront 720ms ease-in-out 150ms;
+          animation: autoFlipFront 720ms ease-in-out 1000ms;
         }
         &.back {
           transform: rotateY(180deg);
-          animation: autoFlipBack 720ms ease-in-out 150ms;
+          animation: autoFlipBack 720ms ease-in-out 1000ms;
         }
       }
       @media (hover: hover) {
