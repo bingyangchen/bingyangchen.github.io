@@ -1,0 +1,13 @@
+---
+description: When installing dependencies, search for and use the latest stable version
+alwaysApply: false
+---
+# Latest Stable Dependencies
+
+This site uses **npm**. When adding or updating dependencies:
+
+1. **Search for the latest stable version** on the [npm registry](https://www.npmjs.com/) or with `npm view <package-name> version` before writing version ranges or running install commands.
+2. **Prefer the latest stable release** unless the project explicitly requires a specific version for compatibility (e.g. Create React App peer constraints).
+3. **Avoid placeholders** like `*` or guessed versions; use a verified semver range or exact version. After installing, keep **`package-lock.json`** in sync via `npm install` and commit lockfile changes when dependencies change.
+
+**npm** (`package.json`): Add or bump packages with `npm install <package>@latest` (or a pinned version), then confirm the resolved version in `package-lock.json`. Use caret (`^`) or tilde (`~`) only when they match the team’s policy for this repo; when in doubt, pin to the stable version you verified.

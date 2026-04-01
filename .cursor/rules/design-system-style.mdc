@@ -1,0 +1,30 @@
+---
+description: When writing style-related code, follow the project design system
+alwaysApply: false
+globs: src/**/*.scss
+---
+
+# Design System for Style
+
+When writing or editing code that involves **style** (colors, typography, spacing, layout), follow this site’s design tokens and existing SCSS patterns.
+
+## Source of truth
+
+- **Tokens**: `src/_global_variables.scss` — colors, theme accent, base font size, letter spacing, header/footer heights, breakpoints (`$small`, `$medium`, `$large`, `$extra-large`).
+- **Global base**: `src/index.scss` — body font stack, default text color, smooth scroll, link reset.
+- **Components & pages**: co-located `*.module.scss` (and shared partials such as `Button.scss`) — consume tokens via `@use ".../global_variables" as _;` (adjust the relative path per file depth).
+
+## Do
+
+- **Colors**: Prefer `_.$variable` from `_global_variables.scss` (e.g. `_.$theme-color`, `_.$deep-gray`, `_.$noisy-white`, `_.$light-gray`). For alphas, use existing transparent tokens where they fit (`_.$transparent-black`, etc.) or derive consistently from named colors.
+- **Typography**: Match established stacks — **Geneva, sans-serif** for UI/body (see `index.scss`); **Georgia / Times / serif** for section titles and subtitles where modules already use that pattern. Scale sizes from `_.$base-font-size` and reuse section `h2` / `h3` / `.subtitle` rhythms from pages like `Home.module.scss` when adding similar sections.
+- **Spacing & layout**: Reuse `_.$header-height`, `_.$footer-height`, and breakpoint variables for media queries instead of new magic numbers.
+- **New tokens**: Add shared colors or layout constants to `_global_variables.scss`, then reference them from modules — do not let the same hex spread across many files.
+
+## Don’t
+
+- Don’t sprinkle one-off hex values in SCSS modules when a global variable (or a single new token in `_global_variables.scss`) would keep the palette consistent.
+- Don’t introduce unrelated font families for main content; stay aligned with Geneva + Georgia unless you are deliberately redesigning the whole site.
+- Don’t duplicate breakpoint widths (`512px`, `720px`, …) inline; use the `$small` / `$medium` / `$large` / `$extra-large` variables.
+
+When editing **TSX** with inline `style={{ ... }}` (unusual in this repo), mirror the same token values or prefer classes in SCSS modules instead of raw literals.
