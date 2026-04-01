@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/static/css/main.932954a0.css",
-    "main.js": "/static/js/main.d3c80a49.js",
-    "static/js/27.8122d512.chunk.js": "/static/js/27.8122d512.chunk.js",
+    "main.css": "/static/css/main.a07580e5.css",
+    "main.js": "/static/js/main.4ded9991.js",
+    "static/js/206.718b1740.chunk.js": "/static/js/206.718b1740.chunk.js",
     "static/media/taigu_thumbnail.webp": "/static/media/taigu_thumbnail.2a3489f7652faad0968c.webp",
     "static/media/avatar_1.webp": "/static/media/avatar_1.d2f48a157e88f8c5eb7e.webp",
     "static/media/path_finding_thumbnail.webp": "/static/media/path_finding_thumbnail.0cd3dee6f6b68970c1cc.webp",
     "static/media/avatar_2.jpg": "/static/media/avatar_2.ace3abacbad5bdc9e78d.jpg",
-    "service-worker.js": "/service-worker.js",
     "static/media/logo.webp": "/static/media/logo.86a7ed11bead8324dcef.webp",
     "static/media/noads_thumbnail.webp": "/static/media/noads_thumbnail.0cf01cd3ea6c91b44a61.webp",
+    "service-worker.js": "/service-worker.js",
     "static/media/taigu_logo.webp": "/static/media/taigu_logo.c25112a8b66d394cc2dc.webp",
     "static/media/noads_logo.webp": "/static/media/noads_logo.30e59d6c79b6b7f42d6e.webp",
     "static/media/path_finding_logo.webp": "/static/media/path_finding_logo.7af478de014a13f7cb77.webp",
@@ -37,7 +37,7 @@
     "static/media/vue_logo.svg": "/static/media/vue_logo.2b520303788d88b4e0c3776cd07cd61f.svg"
   },
   "entrypoints": [
-    "static/css/main.932954a0.css",
-    "static/js/main.d3c80a49.js"
+    "static/css/main.a07580e5.css",
+    "static/js/main.4ded9991.js"
   ]
 }
