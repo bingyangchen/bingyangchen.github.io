@@ -7,4 +7,5 @@ export { default as ProjectCard } from "./ProjectCard/ProjectCard";
 export { default as ProjectDetail } from "./ProjectDetail/ProjectDetail";
 export { default as RoundButton } from "./RoundButton/RoundButton";
 export { default as Skill } from "./Skill/Skill";
+export { default as TypingGreeting } from "./TypingGreeting/TypingGreeting";
 export { default as WorkExperience } from "./WorkExperience/WorkExperience";

@@ -37,6 +37,7 @@ import {
   ProjectDetail,
   RoundButton,
   Skill,
+  TypingGreeting,
   WorkExperience,
 } from "../../../components";
 import {
@@ -50,18 +51,18 @@ import {
 import { IRouter, withRouter } from "../../../router";
 import type { Project } from "../../../types";
 
+const GREETING_TEXT =
+  "Hi, I’m Bing-Yang Chen.\nI’m a software engineer who builds web applications and is always exploring what’s next.";
+
 interface Props extends IRouter {}
 
 interface State {
-  typedGreetingText: string;
-  isTypingComplete: boolean;
   activeProject: Project | null;
   projects: Project[];
 }
 
 class Home extends React.Component<Props, State> {
   public state: State;
-  private fullGreetingText: string;
   private homeRef: React.RefObject<HTMLDivElement>;
   private aboutRef: React.RefObject<HTMLDivElement>;
   private projectsRef: React.RefObject<HTMLDivElement>;
@@ -70,8 +71,6 @@ class Home extends React.Component<Props, State> {
   public constructor(props: Props) {
     super(props);
     this.state = {
-      typedGreetingText: "",
-      isTypingComplete: false,
       activeProject: null,
       projects: [
         {
@@ -110,8 +109,6 @@ class Home extends React.Component<Props, State> {
         },
       ],
     };
-    this.fullGreetingText =
-      "Hi, I’m Bing-Yang Chen.\nI’m a software engineer who builds web applications and is always exploring what’s next.";
     this.homeRef = React.createRef();
     this.aboutRef = React.createRef();
     this.projectsRef = React.createRef();
@@ -119,7 +116,6 @@ class Home extends React.Component<Props, State> {
     this.projectDetailRef = React.createRef();
   }
   public componentDidMount(): void {
-    this.typeGreetingText();
     window.addEventListener("scroll", () => {
       let maxY = -Infinity;
       let maxAnchor: HTMLDivElement | null = null;
@@ -166,10 +162,11 @@ class Home extends React.Component<Props, State> {
             />
           </div>
           <h1 className={styles.name}>Bing-Yang Chen</h1>
-          <div className={styles.greeting}>
-            {this.state.typedGreetingText}
-            {!this.state.isTypingComplete && <span className={styles.cursor}>|</span>}
-          </div>
+          <TypingGreeting
+            text={GREETING_TEXT}
+            className={styles.greeting}
+            cursorClassName={styles.cursor}
+          />
           <div className={styles.cta_list}>
             <a href="#about" className={styles.cta}>
               <div className={styles.icon_container}>
@@ -415,28 +412,6 @@ class Home extends React.Component<Props, State> {
         </div>
       </div>
     );
-  }
-  private typeGreetingText(): void {
-    let accumulatedDelayMs = 0;
-    for (let i = 0; i < this.fullGreetingText.length; i++) {
-      accumulatedDelayMs += this.getGreetingTextDelayMs(i);
-      setTimeout(() => {
-        this.setState((state, props) => {
-          const isComplete = i === this.fullGreetingText.length - 1;
-          return {
-            typedGreetingText: state.typedGreetingText + this.fullGreetingText[i],
-            isTypingComplete: isComplete,
-          };
-        });
-      }, accumulatedDelayMs);
-    }
-  }
-  private getGreetingTextDelayMs(index: number): number {
-    if (index !== 0) {
-      if (this.fullGreetingText[index - 1] === ".") return 550;
-      else if (this.fullGreetingText[index - 1] === ",") return 300;
-    }
-    return (0.2 + Math.random()) * 70;
   }
   private handleClickProjectCard = (project: Project) => {
     return () => {
