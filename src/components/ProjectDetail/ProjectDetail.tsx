@@ -23,49 +23,70 @@ export default class ProjectDetail extends React.Component<Props, State> {
     super(props);
     this.state = {};
   }
+
+  private openInNewTab(url: string): void {
+    const tab = window.open(url, "_blank");
+    if (tab) {
+      tab.opener = null;
+    }
+  }
+
   public render(): React.ReactNode {
     return (
       <div className={styles.main}>
-        <div className={styles.background}>{this.props.thumbnail}</div>
-        <div className={styles.body}>
-          <div className={styles.title}>{this.props.title}</div>
-          <div className={styles.upper}>
-            <div className={styles.tags}>
-              {this.props.tags.map((tag, index) => (
-                <React.Fragment key={index}>
-                  <span className={styles.tag}>{tag}</span>
-                  {index !== this.props.tags.length - 1 && <span>・</span>}
-                </React.Fragment>
-              ))}
-            </div>
-            <div className={styles.time_range}>
-              {this.props.maintaining_time_range[0].getFullYear()}
-              {" - "}
-              {this.props.maintaining_time_range[1]?.getFullYear() ?? "Present"}
-            </div>
+        <div className={styles.grid}>
+          <div className={styles.media}>
+            <div className={styles.mediaInner}>{this.props.thumbnail}</div>
           </div>
-          <div className={styles.middle}>
-            <div className={styles.icon_container}>{this.props.icon}</div>
-            <div className={styles.description}>{this.props.description}</div>
-          </div>
-          <div className={styles.lower}>
-            <Button
-              className="success_fill l bold"
-              onClick={() => {
-                window.open(this.props.demo_url, "_blank");
-              }}
-            >
-              <div className={styles.demo_button_link}>Visit</div>
-            </Button>
-            <Button
-              className="clean l bold"
-              onClick={() => {
-                window.open(this.props.source_code_url, "_blank");
-              }}
-            >
-              <IconCode color="#1aa260" />
-              <div className={styles.source_code_button_link}>Source Code</div>
-            </Button>
+          <div className={styles.content}>
+            <div className={styles.contentPad}>
+              <h3 className={styles.title}>{this.props.title}</h3>
+              <div className={styles.upper}>
+                <div className={styles.tags}>
+                  {this.props.tags.map((tag, index) => (
+                    <React.Fragment key={index}>
+                      <span className={styles.tag}>{tag}</span>
+                      {index !== this.props.tags.length - 1 && (
+                        <span className={styles.tagSep}>·</span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+                <div className={styles.timeRange}>
+                  {this.props.maintaining_time_range[0].getFullYear()}
+                  {" – "}
+                  {this.props.maintaining_time_range[1]?.getFullYear() ??
+                    "Present"}
+                </div>
+              </div>
+              <div className={styles.middle}>
+                <div className={styles.iconContainer}>{this.props.icon}</div>
+                <div className={styles.description}>
+                  {this.props.description}
+                </div>
+              </div>
+              <div className={styles.lower}>
+                <Button
+                  className="primary_fill l bold"
+                  onClick={() => {
+                    this.openInNewTab(this.props.demo_url);
+                  }}
+                >
+                  Visit
+                </Button>
+                <Button
+                  className="clean l bold"
+                  onClick={() => {
+                    this.openInNewTab(this.props.source_code_url);
+                  }}
+                >
+                  <span className={styles.sourceInner}>
+                    <IconCode sideLength="24" color="currentColor" />
+                    Source Code
+                  </span>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
