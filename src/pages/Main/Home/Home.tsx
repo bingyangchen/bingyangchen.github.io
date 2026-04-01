@@ -207,7 +207,15 @@ class Home extends React.Component<Props, State> {
           <div className={styles.work_experience_outer}>
             <div className={styles.block}>
               <WorkExperience
-                work_duration="Dec 2024 ~ Present"
+                work_duration="Jan 2025 ~ Present"
+                job_title="Backend Engineer"
+                company_name="Swag"
+                company_logo="https://swag.live/favicon.ico"
+                company_link="https://swag.live/"
+                description=""
+              />
+              <WorkExperience
+                work_duration="Dec 2024 ~ Dec 2025．1 yr 1 mo"
                 job_title="Senior Backend Engineer"
                 company_name="Gaia"
                 company_logo="https://www.gaia.net/images/ci/apple-icon-152x152.png"
