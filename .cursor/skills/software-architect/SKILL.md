@@ -14,6 +14,7 @@ This repository is **Bing-Yang Chen’s personal site** ([byc1999.com](https://b
 - **PWA / caching** — Workbox is wired via CRA’s service-worker template (precaching, navigation-to-shell). Changes to caching or offline behavior should be deliberate and tested after `npm run build`.
 - **Content & boundaries** — Long-form writing and lists live on the **external blog**; this site is a portfolio shell. Prefer clear separation (links out) over growing an in-app CMS unless that is an explicit goal.
 - **Styling** — Shared tokens live in `src/_global_variables.scss`; section and component styles use SCSS modules. New UI should reuse variables and existing patterns rather than ad-hoc colors.
+- **SCSS modules layout** — In component `*.module.scss`, **nest rules under the root class in the same order as the TSX/DOM** (e.g. `.main { .grid { .media { … } } }`) so styles stay easy to scan beside the component. Avoid extra depth that does not mirror markup; when overriding page-level rules (e.g. `.section h3`), use a **short, purposeful chain** under the real parent path (such as `h3.title` inside `.contentPad`) instead of piling unrelated selectors.
 
 For product tone, sections, and UX intent, read `.cursor/skills/product-designer/context.md` when decisions affect copy or information architecture.
 
