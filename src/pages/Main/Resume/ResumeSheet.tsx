@@ -91,6 +91,17 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                   <span className={styles.roleText}>Backend Engineer • Swag</span>
                   <span className={styles.roleDates}>Jan. 2025 – Present</span>
                 </div>
+                <ul className={styles.bulletList}>
+                  <li>
+                    Refactored a multi-domain availability monitoring service from Flask
+                    and MongoDB to FastAPI and PostgreSQL, significantly reducing
+                    codebase size and CPU usage.
+                  </li>
+                  <li>
+                    Introduced GrowthBook for feature-flag management, enabling internal
+                    teams to configure flags with less friction and greater flexibility.
+                  </li>
+                </ul>
               </div>
 
               <div className={styles.job}>
@@ -116,7 +127,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                   </li>
                   <li>
                     Developed and introduced internal tools to streamline release
-                    workflows for the DevOps team, including environment variable
+                    workflows for the DevOps team, including an environment variable
                     management tool and automated database migration utilities.
                   </li>
                   <li>
@@ -138,22 +149,16 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                   <li>
                     Designed and implemented scalable, high-performance APIs; integrated
                     third-party services; and partnered closely with frontend teams to
-                    deliver robust, production-grade e-commerce functionality.
+                    deliver production-grade e-commerce functionality.
                   </li>
                   <li>
                     Redesigned database schemas, modernized inter-service communication,
-                    and eliminated legacy bottlenecks, resulting in significant gains in
-                    system reliability and throughput.
+                    and eliminated legacy bottlenecks, improving system reliability and
+                    throughput.
                   </li>
                   <li>
-                    Built and deployed internal admin tools that automated key
-                    workflows, accelerating business operations and reducing manual
-                    overhead.
-                  </li>
-                  <li>
-                    Performed rigorous code reviews and enforced engineering best
-                    practices to uphold code quality, ensure system maintainability, and
-                    drive long-term scalability.
+                    Built internal admin tools that automated workflows and reduced
+                    manual operational overhead.
                   </li>
                 </ul>
               </div>
@@ -172,8 +177,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                   </li>
                   <li>
                     Spearheaded the POC for a social shopping backend, integrating the
-                    Facebook API to enable comment management and post lotteries,
-                    enhancing customers’ social media management experience.
+                    Facebook API to enable comment management and post-based lotteries.
                   </li>
                 </ul>
               </div>

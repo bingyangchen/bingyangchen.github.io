@@ -227,7 +227,7 @@ class Home extends React.Component<Props, State> {
                   company_name="Swag"
                   company_logo="https://swag.live/favicon.ico"
                   company_link="https://swag.live/"
-                  description=""
+                  description="Refactored a multi-domain availability monitoring service from Flask and MongoDB to FastAPI and PostgreSQL, significantly reducing codebase size and CPU usage. Introduced GrowthBook for feature-flag management, enabling internal teams to configure flags with less friction and greater flexibility."
                 />
                 <WorkExperience
                   work_duration="Dec 2024 ~ Dec 2025．1 yr 1 mo"
