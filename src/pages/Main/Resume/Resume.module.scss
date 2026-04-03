@@ -21,12 +21,18 @@
 }
 
 .subtitle {
-  margin: 0 0 28px;
+  margin: 0 0 16px;
   max-width: _.$medium;
   line-height: 1.6;
   font-size: 1 * _.$base-font-size;
   text-align: center;
   color: _.$deep-gray;
+}
+
+.downloadRow {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .sheetViewport {
