@@ -1,7 +1,6 @@
 @use "../../../global_variables" as _;
 
 $resume-navy: #234a8c;
-$resume-meta: #6b7280;
 
 @mixin resume-emphasis-font {
   font-weight: bold;
@@ -150,8 +149,7 @@ $resume-meta: #6b7280;
 
             .roleDates {
               font-weight: normal;
-              color: $resume-meta;
-              font-size: 10px;
+              color: _.$gray;
               white-space: nowrap;
               flex-shrink: 0;
             }
@@ -170,7 +168,7 @@ $resume-meta: #6b7280;
               hyphens: auto;
 
               &::before {
-                content: "•";
+                content: "．";
                 position: absolute;
                 left: 0;
                 top: 0;
@@ -201,18 +199,29 @@ $resume-meta: #6b7280;
 
           .yearRange {
             font-weight: normal;
-            color: $resume-meta;
+            color: _.$gray;
           }
         }
 
-        .degreeLine {
-          margin: 0 0 3px;
-        }
-
-        .gpaLine {
+        .educationDetailRow {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-between;
+          align-items: baseline;
+          gap: 8px 16px;
           margin: 0;
-          color: $resume-meta;
-          font-size: 10px;
+
+          .degreeText {
+            flex: 1 1 auto;
+            min-width: 0;
+          }
+
+          .gpaText {
+            color: _.$gray;
+            font-style: italic;
+            white-space: nowrap;
+            flex-shrink: 0;
+          }
         }
 
         .projectLine {

@@ -88,7 +88,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
             <div className={styles.experience}>
               <div className={styles.job}>
                 <div className={styles.roleRow}>
-                  <span className={styles.roleText}>Backend Engineer • Swag</span>
+                  <span className={styles.roleText}>Backend Engineer．Swag</span>
                   <span className={styles.roleDates}>Jan. 2025 – Present</span>
                 </div>
                 <ul className={styles.bulletList}>
@@ -106,11 +106,9 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
 
               <div className={styles.job}>
                 <div className={styles.roleRow}>
-                  <span className={styles.roleText}>
-                    Senior Backend Engineer • Gaia
-                  </span>
+                  <span className={styles.roleText}>Senior Backend Engineer．Gaia</span>
                   <span className={styles.roleDates}>
-                    Dec. 2024 – Dec. 2025 • 1 yr 1 mo
+                    Dec. 2024 – Dec. 2025．1 yr 1 mo
                   </span>
                 </div>
                 <ul className={styles.bulletList}>
@@ -140,9 +138,9 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
 
               <div className={styles.job}>
                 <div className={styles.roleRow}>
-                  <span className={styles.roleText}>Backend Engineer • Pinkoi</span>
+                  <span className={styles.roleText}>Backend Engineer．Pinkoi</span>
                   <span className={styles.roleDates}>
-                    Mar. 2023 – Dec. 2024 • 1 yr 10 mos
+                    Mar. 2023 – Dec. 2024．1 yr 10 mos
                   </span>
                 </div>
                 <ul className={styles.bulletList}>
@@ -165,9 +163,9 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
 
               <div className={styles.job}>
                 <div className={styles.roleRow}>
-                  <span className={styles.roleText}>Backend Engineer • Sysfeather</span>
+                  <span className={styles.roleText}>Backend Engineer．Sysfeather</span>
                   <span className={styles.roleDates}>
-                    Mar. 2022 – Mar. 2023 • 1 yr 1 mo
+                    Mar. 2022 – Mar. 2023．1 yr 1 mo
                   </span>
                 </div>
                 <ul className={styles.bulletList}>
@@ -191,8 +189,10 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 National Chengchi University{" "}
                 <span className={styles.yearRange}>(2017–2021)</span>
               </p>
-              <p className={styles.degreeLine}>Bachelor of Economics</p>
-              <p className={styles.gpaLine}>GPA: 4.1/4.3</p>
+              <div className={styles.educationDetailRow}>
+                <span className={styles.degreeText}>Bachelor of Economics</span>
+                <span className={styles.gpaText}>GPA: 4.1/4.3</span>
+              </div>
             </div>
             <div className={styles.bottomColumn}>
               <h2 className={styles.sectionHeading}>Side Projects</h2>
@@ -210,12 +210,6 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 <span className={styles.projectLabel}>Personal Site</span>
                 <a href="https://byc1999.com/" target="_blank" rel="noreferrer">
                   byc1999.com
-                </a>
-              </p>
-              <p className={styles.projectLine}>
-                <span className={styles.projectLabel}>Taigu</span>
-                <a href="https://taigu.tw/" target="_blank" rel="noreferrer">
-                  taigu.tw
                 </a>
               </p>
             </div>
