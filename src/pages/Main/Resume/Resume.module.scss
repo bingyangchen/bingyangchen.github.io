@@ -1,0 +1,43 @@
+@use "../../../global_variables" as _;
+
+.resumePage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  min-height: calc(100vh - _.$header-height - _.$footer-height);
+  padding: calc(_.$header-height + 24px) 24px 40px;
+  box-sizing: border-box;
+  background-color: _.$noisy-white;
+}
+
+.title {
+  margin: 0 0 12px;
+  font-family: Georgia, Times, "Times New Roman", serif;
+  font-size: 2.2 * _.$base-font-size;
+  font-weight: normal;
+  text-align: center;
+  color: _.$black;
+}
+
+.subtitle {
+  margin: 0 0 28px;
+  max-width: _.$medium;
+  line-height: 1.6;
+  font-size: 1 * _.$base-font-size;
+  text-align: center;
+  color: _.$deep-gray;
+}
+
+.sheetViewport {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  overflow: auto;
+  padding: 12px;
+  box-sizing: border-box;
+
+  & > div {
+    box-shadow: 0 8px 32px _.$transparent-black;
+  }
+}

@@ -96,30 +96,76 @@
       font-size: 1.4 * _.$base-font-size;
       font-weight: bold;
       font-family: sans-serif;
-      margin: 0 0 10px 0;
+      margin: 0;
       letter-spacing: 0;
     }
-    & > .greeting {
-      margin: 10px 0;
-      padding: 15px 25px;
+    & > .resume_link_row {
       width: min(100%, 500px);
-      min-height: 55px;
-      font-family: sans-serif;
-      font-size: 1.2 * _.$base-font-size;
-      line-height: 2 * _.$base-font-size;
-      white-space: pre-wrap;
+      text-align: center;
+      z-index: 1;
+      & .resume_link {
+        margin: 0;
+        padding: 0;
+        border: none;
+        background: none;
+        font-family: Geneva, sans-serif;
+        font-size: 0.95 * _.$base-font-size;
+        letter-spacing: _.$base-letter-spacing;
+        color: _.$theme-color;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+        cursor: pointer;
+        &:disabled {
+          color: _.$gray;
+          cursor: not-allowed;
+          text-decoration: none;
+        }
+        @media (hover: hover) {
+          &:hover:not(:disabled) {
+            color: _.$deep-gray;
+          }
+        }
+      }
+    }
+    & > .greeting_card {
+      margin-top: 20px;
+      width: min(100%, 500px);
+      padding: 15px 25px;
       border-radius: 30px;
       background-color: _.$light-gray;
+      box-sizing: border-box;
+      z-index: 1;
       @media screen and (max-width: _.$small) {
         padding: 15px 20px;
-        font-size: 1.1 * _.$base-font-size;
-        line-height: 1.5 * _.$base-font-size;
       }
-      & > .cursor {
-        display: inline-block;
-        margin-left: 2px;
-        animation: blink 1s infinite;
+      & > .greeting {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 55px;
+        font-family: sans-serif;
+        font-size: 1.2 * _.$base-font-size;
+        line-height: 2 * _.$base-font-size;
+        white-space: pre-wrap;
+        @media screen and (max-width: _.$small) {
+          font-size: 1.1 * _.$base-font-size;
+          line-height: 1.5 * _.$base-font-size;
+        }
+        & > .cursor {
+          display: inline-block;
+          margin-left: 2px;
+          animation: blink 1s infinite;
+        }
       }
+    }
+    & > .resume_export_slot {
+      position: fixed;
+      left: -10000px;
+      top: 0;
+      width: 794px;
+      height: 1123px;
+      overflow: hidden;
+      pointer-events: none;
     }
     & > .cta_list {
       position: absolute;
