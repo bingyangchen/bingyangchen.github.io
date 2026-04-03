@@ -3,205 +3,245 @@
 $resume-navy: #234a8c;
 $resume-meta: #6b7280;
 
+@mixin resume-emphasis-font {
+  font-weight: bold;
+  text-shadow:
+    0.01em 0 0 currentColor,
+    -0.01em 0 0 currentColor,
+    0 0.01em 0 currentColor,
+    0 -0.01em 0 currentColor;
+}
+
 .a4 {
   width: 794px;
+  min-width: 794px;
   height: 1123px;
+  min-height: 1123px;
+  flex-shrink: 0;
   box-sizing: border-box;
   background-color: _.$white;
   color: _.$black;
   font-family: Geneva, sans-serif;
-  font-size: 9.5px;
-  line-height: 1.38;
+  font-size: 12px;
+  line-height: 1.8;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
 
-.contentArea {
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  padding: 28px 40px 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
+  .contentArea {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 32px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 
-.header {
-  margin-bottom: 14px;
-}
+    .header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px 24px;
 
-.name {
-  margin: 0 0 10px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 20px;
-  font-weight: bold;
-  letter-spacing: 0.02em;
-  line-height: 1.15;
-  color: $resume-navy;
-}
+      .name {
+        margin: 0;
+        flex: 1 1 12rem;
+        min-width: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 20px;
+        font-weight: bold;
+        letter-spacing: 0.02em;
+        line-height: 1.15;
+        color: $resume-navy;
+      }
 
-.contactRow {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 18px;
-  font-size: 9.5px;
-  color: _.$deep-gray;
-}
+      .contactRow {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 16px;
+        color: _.$deep-gray;
+        flex: 0 1 auto;
+        text-align: right;
 
-.contactItem {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  & a {
-    color: _.$blue;
-    text-decoration: none;
-  }
-  & a:hover {
-    text-decoration: underline;
-  }
-}
+        .contactItem {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
 
-.contactIcon {
-  flex-shrink: 0;
-  color: _.$deep-gray;
-}
+          & a {
+            text-decoration: none;
+          }
 
-.section {
-  margin-bottom: 12px;
-}
+          & a:hover {
+            text-decoration: underline;
+          }
 
-.sectionHeading {
-  margin: 0 0 8px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 11px;
-  font-weight: bold;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: $resume-navy;
-  padding-bottom: 5px;
-  border-bottom: 1px solid _.$light-gray;
-}
+          .contactIcon {
+            flex-shrink: 0;
+            color: _.$deep-gray;
+          }
+        }
+      }
+    }
 
-.skillCategories {
-  margin: 0;
-  padding-left: 0;
-  list-style: none;
-  & li {
-    margin-bottom: 5px;
-    padding-left: 0;
-    text-align: left;
-    &:last-child {
-      margin-bottom: 0;
+    .sectionHeading {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      font-weight: bold;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: $resume-navy;
+      padding-bottom: 5px;
+      border-bottom: 1px solid _.$light-gray;
+    }
+
+    .section {
+      .skillCategories {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+
+        & li {
+          display: grid;
+          grid-template-columns: 11.5rem 1fr;
+          column-gap: 1rem;
+          align-items: start;
+          margin-bottom: 5px;
+          padding-left: 0;
+          text-align: left;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        .skillLabel {
+          @include resume-emphasis-font;
+        }
+
+        .skillDetail {
+          min-width: 0;
+        }
+      }
+
+      .experience {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .job {
+          .roleRow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px 16px;
+            margin-bottom: 4px;
+
+            .roleText {
+              @include resume-emphasis-font;
+              flex: 1 1 auto;
+              min-width: 0;
+            }
+
+            .roleDates {
+              font-weight: normal;
+              color: $resume-meta;
+              font-size: 10px;
+              white-space: nowrap;
+              flex-shrink: 0;
+            }
+          }
+
+          .bulletList {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+
+            & li {
+              position: relative;
+              padding-left: 1.25em;
+              margin-bottom: 3px;
+              text-align: justify;
+              hyphens: auto;
+
+              &::before {
+                content: "•";
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 0.6em;
+                @include resume-emphasis-font;
+                text-align: center;
+                line-height: 1.8;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .bottomRow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-top: auto;
+      padding-top: 8px;
+
+      .bottomColumn {
+        min-width: 0;
+
+        .schoolLine {
+          margin: 0 0 5px;
+          @include resume-emphasis-font;
+
+          .yearRange {
+            font-weight: normal;
+            color: $resume-meta;
+          }
+        }
+
+        .degreeLine {
+          margin: 0 0 3px;
+        }
+
+        .gpaLine {
+          margin: 0;
+          color: $resume-meta;
+          font-size: 10px;
+        }
+
+        .projectLine {
+          margin: 0 0 5px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 6px 8px;
+          align-items: baseline;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          & a {
+            color: $resume-navy;
+            text-decoration: none;
+            word-break: break-all;
+          }
+
+          & a:hover {
+            text-decoration: underline;
+          }
+        }
+
+        .projectLabel {
+          @include resume-emphasis-font;
+          min-width: 5.5rem;
+        }
+      }
     }
   }
-}
-
-.skillLabel {
-  font-weight: bold;
-  color: _.$black;
-  margin-right: 6px;
-}
-
-.experience {
-  margin: 0;
-}
-
-.job {
-  margin-bottom: 10px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.roleRow {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px 16px;
-  margin-bottom: 4px;
-}
-
-.roleText {
-  font-weight: bold;
-  color: _.$black;
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-.roleDates {
-  font-weight: normal;
-  color: $resume-meta;
-  font-size: 9px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.bulletList {
-  margin: 0;
-  padding-left: 14px;
-  & li {
-    margin-bottom: 3px;
-    text-align: justify;
-    hyphens: auto;
-    color: _.$black;
-  }
-}
-
-.bottomRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  margin-top: auto;
-  padding-top: 8px;
-}
-
-.bottomColumn {
-  min-width: 0;
-  & > .sectionHeading {
-    margin-bottom: 8px;
-  }
-}
-
-.schoolLine {
-  margin: 0 0 5px;
-  font-weight: bold;
-  font-size: 9.5px;
-}
-
-.yearRange {
-  font-weight: normal;
-  color: $resume-meta;
-}
-
-.degreeLine {
-  margin: 0 0 3px;
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.projectLine {
-  margin: 0 0 5px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 8px;
-  align-items: baseline;
-  &:last-child {
-    margin-bottom: 0;
-  }
-  & a {
-    color: _.$blue;
-    text-decoration: none;
-    word-break: break-all;
-  }
-  & a:hover {
-    text-decoration: underline;
-  }
-}
-
-.projectLabel {
-  font-weight: bold;
-  min-width: 5.5rem;
 }

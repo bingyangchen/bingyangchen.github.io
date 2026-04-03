@@ -3,35 +3,12 @@ import styles from "./Resume.module.scss";
 import React from "react";
 
 import { Button } from "../../../components";
+import { openResumePrintDialog } from "../../../resume/print";
 import ResumeSheet from "./ResumeSheet";
 
-interface State {
-  isDownloadingResume: boolean;
-}
-
-export default class Resume extends React.Component<Record<string, never>, State> {
-  private resumeSheetReference = React.createRef<HTMLDivElement>();
-
-  public state: State = {
-    isDownloadingResume: false,
-  };
-
-  private handleDownloadPdf = async (): Promise<void> => {
-    if (!this.resumeSheetReference.current) {
-      return;
-    }
-    this.setState({ isDownloadingResume: true });
-    try {
-      const { generateResumePdf } = await import("../../../resume/generateResumePdf");
-      await generateResumePdf(
-        this.resumeSheetReference.current,
-        "Bing-Yang-Chen-Resume.pdf",
-      );
-    } catch (error) {
-      console.error(error);
-    } finally {
-      this.setState({ isDownloadingResume: false });
-    }
+export default class Resume extends React.Component<Record<string, never>> {
+  private handleDownloadPdf = (): void => {
+    openResumePrintDialog();
   };
 
   public render(): React.ReactNode {
@@ -39,19 +16,16 @@ export default class Resume extends React.Component<Record<string, never>, State
       <div className={styles.resumePage}>
         <h1 className={styles.title}>Resume</h1>
         <p className={styles.subtitle}>
-          Single-page A4 preview. The PDF uses the same layout as this preview.
+          Experience, education, and skills at a glance. Save the PDF when you need a
+          formal copy.
         </p>
         <div className={styles.downloadRow}>
-          <Button
-            className="primary_fill l"
-            onClick={this.handleDownloadPdf}
-            disabled={this.state.isDownloadingResume}
-          >
-            {this.state.isDownloadingResume ? "Preparing PDF…" : "Download PDF"}
+          <Button className="primary_fill l" onClick={this.handleDownloadPdf}>
+            Download PDF
           </Button>
         </div>
-        <div className={styles.sheetViewport}>
-          <ResumeSheet ref={this.resumeSheetReference} />
+        <div className={`${styles.sheetViewport} resume-print-area`}>
+          <ResumeSheet />
         </div>
       </div>
     );

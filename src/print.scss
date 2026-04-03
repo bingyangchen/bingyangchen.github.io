@@ -1,0 +1,97 @@
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  #root {
+    height: 297mm !important;
+    max-height: 297mm !important;
+    min-height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  main {
+    min-height: 0 !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    overflow: hidden !important;
+  }
+
+  main > header,
+  main > footer {
+    display: none !important;
+  }
+
+  main > div:nth-child(2),
+  main > div:nth-child(3) {
+    display: none !important;
+  }
+
+  .main-outlet-slot {
+    min-height: 0 !important;
+    max-height: 297mm !important;
+    overflow: hidden !important;
+  }
+
+  .main-outlet-slot > div {
+    min-height: 0 !important;
+  }
+
+  .main-outlet-slot > div > div {
+    min-height: 0 !important;
+  }
+
+  body * {
+    visibility: hidden;
+  }
+
+  .resume-print-area,
+  .resume-print-area * {
+    visibility: visible;
+  }
+
+  .resume-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  .resume-print-area,
+  .resume-print-area * {
+    user-select: text !important;
+  }
+
+  [data-resume-root] {
+    width: 210mm !important;
+    min-width: 210mm !important;
+    height: 297mm !important;
+    max-height: 297mm !important;
+    min-height: 0 !important;
+    box-sizing: border-box !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

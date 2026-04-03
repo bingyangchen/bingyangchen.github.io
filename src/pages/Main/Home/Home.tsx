@@ -49,6 +49,7 @@ import {
   IconMedia,
   IconXLarge,
 } from "../../../icons";
+import { openResumePrintDialog } from "../../../resume/print";
 import { IRouter, withRouter } from "../../../router";
 import type { Project } from "../../../types";
 import ResumeSheet from "../Resume/ResumeSheet";
@@ -61,13 +62,11 @@ interface Props extends IRouter {}
 interface State {
   activeProject: Project | null;
   projects: Project[];
-  isDownloadingResume: boolean;
 }
 
 class Home extends React.Component<Props, State> {
   public state: State;
   private homeRef: React.RefObject<HTMLDivElement>;
-  private resumeSheetRef: React.RefObject<HTMLDivElement>;
   private aboutRef: React.RefObject<HTMLDivElement>;
   private projectsRef: React.RefObject<HTMLDivElement>;
   private blogRef: React.RefObject<HTMLDivElement>;
@@ -75,7 +74,6 @@ class Home extends React.Component<Props, State> {
   public constructor(props: Props) {
     super(props);
     this.state = {
-      isDownloadingResume: false,
       activeProject: null,
       projects: [
         {
@@ -115,7 +113,6 @@ class Home extends React.Component<Props, State> {
       ],
     };
     this.homeRef = React.createRef();
-    this.resumeSheetRef = React.createRef();
     this.aboutRef = React.createRef();
     this.projectsRef = React.createRef();
     this.blogRef = React.createRef();
@@ -174,11 +171,8 @@ class Home extends React.Component<Props, State> {
                 type="button"
                 className={styles.resume_link}
                 onClick={this.handleDownloadResume}
-                disabled={this.state.isDownloadingResume}
               >
-                {this.state.isDownloadingResume
-                  ? "Preparing PDF…"
-                  : "Download my resume"}
+                Download my resume
               </button>
             </div>
             <div className={styles.greeting_card}>
@@ -446,27 +440,19 @@ class Home extends React.Component<Props, State> {
           </div>
         </div>
         {createPortal(
-          <div className={styles.resume_export_slot} aria-hidden="true">
-            <ResumeSheet ref={this.resumeSheetRef} />
+          <div
+            className={`${styles.resume_export_slot} resume-print-area`}
+            aria-hidden="true"
+          >
+            <ResumeSheet />
           </div>,
           document.body,
         )}
       </>
     );
   }
-  private handleDownloadResume = async (): Promise<void> => {
-    if (!this.resumeSheetRef.current) {
-      return;
-    }
-    this.setState({ isDownloadingResume: true });
-    try {
-      const { generateResumePdf } = await import("../../../resume/generateResumePdf");
-      await generateResumePdf(this.resumeSheetRef.current, "Bing-Yang-Chen-Resume.pdf");
-    } catch (error) {
-      console.error(error);
-    } finally {
-      this.setState({ isDownloadingResume: false });
-    }
+  private handleDownloadResume = (): void => {
+    openResumePrintDialog();
   };
 
   private handleClickProjectCard = (project: Project) => {

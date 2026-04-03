@@ -42,7 +42,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
       <div ref={forwardedReference} className={styles.a4} data-resume-root>
         <div className={styles.contentArea}>
           <header className={styles.header}>
-            <h1 className={styles.name}>CHEN, BING-YANG（陳秉洋）</h1>
+            <h1 className={styles.name}>CHEN, BING-YANG (陳秉洋)</h1>
             <div className={styles.contactRow}>
               <span className={styles.contactItem}>
                 <IconLocation />
@@ -60,19 +60,25 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
             <ul className={styles.skillCategories}>
               <li>
                 <span className={styles.skillLabel}>Languages &amp; Frameworks</span>
-                Python, TypeScript, JavaScript, Django, FastAPI, React, Vue
+                <span className={styles.skillDetail}>
+                  Python, TypeScript, JavaScript, Django, FastAPI, React, Vue
+                </span>
               </li>
               <li>
                 <span className={styles.skillLabel}>Databases</span>
-                PostgreSQL, MySQL, Redis
+                <span className={styles.skillDetail}>PostgreSQL, MySQL, Redis</span>
               </li>
               <li>
                 <span className={styles.skillLabel}>DevOps &amp; Cloud</span>
-                AWS, Linux, Docker, Kubernetes, Git
+                <span className={styles.skillDetail}>
+                  AWS, Linux, Docker, Kubernetes, Git
+                </span>
               </li>
               <li>
                 <span className={styles.skillLabel}>Others</span>
-                Elasticsearch, RabbitMQ, Airflow, GraphQL
+                <span className={styles.skillDetail}>
+                  Elasticsearch, RabbitMQ, Airflow, GraphQL
+                </span>
               </li>
             </ul>
           </section>
@@ -182,7 +188,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 <span className={styles.yearRange}>(2017–2021)</span>
               </p>
               <p className={styles.degreeLine}>Bachelor of Economics</p>
-              <p className={styles.degreeLine}>FinTech Program (GPA: 4.1/4.3)</p>
+              <p className={styles.gpaLine}>GPA: 4.1/4.3</p>
             </div>
             <div className={styles.bottomColumn}>
               <h2 className={styles.sectionHeading}>Side Projects</h2>

@@ -36,14 +36,18 @@
 }
 
 .sheetViewport {
-  display: flex;
-  justify-content: center;
+  align-self: stretch;
   width: 100%;
-  overflow: auto;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
   padding: 12px;
   box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
 
   & > div {
+    margin-left: auto;
+    margin-right: auto;
     box-shadow: 0 8px 32px _.$transparent-black;
   }
 }
