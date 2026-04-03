@@ -10,13 +10,13 @@ import fastapiLogo from "../../../assets/fastapi_logo.svg";
 import gitLogo from "../../../assets/git_logo.svg";
 import graphqlLogo from "../../../assets/graphql_logo.svg";
 import javascriptLogo from "../../../assets/javascript_logo.svg";
+import leechaiLogo from "../../../assets/leechai_logo.webp";
+import leechaiThumbnail from "../../../assets/leechai_thumbnail.webp";
 import metaLogo from "../../../assets/meta_logo.svg";
 import mysqlLogo from "../../../assets/mysql_logo.svg";
 import nccuLogo from "../../../assets/nccu_logo.webp";
 import noadsLogo from "../../../assets/noads_logo.webp";
 import noadsThumbnail from "../../../assets/noads_thumbnail.webp";
-import pathFindingLogo from "../../../assets/path_finding_logo.webp";
-import pathFindingThumbnail from "../../../assets/path_finding_thumbnail.webp";
 import postgresqlLogo from "../../../assets/postgresql_logo.svg";
 import pythonLogo from "../../../assets/python_logo.svg";
 import rabbitmqLogo from "../../../assets/rabbitmq_logo.svg";
@@ -100,15 +100,16 @@ class Home extends React.Component<Props, State> {
             "https://chromewebstore.google.com/detail/noads/mcdfnneilaagajpfcfiofdjibclkflhg",
         },
         {
-          thumbnail: <img src={pathFindingThumbnail} alt="Path Finding Visualizer" />,
-          icon: <img src={pathFindingLogo} alt="Path Finding Visualizer" />,
-          title: "Path Finding Visualizer",
-          tags: ["Algorithm", "Visualization"],
-          maintaining_time_range: [new Date(2020, 1, 1), new Date(2021, 1, 1)],
+          thumbnail: <img src={leechaiThumbnail} alt="Leechai 理柴" />,
+          icon: <img src={leechaiLogo} alt="Leechai 理柴" />,
+          title: "Leechai",
+          tags: ["Personal Finance", "App"],
+          maintaining_time_range: [new Date(2026, 1, 1)],
           description:
             "Explore various pathfinding algorithms and maze generation algorithms.",
-          source_code_url: "https://github.com/bingyangchen/path-finding-visualizer",
-          demo_url: "https://byc1999.com/path-finding-visualizer",
+          source_code_url: "https://github.com/bingyangchen/leechai",
+          demo_url:
+            "https://apps.apple.com/tw/app/leechai-%E7%90%86%E6%9F%B4/id6761012779",
         },
       ],
     };
