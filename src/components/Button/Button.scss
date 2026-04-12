@@ -58,6 +58,10 @@
     background-color: _.$theme-color;
     color: _.$white;
   }
+  &.brand_fill {
+    background-color: _.$brand-olive;
+    color: _.$white;
+  }
   &.primary {
     background-color: _.$white;
     color: _.$theme-color;

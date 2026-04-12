@@ -29,6 +29,7 @@ import vueLogo from "../../../assets/vue_logo.svg";
 
 import styles from "./Home.module.scss";
 
+import { QRCodeSVG } from "qrcode.react";
 import React from "react";
 import { createPortal } from "react-dom";
 
@@ -44,24 +45,95 @@ import {
 import {
   IconBlogText,
   IconChevronDoubleDown,
+  IconCSquareFill,
+  IconEnvelope,
   IconFilePerson,
   IconGitHub,
+  IconGraduationCap,
+  IconLinkedIn,
   IconMedia,
+  IconQrCode,
   IconXLarge,
 } from "../../../icons";
 import { openResumePrintDialog } from "../../../resume/print";
 import { IRouter, withRouter } from "../../../router";
-import type { Project } from "../../../types";
+import type { Project, WorkExperienceData } from "../../../types";
 import ResumeSheet from "../Resume/ResumeSheet";
 
 const GREETING_TEXT =
-  "Hi, I’m Bing-Yang Chen.\nI’m a software engineer who builds web applications and is always exploring what’s next.";
+  "Software engineer focused on web apps that stay maintainable after launch.";
+
+const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
+
+const SITE_URL_FOR_QR = "https://byc1999.com";
+
+const NCCU_ECONOMICS_URL = "https://econo.nccu.edu.tw/";
+
+const WORK_EXPERIENCE_ITEMS: WorkExperienceData[] = [
+  {
+    id: "swag-2025",
+    layout_column: "left",
+    work_duration: "Jan 2025 ~ Present",
+    job_title: "Backend Engineer",
+    company_name: "Swag",
+    company_logo: "https://swag.live/favicon.ico",
+    company_link: "https://swag.live/",
+    description:
+      "Refactored a multi-domain availability monitoring service from Flask and MongoDB to FastAPI and PostgreSQL, significantly reducing codebase size and CPU usage. Introduced GrowthBook for feature-flag management, enabling internal teams to configure flags with less friction and greater flexibility.",
+  },
+  {
+    id: "gaia-2024",
+    layout_column: "left",
+    work_duration: "Dec 2024 ~ Dec 2025．1 yr 1 mo",
+    job_title: "Senior Backend Engineer",
+    company_name: "Gaia",
+    company_logo: "https://www.gaia.net/images/ci/apple-icon-152x152.png",
+    company_link: "https://www.gaia.net/",
+    description:
+      "Architected and led the development of an enterprise-grade knowledge management platform leveraging LLMs to streamline information discovery and elevate customer service quality. Refined containerization practices, achieving a nearly 50% reduction in image size and boosting CI/CD pipeline efficiency by over 60%. Established robust engineering standards by integrating unit testing, linting, and code review processes, improving system reliability and maintainability. Led security hardening efforts, mitigating critical vulnerabilities by securing internal APIs from anonymous access and tightening CORS and content security policies (CSP).",
+  },
+  {
+    id: "pinkoi-2023",
+    layout_column: "left",
+    work_duration: "Mar 2023 ~ Dec 2024．1 yr 10 mos",
+    job_title: "Backend Engineer",
+    company_name: "Pinkoi",
+    company_logo:
+      "https://cdn04.pinkoi.com/pinkoi.site/general/favicon/favicon_192x192.png",
+    company_link: "https://www.pinkoi.com/",
+    description:
+      "Designed and implemented scalable, high-performance APIs; integrated third-party services; and partnered closely with frontend teams to deliver robust, production-grade e-commerce functionality. Redesigned database schemas, modernized inter-service communication, and eliminated legacy bottlenecks, resulting in significant gains in system reliability and throughput. Built and deployed internal admin tools that automated key workflows, accelerating business operations and reducing manual overhead. Performed rigorous code reviews and enforced engineering best practices to uphold code quality, ensure system maintainability, and drive long-term scalability.",
+  },
+  {
+    id: "sysfeather-2022",
+    layout_column: "right",
+    work_duration: "Mar 2022 ~ Mar 2023．1 yr 1 mo",
+    job_title: "Backend Engineer",
+    company_name: "Sysfeather",
+    company_logo: "https://www.sysfeather.com/en-US/logo-sysfeather.png",
+    company_link: "https://www.sysfeather.com/",
+    description:
+      "Developed the backend for an e-commerce automated shop system with multi-tenant architecture. Spearheaded the POC for the Social Shopping Project, integrating the Facebook API to enable comment management and post lotteries, enhancing customers' social media management experience.",
+  },
+  {
+    id: "beida-2020",
+    layout_column: "right",
+    work_duration: "2020 Spring Semester",
+    job_title: "Economics Course Instructor",
+    company_name: "New Taipei Municipal Beida High School",
+    company_logo:
+      "https://www.bdsh.ntpc.edu.tw/var/file/0/1000/msys_1000_9064694_48923.png",
+    description:
+      "To provide graduating high school students with a deeper understanding of economics, I designed a 15-week course covering the principles of economics. The course content included discussions on current events, basic principles, and advanced microeconomic theory. This experience sharpened my presentation and slide design skills.",
+  },
+];
 
 interface Props extends IRouter {}
 
 interface State {
   activeProject: Project | null;
   projects: Project[];
+  isQrModalOpen: boolean;
 }
 
 class Home extends React.Component<Props, State> {
@@ -71,10 +143,12 @@ class Home extends React.Component<Props, State> {
   private projectsRef: React.RefObject<HTMLDivElement>;
   private blogRef: React.RefObject<HTMLDivElement>;
   private projectDetailRef: React.RefObject<HTMLDivElement>;
+  private qrModalEscapeListener: ((event: KeyboardEvent) => void) | undefined;
   public constructor(props: Props) {
     super(props);
     this.state = {
       activeProject: null,
+      isQrModalOpen: false,
       projects: [
         {
           thumbnail: <img src={taiguThumbnail} alt="Taigu" />,
@@ -145,7 +219,55 @@ class Home extends React.Component<Props, State> {
     });
   }
 
+  public componentDidUpdate(
+    _previousProperties: Readonly<Props>,
+    previousState: Readonly<State>,
+  ): void {
+    if (previousState.isQrModalOpen !== this.state.isQrModalOpen) {
+      if (this.state.isQrModalOpen) {
+        this.qrModalEscapeListener = (event: KeyboardEvent) => {
+          if (event.key === "Escape") {
+            this.setState({ isQrModalOpen: false });
+          }
+        };
+        document.addEventListener("keydown", this.qrModalEscapeListener);
+        document.body.style.overflow = "hidden";
+      } else {
+        if (this.qrModalEscapeListener) {
+          document.removeEventListener("keydown", this.qrModalEscapeListener);
+          this.qrModalEscapeListener = undefined;
+        }
+        document.body.style.overflow = "";
+      }
+    }
+  }
+
+  public componentWillUnmount(): void {
+    if (this.qrModalEscapeListener) {
+      document.removeEventListener("keydown", this.qrModalEscapeListener);
+      this.qrModalEscapeListener = undefined;
+    }
+    document.body.style.overflow = "";
+  }
+
   public render(): React.ReactNode {
+    const primaryWorkExperience = WORK_EXPERIENCE_ITEMS[0];
+    const job_badge_label = `${primaryWorkExperience.job_title} @ ${primaryWorkExperience.company_name}`;
+    const job_badge_content = (
+      <>
+        {primaryWorkExperience.company_logo ? (
+          <img
+            src={primaryWorkExperience.company_logo}
+            alt=""
+            className={styles.role_badge_company_logo}
+            width={18}
+            height={18}
+          />
+        ) : null}
+        <span>{job_badge_label}</span>
+      </>
+    );
+
     return (
       <>
         <div className={styles.main}>
@@ -154,57 +276,131 @@ class Home extends React.Component<Props, State> {
             className={`${styles.home} ${styles.section}`}
             ref={this.homeRef}
           >
-            <div className={styles.avatar_container}>
-              <img
-                className={`${styles.avatar} ${styles.front}`}
-                src={avatar_2}
-                alt="陳秉洋"
-              />
-              <img
-                className={`${styles.avatar} ${styles.back}`}
-                src={avatar_1}
-                alt="Bing-Yang Chen"
-              />
-            </div>
-            <h1 className={styles.name}>Bing-Yang Chen</h1>
-            <div className={styles.resume_link_row}>
-              <button
-                type="button"
-                className={styles.resume_link}
-                onClick={this.handleDownloadResume}
-              >
-                Download my resume
-              </button>
-            </div>
-            <div className={styles.greeting_card}>
-              <TypingGreeting
-                text={GREETING_TEXT}
-                className={styles.greeting}
-                cursorClassName={styles.cursor}
-              />
-            </div>
-            <div className={styles.cta_list}>
-              <a href="#about" className={styles.cta}>
-                <div className={styles.icon_container}>
-                  <IconFilePerson sideLength="32" />
+            <div className={styles.home_atmosphere} aria-hidden="true" />
+            <div className={styles.business_card}>
+              <div className={styles.business_card_inner}>
+                <div className={styles.sheet_left}>
+                  <div className={styles.avatar_container}>
+                    <img
+                      className={`${styles.avatar} ${styles.front}`}
+                      src={avatar_2}
+                      alt="陳秉洋"
+                    />
+                    <img
+                      className={`${styles.avatar} ${styles.back}`}
+                      src={avatar_1}
+                      alt="Bing-Yang Chen"
+                    />
+                    <RoundButton
+                      className={styles.qr_avatar_fab}
+                      hintText="Show QR Code"
+                      onClick={() => this.setState({ isQrModalOpen: true })}
+                    >
+                      <IconQrCode sideLength="18" />
+                    </RoundButton>
+                  </div>
+                  <div className={styles.greeting_card}>
+                    <TypingGreeting
+                      text={GREETING_TEXT}
+                      className={styles.greeting}
+                      cursorClassName={styles.cursor}
+                    />
+                  </div>
                 </div>
-                <div className={styles.cta_text}>About</div>
-              </a>
-              <a href="#projects" className={styles.cta}>
-                <div className={styles.icon_container}>
-                  <IconMedia sideLength="30" />
+                <div className={styles.sheet_right}>
+                  <h1 className={styles.name}>Bing-Yang Chen</h1>
+                  <div className={styles.role_badge_row}>
+                    {primaryWorkExperience.company_link ? (
+                      <a
+                        href={primaryWorkExperience.company_link}
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={styles.role_badge}
+                      >
+                        {job_badge_content}
+                      </a>
+                    ) : (
+                      <div className={styles.role_badge}>{job_badge_content}</div>
+                    )}
+                    <a
+                      href={NCCU_ECONOMICS_URL}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className={styles.role_badge}
+                    >
+                      <IconGraduationCap sideLength="16" />
+                      <span className={styles.role_badge_label}>
+                        B.A. Economics, NCCU
+                      </span>
+                    </a>
+                  </div>
+                  <div className={styles.contact_row}>
+                    <a className={styles.email_link} href={`mailto:${CONTACT_EMAIL}`}>
+                      <IconEnvelope sideLength="18" color="currentColor" />
+                      <span>{CONTACT_EMAIL}</span>
+                    </a>
+                    <div className={styles.social_icons}>
+                      <a
+                        href="https://github.com/bingyangchen"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={styles.social_icon_link}
+                        title="GitHub"
+                        aria-label="GitHub"
+                      >
+                        <IconGitHub sideLength="22" />
+                      </a>
+                      <a
+                        href="https://www.linkedin.com/in/bing-yang-chen/"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={styles.social_icon_link}
+                        title="LinkedIn"
+                        aria-label="LinkedIn"
+                      >
+                        <IconLinkedIn sideLength="22" />
+                      </a>
+                      <a
+                        href="https://www.cake.me/me/BingYangChen"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={styles.social_icon_link}
+                        title="Cake"
+                        aria-label="Cake"
+                      >
+                        <IconCSquareFill sideLength="22" />
+                      </a>
+                    </div>
+                  </div>
+                  <div className={styles.cta_toolbar}>
+                    <Button
+                      className="brand_fill xl bold"
+                      onClick={this.handleDownloadResume}
+                    >
+                      Download Resume
+                    </Button>
+                    <div className={styles.nav_links}>
+                      <a href="#about" className={styles.nav_ghost}>
+                        <IconFilePerson sideLength="22" />
+                        <span>About</span>
+                      </a>
+                      <a href="#projects" className={styles.nav_ghost}>
+                        <IconMedia sideLength="20" />
+                        <span>Projects</span>
+                      </a>
+                      <a href="#blog" className={styles.nav_ghost}>
+                        <IconBlogText sideLength="20" />
+                        <span>Blog</span>
+                      </a>
+                    </div>
+                  </div>
                 </div>
-                <div className={styles.cta_text}>Projects</div>
-              </a>
-              <a href="#blog" className={styles.cta}>
-                <div className={styles.icon_container}>
-                  <IconBlogText sideLength="30" />
-                </div>
-                <div className={styles.cta_text}>Blog</div>
-              </a>
+              </div>
             </div>
             <div className={styles.scroll_down_hint}>
-              <IconChevronDoubleDown sideLength="14" />
+              <span className={styles.scroll_down_chevron}>
+                <IconChevronDoubleDown sideLength="14" />
+              </span>
               Scroll down
             </div>
           </div>
@@ -222,66 +418,18 @@ class Home extends React.Component<Props, State> {
             <h3>Work Experience</h3>
             <div className={styles.work_experience_outer}>
               <div className={styles.block}>
-                <WorkExperience
-                  work_duration="Jan 2025 ~ Present"
-                  job_title="Backend Engineer"
-                  company_name="Swag"
-                  company_logo="https://swag.live/favicon.ico"
-                  company_link="https://swag.live/"
-                  description="Refactored a multi-domain availability monitoring service from Flask and MongoDB to FastAPI and PostgreSQL, significantly reducing codebase size and CPU usage. Introduced GrowthBook for feature-flag management, enabling internal teams to configure flags with less friction and greater flexibility."
-                />
-                <WorkExperience
-                  work_duration="Dec 2024 ~ Dec 2025．1 yr 1 mo"
-                  job_title="Senior Backend Engineer"
-                  company_name="Gaia"
-                  company_logo="https://www.gaia.net/images/ci/apple-icon-152x152.png"
-                  company_link="https://www.gaia.net/"
-                  description="Architected and led the development of an enterprise-grade knowledge management platform leveraging LLMs to streamline information discovery and elevate customer service quality. Refined containerization practices, achieving a nearly 50% reduction in image size and boosting CI/CD pipeline efficiency by over 60%. Established robust engineering standards by integrating unit testing, linting, and code review processes, improving system reliability and maintainability. Led security hardening efforts, mitigating critical vulnerabilities by securing internal APIs from anonymous access and tightening CORS and content security policies (CSP)."
-                />
-                <WorkExperience
-                  work_duration="Mar 2023 ~ Dec 2024．1 yr 10 mos"
-                  job_title="Backend Engineer"
-                  company_name="Pinkoi"
-                  company_logo="https://cdn04.pinkoi.com/pinkoi.site/general/favicon/favicon_192x192.png"
-                  company_link="https://www.pinkoi.com/"
-                  description="Designed and implemented scalable, high-performance APIs; integrated third-party services; and partnered closely with frontend teams to deliver robust, production-grade e-commerce functionality. Redesigned database schemas, modernized inter-service communication, and eliminated legacy bottlenecks, resulting in significant gains in system reliability and throughput. Built and deployed internal admin tools that automated key workflows, accelerating business operations and reducing manual overhead. Performed rigorous code reviews and enforced engineering best practices to uphold code quality, ensure system maintainability, and drive long-term scalability."
-                  // skills={[
-                  //     "Python",
-                  //     "MySQL",
-                  //     "Redis",
-                  //     "Elasticsearch",
-                  //     "RabbitMQ",
-                  //     "Vue",
-                  //     "Cypress",
-                  // ]}
-                />
+                {WORK_EXPERIENCE_ITEMS.filter(
+                  (item) => item.layout_column === "left",
+                ).map(({ id, layout_column, ...work }) => (
+                  <WorkExperience key={id} {...work} />
+                ))}
               </div>
               <div className={styles.block}>
-                <WorkExperience
-                  work_duration="Mar 2022 ~ Mar 2023．1 yr 1 mo"
-                  job_title="Backend Engineer"
-                  company_name="Sysfeather"
-                  company_logo="https://www.sysfeather.com/en-US/logo-sysfeather.png"
-                  company_link="https://www.sysfeather.com/"
-                  description="Developed the backend for an e-commerce automated shop system with multi-tenant architecture. Spearheaded the POC for the Social Shopping Project, integrating the Facebook API to enable comment management and post lotteries, enhancing customers' social media management experience."
-                  // skills={[
-                  //     "Python",
-                  //     "Django",
-                  //     "PostgreSQL",
-                  //     "Redis",
-                  //     "GraphQL",
-                  //     "Docker",
-                  //     "React",
-                  //     "Facebook API",
-                  // ]}
-                />
-                <WorkExperience
-                  work_duration="2020 Spring Semester"
-                  job_title="Economics Course Instructor"
-                  company_logo="https://www.bdsh.ntpc.edu.tw/var/file/0/1000/msys_1000_9064694_48923.png"
-                  company_name="New Taipei Municipal Beida High School"
-                  description="To provide graduating high school students with a deeper understanding of economics, I designed a 15-week course covering the principles of economics. The course content included discussions on current events, basic principles, and advanced microeconomic theory. This experience sharpened my presentation and slide design skills."
-                />
+                {WORK_EXPERIENCE_ITEMS.filter(
+                  (item) => item.layout_column === "right",
+                ).map(({ id, layout_column, ...work }) => (
+                  <WorkExperience key={id} {...work} />
+                ))}
               </div>
             </div>
             <h3>Skills</h3>
@@ -449,6 +597,43 @@ class Home extends React.Component<Props, State> {
           </div>,
           document.body,
         )}
+        {this.state.isQrModalOpen
+          ? createPortal(
+              <div
+                className={styles.qr_modal_overlay}
+                role="presentation"
+                onClick={() => this.setState({ isQrModalOpen: false })}
+              >
+                <button
+                  type="button"
+                  className={styles.qr_modal_close_button}
+                  aria-label="Close QR code"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    this.setState({ isQrModalOpen: false });
+                  }}
+                >
+                  <IconXLarge sideLength="20" />
+                </button>
+                <div
+                  className={styles.qr_modal_content}
+                  role="dialog"
+                  aria-modal="true"
+                  aria-labelledby="qr-modal-title"
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <div className={styles.qr_modal_code_panel}>
+                    <QRCodeSVG value={SITE_URL_FOR_QR} size={240} level="M" />
+                  </div>
+                  <div className={styles.qr_modal_title} id="qr-modal-title">
+                    Bing-Yang Chen
+                  </div>
+                  <p className={styles.qr_modal_cta}>Scan to connect</p>
+                </div>
+              </div>,
+              document.body,
+            )
+          : null}
       </>
     );
   }
