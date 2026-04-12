@@ -421,6 +421,12 @@
         }
       }
     }
+    & .resume_download_desktop_only {
+      display: none;
+      @media (min-width: _.$medium) {
+        display: flex;
+      }
+    }
     & .cta_toolbar {
       display: flex;
       flex-direction: column;

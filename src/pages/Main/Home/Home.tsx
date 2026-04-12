@@ -374,7 +374,7 @@ class Home extends React.Component<Props, State> {
                   </div>
                   <div className={styles.cta_toolbar}>
                     <Button
-                      className="brand_fill xl bold"
+                      className={`brand_fill xl bold ${styles.resume_download_desktop_only}`}
                       onClick={this.handleDownloadResume}
                     >
                       Download Resume
