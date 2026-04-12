@@ -1,7 +1,7 @@
 {
   "files": {
-    "main.css": "/static/css/main.599b137b.css",
-    "main.js": "/static/js/main.86e6d3e6.js",
+    "main.css": "/static/css/main.e5b6558f.css",
+    "main.js": "/static/js/main.d305a6df.js",
     "static/js/206.718b1740.chunk.js": "/static/js/206.718b1740.chunk.js",
     "static/media/taigu_thumbnail.webp": "/static/media/taigu_thumbnail.2a3489f7652faad0968c.webp",
     "static/media/avatar_1.webp": "/static/media/avatar_1.d2f48a157e88f8c5eb7e.webp",
@@ -37,7 +37,7 @@
     "static/media/vue_logo.svg": "/static/media/vue_logo.2b520303788d88b4e0c3776cd07cd61f.svg"
   },
   "entrypoints": [
-    "static/css/main.599b137b.css",
-    "static/js/main.86e6d3e6.js"
+    "static/css/main.e5b6558f.css",
+    "static/js/main.d305a6df.js"
   ]
 }
