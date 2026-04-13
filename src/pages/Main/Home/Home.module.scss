@@ -520,26 +520,18 @@
     padding-bottom: 50px;
     & > .work_experience_outer {
       display: flex;
+      flex-direction: column;
       width: min(100%, _.$large);
-      padding: 30px;
+      padding: 30px 30px 15vh;
       margin: 0 auto;
-      @media (max-width: _.$medium) {
-        flex-direction: column;
-      }
       @media (max-width: _.$small) {
         padding-left: 20px;
-      }
-      & > .block {
-        width: 50%;
-        @media (max-width: _.$medium) {
-          width: 100%;
-        }
       }
     }
     & > .skills_outer {
       width: min(100%, _.$extra-large);
       margin: 0 auto;
-      padding: 30px 0;
+      padding: 30px 0 20vh;
       overflow: hidden;
       & > .skills_inner {
         display: flex;
@@ -566,7 +558,7 @@
       align-items: center;
       justify-content: center;
       gap: 50px;
-      padding: 30px 30px 100px;
+      padding: 30px 30px 20vh;
       @media (max-width: _.$small) {
         flex-direction: column;
         gap: 40px;
@@ -649,7 +641,7 @@
     & > .footer {
       display: flex;
       justify-content: center;
-      margin: 30px 0;
+      margin: 15vh 0;
     }
   }
   & > .blog {
@@ -664,7 +656,7 @@
     & > .footer {
       display: flex;
       justify-content: center;
-      padding: 50px 0 110px;
+      padding: 50px 0 15vh;
     }
   }
 }

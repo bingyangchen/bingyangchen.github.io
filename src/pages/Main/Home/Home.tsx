@@ -1,31 +1,6 @@
-import airflowLogo from "../../../assets/airflow_logo.svg";
 import avatar_1 from "../../../assets/avatar_1.webp";
 import avatar_2 from "../../../assets/avatar_2.jpg";
-import awsLogo from "../../../assets/aws_logo.svg";
-import cypressLogo from "../../../assets/cypress_logo.svg";
-import djangoLogo from "../../../assets/django_logo.svg";
-import dockerLogo from "../../../assets/docker_logo.svg";
-import elasticsearchLogo from "../../../assets/elasticsearch_logo.svg";
-import fastapiLogo from "../../../assets/fastapi_logo.svg";
-import gitLogo from "../../../assets/git_logo.svg";
-import graphqlLogo from "../../../assets/graphql_logo.svg";
-import javascriptLogo from "../../../assets/javascript_logo.svg";
-import leechaiLogo from "../../../assets/leechai_logo.webp";
-import leechaiThumbnail from "../../../assets/leechai_thumbnail.webp";
-import metaLogo from "../../../assets/meta_logo.svg";
-import mysqlLogo from "../../../assets/mysql_logo.svg";
 import nccuLogo from "../../../assets/nccu_logo.webp";
-import noadsLogo from "../../../assets/noads_logo.webp";
-import noadsThumbnail from "../../../assets/noads_thumbnail.webp";
-import postgresqlLogo from "../../../assets/postgresql_logo.svg";
-import pythonLogo from "../../../assets/python_logo.svg";
-import rabbitmqLogo from "../../../assets/rabbitmq_logo.svg";
-import reactLogo from "../../../assets/react_logo.svg";
-import redisLogo from "../../../assets/redis_logo.svg";
-import taiguLogo from "../../../assets/taigu_logo.webp";
-import taiguThumbnail from "../../../assets/taigu_thumbnail.webp";
-import typescriptLogo from "../../../assets/typescript_logo.svg";
-import vueLogo from "../../../assets/vue_logo.svg";
 
 import styles from "./Home.module.scss";
 
@@ -42,6 +17,9 @@ import {
   TypingGreeting,
   WorkExperience,
 } from "../../../components";
+import { homeProjects } from "../../../data/projects";
+import { homeSkillItems } from "../../../data/skills";
+import { workExperienceItems } from "../../../data/workExperience";
 import {
   IconBlogText,
   IconChevronDoubleDown,
@@ -57,7 +35,7 @@ import {
 } from "../../../icons";
 import { openResumePrintDialog } from "../../../resume/print";
 import { IRouter, withRouter } from "../../../router";
-import type { Project, WorkExperienceData } from "../../../types";
+import type { Project } from "../../../types";
 import ResumeSheet from "../Resume/ResumeSheet";
 
 const GREETING_TEXT =
@@ -69,70 +47,10 @@ const SITE_URL_FOR_QR = "https://byc1999.com";
 
 const NCCU_ECONOMICS_URL = "https://econo.nccu.edu.tw/";
 
-const WORK_EXPERIENCE_ITEMS: WorkExperienceData[] = [
-  {
-    id: "swag-2025",
-    layout_column: "left",
-    work_duration: "Jan 2025 ~ Present",
-    job_title: "Backend Engineer",
-    company_name: "Swag",
-    company_logo: "https://swag.live/favicon.ico",
-    company_link: "https://swag.live/",
-    description:
-      "Refactored a multi-domain availability monitoring service from Flask and MongoDB to FastAPI and PostgreSQL, significantly reducing codebase size and CPU usage. Introduced GrowthBook for feature-flag management, enabling internal teams to configure flags with less friction and greater flexibility.",
-  },
-  {
-    id: "gaia-2024",
-    layout_column: "left",
-    work_duration: "Dec 2024 ~ Dec 2025．1 yr 1 mo",
-    job_title: "Senior Backend Engineer",
-    company_name: "Gaia",
-    company_logo: "https://www.gaia.net/images/ci/apple-icon-152x152.png",
-    company_link: "https://www.gaia.net/",
-    description:
-      "Architected and led the development of an enterprise-grade knowledge management platform leveraging LLMs to streamline information discovery and elevate customer service quality. Refined containerization practices, achieving a nearly 50% reduction in image size and boosting CI/CD pipeline efficiency by over 60%. Established robust engineering standards by integrating unit testing, linting, and code review processes, improving system reliability and maintainability. Led security hardening efforts, mitigating critical vulnerabilities by securing internal APIs from anonymous access and tightening CORS and content security policies (CSP).",
-  },
-  {
-    id: "pinkoi-2023",
-    layout_column: "left",
-    work_duration: "Mar 2023 ~ Dec 2024．1 yr 10 mos",
-    job_title: "Backend Engineer",
-    company_name: "Pinkoi",
-    company_logo:
-      "https://cdn04.pinkoi.com/pinkoi.site/general/favicon/favicon_192x192.png",
-    company_link: "https://www.pinkoi.com/",
-    description:
-      "Designed and implemented scalable, high-performance APIs; integrated third-party services; and partnered closely with frontend teams to deliver robust, production-grade e-commerce functionality. Redesigned database schemas, modernized inter-service communication, and eliminated legacy bottlenecks, resulting in significant gains in system reliability and throughput. Built and deployed internal admin tools that automated key workflows, accelerating business operations and reducing manual overhead. Performed rigorous code reviews and enforced engineering best practices to uphold code quality, ensure system maintainability, and drive long-term scalability.",
-  },
-  {
-    id: "sysfeather-2022",
-    layout_column: "right",
-    work_duration: "Mar 2022 ~ Mar 2023．1 yr 1 mo",
-    job_title: "Backend Engineer",
-    company_name: "Sysfeather",
-    company_logo: "https://www.sysfeather.com/en-US/logo-sysfeather.png",
-    company_link: "https://www.sysfeather.com/",
-    description:
-      "Developed the backend for an e-commerce automated shop system with multi-tenant architecture. Spearheaded the POC for the Social Shopping Project, integrating the Facebook API to enable comment management and post lotteries, enhancing customers' social media management experience.",
-  },
-  {
-    id: "beida-2020",
-    layout_column: "right",
-    work_duration: "2020 Spring Semester",
-    job_title: "Economics Course Instructor",
-    company_name: "New Taipei Municipal Beida High School",
-    company_logo:
-      "https://www.bdsh.ntpc.edu.tw/var/file/0/1000/msys_1000_9064694_48923.png",
-    description:
-      "To provide graduating high school students with a deeper understanding of economics, I designed a 15-week course covering the principles of economics. The course content included discussions on current events, basic principles, and advanced microeconomic theory. This experience sharpened my presentation and slide design skills.",
-  },
-];
-
 interface Props extends IRouter {}
 
 interface State {
   activeProject: Project | null;
-  projects: Project[];
   isQrModalOpen: boolean;
 }
 
@@ -149,43 +67,6 @@ class Home extends React.Component<Props, State> {
     this.state = {
       activeProject: null,
       isQrModalOpen: false,
-      projects: [
-        {
-          thumbnail: <img src={taiguThumbnail} alt="Taigu" />,
-          icon: <img src={taiguLogo} alt="Taigu" />,
-          title: "Taigu",
-          tags: ["PWA", "Investment"],
-          maintaining_time_range: [new Date(2021, 1, 1)],
-          description:
-            "Track and monitor your investment performance with detailed analytics.",
-          source_code_url: "https://github.com/bingyangchen/taigu",
-          demo_url: "https://taigu.tw/welcome",
-        },
-        {
-          thumbnail: <img src={noadsThumbnail} alt="Noads" />,
-          icon: <img src={noadsLogo} alt="Noads" />,
-          title: "Noads",
-          tags: ["Chrome Extension", "Ad Blocker"],
-          maintaining_time_range: [new Date(2024, 1, 1), new Date(2024, 1, 1)],
-          description:
-            "A simple ad blocker that removes specific DOM elements using CSS selectors.",
-          source_code_url: "https://github.com/bingyangchen/noads",
-          demo_url:
-            "https://chromewebstore.google.com/detail/noads/mcdfnneilaagajpfcfiofdjibclkflhg",
-        },
-        {
-          thumbnail: <img src={leechaiThumbnail} alt="Leechai 理柴" />,
-          icon: <img src={leechaiLogo} alt="Leechai 理柴" />,
-          title: "Leechai",
-          tags: ["Personal Finance", "App"],
-          maintaining_time_range: [new Date(2026, 1, 1)],
-          description:
-            "Explore various pathfinding algorithms and maze generation algorithms.",
-          source_code_url: "https://github.com/bingyangchen/leechai",
-          demo_url:
-            "https://apps.apple.com/tw/app/leechai-%E7%90%86%E6%9F%B4/id6761012779",
-        },
-      ],
     };
     this.homeRef = React.createRef();
     this.aboutRef = React.createRef();
@@ -251,7 +132,7 @@ class Home extends React.Component<Props, State> {
   }
 
   public render(): React.ReactNode {
-    const primaryWorkExperience = WORK_EXPERIENCE_ITEMS[0];
+    const primaryWorkExperience = workExperienceItems[0];
     const job_badge_label = `${primaryWorkExperience.job_title} @ ${primaryWorkExperience.company_name}`;
     const job_badge_content = (
       <>
@@ -417,49 +298,20 @@ class Home extends React.Component<Props, State> {
             <hr />
             <h3>Work Experience</h3>
             <div className={styles.work_experience_outer}>
-              <div className={styles.block}>
-                {WORK_EXPERIENCE_ITEMS.filter(
-                  (item) => item.layout_column === "left",
-                ).map(({ id, layout_column, ...work }) => (
-                  <WorkExperience key={id} {...work} />
-                ))}
-              </div>
-              <div className={styles.block}>
-                {WORK_EXPERIENCE_ITEMS.filter(
-                  (item) => item.layout_column === "right",
-                ).map(({ id, layout_column, ...work }) => (
-                  <WorkExperience key={id} {...work} />
-                ))}
-              </div>
+              {workExperienceItems.map(({ id, ...work }) => (
+                <WorkExperience key={id} {...work} />
+              ))}
             </div>
             <h3>Skills</h3>
             <div className={styles.skills_outer}>
               <div className={styles.skills_inner}>
-                {[1, 2].map((number) => {
-                  return (
-                    <div className={styles.screen} key={number}>
-                      <Skill logo={pythonLogo} title="Python" />
-                      <Skill logo={typescriptLogo} title="TypeScript" />
-                      <Skill logo={javascriptLogo} title="JavaScript" />
-                      <Skill logo={mysqlLogo} title="MySQL" />
-                      <Skill logo={postgresqlLogo} title="PostgreSQL" />
-                      <Skill logo={redisLogo} title="Redis" />
-                      <Skill logo={elasticsearchLogo} title="Elasticsearch" />
-                      <Skill logo={rabbitmqLogo} title="RabbitMQ" />
-                      <Skill logo={airflowLogo} title="Airflow" />
-                      <Skill logo={djangoLogo} title="Django" />
-                      <Skill logo={fastapiLogo} title="FastAPI" />
-                      <Skill logo={reactLogo} title="React" />
-                      <Skill logo={vueLogo} title="Vue" />
-                      <Skill logo={gitLogo} title="Git" />
-                      <Skill logo={dockerLogo} title="Docker" />
-                      <Skill logo={awsLogo} title="AWS" />
-                      <Skill logo={graphqlLogo} title="GraphQL" />
-                      <Skill logo={cypressLogo} title="Cypress" />
-                      <Skill logo={metaLogo} title="Meta API" />
-                    </div>
-                  );
-                })}
+                {[1, 2].map((screenIndex) => (
+                  <div className={styles.screen} key={screenIndex}>
+                    {homeSkillItems.map((skill) => (
+                      <Skill key={skill.id} logo={skill.logo} title={skill.title} />
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
             <h3>Education</h3>
@@ -533,7 +385,7 @@ class Home extends React.Component<Props, State> {
               )}
             </div>
             <div className={styles.project_list_container}>
-              {this.state.projects.map((project) => {
+              {homeProjects.map((project) => {
                 return (
                   <div
                     key={project.title}

@@ -1,6 +1,5 @@
 export type WorkExperienceData = {
   id: string;
-  layout_column: "left" | "right";
   work_duration: string;
   job_title: string;
   company_name: string;
@@ -8,6 +7,12 @@ export type WorkExperienceData = {
   company_link?: string;
   description: string;
   skills?: string[];
+};
+
+export type SkillItem = {
+  id: string;
+  title: string;
+  logo: string;
 };
 
 export type Project = {
