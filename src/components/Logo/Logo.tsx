@@ -1,52 +1,24 @@
 import logo from "../../assets/logo.webp";
 import styles from "./Logo.module.scss";
 
-import React from "react";
 import { NavLink } from "react-router-dom";
 
-interface Props {
-    size: "s" | "m" | "l";
-    invert?: boolean;
-    full?: boolean;
+interface LogoProperties {
+  size: "s" | "m" | "l";
+  invert?: boolean;
+  full?: boolean;
 }
 
-interface State {}
+export default function Logo({ size, invert, full }: LogoProperties) {
+  const sizeClass = size === "s" ? styles.s : size === "m" ? styles.m : styles.l;
+  const className = [styles.main, sizeClass, invert && styles.invert]
+    .filter(Boolean)
+    .join(" ");
 
-export default class Logo extends React.Component<Props, State> {
-    public state: State;
-    public constructor(props: Props) {
-        super(props);
-        this.state = {};
-    }
-    public render(): React.ReactNode {
-        return (
-            <NavLink
-                to="/"
-                className={this.className}
-                onClick={() => window.scrollTo({ top: 0 })}
-            >
-                <img
-                    className={styles.logo}
-                    src={logo}
-                    alt="陳秉洋, Bing-Yang Chen"
-                />
-                {this.props.full && (
-                    <div className={styles.product_name}>byc1999.com</div>
-                )}
-            </NavLink>
-        );
-    }
-    private get className(): string {
-        return (
-            styles.main +
-            " " +
-            (this.props.size === "s"
-                ? styles.s
-                : this.props.size === "m"
-                ? styles.m
-                : styles.l) +
-            " " +
-            (this.props.invert ? styles.invert : "")
-        );
-    }
+  return (
+    <NavLink to="/" className={className} onClick={() => window.scrollTo({ top: 0 })}>
+      <img className={styles.logo} src={logo} alt="陳秉洋, Bing-Yang Chen" />
+      {full && <div className={styles.product_name}>byc1999.com</div>}
+    </NavLink>
+  );
 }

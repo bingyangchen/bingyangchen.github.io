@@ -1,27 +1,12 @@
-import React from "react";
+import { asIcon, type IconSvgChildProperties } from "./IconLayout";
 
-import { asIcon } from "./IconLayout";
-
-interface Props {}
-
-interface State {}
-
-class IconEnvelope extends React.Component<Props, State> {
-  public state: State;
-
-  public constructor(props: Props) {
-    super(props);
-    this.state = {};
-  }
-
-  public render(): React.ReactNode {
-    return (
-      <>
-        <path d="M23.954,5.542,15.536,13.96a5.007,5.007,0,0,1-7.072,0L.046,5.542C.032,5.7,0,5.843,0,6V18a5.006,5.006,0,0,0,5,5H19a5.006,5.006,0,0,0,5-5V6C24,5.843,23.968,5.7,23.954,5.542Z" />
-        <path d="M14.122,12.546l9.134-9.135A4.986,4.986,0,0,0,19,1H5A4.986,4.986,0,0,0,.744,3.411l9.134,9.135A3.007,3.007,0,0,0,14.122,12.546Z" />
-      </>
-    );
-  }
+function IconEnvelope(_properties: IconSvgChildProperties) {
+  return (
+    <>
+      <path d="M23.954,5.542,15.536,13.96a5.007,5.007,0,0,1-7.072,0L.046,5.542C.032,5.7,0,5.843,0,6V18a5.006,5.006,0,0,0,5,5H19a5.006,5.006,0,0,0,5-5V6C24,5.843,23.968,5.7,23.954,5.542Z" />
+      <path d="M14.122,12.546l9.134-9.135A4.986,4.986,0,0,0,19,1H5A4.986,4.986,0,0,0,.744,3.411l9.134,9.135A3.007,3.007,0,0,0,14.122,12.546Z" />
+    </>
+  );
 }
 
 export default asIcon(IconEnvelope);

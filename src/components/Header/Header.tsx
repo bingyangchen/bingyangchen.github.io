@@ -1,10 +1,9 @@
 import styles from "./Header.module.scss";
 
-import React, { ReactElement } from "react";
+import { ReactElement, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Logo, NavTab, RoundButton } from "..";
 import { useTranslation } from "../../i18n/context";
-import type { TranslationDictionary } from "../../i18n/types";
 import {
   IconBlogText,
   IconFilePerson,
@@ -13,107 +12,93 @@ import {
   IconMedia,
 } from "../../icons";
 
-interface Props {
-  dictionary: TranslationDictionary;
-}
+export default function Header() {
+  const { dictionary } = useTranslation();
+  const [isSideMenuActive, setIsSideMenuActive] = useState(false);
+  const [isHeaderTransparent, setIsHeaderTransparent] = useState(true);
 
-interface State {
-  isSideMenuActive: boolean;
-  isHeaderTransparent: boolean;
-}
-
-export class Header extends React.Component<Props, State> {
-  public state: State;
-  public constructor(props: Props) {
-    super(props);
-    this.state = {
-      isSideMenuActive: false,
-      isHeaderTransparent: true,
-    };
-  }
-  public componentDidMount(): void {
-    window.addEventListener("scroll", () => {
-      this.setState({
-        isHeaderTransparent: window.scrollY < window.innerHeight,
-      });
+  useEffect(() => {
+    function updateHeaderTransparencyFromScroll() {
+      setIsHeaderTransparent(window.scrollY < window.innerHeight);
+    }
+    updateHeaderTransparencyFromScroll();
+    window.addEventListener("scroll", updateHeaderTransparencyFromScroll, {
+      passive: true,
     });
-  }
-  private get subpageTabs(): ReactElement[] {
-    return [
+    return () => {
+      window.removeEventListener("scroll", updateHeaderTransparencyFromScroll);
+    };
+  }, []);
+
+  const subpageTabs = useMemo(
+    (): ReactElement[] => [
       <NavTab
         tabIcon={<IconHomeblank sideLength="100%" />}
-        tabName={this.props.dictionary.header.home}
+        tabName={dictionary.header.home}
         to="#home"
         onClick={() => {}}
         key="home"
       />,
       <NavTab
         tabIcon={<IconFilePerson sideLength="100%" />}
-        tabName={this.props.dictionary.header.about}
+        tabName={dictionary.header.about}
         to="#about"
         onClick={() => {}}
         key="about"
       />,
       <NavTab
         tabIcon={<IconMedia sideLength="100%" />}
-        tabName={this.props.dictionary.header.projects}
+        tabName={dictionary.header.projects}
         to="#projects"
         onClick={() => {}}
         key="projects"
       />,
       <NavTab
         tabIcon={<IconBlogText sideLength="100%" />}
-        tabName={this.props.dictionary.header.blog}
+        tabName={dictionary.header.blog}
         to="#blog"
         onClick={() => {}}
         key="blog"
       />,
-    ];
-  }
-  public render(): React.ReactNode {
-    return (
-      <>
-        <header className={this.mainClass}>
-          <Logo size="s" />
-          <div className={styles.nav_bar_tab_container}>{this.subpageTabs}</div>
-          <div className={styles.list_button_outer}>
-            <RoundButton onClick={this.showSideMenu}>
-              <IconList />
-            </RoundButton>
-          </div>
-        </header>
-        <div
-          className={
-            styles.side_menu + (this.state.isSideMenuActive ? ` ${styles.active}` : "")
-          }
-          onClick={this.hideSideMenu}
-        >
-          {this.subpageTabs}
-        </div>
-        <div
-          className={
-            styles.side_menu_background +
-            (this.state.isSideMenuActive ? ` ${styles.active}` : "")
-          }
-          onClick={this.hideSideMenu}
-        />
-      </>
-    );
-  }
-  private get mainClass(): string {
-    return this.state.isHeaderTransparent
-      ? `${styles.main} ${styles.transparent}`
-      : styles.main;
-  }
-  private showSideMenu = (): void => {
-    this.setState({ isSideMenuActive: true });
-  };
-  private hideSideMenu = (): void => {
-    this.setState({ isSideMenuActive: false });
-  };
-}
+    ],
+    [dictionary],
+  );
 
-export default function HeaderWrapper(props: Omit<Props, "dictionary">) {
-  const { dictionary } = useTranslation();
-  return <Header {...props} dictionary={dictionary} />;
+  const mainClass = isHeaderTransparent
+    ? `${styles.main} ${styles.transparent}`
+    : styles.main;
+
+  const showSideMenu = useCallback(() => {
+    setIsSideMenuActive(true);
+  }, []);
+
+  const hideSideMenu = useCallback(() => {
+    setIsSideMenuActive(false);
+  }, []);
+
+  return (
+    <>
+      <header className={mainClass}>
+        <Logo size="s" />
+        <div className={styles.nav_bar_tab_container}>{subpageTabs}</div>
+        <div className={styles.list_button_outer}>
+          <RoundButton onClick={showSideMenu}>
+            <IconList />
+          </RoundButton>
+        </div>
+      </header>
+      <div
+        className={styles.side_menu + (isSideMenuActive ? ` ${styles.active}` : "")}
+        onClick={hideSideMenu}
+      >
+        {subpageTabs}
+      </div>
+      <div
+        className={
+          styles.side_menu_background + (isSideMenuActive ? ` ${styles.active}` : "")
+        }
+        onClick={hideSideMenu}
+      />
+    </>
+  );
 }
