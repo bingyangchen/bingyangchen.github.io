@@ -3,6 +3,8 @@ import Button from "../Button/Button";
 import styles from "./ProjectDetail.module.scss";
 
 import React from "react";
+import { useTranslation } from "../../i18n/context";
+import type { TranslationDictionary } from "../../i18n/types";
 
 interface Props {
   thumbnail: React.ReactNode;
@@ -13,11 +15,12 @@ interface Props {
   maintaining_time_range: [Date, Date] | [Date];
   source_code_url: string;
   demo_url: string;
+  dictionary: TranslationDictionary;
 }
 
 interface State {}
 
-export default class ProjectDetail extends React.Component<Props, State> {
+export class ProjectDetail extends React.Component<Props, State> {
   public state: State;
   public constructor(props: Props) {
     super(props);
@@ -26,9 +29,7 @@ export default class ProjectDetail extends React.Component<Props, State> {
 
   private openInNewTab(url: string): void {
     const tab = window.open(url, "_blank");
-    if (tab) {
-      tab.opener = null;
-    }
+    if (tab) tab.opener = null;
   }
 
   public render(): React.ReactNode {
@@ -56,14 +57,12 @@ export default class ProjectDetail extends React.Component<Props, State> {
                   {this.props.maintaining_time_range[0].getFullYear()}
                   {" – "}
                   {this.props.maintaining_time_range[1]?.getFullYear() ??
-                    "Present"}
+                    this.props.dictionary.projectCommon.present}
                 </div>
               </div>
               <div className={styles.middle}>
                 <div className={styles.iconContainer}>{this.props.icon}</div>
-                <div className={styles.description}>
-                  {this.props.description}
-                </div>
+                <div className={styles.description}>{this.props.description}</div>
               </div>
               <div className={styles.lower}>
                 <Button
@@ -72,7 +71,7 @@ export default class ProjectDetail extends React.Component<Props, State> {
                     this.openInNewTab(this.props.demo_url);
                   }}
                 >
-                  Visit
+                  {this.props.dictionary.projectCommon.visit}
                 </Button>
                 <Button
                   className="clean l bold"
@@ -82,7 +81,7 @@ export default class ProjectDetail extends React.Component<Props, State> {
                 >
                   <span className={styles.sourceInner}>
                     <IconCode sideLength="24" color="currentColor" />
-                    Source Code
+                    {this.props.dictionary.projectCommon.sourceCode}
                   </span>
                 </Button>
               </div>
@@ -92,4 +91,9 @@ export default class ProjectDetail extends React.Component<Props, State> {
       </div>
     );
   }
+}
+
+export default function ProjectDetailWrapper(props: Omit<Props, "dictionary">) {
+  const { dictionary } = useTranslation();
+  return <ProjectDetail {...props} dictionary={dictionary} />;
 }

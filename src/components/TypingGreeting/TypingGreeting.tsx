@@ -5,7 +5,7 @@ function greetingDelayMs(fullText: string, index: number): number {
     if (fullText[index - 1] === ".") return 550;
     if (fullText[index - 1] === ",") return 300;
   }
-  return (0.2 + Math.random()) * 70;
+  return Math.max(0.1, Math.random()) * 200;
 }
 
 export interface TypingGreetingProps {

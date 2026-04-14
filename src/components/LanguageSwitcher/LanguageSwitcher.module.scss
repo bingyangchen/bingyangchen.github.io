@@ -1,0 +1,49 @@
+@use "../../global_variables" as _;
+
+.switcher {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  background-color: _.$white;
+  border: 1px solid _.$light-gray;
+  border-radius: 20px;
+  padding: 4px 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px _.$transparent-black;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  .option {
+    font-size: 14px;
+    font-weight: 500;
+    color: _.$gray;
+    padding: 4px 8px;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+
+    &.active {
+      color: _.$theme-color;
+      background-color: _.$noisy-white;
+    }
+  }
+
+  .divider {
+    width: 1px;
+    height: 16px;
+    background-color: _.$light-gray;
+    margin: 0 4px;
+  }
+}
+
+@media (max-width: _.$medium) {
+  .switcher {
+    bottom: 16px;
+    right: 16px;
+  }
+}

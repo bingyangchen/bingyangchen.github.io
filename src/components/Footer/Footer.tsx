@@ -1,45 +1,50 @@
 import styles from "./Footer.module.scss";
 
 import React from "react";
+import { useTranslation } from "../../i18n/context";
+import type { TranslationDictionary } from "../../i18n/types";
 import { IconCSquareFill, IconGitHub, IconLinkedIn } from "../../icons";
 import Logo from "../Logo/Logo";
 
-interface Props {}
+interface Props {
+  dictionary: TranslationDictionary;
+}
 
 interface State {}
 
-export default class Footer extends React.Component<Props, State> {
+export class Footer extends React.Component<Props, State> {
   public state: State;
   public constructor(props: Props) {
     super(props);
     this.state = {};
   }
   public render(): React.ReactNode {
+    const { footer } = this.props.dictionary;
     return (
       <footer className={styles.main}>
         <div className={`${styles.section} ${styles.contact_me}`}>
-          <div className={styles.title}>Contact Me</div>
+          <div className={styles.title}>{footer.contactMe}</div>
           <div className={styles.body}>bryan.chen.429@gmail.com</div>
         </div>
         <div className={`${styles.section} ${styles.services}`}>
-          <div className={styles.title}>Services</div>
+          <div className={styles.title}>{footer.services}</div>
           <div className={styles.list}>
-            <div className={styles.item}>Personal Branding Website Development</div>
+            <div className={styles.item}>{footer.personalBranding}</div>
             <hr />
-            <div className={styles.item}>Corporate Branding Website Development</div>
+            <div className={styles.item}>{footer.corporateBranding}</div>
             <hr />
-            <div className={styles.item}>Corporate Internal Management Systems</div>
+            <div className={styles.item}>{footer.internalSystems}</div>
             <hr />
-            <div className={styles.item}>Other Web Application Development</div>
+            <div className={styles.item}>{footer.otherWebApps}</div>
             <hr />
-            <div className={styles.item}>Programming Instruction</div>
+            <div className={styles.item}>{footer.programmingInstruction}</div>
             <hr />
-            <div className={styles.item}>Economics Instruction</div>
+            <div className={styles.item}>{footer.economicsInstruction}</div>
             <hr />
           </div>
         </div>
         <div className={`${styles.section} ${styles.social_media}`}>
-          <div className={styles.title}>Social Media</div>
+          <div className={styles.title}>{footer.socialMedia}</div>
           <div className={styles.list}>
             <a
               href="https://github.com/bingyangchen"
@@ -78,10 +83,15 @@ export default class Footer extends React.Component<Props, State> {
         </div>
         <Logo size="s" full invert />
         <div className={`${styles.section} ${styles.copyright}`}>
-          Copyright © {new Date().getFullYear()} 陳秉洋 (Bing-Yang Chen) All rights
+          Copyright © {new Date().getFullYear()} {this.props.dictionary.name} All rights
           reserved
         </div>
       </footer>
     );
   }
+}
+
+export default function FooterWrapper(props: Omit<Props, "dictionary">) {
+  const { dictionary } = useTranslation();
+  return <Footer {...props} dictionary={dictionary} />;
 }

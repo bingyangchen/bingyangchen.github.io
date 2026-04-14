@@ -1,6 +1,8 @@
 import styles from "./ProjectCard.module.scss";
 
 import React, { MouseEvent } from "react";
+import { useTranslation } from "../../i18n/context";
+import type { TranslationDictionary } from "../../i18n/types";
 
 interface Props {
   thumbnail: React.ReactNode;
@@ -8,13 +10,14 @@ interface Props {
   title: string;
   tags: string[];
   maintaining_time_range: [Date, Date] | [Date];
+  dictionary: TranslationDictionary;
 }
 
 interface State {
   activated: boolean;
 }
 
-export default class ProjectCard extends React.Component<Props, State> {
+export class ProjectCard extends React.Component<Props, State> {
   public state: State;
   private rippleRef: React.RefObject<HTMLDivElement>;
   public constructor(props: Props) {
@@ -50,7 +53,8 @@ export default class ProjectCard extends React.Component<Props, State> {
             <div className={styles.time_range}>
               {this.props.maintaining_time_range[0].getFullYear()}
               {" - "}
-              {this.props.maintaining_time_range[1]?.getFullYear() ?? "Present"}
+              {this.props.maintaining_time_range[1]?.getFullYear() ??
+                this.props.dictionary.projectCommon.present}
             </div>
           </div>
         </div>
@@ -74,4 +78,9 @@ export default class ProjectCard extends React.Component<Props, State> {
       this.setState({ activated: false });
     }, 250);
   };
+}
+
+export default function ProjectCardWrapper(props: Omit<Props, "dictionary">) {
+  const { dictionary } = useTranslation();
+  return <ProjectCard {...props} dictionary={dictionary} />;
 }

@@ -20,6 +20,8 @@ import {
 import { homeProjects } from "../../../data/projects";
 import { homeSkillItems } from "../../../data/skills";
 import { workExperienceItems } from "../../../data/workExperience";
+import { useTranslation } from "../../../i18n/context";
+import type { TranslationDictionary } from "../../../i18n/types";
 import {
   IconBlogText,
   IconChevronDoubleDown,
@@ -38,16 +40,15 @@ import { IRouter, withRouter } from "../../../router";
 import type { Project } from "../../../types";
 import ResumeSheet from "../Resume/ResumeSheet";
 
-const GREETING_TEXT =
-  "Software engineer focused on web apps that stay maintainable after launch.";
-
 const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
 
 const SITE_URL_FOR_QR = "https://byc1999.com";
 
 const NCCU_ECONOMICS_URL = "https://econo.nccu.edu.tw/";
 
-interface Props extends IRouter {}
+interface Props extends IRouter {
+  dictionary: TranslationDictionary;
+}
 
 interface State {
   activeProject: Project | null;
@@ -133,7 +134,13 @@ class Home extends React.Component<Props, State> {
 
   public render(): React.ReactNode {
     const primaryWorkExperience = workExperienceItems[0];
-    const job_badge_label = `${primaryWorkExperience.job_title} @ ${primaryWorkExperience.company_name}`;
+    const primaryWorkTranslation =
+      this.props.dictionary.workExperiences[primaryWorkExperience.id];
+    const job_title =
+      primaryWorkTranslation?.job_title || primaryWorkExperience.job_title;
+    const company_name =
+      primaryWorkTranslation?.company_name || primaryWorkExperience.company_name;
+    const job_badge_label = `${job_title} @ ${company_name}`;
     const job_badge_content = (
       <>
         {primaryWorkExperience.company_logo ? (
@@ -186,7 +193,7 @@ class Home extends React.Component<Props, State> {
                     className={`${styles.greeting_card} ${styles.hero_enter_greeting}`}
                   >
                     <TypingGreeting
-                      text={GREETING_TEXT}
+                      text={this.props.dictionary.home.greeting}
                       className={styles.greeting}
                       cursorClassName={styles.cursor}
                     />
@@ -194,7 +201,7 @@ class Home extends React.Component<Props, State> {
                 </div>
                 <div className={styles.sheet_right}>
                   <h1 className={`${styles.name} ${styles.hero_enter_name}`}>
-                    Bing-Yang Chen
+                    {this.props.dictionary.name}
                   </h1>
                   <div
                     className={`${styles.role_badge_row} ${styles.hero_enter_badges}`}
@@ -219,7 +226,7 @@ class Home extends React.Component<Props, State> {
                     >
                       <IconGraduationCap sideLength="16" />
                       <span className={styles.role_badge_label}>
-                        B.A. Economics, NCCU
+                        {this.props.dictionary.home.role}
                       </span>
                     </a>
                   </div>
@@ -266,20 +273,20 @@ class Home extends React.Component<Props, State> {
                       className={`brand_fill xl bold ${styles.resume_download_desktop_only}`}
                       onClick={this.handleDownloadResume}
                     >
-                      Download Resume
+                      {this.props.dictionary.home.downloadResume}
                     </Button>
                     <div className={styles.nav_links}>
                       <a href="#about" className={styles.nav_ghost}>
                         <IconFilePerson sideLength="22" />
-                        <span>About</span>
+                        <span>{this.props.dictionary.navigation.about}</span>
                       </a>
                       <a href="#projects" className={styles.nav_ghost}>
                         <IconMedia sideLength="20" />
-                        <span>Projects</span>
+                        <span>{this.props.dictionary.navigation.projects}</span>
                       </a>
                       <a href="#blog" className={styles.nav_ghost}>
                         <IconBlogText sideLength="20" />
-                        <span>Blog</span>
+                        <span>{this.props.dictionary.navigation.blog}</span>
                       </a>
                     </div>
                   </div>
@@ -292,7 +299,7 @@ class Home extends React.Component<Props, State> {
               <span className={styles.scroll_down_chevron}>
                 <IconChevronDoubleDown sideLength="14" />
               </span>
-              Scroll down
+              {this.props.dictionary.home.scrollDown}
             </div>
           </div>
           <div
@@ -300,19 +307,28 @@ class Home extends React.Component<Props, State> {
             className={`${styles.about} ${styles.section}`}
             ref={this.aboutRef}
           >
-            <h2>ABOUT</h2>
+            <h2>{this.props.dictionary.about.title}</h2>
             <div className={styles.subtitle}>
-              Software engineer with a background in Economics, driven by curiosity and
-              a strong sense of purpose found in building through code.
+              {this.props.dictionary.about.subtitle}
             </div>
             <hr />
-            <h3>Work Experience</h3>
+            <h3>{this.props.dictionary.about.workExperience}</h3>
             <div className={styles.work_experience_outer}>
-              {workExperienceItems.map(({ id, ...work }) => (
-                <WorkExperience key={id} {...work} />
-              ))}
+              {workExperienceItems.map(({ id, ...work }) => {
+                const translation = this.props.dictionary.workExperiences[id];
+                return (
+                  <WorkExperience
+                    key={id}
+                    {...work}
+                    work_duration={translation?.work_duration || work.work_duration}
+                    job_title={translation?.job_title || work.job_title}
+                    company_name={translation?.company_name || work.company_name}
+                    description={translation?.description || work.description}
+                  />
+                );
+              })}
             </div>
-            <h3>Skills</h3>
+            <h3>{this.props.dictionary.about.skills}</h3>
             <div className={styles.skills_outer}>
               <div className={styles.skills_inner}>
                 {[1, 2].map((screenIndex) => (
@@ -324,7 +340,7 @@ class Home extends React.Component<Props, State> {
                 ))}
               </div>
             </div>
-            <h3>Education</h3>
+            <h3>{this.props.dictionary.about.education}</h3>
             <div className={styles.education_outer}>
               <img
                 className={styles.school_logo}
@@ -338,7 +354,7 @@ class Home extends React.Component<Props, State> {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  National Chengchi University, Department of Economics
+                  {this.props.dictionary.about.nccuEconomics}
                 </a>
                 <a
                   className={styles.degree}
@@ -346,7 +362,7 @@ class Home extends React.Component<Props, State> {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  National Chengchi University, Financial Technology Program
+                  {this.props.dictionary.about.nccuFintech}
                 </a>
               </div>
             </div>
@@ -356,11 +372,9 @@ class Home extends React.Component<Props, State> {
             className={`${styles.projects} ${styles.section}`}
             ref={this.projectsRef}
           >
-            <h2>PROJECTS</h2>
+            <h2>{this.props.dictionary.projects.title}</h2>
             <div className={styles.subtitle}>
-              Keeping creativity alive through side projects - exploring new ideas and
-              building things that matter in my free time. You might find something
-              interesting here!
+              {this.props.dictionary.projects.subtitle}
             </div>
             <hr />
             <div
@@ -383,8 +397,14 @@ class Home extends React.Component<Props, State> {
                     thumbnail={this.state.activeProject.thumbnail}
                     icon={this.state.activeProject.icon}
                     title={this.state.activeProject.title}
-                    description={this.state.activeProject.description}
-                    tags={this.state.activeProject.tags}
+                    description={
+                      this.props.dictionary.projectsData[this.state.activeProject.title]
+                        ?.description || this.state.activeProject.description
+                    }
+                    tags={
+                      this.props.dictionary.projectsData[this.state.activeProject.title]
+                        ?.tags || this.state.activeProject.tags
+                    }
                     maintaining_time_range={
                       this.state.activeProject.maintaining_time_range
                     }
@@ -396,6 +416,7 @@ class Home extends React.Component<Props, State> {
             </div>
             <div className={styles.project_list_container}>
               {homeProjects.map((project) => {
+                const translation = this.props.dictionary.projectsData[project.title];
                 return (
                   <div
                     key={project.title}
@@ -407,7 +428,7 @@ class Home extends React.Component<Props, State> {
                       }
                       icon={project.icon}
                       title={project.title}
-                      tags={project.tags}
+                      tags={translation?.tags || project.tags}
                       maintaining_time_range={project.maintaining_time_range}
                     />
                   </div>
@@ -419,11 +440,11 @@ class Home extends React.Component<Props, State> {
                 href="https://github.com/bingyangchen"
                 target="_blank"
                 rel="noreferrer"
-                title="Visit My GitHub"
+                title={this.props.dictionary.projects.visitGithub}
               >
                 <Button className="primary_fill xl">
                   <IconGitHub sideLength="28" />
-                  Visit My GitHub
+                  {this.props.dictionary.projects.visitGithub}
                 </Button>
               </a>
             </div>
@@ -433,18 +454,14 @@ class Home extends React.Component<Props, State> {
             className={`${styles.blog} ${styles.section}`}
             ref={this.blogRef}
           >
-            <h2>BLOG</h2>
-            <div className={styles.subtitle}>
-              Learning is a two-way street - I believe in both absorbing knowledge and
-              sharing insights. Here are my learning notes and thoughts. Feedback and
-              corrections are always welcome!
-            </div>
+            <h2>{this.props.dictionary.blog.title}</h2>
+            <div className={styles.subtitle}>{this.props.dictionary.blog.subtitle}</div>
             <hr />
             <div className={styles.footer}>
               <a href="https://blog.byc1999.com/list" target="_blank" rel="noreferrer">
                 <Button className="primary_fill xl">
                   <IconBlogText sideLength="28" />
-                  Check it out
+                  {this.props.dictionary.blog.checkItOut}
                 </Button>
               </a>
             </div>
@@ -488,9 +505,11 @@ class Home extends React.Component<Props, State> {
                     <QRCodeSVG value={SITE_URL_FOR_QR} size={240} level="M" />
                   </div>
                   <div className={styles.qr_modal_title} id="qr-modal-title">
-                    Bing-Yang Chen
+                    {this.props.dictionary.name}
                   </div>
-                  <p className={styles.qr_modal_cta}>Scan to connect</p>
+                  <p className={styles.qr_modal_cta}>
+                    {this.props.dictionary.qrModal.scanToConnect}
+                  </p>
                 </div>
               </div>,
               document.body,
@@ -517,4 +536,9 @@ class Home extends React.Component<Props, State> {
   };
 }
 
-export default withRouter(Home);
+function HomeWrapper(props: IRouter) {
+  const { dictionary } = useTranslation();
+  return <Home {...props} dictionary={dictionary} />;
+}
+
+export default withRouter(HomeWrapper);
