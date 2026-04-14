@@ -161,7 +161,9 @@ class Home extends React.Component<Props, State> {
             <div className={styles.business_card}>
               <div className={styles.business_card_inner}>
                 <div className={styles.sheet_left}>
-                  <div className={styles.avatar_container}>
+                  <div
+                    className={`${styles.avatar_container} ${styles.hero_enter_avatar}`}
+                  >
                     <img
                       className={`${styles.avatar} ${styles.front}`}
                       src={avatar_2}
@@ -180,7 +182,9 @@ class Home extends React.Component<Props, State> {
                       <IconQrCode sideLength="18" />
                     </RoundButton>
                   </div>
-                  <div className={styles.greeting_card}>
+                  <div
+                    className={`${styles.greeting_card} ${styles.hero_enter_greeting}`}
+                  >
                     <TypingGreeting
                       text={GREETING_TEXT}
                       className={styles.greeting}
@@ -189,8 +193,12 @@ class Home extends React.Component<Props, State> {
                   </div>
                 </div>
                 <div className={styles.sheet_right}>
-                  <h1 className={styles.name}>Bing-Yang Chen</h1>
-                  <div className={styles.role_badge_row}>
+                  <h1 className={`${styles.name} ${styles.hero_enter_name}`}>
+                    Bing-Yang Chen
+                  </h1>
+                  <div
+                    className={`${styles.role_badge_row} ${styles.hero_enter_badges}`}
+                  >
                     {primaryWorkExperience.company_link ? (
                       <a
                         href={primaryWorkExperience.company_link}
@@ -215,7 +223,7 @@ class Home extends React.Component<Props, State> {
                       </span>
                     </a>
                   </div>
-                  <div className={styles.contact_row}>
+                  <div className={`${styles.contact_row} ${styles.hero_enter_contact}`}>
                     <a className={styles.email_link} href={`mailto:${CONTACT_EMAIL}`}>
                       <IconEnvelope sideLength="18" color="currentColor" />
                       <span>{CONTACT_EMAIL}</span>
@@ -253,7 +261,7 @@ class Home extends React.Component<Props, State> {
                       </a>
                     </div>
                   </div>
-                  <div className={styles.cta_toolbar}>
+                  <div className={`${styles.cta_toolbar} ${styles.hero_enter_cta}`}>
                     <Button
                       className={`brand_fill xl bold ${styles.resume_download_desktop_only}`}
                       onClick={this.handleDownloadResume}
@@ -278,7 +286,9 @@ class Home extends React.Component<Props, State> {
                 </div>
               </div>
             </div>
-            <div className={styles.scroll_down_hint}>
+            <div
+              className={`${styles.scroll_down_hint} ${styles.hero_enter_scroll_hint}`}
+            >
               <span className={styles.scroll_down_chevron}>
                 <IconChevronDoubleDown sideLength="14" />
               </span>

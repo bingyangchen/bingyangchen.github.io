@@ -61,6 +61,29 @@
     box-sizing: border-box;
     overflow: hidden;
     isolation: isolate;
+    $hero-enter-ease: cubic-bezier(0.16, 1, 0.3, 1);
+    $hero-enter-duration: 800ms;
+    & .hero_enter_avatar {
+      opacity: 0;
+      animation: heroFadeIn $hero-enter-duration $hero-enter-ease 0ms forwards;
+    }
+    & .hero_enter_name,
+    & .hero_enter_greeting {
+      opacity: 0;
+      animation: fadeSlideUp $hero-enter-duration $hero-enter-ease 100ms both;
+    }
+    & .hero_enter_badges {
+      opacity: 0;
+      animation: fadeSlideUp $hero-enter-duration $hero-enter-ease 200ms both;
+    }
+    & .hero_enter_contact {
+      opacity: 0;
+      animation: fadeSlideUp $hero-enter-duration $hero-enter-ease 300ms both;
+    }
+    & .hero_enter_cta {
+      opacity: 0;
+      animation: fadeSlideUp $hero-enter-duration $hero-enter-ease 400ms both;
+    }
     & > .home_atmosphere {
       position: absolute;
       inset: -20%;
@@ -510,9 +533,35 @@
       font-family: Geneva, sans-serif;
       font-size: 0.85 * _.$base-font-size;
       transform: translateX(-50%);
+      &.hero_enter_scroll_hint {
+        opacity: 0;
+        animation: heroScrollHintFadeIn $hero-enter-duration $hero-enter-ease 800ms both;
+        & > .scroll_down_chevron {
+          display: inline-flex;
+          animation: scrollChevronBounce 1.4s ease-in-out 1600ms infinite;
+        }
+      }
       & > .scroll_down_chevron {
         display: inline-flex;
-        animation: scrollChevronBounce 1.4s ease-in-out infinite;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      & .hero_enter_avatar,
+      & .hero_enter_name,
+      & .hero_enter_greeting,
+      & .hero_enter_badges,
+      & .hero_enter_contact,
+      & .hero_enter_cta {
+        animation: none;
+        opacity: 1;
+        transform: none;
+      }
+      & > .scroll_down_hint.hero_enter_scroll_hint {
+        animation: none;
+        opacity: 1;
+        & > .scroll_down_chevron {
+          animation: none;
+        }
       }
     }
   }
@@ -767,6 +816,37 @@
   51%,
   100% {
     opacity: 0;
+  }
+}
+
+@keyframes heroFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroScrollHintFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%);
   }
 }
 
