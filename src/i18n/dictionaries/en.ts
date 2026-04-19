@@ -17,7 +17,7 @@ export const englishDictionary: TranslationDictionary = {
   about: {
     title: "ABOUT",
     subtitle:
-      "Software engineer with a background in Economics, driven by curiosity and a strong sense of purpose found in building through code.",
+      "With a background in Economics, I focus on software engineering and product development. Good technology does not need to look like magic. It should solve real problems reliably and leave something genuinely useful behind.",
     workExperience: "Work Experience",
     skills: "Skills",
     education: "Education",
@@ -27,13 +27,13 @@ export const englishDictionary: TranslationDictionary = {
   projects: {
     title: "PROJECTS",
     subtitle:
-      "Keeping creativity alive through side projects - exploring new ideas and building things that matter in my free time. You might find something interesting here!",
+      "In my spare time, I use personal projects to explore new technologies and to find out which ideas are not just interesting in theory, but worth building for real.",
     visitGithub: "Visit My GitHub",
   },
   blog: {
     title: "BLOG",
     subtitle:
-      "Learning is a two-way street - I believe in both absorbing knowledge and sharing insights. Here are my learning notes and thoughts. Feedback and corrections are always welcome!",
+      "This is where I keep learning notes, technical write-ups, and some of the thinking behind them. A surprising number of things only make sense once you try to write them down.",
     checkItOut: "Check it out",
   },
   qrModal: {

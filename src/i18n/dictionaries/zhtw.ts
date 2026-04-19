@@ -17,7 +17,7 @@ export const traditionalChineseDictionary: TranslationDictionary = {
   about: {
     title: "簡歷",
     subtitle:
-      "我是一個具備經濟學背景的軟體工程師。對技術充滿好奇心，並在透過程式碼解決真實問題、打造產品的過程中，找到強烈的成就感與使命感。",
+      "具備經濟學背景，專注於軟體工程與產品開發。相信好的技術不必看起來像魔法，而是能穩定地解決問題，並留下真正有用的成果。",
     workExperience: "工作經歷",
     skills: "專業技能",
     education: "學歷",
@@ -27,13 +27,13 @@ export const traditionalChineseDictionary: TranslationDictionary = {
   projects: {
     title: "專案",
     subtitle:
-      "我喜歡在閒暇時間透過 Side Projects 探索新技術，將有趣的點子轉化為實際的產出。希望你能在這裡發現一些酷東西！",
+      "閒暇時間會透過個人專案探索新技術，順便確認哪些想法不只聽起來不錯，也值得真的做出來。",
     visitGithub: "我的 GitHub",
   },
   blog: {
     title: "文章",
     subtitle:
-      "我相信學習是一段雙向的過程，吸收新知與分享見解同樣重要。這裡記錄了我的學習筆記與技術心得，歡迎隨時與我交流！",
+      "這裡記錄的是學習筆記、技術心得，也包括一些把問題想清楚的過程。畢竟很多事一旦寫下來，才知道自己是不是真的懂了。",
     checkItOut: "查看文章",
   },
   qrModal: {
