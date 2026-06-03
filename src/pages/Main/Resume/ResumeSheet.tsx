@@ -120,9 +120,9 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Designed and implemented scalable, high-performance APIs; integrated
-                    third-party services; and partnered closely with frontend teams to
-                    deliver production-grade e-commerce functionality.
+                    Built scalable APIs for marketplace checkout and order workflows,
+                    integrated third-party services, and partnered with frontend teams
+                    to deliver reliable production e-commerce features.
                   </li>
                   <li>
                     Redesigned database schemas, modernized inter-service communication,

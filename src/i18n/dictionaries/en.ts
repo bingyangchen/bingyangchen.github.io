@@ -76,7 +76,7 @@ export const englishDictionary: TranslationDictionary = {
       job_title: "Backend Engineer",
       company_name: "Pinkoi",
       description:
-        "Designed and implemented scalable, high-performance APIs; integrated third-party services; and partnered closely with frontend teams to deliver robust, production-grade e-commerce functionality. Redesigned database schemas, modernized inter-service communication, and eliminated legacy bottlenecks, resulting in significant gains in system reliability and throughput. Built and deployed internal admin tools that automated key workflows, accelerating business operations and reducing manual overhead. Performed rigorous code reviews and enforced engineering best practices to uphold code quality, ensure system maintainability, and drive long-term scalability.",
+        "Built scalable APIs for marketplace checkout and order workflows, integrated third-party services, and partnered with frontend teams to deliver reliable production e-commerce features. Redesigned database schemas, modernized inter-service communication, and eliminated legacy bottlenecks, resulting in significant gains in system reliability and throughput. Built and deployed internal admin tools that automated key workflows, accelerating business operations and reducing manual overhead. Performed rigorous code reviews and enforced engineering best practices to uphold code quality, ensure system maintainability, and drive long-term scalability.",
     },
     "sysfeather-2022": {
       work_duration: "Mar 2022 ~ Mar 2023．1 yr 1 mo",
