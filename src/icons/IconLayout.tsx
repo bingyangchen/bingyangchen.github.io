@@ -3,6 +3,8 @@ import React from "react";
 export interface IconSvgChildProperties {
   sideLength?: string;
   color?: string;
+  className?: string;
+  "aria-hidden"?: boolean | "true" | "false";
 }
 
 export function asIcon(Component: React.ComponentType<IconSvgChildProperties>) {
@@ -14,6 +16,8 @@ export function asIcon(Component: React.ComponentType<IconSvgChildProperties>) {
         height={properties.sideLength || "24"}
         fill={properties.color || "currentColor"}
         viewBox="0 0 24 24"
+        className={properties.className}
+        aria-hidden={properties["aria-hidden"]}
       >
         <Component {...properties} />
       </svg>

@@ -11,6 +11,7 @@ export { default as IconGitHub } from "./IconGitHub";
 export { default as IconHomeblank } from "./IconHomeBlank";
 export { default as IconLinkedIn } from "./IconLinkedIn";
 export { default as IconList } from "./IconList";
+export { default as IconLocation } from "./IconLocation";
 export { default as IconMedia } from "./IconMedia";
 export { default as IconQrCode } from "./IconQrCode";
 export { default as IconXLarge } from "./IconXLarge";
