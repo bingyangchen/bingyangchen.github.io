@@ -62,7 +62,7 @@ export const englishDictionary: TranslationDictionary = {
       job_title: "Backend Engineer",
       company_name: "Swag",
       description:
-        "Refactored a multi-domain availability monitoring service from Flask and MongoDB to FastAPI and PostgreSQL, significantly reducing codebase size and CPU usage. Introduced GrowthBook for feature-flag management, enabling internal teams to configure flags with less friction and greater flexibility.",
+        "Own and modernize a high-throughput multi-domain monitoring service; re-engineered the backend with FastAPI and PostgreSQL to cut CPU usage and streamline future feature deployment. Introduced GrowthBook for feature-flag management, enabling internal teams to configure flags with less friction and greater flexibility.",
     },
     "gaia-2024": {
       work_duration: "Dec 2024 ~ Dec 2025．1 yr 1 mo",

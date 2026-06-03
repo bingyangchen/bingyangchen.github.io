@@ -93,9 +93,9 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Refactored a multi-domain availability monitoring service from Flask
-                    and MongoDB to FastAPI and PostgreSQL, significantly reducing
-                    codebase size and CPU usage.
+                    Own and modernize a high-throughput multi-domain monitoring service;
+                    re-engineered the backend with FastAPI and PostgreSQL to cut CPU
+                    usage and streamline future feature deployment.
                   </li>
                   <li>
                     Introduced GrowthBook for feature-flag management, enabling internal
