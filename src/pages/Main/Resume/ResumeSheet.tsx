@@ -89,7 +89,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               <div className={styles.job}>
                 <div className={styles.roleRow}>
                   <span className={styles.roleText}>Backend Engineer．Swag</span>
-                  <span className={styles.roleDates}>Jan. 2025 – Present</span>
+                  <span className={styles.roleDates}>Jan. 2026 – Present</span>
                 </div>
                 <ul className={styles.bulletList}>
                   <li>

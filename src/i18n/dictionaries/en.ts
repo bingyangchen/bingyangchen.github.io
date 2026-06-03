@@ -57,8 +57,8 @@ export const englishDictionary: TranslationDictionary = {
     socialMedia: "Social Media",
   },
   workExperiences: {
-    "swag-2025": {
-      work_duration: "Jan 2025 ~ Present",
+    "swag-2026": {
+      work_duration: "Jan 2026 ~ Present",
       job_title: "Backend Engineer",
       company_name: "Swag",
       description:

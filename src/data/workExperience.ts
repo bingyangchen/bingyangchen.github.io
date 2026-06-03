@@ -2,8 +2,8 @@ import type { WorkExperienceData } from "../types";
 
 export const workExperienceItems: WorkExperienceData[] = [
   {
-    id: "swag-2025",
-    work_duration: "Jan 2025 ~ Present",
+    id: "swag-2026",
+    work_duration: "Jan 2026 ~ Present",
     job_title: "Backend Engineer",
     company_name: "Swag",
     company_logo: "https://swag.live/favicon.ico",

@@ -57,8 +57,8 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     socialMedia: "其它平台",
   },
   workExperiences: {
-    "swag-2025": {
-      work_duration: "2025 年 1 月 ~ 至今",
+    "swag-2026": {
+      work_duration: "2026 年 1 月 ~ 至今",
       job_title: "後端工程師",
       company_name: "Swag",
       description:
