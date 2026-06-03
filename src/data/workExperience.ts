@@ -19,7 +19,7 @@ export const workExperienceItems: WorkExperienceData[] = [
     company_logo: "https://www.gaia.net/images/ci/apple-icon-152x152.png",
     company_link: "https://www.gaia.net/",
     description:
-      "Architected and led the development of an enterprise-grade knowledge management platform leveraging LLMs to streamline information discovery and elevate customer service quality. Refined containerization practices, achieving a nearly 50% reduction in image size and boosting CI/CD pipeline efficiency by over 60%. Established robust engineering standards by integrating unit testing, linting, and code review processes, improving system reliability and maintainability. Led security hardening efforts, mitigating critical vulnerabilities by securing internal APIs from anonymous access and tightening CORS and content security policies (CSP).",
+      "Architected a customer-facing B2B SaaS knowledge platform from 0 to 1, designing Python backend services for LLM/RAG workflows, PostgreSQL-backed retrieval, and scalable knowledge search for enterprise customers. Built and owned core backend platform capabilities including authentication, SSO, and role-based access control, strengthening access security and reliability for a customer-facing B2B SaaS product. Developed backend tooling to automate release workflows, including environment variable management and database migration utilities, reducing manual deployment steps and improving release reliability. Improved team-wide engineering practices by mentoring engineers, defining coding standards, and systematizing code reviews, reducing new engineer onboarding time from one week to one day.",
   },
   {
     id: "pinkoi-2023",

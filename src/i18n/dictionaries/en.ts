@@ -69,7 +69,7 @@ export const englishDictionary: TranslationDictionary = {
       job_title: "Senior Backend Engineer",
       company_name: "Gaia",
       description:
-        "Architected and led the development of an enterprise-grade LLM-based knowledge management platform. Leveraged RAG (Retrieval-Augmented Generation) and Vector Databases to enable highly accurate semantic search, streamlining internal information discovery and elevating customer service efficiency for key clients including Giant Bicycles and ADATA. To meet enterprise security standards, implemented a comprehensive Role-Based Access Control (RBAC) architecture, ensuring the secure isolation of sensitive documents during vector search.",
+        "Architected a customer-facing B2B SaaS knowledge platform from 0 to 1, designing Python backend services for LLM/RAG workflows, PostgreSQL-backed retrieval, and scalable knowledge search for enterprise customers. Built and owned core backend platform capabilities including authentication, SSO, and role-based access control, strengthening access security and reliability for a customer-facing B2B SaaS product. Developed backend tooling to automate release workflows, including environment variable management and database migration utilities, reducing manual deployment steps and improving release reliability. Improved team-wide engineering practices by mentoring engineers, defining coding standards, and systematizing code reviews, reducing new engineer onboarding time from one week to one day.",
     },
     "pinkoi-2023": {
       work_duration: "Mar 2023 ~ Dec 2024．1 yr 10 mos",

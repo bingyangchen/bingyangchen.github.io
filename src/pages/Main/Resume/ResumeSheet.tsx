@@ -88,25 +88,26 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Architected and drove the development of an enterprise knowledge
-                    management platform from 0 to 1, leveraging LLMs to establish RAG
-                    workflows that empower faster decision-making across the
-                    organization.
+                    Architected a customer-facing B2B SaaS knowledge platform from 0 to
+                    1, designing Python backend services for LLM/RAG workflows,
+                    PostgreSQL-backed retrieval, and scalable knowledge search for
+                    enterprise customers.
                   </li>
                   <li>
-                    Built and owned several core platform capabilities, such as
-                    authentication, SSO, and role-based access control, establishing the
-                    security and reliability backbone for the application.
+                    Built and owned core backend platform capabilities including
+                    authentication, SSO, and role-based access control, strengthening
+                    access security and reliability for a customer-facing B2B SaaS
+                    product.
                   </li>
                   <li>
-                    Developed and introduced internal tools to streamline release
-                    workflows for the DevOps team, including an environment variable
-                    management tool and automated database migration utilities.
+                    Developed backend tooling to automate release workflows, including
+                    environment variable management and database migration utilities,
+                    reducing manual deployment steps and improving release reliability.
                   </li>
                   <li>
-                    Provided mentorship, set engineering standards, and operationalized
-                    code reviews, elevating team-wide development practices and
-                    accelerating new engineer onboarding from one week to one day.
+                    Improved team-wide engineering practices by mentoring engineers,
+                    defining coding standards, and systematizing code reviews, reducing
+                    new engineer onboarding time from one week to one day.
                   </li>
                 </ul>
               </div>
