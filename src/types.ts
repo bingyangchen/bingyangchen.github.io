@@ -4,7 +4,6 @@ export type WorkExperienceData = {
   job_title: string;
   company_name: string;
   company_logo?: string;
-  company_link?: string;
   description: string;
   skills?: string[];
 };

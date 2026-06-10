@@ -189,18 +189,7 @@ export default function Home() {
                   {dictionary.name}
                 </h1>
                 <div className={`${styles.role_badge_row} ${styles.hero_enter_badges}`}>
-                  {primaryWorkExperience.company_link ? (
-                    <a
-                      href={primaryWorkExperience.company_link}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className={styles.role_badge}
-                    >
-                      {job_badge_content}
-                    </a>
-                  ) : (
-                    <div className={styles.role_badge}>{job_badge_content}</div>
-                  )}
+                  <div className={styles.role_badge}>{job_badge_content}</div>
                   <a
                     href={NCCU_ECONOMICS_URL}
                     target="_blank"

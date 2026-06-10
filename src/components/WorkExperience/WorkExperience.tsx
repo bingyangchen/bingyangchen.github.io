@@ -5,7 +5,6 @@ interface WorkExperienceProperties {
   job_title: string;
   company_name: string;
   company_logo?: string;
-  company_link?: string;
   description: string;
   skills?: string[];
 }
@@ -15,7 +14,6 @@ export default function WorkExperience({
   job_title,
   company_name,
   company_logo,
-  company_link,
   description,
   skills,
 }: WorkExperienceProperties) {
@@ -28,34 +26,16 @@ export default function WorkExperience({
       <div className={styles.body}>
         <div className={styles.work_duration}>{work_duration}</div>
         <div className={styles.job_title}>{job_title}</div>
-        {company_link ? (
-          <a
-            className={styles.company_name}
-            href={company_link}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {company_logo && (
-              <img
-                className={styles.company_logo}
-                src={company_logo}
-                alt={company_name}
-              />
-            )}
-            {company_name}
-          </a>
-        ) : (
-          <div className={styles.company_name}>
-            {company_logo && (
-              <img
-                className={styles.company_logo}
-                src={company_logo}
-                alt={company_name}
-              />
-            )}
-            {company_name}
-          </div>
-        )}
+        <div className={styles.company_name}>
+          {company_logo && (
+            <img
+              className={styles.company_logo}
+              src={company_logo}
+              alt={company_name}
+            />
+          )}
+          {company_name}
+        </div>
         <div className={styles.description}>{description}</div>
         {skills && (
           <div className={styles.tech_stack}>

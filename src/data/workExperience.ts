@@ -7,7 +7,6 @@ export const workExperienceItems: WorkExperienceData[] = [
     job_title: "Backend Engineer",
     company_name: "Swag",
     company_logo: "https://swag.live/favicon.ico",
-    company_link: "https://swag.live/",
     description:
       "Refactored a multi-domain availability monitoring service from Flask and MongoDB to FastAPI and PostgreSQL, significantly reducing codebase size and CPU usage. Introduced GrowthBook for feature-flag management, enabling internal teams to configure flags with less friction and greater flexibility.",
   },
@@ -17,7 +16,6 @@ export const workExperienceItems: WorkExperienceData[] = [
     job_title: "Senior Backend Engineer",
     company_name: "Gaia",
     company_logo: "https://www.gaia.net/images/ci/apple-icon-152x152.png",
-    company_link: "https://www.gaia.net/",
     description:
       "Architected a customer-facing B2B SaaS knowledge platform from 0 to 1, designing Python backend services for LLM/RAG workflows, PostgreSQL-backed retrieval, and scalable knowledge search for enterprise customers. Built and owned core backend platform capabilities including authentication, SSO, and role-based access control, strengthening access security and reliability for a customer-facing B2B SaaS product. Developed backend tooling to automate release workflows, including environment variable management and database migration utilities, reducing manual deployment steps and improving release reliability. Improved team-wide engineering practices by mentoring engineers, defining coding standards, and systematizing code reviews, reducing new engineer onboarding time from one week to one day.",
   },
@@ -28,7 +26,6 @@ export const workExperienceItems: WorkExperienceData[] = [
     company_name: "Pinkoi",
     company_logo:
       "https://cdn04.pinkoi.com/pinkoi.site/general/favicon/favicon_192x192.png",
-    company_link: "https://www.pinkoi.com/",
     description:
       "Built scalable APIs for marketplace checkout and order workflows, integrated third-party services, and partnered with frontend teams to deliver reliable production e-commerce features. Redesigned database schemas, modernized inter-service communication, and eliminated legacy bottlenecks, resulting in significant gains in system reliability and throughput. Built and deployed internal admin tools that automated key workflows, accelerating business operations and reducing manual overhead. Performed rigorous code reviews and enforced engineering best practices to uphold code quality, ensure system maintainability, and drive long-term scalability.",
   },
@@ -38,7 +35,6 @@ export const workExperienceItems: WorkExperienceData[] = [
     job_title: "Backend Engineer",
     company_name: "Sysfeather",
     company_logo: "https://www.sysfeather.com/en-US/logo-sysfeather.png",
-    company_link: "https://www.sysfeather.com/",
     description:
       "Developed the backend for an e-commerce automated shop system with multi-tenant architecture. Spearheaded the POC for the Social Shopping Project, integrating the Facebook API to enable comment management and post lotteries, enhancing customers' social media management experience.",
   },
