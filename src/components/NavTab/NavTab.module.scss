@@ -1,46 +1,30 @@
 @use "../../global_variables" as _;
 
 .main {
-    display: flex;
-    align-items: center;
-    font-family: Verdana;
-    @media (min-width: _.$small) {
-        justify-content: center;
-        padding: 0 10px;
-        height: 100%;
-        width: 103px;
-        font-size: 0.9 * _.$base-font-size;
-        transition-duration: 150ms;
-        @media (hover: hover) {
-            &:hover {
-                color: _.$black;
-            }
-        }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 0 10px;
+  font-family: Verdana;
+  font-size: 0.9 * _.$base-font-size;
+  transition-duration: 150ms;
+  white-space: nowrap;
+  @media (min-width: _.$small) {
+    width: 103px;
+  }
+  @media (max-width: _.$small) {
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 0 4px;
+    font-size: 0.75 * _.$base-font-size;
+  }
+  @media (hover: hover) {
+    &:hover {
+      color: _.$black;
     }
-    @media (max-width: _.$small) {
-        gap: 20px;
-        height: 65px;
-        padding: 0 20px;
-        color: _.$gray;
-        @media (hover: hover) {
-            &:not(.active):hover {
-                background-color: _.$noisy-white;
-            }
-        }
-        &.active {
-            color: _.$blue;
-            background-color: #4c8bf520;
-        }
-    }
-    & > .icon_outer {
-        @media (min-width: _.$small) {
-            display: none;
-        }
-        @media (max-width: _.$small) {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 20px;
-        }
-    }
+  }
+  & > .icon_outer {
+    display: none;
+  }
 }
