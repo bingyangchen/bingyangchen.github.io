@@ -13,8 +13,16 @@ This repository is **Bing-Yang Chen’s personal site** ([byc1999.com](https://b
 - **Bundle & runtime cost** — Keep dependencies justified; watch bundle size and main-thread work on mobile. Images and third-party links dominate perceived performance alongside JS.
 - **PWA / caching** — Workbox is wired via CRA’s service-worker template (precaching, navigation-to-shell). Changes to caching or offline behavior should be deliberate and tested after `npm run build`.
 - **Content & boundaries** — Long-form writing and lists live on the **external blog**; this site is a portfolio shell. Prefer clear separation (links out) over growing an in-app CMS unless that is an explicit goal.
-- **Styling** — Shared tokens live in `src/_global_variables.scss`; section and component styles use SCSS modules. New UI should reuse variables and existing patterns rather than ad-hoc colors.
-- **SCSS modules layout** — In component `*.module.scss`, **nest rules under the root class in the same order as the TSX/DOM** (e.g. `.main { .grid { .media { … } } }`) so styles stay easy to scan beside the component. Avoid extra depth that does not mirror markup; when overriding page-level rules (e.g. `.section h3`), use a **short, purposeful chain** under the real parent path (such as `h3.title` inside `.contentPad`) instead of piling unrelated selectors.
+- **Design System & Styling** — Always adhere to this site's styling tokens and SCSS patterns:
+  - **Tokens**: `src/_global_variables.scss` contains the source of truth for colors, theme accent, base font size, letter spacing, header/footer heights, and responsive breakpoints (`$small`, `$medium`, `$large`, `$extra-large`).
+  - **Global base**: `src/index.scss` sets the body font stack, default text color, smooth scroll, and link resets.
+  - **SCSS Modules**: Component and page-level styles must use co-located `*.module.scss` files. Consume tokens via `@use ".../global_variables" as _;` (adjust relative paths as needed). Avoid inline `style={{ ... }}` in TSX files unless absolutely necessary.
+- **SCSS Modules Layout & Best Practices**:
+  - **Nesting**: In component `*.module.scss`, **nest rules under the root class in the same order as the TSX/DOM** (e.g. `.main { .grid { .media { … } } }`) so styles stay easy to scan beside the markup. Avoid unnecessary depth that does not mirror markup.
+  - **Overrides**: When overriding page-level or generic elements (e.g. `.section h3`), use a **short, purposeful chain** under the real parent path (such as `h3.title` inside `.contentPad`) instead of piling unrelated selectors.
+  - **Colors & Hex Values**: Never use one-off hex values in SCSS modules. Always use token variables (e.g., `_.$theme-color`, `_.$deep-gray`, `_.$noisy-white`, `_.$light-gray`). If a new global color or layout constant is needed, add it to `_global_variables.scss` first rather than hardcoding it.
+  - **Typography**: Match established font stacks — **Geneva, sans-serif** for UI/body text; **Georgia / Times / serif** for section titles and subtitles where modules already use that pattern. Scale sizes from `_.$base-font-size` and reuse existing section `h2` / `h3` / `.subtitle` rhythms.
+  - **Breakpoints**: Do not duplicate breakpoint widths inline. Always use `$small` / `$medium` / `$large` / `$extra-large` variables in media queries.
 
 For product tone, sections, and UX intent, read `.cursor/skills/product-designer/context.md` when decisions affect copy or information architecture.
 
@@ -66,7 +74,7 @@ You are an expert software engineer and architect with design sensibility. Your 
 
 ## Examples
 
-**Example 1: Reviewing a nested, complex function**
+### Example 1: Reviewing a Nested, Complex Function
 
 Input: *User asks to review a 200-line function with deeply nested conditionals.*
 
@@ -85,7 +93,7 @@ function processOrder(order: Order): boolean {
 }
 ```
 
-**Example 2: Suggesting an architectural change**
+### Example 2: Suggesting an Architectural Change
 
 Input: *User asks how to add many new projects without bloating `Home.tsx`.*
 
