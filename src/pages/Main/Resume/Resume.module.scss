@@ -45,6 +45,10 @@
   box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
 
+  * {
+    user-select: text;
+  }
+
   & > div {
     margin-left: auto;
     margin-right: auto;

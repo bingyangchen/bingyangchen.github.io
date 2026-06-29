@@ -68,13 +68,19 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Own and modernize a high-throughput multi-domain monitoring service;
-                    re-engineered the backend with FastAPI and PostgreSQL to cut CPU
-                    usage and streamline future feature deployment.
+                    Modernized a high-throughput multi-domain monitoring service by
+                    migrating the backend to FastAPI and PostgreSQL, reducing CPU usage
+                    and improving maintainability.
                   </li>
                   <li>
-                    Introduced GrowthBook for feature-flag management, enabling internal
-                    teams to configure flags with less friction and greater flexibility.
+                    Designed and built the backend for a new affiliate platform,
+                    including partner-facing APIs, commission settlement workflows, and
+                    internal tools for partner operations.
+                  </li>
+                  <li>
+                    Introduced GrowthBook for feature flag management, enabling product
+                    teams to manage feature rollouts independently with greater
+                    flexibility.
                   </li>
                 </ul>
               </div>
@@ -88,26 +94,23 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Architected a customer-facing B2B SaaS knowledge platform from 0 to
-                    1, designing Python backend services for LLM/RAG workflows,
-                    PostgreSQL-backed retrieval, and scalable knowledge search for
-                    enterprise customers.
+                    Architected a customer-facing B2B knowledge platform from 0 to 1,
+                    building backend services for LLM/RAG workflows and enterprise
+                    knowledge retrieval.
                   </li>
                   <li>
-                    Built and owned core backend platform capabilities including
-                    authentication, SSO, and role-based access control, strengthening
-                    access security and reliability for a customer-facing B2B SaaS
+                    Built and owned core platform capabilities including authentication,
+                    SSO, RBAC, and file upload functionality for a customer-facing
                     product.
                   </li>
                   <li>
-                    Developed backend tooling to automate release workflows, including
-                    environment variable management and database migration utilities,
-                    reducing manual deployment steps and improving release reliability.
+                    Optimized database schemas and refactored backend services, reducing
+                    chat loading time by 67%.
                   </li>
                   <li>
-                    Improved team-wide engineering practices by mentoring engineers,
-                    defining coding standards, and systematizing code reviews, reducing
-                    new engineer onboarding time from one week to one day.
+                    Improved engineering practices by mentoring teammates, defining
+                    coding standards, and systematizing code reviews, reducing new
+                    engineer ramp-up time from one week to one day.
                   </li>
                 </ul>
               </div>
@@ -121,18 +124,18 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Built scalable APIs for marketplace checkout and order workflows,
-                    integrated third-party services, and partnered with frontend teams
-                    to deliver reliable production e-commerce features.
+                    Designed and implemented guest shopping cart functionality, enabling
+                    a seamless checkout experience for non-registered users.
                   </li>
                   <li>
-                    Redesigned database schemas, modernized inter-service communication,
-                    and eliminated legacy bottlenecks, improving system reliability and
-                    throughput.
+                    Integrated Taiwan's Cultural Points program and ShopBack Hong Kong,
+                    supporting new purchasing channels and driving order growth in
+                    targeted markets.
                   </li>
                   <li>
-                    Built internal admin tools that automated workflows and reduced
-                    manual operational overhead.
+                    Re-architected the free-shipping eligibility computation pipeline,
+                    reducing computation by nearly 50% while ensuring promotion accuracy
+                    during high-traffic campaigns.
                   </li>
                 </ul>
               </div>
@@ -146,12 +149,9 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Developed the backend for a multi-tenant e-commerce automation
-                    system.
-                  </li>
-                  <li>
-                    Spearheaded the POC for a social shopping backend, integrating the
-                    Facebook API to enable comment management and post-based lotteries.
+                    Built backend services for a multi-tenant e-commerce platform while
+                    leading the technical proof of concept for social commerce
+                    integrations.
                   </li>
                 </ul>
               </div>
@@ -171,7 +171,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               </div>
             </div>
             <div className={styles.bottomColumn}>
-              <h2 className={styles.sectionHeading}>Side Projects</h2>
+              <h2 className={styles.sectionHeading}>Social Links</h2>
               <p className={styles.projectLine}>
                 <span className={styles.projectLabel}>GitHub</span>
                 <a
