@@ -4,11 +4,6 @@ $resume-navy: #234a8c;
 
 @mixin resume-emphasis-font {
   font-weight: bold;
-  text-shadow:
-    0.01em 0 0 currentColor,
-    -0.01em 0 0 currentColor,
-    0 0.01em 0 currentColor,
-    0 -0.01em 0 currentColor;
 }
 
 .a4 {
@@ -20,7 +15,7 @@ $resume-navy: #234a8c;
   box-sizing: border-box;
   background-color: _.$white;
   color: _.$black;
-  font-family: Geneva, sans-serif;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 12px;
   line-height: 1.8;
   -webkit-font-smoothing: antialiased;
@@ -140,6 +135,7 @@ $resume-navy: #234a8c;
             align-items: baseline;
             gap: 8px 16px;
             margin-bottom: 4px;
+            font-size: 13px;
 
             .roleText {
               @include resume-emphasis-font;

@@ -78,9 +78,8 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                     internal tools for partner operations.
                   </li>
                   <li>
-                    Introduced GrowthBook for feature flag management, enabling product
-                    teams to manage feature rollouts independently with greater
-                    flexibility.
+                    Introduced remote config service, enabling product teams to manage
+                    feature rollouts and a/b tests with greater flexibility.
                   </li>
                 </ul>
               </div>
@@ -94,9 +93,10 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Architected a customer-facing B2B knowledge platform from 0 to 1,
-                    building backend services for LLM/RAG workflows and enterprise
-                    knowledge retrieval.
+                    Architected the backend of a customer-facing enterprise AI knowledge
+                    platform from 0 to 1, enabling conversational AI, knowledge base
+                    management, RAG-powered retrieval, multimodal generation, and
+                    modular MCP integrations.
                   </li>
                   <li>
                     Built and owned core platform capabilities including authentication,
