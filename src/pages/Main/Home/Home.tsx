@@ -203,10 +203,10 @@ export default function Home() {
                   </a>
                 </div>
                 <div className={`${styles.contact_row} ${styles.hero_enter_contact}`}>
-                  <a className={styles.email_link} href={`mailto:${CONTACT_EMAIL}`}>
+                  <span className={styles.email_link}>
                     <IconEnvelope sideLength="18" color="currentColor" />
                     <span>{CONTACT_EMAIL}</span>
-                  </a>
+                  </span>
                   <div className={styles.social_icons}>
                     <a
                       href="https://github.com/bingyangchen"

@@ -417,12 +417,11 @@
       font-family: Geneva, sans-serif;
       font-size: 0.9 * _.$base-font-size;
       color: _.$deep-gray;
-      text-decoration: none;
       word-break: break-all;
-      @media (hover: hover) {
-        &:hover {
-          color: _.$brand-olive;
-        }
+
+      & span {
+        cursor: text;
+        user-select: all;
       }
     }
     & .social_icons {
