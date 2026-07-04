@@ -62,28 +62,28 @@ export const englishDictionary: TranslationDictionary = {
       job_title: "Backend Engineer",
       company_name: "Swag",
       description:
-        "Own and modernize a high-throughput multi-domain monitoring service; re-engineered the backend with FastAPI and PostgreSQL to cut CPU usage and streamline future feature deployment. Introduced GrowthBook for feature-flag management, enabling internal teams to configure flags with less friction and greater flexibility.",
+        "Much of my work has centered on backend systems. I modernized a high-throughput, domain healthness monitoring service by migrating its backend to FastAPI and PostgreSQL, which cut CPU usage and made the codebase considerably easier to maintain. I then designed and built the backend for a new affiliate platform from the ground up, covering the partner-facing APIs, the commission settlement workflows, and the internal tools our partner operations team relied on. Along the way, I also introduced a remote config service that gave product teams the flexibility to manage feature rollouts and run A/B tests on their own terms.",
     },
     "gaia-2024": {
       work_duration: "Dec 2024 ~ Dec 2025．1 yr 1 mo",
       job_title: "Senior Backend Engineer",
       company_name: "Gaia",
       description:
-        "Architected a customer-facing B2B SaaS knowledge platform from 0 to 1, designing Python backend services for LLM/RAG workflows, PostgreSQL-backed retrieval, and scalable knowledge search for enterprise customers. Built and owned core backend platform capabilities including authentication, SSO, and role-based access control, strengthening access security and reliability for a customer-facing B2B SaaS product. Developed backend tooling to automate release workflows, including environment variable management and database migration utilities, reducing manual deployment steps and improving release reliability. Improved team-wide engineering practices by mentoring engineers, defining coding standards, and systematizing code reviews, reducing new engineer onboarding time from one week to one day.",
+        "One of the projects I'm proudest of is an enterprise AI knowledge platform I architected from the ground up. I owned the backend design end to end, building it to support conversational AI, knowledge base management, RAG-powered retrieval, multimodal generation, and modular MCP integrations, along with the core platform capabilities the whole product stood on: authentication, SSO, RBAC, and file upload. Because it was customer-facing, performance mattered as much as features, so I optimized the database schemas and refactored the backend services, which brought chat loading time down by 67%. But the part I've come to value most wasn't the code itself. As the platform grew I put real effort into how the team worked, mentoring teammates, defining our coding standards, and systematizing code reviews, and it paid off in a way I could measure: new engineers went from a week to a single day to get up to speed.",
     },
     "pinkoi-2023": {
       work_duration: "Mar 2023 ~ Dec 2024．1 yr 10 mos",
       job_title: "Backend Engineer",
       company_name: "Pinkoi",
       description:
-        "Built scalable APIs for marketplace checkout and order workflows, integrated third-party services, and partnered with frontend teams to deliver reliable production e-commerce features. Redesigned database schemas, modernized inter-service communication, and eliminated legacy bottlenecks, resulting in significant gains in system reliability and throughput. Built and deployed internal admin tools that automated key workflows, accelerating business operations and reducing manual overhead. Performed rigorous code reviews and enforced engineering best practices to uphold code quality, ensure system maintainability, and drive long-term scalability.",
+        "On the e-commerce side, a lot of my work came down to removing friction in the buying flow. I designed and implemented guest shopping cart functionality so that non-registered users could move through checkout without being forced to sign up first. I also integrated Taiwan's Cultural Points program and ShopBack Hong Kong, which opened up new purchasing channels and drove order growth in the markets we were targeting. The piece I found most demanding was re-architecting the free-shipping eligibility computation pipeline: I brought the computation down by nearly half while keeping promotion accuracy intact even during high-traffic campaigns, when getting it wrong would have been most costly.",
     },
     "sysfeather-2022": {
       work_duration: "Mar 2022 ~ Mar 2023．1 yr 1 mo",
       job_title: "Backend Engineer",
       company_name: "Sysfeather",
       description:
-        "Developed the backend for an e-commerce automated shop system with multi-tenant architecture. Spearheaded the POC for the Social Shopping Project, integrating the Facebook API to enable comment management and post lotteries, enhancing customers' social media management experience.",
+        "I built the backend services behind a multi-tenant e-commerce platform, and at the same time took the lead on the technical proof of concept for our social commerce integrations.",
     },
     "beida-2020": {
       work_duration: "2020 Spring Semester",

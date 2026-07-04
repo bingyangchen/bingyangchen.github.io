@@ -159,12 +159,12 @@ export default function Home() {
                   <img
                     className={`${styles.avatar} ${styles.front}`}
                     src={avatar_2}
-                    alt="陳秉洋"
+                    alt="陳秉洋 (Bing-Yang Chen)"
                   />
                   <img
                     className={`${styles.avatar} ${styles.back}`}
                     src={avatar_1}
-                    alt="Bing-Yang Chen"
+                    alt="陳秉洋 (Bing-Yang Chen)"
                   />
                   <RoundButton
                     className={styles.qr_avatar_fab}
