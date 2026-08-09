@@ -19,12 +19,18 @@ const TypingGreeting = React.memo(function TypingGreeting({
   className,
   cursorClassName,
 }: TypingGreetingProps): React.ReactElement {
-  const [typed, setTyped] = React.useState("");
-  const [complete, setComplete] = React.useState(false);
+  // Start at the finished state: the prerendered snapshot then contains the
+  // whole greeting (good for crawlers). The layout effect below rewinds to empty
+  // before the browser paints, so the animation still plays from the start.
+  const [typed, setTyped] = React.useState(text);
+  const [complete, setComplete] = React.useState(true);
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     let cancelled = false;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+    setTyped("");
+    setComplete(false);
 
     const step = (i: number): void => {
       if (cancelled || i >= text.length) return;

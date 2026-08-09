@@ -48,12 +48,17 @@ export default function Home() {
   const { dictionary } = useTranslation();
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const homeRef = useRef<HTMLDivElement>(null);
   const aboutRef = useRef<HTMLDivElement>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
   const blogRef = useRef<HTMLDivElement>(null);
   const projectDetailRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     function handleScrollForHash() {
@@ -417,15 +422,16 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {createPortal(
-        <div
-          className={`${styles.resume_export_slot} resume-print-area`}
-          aria-hidden="true"
-        >
-          <ResumeSheet />
-        </div>,
-        document.body,
-      )}
+      {isMounted &&
+        createPortal(
+          <div
+            className={`${styles.resume_export_slot} resume-print-area`}
+            aria-hidden="true"
+          >
+            <ResumeSheet />
+          </div>,
+          document.body,
+        )}
       {isQrModalOpen
         ? createPortal(
             <div

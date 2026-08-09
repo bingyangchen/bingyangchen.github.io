@@ -54,10 +54,10 @@ export default function ProjectDetail({
                 ))}
               </div>
               <div className={styles.timeRange}>
-                {maintaining_time_range[0].getFullYear()}
-                {" – "}
-                {maintaining_time_range[1]?.getFullYear() ??
-                  dictionary.projectCommon.present}
+                {`${maintaining_time_range[0].getFullYear()} – ${
+                  maintaining_time_range[1]?.getFullYear() ??
+                  dictionary.projectCommon.present
+                }`}
               </div>
             </div>
             <div className={styles.middle}>

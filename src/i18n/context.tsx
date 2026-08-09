@@ -14,20 +14,18 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 const LANGUAGE_STORAGE_KEY = "preferred_language";
 
+function detectPreferredLanguage(): Language {
+  const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+  if (savedLanguage === "en" || savedLanguage === "zh-TW") {
+    return savedLanguage;
+  }
+  return navigator.language.startsWith("zh") ? "zh-TW" : "en";
+}
+
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [language, setLanguageState] = useState<Language>(() => {
-    const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-    if (savedLanguage === "en" || savedLanguage === "zh-TW") {
-      return savedLanguage;
-    }
-    const browserLanguage = navigator.language;
-    if (browserLanguage.startsWith("zh")) {
-      return "zh-TW";
-    }
-    return "en";
-  });
+  const [language, setLanguageState] = useState<Language>(detectPreferredLanguage);
 
   const setLanguage = (newLanguage: Language) => {
     setLanguageState(newLanguage);

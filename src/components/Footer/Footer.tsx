@@ -70,7 +70,7 @@ export default function Footer() {
       </div>
       <Logo size="s" full invert />
       <div className={`${styles.section} ${styles.copyright}`}>
-        Copyright © {new Date().getFullYear()} {dictionary.name} All rights reserved
+        {`Copyright © ${new Date().getFullYear()} ${dictionary.name} All rights reserved`}
       </div>
     </footer>
   );
