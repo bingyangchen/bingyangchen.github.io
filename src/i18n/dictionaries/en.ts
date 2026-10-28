@@ -62,7 +62,7 @@ export const englishDictionary: TranslationDictionary = {
       job_title: "Backend Engineer",
       company_name: "Swag",
       description:
-        "Much of my work has centered on backend systems. I modernized a high-throughput, domain healthness monitoring service by migrating its backend to FastAPI and PostgreSQL, which cut CPU usage and made the codebase considerably easier to maintain. I then designed and built the backend for a new affiliate platform from the ground up, covering the partner-facing APIs, the commission settlement workflows, and the internal tools our partner operations team relied on. Along the way, I also introduced a remote config service that gave product teams the flexibility to manage feature rollouts and run A/B tests on their own terms.",
+        "I built the affiliate platform backend from scratch and developed a Telegram video service with on-demand transcoding and reuse of uploaded videos. For partner credit transfers and game wallet integration, I implemented signed APIs and duplicate-transaction handling, with a PostgreSQL game ledger and automated reconciliation. I also migrated domain availability APIs from Flask and MongoDB to async FastAPI and PostgreSQL with Redis caching, and integrated GrowthBook for targeted feature rollouts and A/B testing.",
     },
     "gaia-2024": {
       work_duration: "Dec 2024 ~ Dec 2025．1 yr 1 mo",

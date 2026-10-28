@@ -62,7 +62,7 @@ export const traditionalChineseDictionary: TranslationDictionary = {
       job_title: "後端工程師",
       company_name: "Swag",
       description:
-        "將多網域可用性監控服務由 Flask 與 MongoDB 重構為 FastAPI 與 PostgreSQL，有效精簡程式碼架構並顯著降低 CPU 負載。導入 GrowthBook 進行 Feature Flag 管理，降低內部團隊設定功能開關的門檻，大幅提升操作彈性。",
+        "從零開發合作平台後端，並建立支援依需求轉檔與影片重用的 Telegram 影音服務。在合作夥伴點數轉帳與遊戲錢包整合中，實作 API 簽章與防止重複交易的機制，並為遊戲交易建立 PostgreSQL 帳本與自動對帳流程。同時將網域可用性 API 由 Flask、MongoDB 遷移至非同步 FastAPI、PostgreSQL，加入 Redis cache，並導入 GrowthBook 支援功能發布與 A/B 測試。",
     },
     "gaia-2024": {
       work_duration: "2024 年 12 月 ~ 2025 年 12 月．1 年 1 個月",

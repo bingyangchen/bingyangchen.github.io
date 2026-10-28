@@ -68,18 +68,24 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 </div>
                 <ul className={styles.bulletList}>
                   <li>
-                    Modernized a high-throughput multi-domain monitoring service by
-                    migrating the backend to FastAPI and PostgreSQL, reducing CPU usage
-                    and improving maintainability.
+                    Built the affiliate backend from scratch with FastAPI,
+                    HMAC-authenticated APIs, and idempotent credit transfers.
                   </li>
                   <li>
-                    Designed and built the backend for a new affiliate platform,
-                    including partner-facing APIs, commission settlement workflows, and
-                    internal tools for partner operations.
+                    Integrated a game wallet with a PostgreSQL ledger, deduplicated
+                    transactions, and automated reconciliation.
                   </li>
                   <li>
-                    Introduced remote config service, enabling product teams to manage
-                    feature rollouts and a/b tests with greater flexibility.
+                    Migrated domain availability APIs from Flask/MongoDB to async
+                    FastAPI/PostgreSQL with Redis caching.
+                  </li>
+                  <li>
+                    Integrated GrowthBook for feature rollouts and A/B tests, with
+                    configuration migration and CDN invalidation.
+                  </li>
+                  <li>
+                    Built a Telegram video service with on-demand transcoding, signed
+                    service APIs, and reusable uploads.
                   </li>
                 </ul>
               </div>
