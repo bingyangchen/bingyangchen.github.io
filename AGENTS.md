@@ -1,62 +1,24 @@
-# AI Agent System Instructions & Guidelines
+# Project Instructions
 
-Welcome, AI Agent. This file contains the core principles, interactive standards, and development workflows for contributing to this project. Always adhere to these instructions.
+## Task Context
 
----
+* Before proposing or changing UI, interactions, product copy, or information architecture, read [the site design context](docs/design.md).
+* Follow the site's established direction and tokens over generic design-skill preferences unless the user changes that direction. Use the user-level `impeccable-design` entrypoint when skill selection or coordination is needed; a specifically requested sub-skill can be used directly.
+* For resume content, layout, or PDF work, also read [the project resume skill](.agents/skills/resume-writer/SKILL.md).
+* Update the design context in the same change when an agreed change alters the site's purpose, major sections, outbound destinations, language behavior, copy tone, or visual system.
 
-## 1. Professional Persona & Mindset
+## Runtime and Deployment
 
-You operate as a multi-disciplinary expert across these domains:
+* This is a React and TypeScript frontend built with Create React App and deployed to GitHub Pages through `.github/workflows/deploy.yml`. There is no application server or first-party API in this repository.
+* `npm run build` runs prerendering through `postbuild`. When changing routing, inspect `scripts/prerender.mjs` and verify direct navigation and reloads on static hosting; do not assume a server-provided SPA fallback.
+* For service-worker or offline changes, inspect registration in `src/index.tsx` as well as the Workbox files, and verify the behavior against a production build.
 
-* **Software Engineer**: Write clean, maintainable, type-safe code. Follow best practices, handle edge cases, and favor simplicity.
-* **Architect**: Design with scalability, appropriate scale, and clear boundaries between components in mind.
-* **Product Designer**: Maintain high aesthetic standards, great UX, and meaningful copy.
+## Styling
 
----
+* Use `src/_global_variables.scss` for colors, base typography values, shared layout constants, and breakpoints. Add new shared values there rather than hardcoding them in SCSS modules. Use `$small`, `$medium`, `$large`, and `$extra-large` for media queries.
+* Keep component and page styles in co-located `*.module.scss` files. Consume tokens with `@use ".../global_variables" as _;`, adjusting the relative path. Avoid inline TSX styles unless necessary.
+* Nest module rules under their root class in TSX/DOM order, without unnecessary depth. Keep overrides under their actual parent with short, purposeful selectors.
 
-## 2. Interaction & Dialogue Style
+## Dependencies
 
-To ensure clear, efficient collaboration:
-
-* **Direct Answers**: Lead with the conclusion, recommendation, or direct answer.
-* **No Fluff/Clichés**: Avoid verbose or redundant openings like "Of course," "Sure, I can help," or "沒問題，我來幫你."
-* **Concise**: Output only necessary information. Eliminate redundant transitions or repetitive sentences.
-* **No Explanatory Code Comments**: Write clean, self-documenting code. Do not add comments explaining what the code does or what changes you made. Comments should only justify non-obvious intent or critical constraints.
-
----
-
-## 3. General Development Standards
-
-### A. Naming Conventions (No Redundant Suffix)
-
-If the parent directory or context already specifies the role or functionality, do not repeat that suffix in the file or symbol name.
-
-* *In directories like `components/`* ➔ Use `Button.tsx`, NOT `ButtonComponent.tsx`.
-* *In directories like `pages/`* ➔ Use `Home.tsx` or `About.tsx`, NOT `HomePage.tsx` or `AboutView.tsx`.
-* *In directories like `icons/`* ➔ Use `Github.tsx` or `Email.tsx`, NOT `GithubIcon.tsx` or `EmailIcon.tsx`.
-* *In directories like `hooks/`* ➔ Use `useTheme.ts`, NOT `useThemeHook.ts`.
-
-### B. No Abbreviations in Code
-
-Use full, readable words for all variables, functions, parameters, and types. Avoid abbreviations, shorthand, and single-letter names unless they are standard/tight loop constructs.
-
-* **❌ Abbreviated**: `usr`, `acctBal`, `calcAmt()`, `onBtnTap()`
-* **✅ Full Words**: `user`, `accountBalance`, `calculateAmount()`, `onButtonTap()`
-* *Exceptions*: Standard loop indices (`i`, `j`, `k` in tight loops) and `e` for event handlers.
-
-### C. Minimal & Purposeful Comments
-
-Do not write code comments or docstrings unless absolutely necessary for explaining **why** (non-obvious logic, workarounds, critical constraints) rather than **what** (obvious behavior).
-
-* **❌ Skip**: Obvious getters/setters, self-explanatory variable definitions, or trivial types.
-* **✅ Add**: Explanations of floating-point workarounds, math formulas, complex third-party API quirks, or invariants.
-
----
-
-## 4. Package & Dependency Management
-
-When managing packages in this **npm-based** project:
-
-1. **Verify Stable Version**: Always search for the latest stable version of a library using npm registry or `npm view <package> version` before updating or installing.
-2. **Avoid Placeholders**: Do not guess versions or use wildcard ranges like `*`.
-3. **Sync & Lock**: Ensure `package-lock.json` is fully synced via `npm install` after editing `package.json`, and commit the lockfile changes.
+* Use npm.

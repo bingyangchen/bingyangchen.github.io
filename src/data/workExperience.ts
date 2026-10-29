@@ -31,7 +31,7 @@ export const workExperienceItems: WorkExperienceData[] = [
     work_duration: "Mar 2022 ~ Mar 2023．1 yr 1 mo",
     job_title: "",
     company_name: "",
-    company_logo: "https://www.sysfeather.com/en-US/logo-sysfeather.png",
+    company_logo: "https://www.sysfeather.com/en-US/logo-sysfeather-v2.png",
     description: "",
   },
   {

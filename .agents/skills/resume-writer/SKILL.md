@@ -1,82 +1,39 @@
 ---
 name: resume-writer
-description: Drafts and revises resumes and CVs with a recruiter and hiring-manager lens: scannable structure, outcome-focused bullets, role fit, ATS-friendly practices, and professional visual layout (typography, spacing, hierarchy). Use when writing or editing resume/CV content, styling a resume for PDF or print, or when the user asks what employers, HR, or design norms expect.
+description: >-
+  Maintain this site's resume content, layout, and browser-printed PDF with a
+  recruiter and hiring-manager perspective. Use when drafting or reviewing resume
+  copy, tailoring it to a role, or changing resume styling and print behavior.
 ---
 
-# Resume and CV (HR-aligned)
+## Project Sources
 
-## Role
+Follow [the site design context](../../../docs/design.md) for audience, tone, and visual direction. Paths below are relative to the repository root; inspect only sources relevant to the task:
 
-Act as someone who has screened many candidates: prioritize **clarity, relevance, and proof** over volume. Assume the reader spends **seconds** on the first pass.
+- `src/pages/Main/Resume/ResumeSheet.tsx`: English resume content, maintained separately from the site's dictionaries.
+- Shared facts: `src/data/workExperience.ts`, both `src/i18n/dictionaries/en.ts` and `src/i18n/dictionaries/zhtw.ts`, and `src/pages/Main/Home/Home.tsx`. For skill or project claims, also check `src/data/skills.ts` or `src/data/projects.tsx` and their dictionary entries.
+- Layout and printing: `src/pages/Main/Resume/ResumeSheet.module.scss`, `src/print.scss`, and `src/resume/print.ts`.
 
-## What HR and hiring managers optimize for
+## Facts and Editorial Decisions
 
-- **Fit**: Role title, domain, and skills match the job; jargon aligns with the posting.
-- **Impact**: Outcomes and scope, not only tasks. Prefer **numbers, scale, and time** when truthful.
-- **Credibility**: Consistent dates, no unexplained gaps without a one-line context if needed, honest seniority.
-- **Scannability**: Short sections, bullets not paragraphs, consistent tense (past for prior roles, present for current where standard).
+- Cross-check shared facts against the sources and user-supplied evidence. Existing copy does not independently verify a claim, and neither dictionary takes precedence when they disagree. Ask the user about contradictions the evidence cannot resolve.
+- Preserve supported seniority, ownership, scope, and attribution; request missing evidence for metrics or stronger claims.
+- Keep common facts consistent across resume, website, and languages while allowing different accomplishments, wording, and detail. Respect the requested editing scope.
+- Preserve the resume's language unless a language change is requested.
+- For tailoring, select accomplishments and truthful keywords for the target role or job description. General maintenance does not require a job posting.
+- Write concise bullets connecting action, scope, and outcome; put the strongest relevant evidence first.
 
-## Structure (typical professional resume)
+## Layout and Format
 
-1. **Header**: Name, one primary location or “open to relocation” if relevant, portfolio or LinkedIn if professional, email. Avoid full mailing address unless locale expects it.
-2. **One-line positioning** (optional): Target role or specialty in plain language, not buzzwords alone.
-3. **Experience**: Reverse chronological. Each role: company, title, dates, **3–6 bullets** of high-signal wins.
-4. **Education**: Degree, field, institution, year; omit GPA unless strong and recent.
-5. **Skills**: Grouped or comma lists—**match the job**; avoid listing every technology.
-6. **Projects** (if early career or switching fields): Link or one line each; emphasize stack and outcome.
+- Preserve A4 unless the user requests a format change. The current print CSS caps height and hides overflow, so added content can be silently clipped. Edit for relevance and spacing before shrinking text; discuss a format change if readability cannot be maintained.
+- Keep key information as selectable text, with conventional headings and logical reading order. Prefer a single column for ATS submissions; appearance and successful text extraction alone do not establish ATS compatibility.
 
-## Bullet formula (when claims need weight)
+## Validation
 
-**Action + scope + outcome** (add a metric if real):
+After changes to resume content, layout, or print behavior:
 
-- Weak: “Responsible for API development.”
-- Stronger: “Designed and shipped REST APIs for checkout; cut average latency from 800 ms to 120 ms on peak traffic.”
+1. Inspect the sheet on screen and export through the browser print flow at the intended paper size. Check the PDF for page count, clipping, missing content, wrapping, spacing, font rendering, and readability.
+2. Check extracted or copied text for completeness and reading order, and verify PDF contact and social links.
+3. The homepage export and `/resume` share `ResumeSheet`. Check both entry points when shared print behavior changes; copy-only edits require inspecting the exported sheet, without unrelated navigation checks.
 
-Use **strong verbs** (shipped, led, reduced, automated, scaled). Cut filler (“various,” “multiple,” “helped with” without substance).
-
-## Tailoring
-
-- Mirror **keywords** from the job description where they reflect true experience (skills, tools, domains).
-- Reorder bullets so the **most relevant** wins appear first under each role.
-- For career changers, foreground **transferable outcomes** and learning velocity.
-
-## Look and layout (styling)
-
-Assume the document must read well on **screen and printed A4/Letter PDF**, and feel **calm and professional**—not a marketing poster.
-
-- **Hierarchy**: Largest text = candidate name; clear section headings (Experience, Education, Skills); then employer, job title, dates; then body. Readers should see structure in a one-second scan.
-- **Typography**: One family or at most **one serif + one sans**; avoid decorative or script fonts. Body often **10–12 pt**; section titles slightly larger or semibold; **line spacing** around 1.15–1.5 for readability.
-- **Density**: Generous **margins** (roughly 0.5–1 in / 12–25 mm); avoid edge-to-edge text. **White space** between sections beats cramming extra lines.
-- **Alignment**: **Left-align** body text; a common pattern is job title and company left, **dates right** on the same line (or dates on a second line—pick one pattern and repeat).
-- **Length**: Often **one page** for early career; **two pages** acceptable for senior roles with strong bullets—quality over padding. Longer is rare and must earn every line.
-- **Color**: Default **dark text on light background**; optional **single accent** for headings, links, or thin rules—avoid rainbow blocks, heavy fills, or low-contrast gray that fails in print.
-- **Emphasis**: Use **bold sparingly** (titles, employers); avoid all-caps paragraphs, underlining body text, or more than one highlight style fighting for attention.
-- **Columns**: **Single column** is the default for clarity and ATS. A narrow sidebar (contact, skills) can work for design-forward PDFs if alignment stays crisp—never at the cost of parsing plain text.
-- **Graphics**: Simple **section dividers** or a thin line under the name are fine; icons optional and subtle. Charts and heavy graphics rarely help HR review; keep an **ATS-plain** variant if applying through portals.
-
-## ATS and format (web or PDF)
-
-- Prefer **simple layout**: single column, standard headings (Experience, Education, Skills)—matches “Look and layout” above.
-- Avoid critical text only inside images or complex tables for the version submitted to applicant systems.
-- **File name**: `Firstname-Lastname-Role.pdf` or similar—professional and readable.
-
-## Avoid
-
-- Objective statements that only describe what you want, with no value to the employer.
-- Long paragraphs; dense walls of text.
-- Unverifiable superlatives (“expert in everything,” “passionate” without evidence).
-- Hobbies unless they reinforce the role or culture fit and stay brief.
-- Inflated titles or dates; background checks and references punish mismatch.
-
-## Output contract
-
-When editing or drafting:
-
-1. **Default**: Revised text ready to paste (section by section if large).
-2. **Styling**: If the user is building a visual resume (HTML, CSS, Figma, Word), give concrete layout guidance: hierarchy, spacing, font choices, and what to avoid—aligned with “Look and layout.”
-3. **Notes**: Call out only high-impact tradeoffs (length vs. detail, one metric missing).
-4. **Language**: Follow the user’s language for the resume unless they request English or another language explicitly.
-
-## Optional project context
-
-If this repository contains resume content (for example `Resume.tsx` or copy files), read them before suggesting changes so tone and facts stay aligned with the site.
+Use available PDF tooling for inspection. If export or inspection is unavailable, report the limitation and remaining checks. Guidance-only edits to this skill do not require PDF export.
