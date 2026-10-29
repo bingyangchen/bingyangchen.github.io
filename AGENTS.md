@@ -2,6 +2,7 @@
 
 ## Task Context
 
+* Before any change, load [the shared SDD workflow](.agents/skills/sdd/SKILL.md) and choose `plan`, `implement`, `change`, or the trivial path. Explicit user instructions for the current task take precedence.
 * Before proposing or changing UI, interactions, product copy, or information architecture, read [the site design context](docs/design.md).
 * Follow the site's established direction and tokens over generic design-skill preferences unless the user changes that direction. Use the user-level `impeccable-design` entrypoint when skill selection or coordination is needed; a specifically requested sub-skill can be used directly.
 * For resume content, layout, or PDF work, also read [the project resume skill](.agents/skills/resume-writer/SKILL.md).
