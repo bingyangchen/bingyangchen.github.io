@@ -8,8 +8,19 @@
     "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "postbuild": "npm run prerender",
     "prerender": "node scripts/prerender.mjs",
-    "test": "react-scripts test",
+    "preview": "node scripts/serve-build.mjs",
+    "check:scenarios": "node scripts/check-scenarios.mjs",
+    "test:checker": "node --test tests/check-scenarios.test.mjs",
+    "test:unit": "react-scripts test --watchAll=false --runInBand",
+    "test:browser": "node --test tests/browser/*.test.mjs",
+    "check": "npm run check:scenarios && npm run test:checker && npm run test:unit && npm run build && npm run test:browser",
     "eject": "react-scripts eject"
+  },
+  "jest": {
+    "testMatch": [
+      "<rootDir>/src/**/*.{test,spec}.{js,jsx,ts,tsx}",
+      "!<rootDir>/src/**/{fixtures,__fixtures__}/**"
+    ]
   },
   "eslintConfig": {
     "extends": [
