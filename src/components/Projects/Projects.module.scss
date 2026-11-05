@@ -468,7 +468,6 @@
         }
       }
       .projectContent .actions {
-        max-width: calc(100% - #{_.$language-switcher-clearance});
         a {
           max-width: 100%;
         }

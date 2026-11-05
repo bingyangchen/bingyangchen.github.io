@@ -1,6 +1,6 @@
-import { fireEvent, render, screen, cleanup } from "@testing-library/react";
-import { LanguageProvider, useTranslation } from "./context";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { LanguageSwitcher } from "../components/LanguageSwitcher/LanguageSwitcher";
+import { LanguageProvider, useTranslation } from "./context";
 
 function LanguageProbe() {
   const { language, dictionary } = useTranslation();
@@ -61,11 +61,13 @@ test("SITE-R3.5 無效偏好", () => {
 
 test("SITE-R4.1 雙向切換", () => {
   showLanguage("en-US");
-  const toggle = screen.getByRole("button", { name: "Toggle language" });
+  const toggle = screen.getByRole("button", { name: "Switch to Traditional Chinese" });
+  expect(toggle).toHaveTextContent("中文");
   fireEvent.click(toggle);
+  expect(toggle).toHaveTextContent("English");
   expect(screen.getByRole("status")).toHaveTextContent("zh-TW:陳秉洋");
   expect(localStorage.getItem("preferred_language")).toBe("zh-TW");
-  expect(toggle).toHaveAttribute("title", "Switch to English");
+  expect(toggle).toHaveAttribute("title", "切換成英文");
   fireEvent.click(toggle);
   expect(screen.getByRole("status")).toHaveTextContent("en:Bing-Yang Chen");
   expect(localStorage.getItem("preferred_language")).toBe("en");

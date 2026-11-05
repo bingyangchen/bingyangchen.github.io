@@ -6,12 +6,12 @@ import { Footer, Header } from "../../components";
 
 export default function Main() {
   return (
-    <main className={styles.main}>
+    <div className={`${styles.main} site-layout`}>
       <Header />
-      <div className="main-outlet-slot">
+      <main id="main-content" className="main-outlet-slot" tabIndex={-1}>
         <Outlet />
-      </div>
+      </main>
       <Footer />
-    </main>
+    </div>
   );
 }

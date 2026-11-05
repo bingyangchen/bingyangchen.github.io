@@ -106,7 +106,7 @@ async function getPrintResult() {
   await page.emulateMediaType("print");
   await page.waitForFunction(
     () =>
-      getComputedStyle(document.querySelector('[aria-label="Toggle language"]'))
+      getComputedStyle(document.querySelector("[data-language-switcher]"))
         .visibility === "hidden",
   );
   await page.evaluate(() => document.fonts.ready);
@@ -120,7 +120,7 @@ async function getPrintResult() {
     count: document.querySelectorAll("[data-resume-root]").length,
     header: getComputedStyle(document.querySelector("header")).display,
     footer: getComputedStyle(document.querySelector("footer")).display,
-    language: getComputedStyle(document.querySelector('[aria-label="Toggle language"]'))
+    language: getComputedStyle(document.querySelector("[data-language-switcher]"))
       .visibility,
   }));
   const pdf = Buffer.from(
@@ -143,7 +143,10 @@ test("SITE-R1.1 SITE-R1.2 SITE-R7.1 公開首頁與初始作品", async () => {
     ["home", "about", "projects", "blog"],
   );
   assert.equal(
-    await page.$$eval("main > header,main > footer", (elements) => elements.length),
+    await page.$$eval(
+      ".site-layout > header,.site-layout > footer",
+      (elements) => elements.length,
+    ),
     2,
   );
   assert.deepEqual(
@@ -165,7 +168,7 @@ test("SITE-R1.3 非公開履歷與未知路徑不使用 SPA fallback", async () 
   assert.equal(await page.$('a[href="/resume"]'), null);
 });
 
-test("SITE-R1.4 非公開本機預覽", async () => {
+test("SITE-R1.4 SITE-R12.4 非公開本機預覽", async () => {
   await openHome();
   await enterPreview();
   assert.equal(await page.$eval("h1", (element) => element.textContent), "Resume");
@@ -181,7 +184,11 @@ test("SITE-R2.1 SITE-R2.2 導覽與自然捲動", async () => {
   const initialLength = await page.evaluate(() => window.history.length);
   await page.click('[class*="nav_links"] a[href="#about"]');
   await page.waitForFunction(
-    () => Math.abs(document.getElementById("about").getBoundingClientRect().top) < 2,
+    () =>
+      Math.abs(
+        document.getElementById("about").getBoundingClientRect().top -
+          document.querySelector("header").getBoundingClientRect().bottom,
+      ) < 2,
   );
   assert.equal(await page.evaluate(() => window.location.hash), "#about");
   assert.equal(await page.evaluate(() => window.history.length), initialLength + 1);
@@ -195,29 +202,340 @@ test("SITE-R2.1 SITE-R2.2 導覽與自然捲動", async () => {
   await page.waitForFunction(() => window.scrollY < 2);
 });
 
-test("SITE-R2.5 SITE-R2.6 Header 門檻與 Logo 回頂端", async () => {
+test("SITE-R2.5 SITE-R2.6 常駐 Header 與 Logo 回頂端", async () => {
   await openHome();
-  assert.equal(
+  assert.notEqual(
     await page.$eval("header", (element) => getComputedStyle(element).display),
     "none",
   );
-  await page.evaluate(() =>
-    window.scrollTo({ top: window.innerHeight + 20, behavior: "instant" }),
+  assert.equal(
+    await page.$$eval('header nav a[href^="#"]', (elements) => elements.length),
+    3,
   );
-  await page.waitForFunction(
-    () => getComputedStyle(document.querySelector("header")).display !== "none",
+  await page.click('header a[href="#projects"]');
+  await waitForSection("projects");
+  await page.click('header a[href="#home"]');
+  await page.waitForFunction(() => window.scrollY < 2);
+  assert.equal(
+    await page.$eval('header a[aria-current="location"]', (element) =>
+      element.getAttribute("aria-label"),
+    ),
+    "Bing-Yang Chen",
   );
   assert.equal(
-    await page.$$eval('header a[href^="#"]', (elements) => elements.length),
-    4,
+    await page.$eval(
+      'header a[href="#home"] img',
+      (element) => element.complete && element.naturalWidth > 0,
+    ),
+    true,
   );
-  await page.click('header a[href="/"]');
+  assert.equal(
+    await page.$eval('header a[href="#home"]', (element) => element.textContent.trim()),
+    "",
+  );
+});
+
+async function waitForSection(id) {
+  await page.waitForFunction(
+    (section) => {
+      const element = document.getElementById(section);
+      const top = element.getBoundingClientRect().top + window.scrollY;
+      const header = document.querySelector("header").getBoundingClientRect().bottom;
+      const destination = Math.max(
+        0,
+        Math.min(
+          section === "home" ? 0 : top - header,
+          document.documentElement.scrollHeight - window.innerHeight,
+        ),
+      );
+      return (
+        window.location.hash === `#${section}` &&
+        Math.abs(window.scrollY - destination) < 2
+      );
+    },
+    {},
+    id,
+  );
+}
+
+test("SITE-R2.3 返回與前進保留區塊落點", async () => {
+  await openHome();
+  await page.click('header a[href="#projects"]');
+  await waitForSection("projects");
+  await page.click('header a[href="#blog"]');
+  await waitForSection("blog");
+  await page.evaluate(() =>
+    window.addEventListener(
+      "popstate",
+      () => window.dispatchEvent(new Event("scrollend")),
+      { once: true },
+    ),
+  );
+  await page.goBack({ waitUntil: "networkidle0" });
+  await waitForSection("projects");
+  await page.goBack({ waitUntil: "networkidle0" });
   await page.waitForFunction(() => window.scrollY < 2);
+  await page.goForward({ waitUntil: "networkidle0" });
+  await waitForSection("projects");
+  await page.click('header a[href="#about"]');
+  await waitForSection("about");
+  await page.evaluate(() => window.scrollBy({ top: 240, behavior: "instant" }));
+  const readingPosition = await page.evaluate(() => window.scrollY);
+  await page.click('header a[href="#projects"]');
+  await waitForSection("projects");
+  await page.goBack({ waitUntil: "networkidle0" });
+  await page.waitForFunction(
+    (top) => Math.abs(window.scrollY - top) < 2 && window.location.hash === "#about",
+    {},
+    readingPosition,
+  );
+  await page.reload({ waitUntil: "networkidle0" });
+  await page.waitForFunction(
+    (top) => Math.abs(window.scrollY - top) < 2,
+    {},
+    readingPosition,
+  );
+});
+
+test("SITE-R2.4 Hash 直接開啟與重載避開 Header", async () => {
+  for (const section of ["home", "about", "projects", "blog"]) {
+    await page.goto("about:blank");
+    await openHome(`#${section}`);
+    await waitForSection(section);
+    await page.reload({ waitUntil: "networkidle0" });
+    await waitForSection(section);
+  }
+});
+
+test("SITE-R2.7 目前區塊與語言切換", async () => {
+  await openHome();
+  await page.$eval("#about", (element) =>
+    element.scrollIntoView({ behavior: "instant" }),
+  );
+  await page.waitForSelector('header nav a[href="#about"][aria-current="location"]');
+  await page.click("[data-language-switcher]");
+  assert.equal(
+    await page.$eval(
+      'header nav a[aria-current="location"]',
+      (element) => element.textContent,
+    ),
+    "簡歷",
+  );
+  assert.equal(
+    await page.$$eval(
+      'header [aria-current="location"]',
+      (elements) => elements.length,
+    ),
+    1,
+  );
+});
+
+test("SITE-R2.7 高視窗的最後區塊", async () => {
+  await page.setViewport({ width: 1440, height: 2000 });
+  await openHome();
+  await page.click('header a[href="#blog"]');
+  await waitForSection("blog");
+  await page.waitForSelector('header nav a[href="#blog"][aria-current="location"]');
+  assert.ok(
+    await page.$eval(
+      "#blog",
+      (element) => element.getBoundingClientRect().top < window.innerHeight,
+    ),
+  );
+  await page.reload({ waitUntil: "networkidle0" });
+  await waitForSection("blog");
+  await page.waitForSelector('header nav a[href="#blog"][aria-current="location"]');
+  await page.click('header a[href="#home"]');
+  await page.waitForFunction(() => window.scrollY < 2);
+});
+
+test("SITE-R2.8 SITE-R12.4 手機選單、焦點與收起入口", async () => {
+  await page.setViewport({ width: 390, height: 844 });
+  await openHome();
+  const menu = 'header button[aria-controls="site-navigation"]';
+  assert.equal(
+    await page.$eval(
+      "#site-navigation",
+      (element) => getComputedStyle(element).display,
+    ),
+    "none",
+  );
+  await page.click(menu);
+  await page.keyboard.press("Tab");
+  assert.equal(
+    await page.evaluate(() => document.activeElement.getAttribute("href")),
+    "#about",
+  );
+  await page.keyboard.press("Escape");
+  assert.equal(
+    await page.$eval(menu, (element) => element.getAttribute("aria-expanded")),
+    "false",
+  );
+  assert.equal(
+    await page.evaluate(() => document.activeElement.getAttribute("aria-controls")),
+    "site-navigation",
+  );
+  await page.keyboard.press("Enter");
+  await page.keyboard.press("Tab");
+  await page.keyboard.press("Enter");
+  await waitForSection("about");
+  assert.equal(await page.evaluate(() => document.activeElement.id), "about");
+  assert.equal(
+    await page.$eval(menu, (element) => element.getAttribute("aria-expanded")),
+    "false",
+  );
+  await page.keyboard.press("Tab");
+  assert.equal(
+    await page.evaluate(() =>
+      document.querySelector("header").contains(document.activeElement),
+    ),
+    false,
+  );
+  await page.click(menu);
+  await page.click("[data-language-switcher]");
+  assert.equal(await page.$eval("html", (element) => element.lang), "zh-TW");
+  assert.equal(
+    await page.$eval(menu, (element) => element.getAttribute("aria-expanded")),
+    "true",
+  );
+  await page.mouse.click(200, 500);
+  assert.equal(
+    await page.$eval(menu, (element) => element.getAttribute("aria-expanded")),
+    "false",
+  );
+  await page.click(menu);
+  await page.setViewport({ width: 1024, height: 844 });
+  await page.waitForFunction(
+    () =>
+      document
+        .querySelector("header button[aria-controls]")
+        .getAttribute("aria-expanded") === "false",
+  );
+  await page.setViewport({ width: 390, height: 844 });
+  assert.equal(
+    await page.$eval(
+      "#site-navigation",
+      (element) => getComputedStyle(element).display,
+    ),
+    "none",
+  );
+  await page.setViewport({ width: 1024, height: 844 });
+  await page.$eval('header a[href="#projects"]', (element) => element.focus());
+  await page.setViewport({ width: 390, height: 844 });
+  await page.waitForFunction(
+    () => document.activeElement?.getAttribute("aria-controls") === "site-navigation",
+  );
+  await page.setViewport({ width: 1024, height: 844 });
+  await page.waitForFunction(
+    () => document.activeElement?.getAttribute("href") === "#home",
+  );
+});
+
+test("SITE-R2.9 Header 對齊、觸控範圍與窄版組成", async () => {
+  await openHome();
+  for (const language of ["en", "zh-TW"]) {
+    if ((await page.$eval("html", (element) => element.lang)) !== language)
+      await page.$eval("[data-language-switcher]", (element) => element.click());
+    for (const width of [320, 390, 720, 721, 1024, 1440, 1920, 2560]) {
+      await page.setViewport({ width, height: 900 });
+      if (width <= 720)
+        await page.click('header button[aria-controls="site-navigation"]');
+      const metrics = await page.$eval("header", (header) => {
+        const inner = header.querySelector('[class*="inner"]').getBoundingClientRect();
+        const identityLink = header.querySelector('a[href="#home"]');
+        const identity = identityLink.getBoundingClientRect();
+        const projects = document.querySelector("#projects > div");
+        const links = [...header.querySelectorAll("nav a, nav button"), identityLink];
+        return {
+          width: header.getBoundingClientRect().width,
+          innerWidth: inner.width,
+          innerLeft: inner.left,
+          identityLeft: identity.left,
+          contentLeft:
+            projects.getBoundingClientRect().left +
+            parseFloat(getComputedStyle(projects).paddingLeft),
+          targets: links.map((element) => element.getBoundingClientRect().height),
+          overflow: links.some((element) => {
+            const box = element.getBoundingClientRect();
+            return box.left < 0 || box.right > window.innerWidth;
+          }),
+          languageCount: document.querySelectorAll("[data-language-switcher]").length,
+        };
+      });
+      assert.equal(metrics.width, width);
+      assert.equal(metrics.innerWidth, Math.min(width, 1280));
+      assert.equal(metrics.innerLeft, (width - Math.min(width, 1280)) / 2);
+      assert.equal(metrics.identityLeft, metrics.contentLeft);
+      assert.equal(metrics.overflow, false);
+      assert.ok(metrics.targets.every((height) => height >= 44));
+      assert.equal(metrics.languageCount, 1);
+      if (width <= 720) await page.keyboard.press("Escape");
+    }
+  }
+});
+
+test("SITE-R2.10 跳過導覽、主要內容與焦點提示", async () => {
+  await openHome();
+  assert.equal(await page.$$eval("main", (elements) => elements.length), 1);
+  assert.equal(
+    await page.$eval("header nav", (element) => element.getAttribute("aria-label")),
+    "Main navigation",
+  );
+  await page.keyboard.press("Tab");
+  assert.equal(
+    await page.evaluate(() => document.activeElement.textContent),
+    "Skip to content",
+  );
+  assert.ok(
+    await page.evaluate(
+      () => getComputedStyle(document.activeElement).outlineWidth !== "0px",
+    ),
+  );
+  await page.keyboard.press("Enter");
+  assert.equal(await page.evaluate(() => document.activeElement.id), "main-content");
+});
+
+test("SITE-R13.5 導覽減少動態", async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await page.setViewport({ width: 390, height: 844 });
+  await openHome();
+  await page.click('header button[aria-controls="site-navigation"]');
+  assert.equal(
+    await page.$eval(
+      'header [class*="menu_icon"] > span',
+      (element) => getComputedStyle(element).transitionDuration,
+    ),
+    "0s",
+  );
+  assert.equal(
+    await page.$eval(
+      "header nav a",
+      (element) => getComputedStyle(element, "::after").transitionDuration,
+    ),
+    "0s",
+  );
+  assert.equal(
+    await page.$eval("html", (element) => getComputedStyle(element).scrollBehavior),
+    "auto",
+  );
+  await page.click('header a[href="#projects"]');
+  assert.ok(
+    await page.$eval(
+      "#projects",
+      (element) =>
+        Math.abs(
+          element.getBoundingClientRect().top -
+            document.querySelector("header").getBoundingClientRect().bottom,
+        ) < 2,
+    ),
+  );
 });
 
 test("SITE-R4.1 SITE-R4.2 雙向切換與 reload 持久化", async () => {
   await openHome();
-  const toggle = 'button[aria-label="Toggle language"]';
+  const toggle = "button[data-language-switcher]";
   await page.click(toggle);
   await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
   assert.equal(
@@ -237,7 +555,7 @@ test("SITE-R4.3 作品詳情中切換語言", async () => {
     `${DETAIL} [class*="description"]`,
     (element) => element.textContent,
   );
-  await page.click('[aria-label="Toggle language"]');
+  await page.click("[data-language-switcher]");
   await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
   assert.equal(
     await page.$eval(`${DETAIL} h3`, (element) => element.textContent),
@@ -255,9 +573,7 @@ test("SITE-R4.3 作品詳情中切換語言", async () => {
 test("SITE-R4.4 QR 中切換語言保留 dialog", async () => {
   await openHome();
   await page.click(QR);
-  await page.evaluate(() =>
-    document.querySelector('[aria-label="Toggle language"]').click(),
-  );
+  await page.evaluate(() => document.querySelector("[data-language-switcher]").click());
   await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
   assert.ok(
     (await page.$eval('[role="dialog"]', (element) => element.textContent)).includes(
@@ -271,8 +587,8 @@ test("SITE-R4.5 Tab、Enter 與 Space 操作語言按鈕", async () => {
   let reached = false;
   for (let index = 0; index < 80; index += 1) {
     await page.keyboard.press("Tab");
-    reached = await page.evaluate(
-      () => document.activeElement?.getAttribute("aria-label") === "Toggle language",
+    reached = await page.evaluate(() =>
+      document.activeElement?.hasAttribute("data-language-switcher"),
     );
     if (reached) break;
   }
@@ -431,7 +747,7 @@ test("SITE-R12.2 學歷跨 breakpoint 時立即套用字級", async () => {
   for (const language of ["en", "zh-TW"]) {
     if ((await page.$eval("html", (element) => element.lang)) !== language)
       await page.evaluate(() =>
-        document.querySelector('[aria-label="Toggle language"]').click(),
+        document.querySelector("[data-language-switcher]").click(),
       );
     for (const [width, fontSize] of [
       [513, "18px"],
@@ -459,7 +775,7 @@ test("SITE-R12.3 作品詳情分支", async () => {
     for (const language of ["en", "zh-TW"]) {
       if ((await page.$eval("html", (element) => element.lang)) !== language)
         await page.evaluate(() =>
-          document.querySelector('[aria-label="Toggle language"]').click(),
+          document.querySelector("[data-language-switcher]").click(),
         );
       let height;
       for (const index of [1, 2, 3]) {
@@ -520,10 +836,7 @@ test("SITE-R12.3 作品詳情分支", async () => {
         for (const link of await page.$$(`${DETAIL} a`)) {
           await link.evaluate((element) => {
             const rect = element.getBoundingClientRect();
-            const switcher = document
-              .querySelector('[aria-label="Toggle language"]')
-              .getBoundingClientRect();
-            const targetCenter = (switcher.top + switcher.bottom) / 2;
+            const targetCenter = window.innerHeight / 2;
             window.scrollBy({
               top: rect.top + rect.height / 2 - targetCenter,
               behavior: "instant",
@@ -602,7 +915,7 @@ test("SITE-R10.4 SITE-R10.5 英文履歷與單一 portal", async () => {
     1,
   );
   assert.equal(await page.$("#root [data-resume-root]"), null);
-  await page.click('[aria-label="Toggle language"]');
+  await page.click("[data-language-switcher]");
   assert.ok(
     (await page.$eval("[data-resume-root]", (element) => element.textContent)).includes(
       "Career Summary",

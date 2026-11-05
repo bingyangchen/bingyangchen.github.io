@@ -1,5 +1,12 @@
 @use "global_variables" as _;
 
+html {
+  scroll-padding-top: calc(_.$header-height + env(safe-area-inset-top, 0px));
+  &[data-restoring-scroll] {
+    scroll-behavior: auto;
+  }
+}
+
 body {
   margin: 0;
   font-family: Geneva, sans-serif;
@@ -25,6 +32,14 @@ code {
 
 img {
   -webkit-user-drag: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *:before,
+  *:after {
+    scroll-behavior: auto;
+  }
 }
 
 a {

@@ -33,7 +33,17 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     checkItOut: "查看文章",
   },
   qrModal: { scanToConnect: "掃描以取得連結" },
-  header: { home: "首頁", about: "簡歷", projects: "專案", blog: "文章" },
+  header: {
+    home: "回到首頁",
+    about: "簡歷",
+    projects: "專案",
+    blog: "文章",
+    navigationLabel: "主要導覽",
+    openMenu: "選單",
+    closeMenu: "關閉",
+    skipToContent: "跳至主要內容",
+    switchLanguage: "切換成英文",
+  },
   footer: {
     contactMe: "聯繫方式",
     services: "服務項目",

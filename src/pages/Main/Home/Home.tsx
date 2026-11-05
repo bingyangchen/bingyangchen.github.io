@@ -5,7 +5,7 @@ import nccuLogo from "../../../assets/nccu_logo.webp";
 import styles from "./Home.module.scss";
 
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import {
@@ -46,36 +46,8 @@ export default function Home() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
-  const homeRef = useRef<HTMLDivElement>(null);
-  const aboutRef = useRef<HTMLDivElement>(null);
-  const projectsRef = useRef<HTMLDivElement>(null);
-  const blogRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     setIsMounted(true);
-  }, []);
-
-  useEffect(() => {
-    function handleScrollForHash() {
-      let maxY = -Infinity;
-      let maxAnchor: HTMLDivElement | null = null;
-      [homeRef.current, aboutRef.current, projectsRef.current, blogRef.current]
-        .filter((element) => element && element.getBoundingClientRect().y <= 1)
-        .forEach((element) => {
-          const y = element!.getBoundingClientRect().y;
-          if (y > maxY) {
-            maxY = y;
-            maxAnchor = element;
-          }
-        });
-      maxAnchor = maxAnchor || homeRef.current!;
-      const newHash = `#${maxAnchor.id}`;
-      if (window.location.hash !== newHash) {
-        window.history.replaceState({}, "", newHash);
-      }
-    }
-    window.addEventListener("scroll", handleScrollForHash);
-    return () => window.removeEventListener("scroll", handleScrollForHash);
   }, []);
 
   useEffect(() => {
@@ -130,7 +102,7 @@ export default function Home() {
   return (
     <>
       <div className={styles.main}>
-        <div id="home" className={`${styles.home} ${styles.section}`} ref={homeRef}>
+        <div id="home" className={`${styles.home} ${styles.section}`} tabIndex={-1}>
           <div className={styles.home_atmosphere} aria-hidden="true" />
           <div className={styles.business_card}>
             <div className={styles.business_card_inner}>
@@ -256,7 +228,7 @@ export default function Home() {
             {dictionary.home.scrollDown}
           </div>
         </div>
-        <div id="about" className={`${styles.about} ${styles.section}`} ref={aboutRef}>
+        <div id="about" className={`${styles.about} ${styles.section}`} tabIndex={-1}>
           <h2>{dictionary.about.title}</h2>
           <div className={styles.subtitle}>{dictionary.about.subtitle}</div>
           <hr />
@@ -315,10 +287,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div id="projects" className={styles.section} ref={projectsRef}>
+        <div id="projects" className={styles.section} tabIndex={-1}>
           <Projects />
         </div>
-        <div id="blog" className={`${styles.blog} ${styles.section}`} ref={blogRef}>
+        <div id="blog" className={`${styles.blog} ${styles.section}`} tabIndex={-1}>
           <h2>{dictionary.blog.title}</h2>
           <div className={styles.subtitle}>{dictionary.blog.subtitle}</div>
           <hr />

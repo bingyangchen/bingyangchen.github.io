@@ -28,19 +28,39 @@ prefix: SITE
 
 ### SITE-R2 區塊導覽與瀏覽器歷史
 
-首頁導覽使用 `#home`、`#about`、`#projects`、`#blog`。Logo 回首頁頂端。自然捲動更新目前區塊的 hash，使用 replaceState 避免每次捲動新增歷史紀錄；明確點選 anchor 則保留瀏覽器原生的導覽與歷史行為。
+首頁導覽使用 `#home`、`#about`、`#projects`、`#blog`。Header 的 Logo 回到首頁，三個內容連結前往 About、Projects、Blog；Footer 保留 Logo 回首頁的入口。明確點選 anchor 保留瀏覽器原生的導覽、修飾鍵、新分頁及歷史行為。自然捲動結束後以 replaceState 更新目前區塊的 hash，避免在明確導覽的過程中改寫目的地。
 
-目前 Header 在捲動距離小於一個 viewport 高度時隱藏，超過門檻後顯示。這是現有門檻，不代表所有 viewport 的可用性都已通過；短螢幕問題見 [Roadmap](../roadmap.md#短螢幕裁切)。
+Header 從初始畫面起常駐，讓內容入口與語言切換的位置固定。桌面版 Header 與 Projects 共用置中容器及留白，背景與底線滿版；Logo 連結提供回首頁操作，輔助工具可取得目前語言的作者名稱。目前區塊以可見樣式及 aria-current 識別，anchor 落點避開 Header，直接開啟 hash 時也在初始內容尺寸變動後維持落點，直到使用者操作。
+
+Header 使用半透明白色底與背景模糊，讓下方白色及灰色背景自然影響材質，並以淡底線分隔內容。Header 在以下情況使用實色背景：
+
+- 窄版選單展開時。
+
+  展開的選單也使用實色背景。
+
+- 瀏覽器不支援背景模糊時。
+- 瀏覽器支援並收到減少透明度偏好時。
+- 瀏覽器支援並收到提高對比偏好時。
+
+  Header 與選單的分隔線也會加深。
+
+窄版以 disclosure 按鈕展開內容連結與語言控制，保留原生連結及一般 Tab 順序。選單不視為 modal，也不限制頁面捲動；選取連結後收起，焦點移到目標內容，後續 Tab 從目標內容接續。Escape 關閉並還原焦點至選單按鈕，點擊外部、焦點離開 Header 或切換至桌面寬度時也會收起。選單在短螢幕中可捲動。
+
+頁面使用獨立的主要內容 main landmark、具名稱的導覽及鍵盤跳過連結，控制均提供可見焦點。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R2.1 首頁區塊連結 | 由 Hero 的 About、Projects、Blog 或顯示中的 Header 連結導覽，網址 hash 與落點指向所選區塊。 | browser |
-| SITE-R2.2 自然捲動 | 捲動跨越區塊時，hash 改成已通過頁面頂端的最近區塊；history length 不因這種更新增加。 | browser |
-| SITE-R2.3 返回與前進 | 明確點選區塊連結後使用返回與前進，URL 與頁面落點依對應歷史紀錄恢復，不因 scroll 更新而連續新增紀錄。現行問題見 [Roadmap](../roadmap.md#hash-與歷史還原)。 | manual |
-| SITE-R2.4 Hash 直接開啟 | 新分頁開啟或 reload 各首頁 hash，確認實際落點及 Header 是否遮擋區塊；不能只測 click。現行問題見 [Roadmap](../roadmap.md#hash-與歷史還原)。 | manual |
+| SITE-R2.1 首頁區塊連結 | 由 Hero 的 About、Projects、Blog 或 Header 連結導覽，網址 hash 與落點指向所選區塊，內容未被 Header 遮住。 | browser |
+| SITE-R2.2 自然捲動 | 捲動跨越區塊時更新目前區塊提示，結束後同步 hash；history length 不因自然捲動增加。 | browser |
+| SITE-R2.3 返回與前進 | 明確點選區塊連結後使用返回與前進，URL 與閱讀位置依對應歷史紀錄恢復，包含區塊中途的位置；前一次 scroll 結束不會改寫目的地。 | browser、manual |
+| SITE-R2.4 Hash 直接開啟 | 新分頁開啟各首頁 hash 時，目標區塊避開 Header；reload 有紀錄的頁面時保留閱讀位置，目前區塊提示與內容一致。 | browser、manual |
 | SITE-R2.5 Logo 回頂端 | 點 Header 或 Footer 的 Logo，回到首頁頂端。 | browser |
-| SITE-R2.6 Header 顯示門檻 | 在 viewport 高度前後捲動，Header 分別隱藏與顯示；顯示後四個區塊連結可操作。 | browser、manual |
+| SITE-R2.6 常駐 Header | 初始畫面及捲動後均能使用 Header；桌面直接操作內容連結，窄版可開啟選單。 | browser、manual |
+| SITE-R2.7 目前區塊 | 捲動或點選連結後，只有目前區塊帶有 aria-current 與可見提示，語言切換後仍維持。 | browser |
+| SITE-R2.8 窄版選單 | 用滑鼠及鍵盤開關選單；Escape 還原焦點，選取連結後焦點從目標內容接續，外部點擊、離開 Header 及桌面寬度都能收起，隱藏連結不保留鍵盤焦點。 | browser、manual |
+| SITE-R2.9 Header 組成 | 在兩種語言及窄版到寬螢幕中檢查 Logo、置中、與 Projects 對齊、控制不重疊及至少 44px 的操作高度；白灰背景下的材質維持清晰，支援的透明度及對比偏好可切換至實色。 | browser、manual |
+| SITE-R2.10 跳過導覽 | 頁面只有一個主要內容 landmark；第一個 Tab 顯示跳過連結，啟用後焦點移到主要內容，導覽具有目前語言的名稱。 | browser |
 
 ### SITE-R3 初始語言選擇
 
@@ -66,7 +86,7 @@ flowchart TD
 
 ### SITE-R4 語言切換與持久化
 
-語言按鈕在英文與繁中之間切換，標示目前語言並提示下一個語言。切換後更新頁面字典、`html.lang` 與儲存偏好。開著的作品詳情與 QR code 保留狀態，內容依目前語言顯示；履歷內容政策見 SITE-R10。
+語言按鈕在英文與繁中之間切換，顯示下一個語言，並以目前語言提供操作名稱。切換後更新頁面字典、`html.lang` 與儲存偏好。開著的作品詳情與 QR code 保留狀態，內容依目前語言顯示；履歷內容政策見 SITE-R10。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
@@ -214,8 +234,7 @@ stateDiagram-v2
 - 作品在大於 720 px 時採左文右圖，其餘採名稱、用途、圖片、說明、外連及期間的單欄順序；小於或等於 512 px 的 App 展示使用單一主畫面。
 - 展示區保留所有作品需要的最大自然高度，以頁面捲動閱讀，沒有巢狀或橫向捲動。
 - 互動目標至少 44 px 高。
-- 窄畫面的作品操作保留語言切換器所需空間。
-- 語言切換器保留在右下，並考慮 safe area。
+- 語言切換整合在 Header，窄版由選單開啟；Header 與選單考慮 safe area。
 - 本機履歷預覽的固定紙張使用容器捲動閱讀。
 
 <!-- prettier-ignore -->
@@ -224,7 +243,7 @@ stateDiagram-v2
 | SITE-R12.1 Hero 分支 | 檢查 719 與 720 px 邊界的直排及左右組成，核對目前各元素的可見性；現行裁切問題見 [Roadmap](../roadmap.md#短螢幕裁切)。 | manual |
 | SITE-R12.2 清單與學歷分支 | 檢查 512 與 513 px 的學歷及作品區塊；三個作品分頁在兩種尺寸均可見，學歷維持既有 breakpoint，字級在跨過 breakpoint 時立即套用。 | browser、manual |
 | SITE-R12.3 作品詳情分支 | 在 320、390、512、513、720、721、1024、1025 及 1440 px 切換各作品，核對排列順序、無水平溢出、素材取景、文字完整及操作可達性；互動目標至少 44 px 高。 | browser、manual |
-| SITE-R12.4 語言與預覽容器 | 窄畫面仍能找到語言切換器；本機履歷紙張可在專用容器捲動，不把紙張縮到不可讀。 | manual |
+| SITE-R12.4 語言與預覽容器 | 窄畫面能在 Header 選單中切換語言；本機履歷紙張可在專用容器捲動，不把紙張縮到不可讀。 | browser、manual |
 
 ### SITE-R13 動態與 Reduced Motion
 
@@ -237,6 +256,7 @@ stateDiagram-v2
 | SITE-R13.2 Hero 動態 | 一般 motion 設定下，入場與下滑提示不阻止正常閱讀與操作。 | manual |
 | SITE-R13.3 已有 Reduce 分支 | 模擬 reduced-motion，Hero 入場與下滑箭頭的停用分支生效；其餘動態的待處理事項見 [Roadmap](../roadmap.md#reduced-motion)。 | browser、manual |
 | SITE-R13.4 作品動態偏好 | 一般模式切換沒有 timer 等待；reduced-motion 下切換三個作品，沒有圖片位移動畫或自動捲動，選取及內容仍立即正確。 | browser、manual |
+| SITE-R13.5 導覽動態偏好 | 減少動態設定下 anchor 立即定位，Header 選單圖示與目前區塊提示沒有過場動畫，操作結果與一般模式相同。 | browser、manual |
 
 ### SITE-R14 靜態輸出與 Prerender
 

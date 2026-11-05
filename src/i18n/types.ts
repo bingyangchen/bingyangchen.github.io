@@ -16,7 +16,17 @@ export interface TranslationDictionary {
   projects: { title: string; subtitle: string; visitGithub: string };
   blog: { title: string; subtitle: string; checkItOut: string };
   qrModal: { scanToConnect: string };
-  header: { home: string; about: string; projects: string; blog: string };
+  header: {
+    home: string;
+    about: string;
+    projects: string;
+    blog: string;
+    navigationLabel: string;
+    openMenu: string;
+    closeMenu: string;
+    skipToContent: string;
+    switchLanguage: string;
+  };
   footer: {
     contactMe: string;
     services: string;

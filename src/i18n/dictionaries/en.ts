@@ -33,7 +33,17 @@ export const englishDictionary: TranslationDictionary = {
     checkItOut: "Check it out",
   },
   qrModal: { scanToConnect: "Scan to connect" },
-  header: { home: "HOME", about: "ABOUT", projects: "PROJECTS", blog: "BLOG" },
+  header: {
+    home: "Back to home",
+    about: "About",
+    projects: "Projects",
+    blog: "Blog",
+    navigationLabel: "Main navigation",
+    openMenu: "Menu",
+    closeMenu: "Close",
+    skipToContent: "Skip to content",
+    switchLanguage: "Switch to Traditional Chinese",
+  },
   footer: {
     contactMe: "Contact Me",
     services: "Services",
