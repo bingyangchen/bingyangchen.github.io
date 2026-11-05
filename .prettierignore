@@ -1,0 +1,8 @@
+.agents/
+.claude/
+.codex/
+build/
+coverage/
+docs/plans/archive/
+package-lock.json
+src/assets/

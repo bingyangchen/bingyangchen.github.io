@@ -2,17 +2,8 @@ export type Language = "en" | "zh-TW";
 
 export interface TranslationDictionary {
   name: string;
-  home: {
-    greeting: string;
-    role: string;
-    downloadResume: string;
-    scrollDown: string;
-  };
-  navigation: {
-    about: string;
-    projects: string;
-    blog: string;
-  };
+  home: { greeting: string; role: string; downloadResume: string; scrollDown: string };
+  navigation: { about: string; projects: string; blog: string };
   about: {
     title: string;
     subtitle: string;
@@ -22,25 +13,10 @@ export interface TranslationDictionary {
     nccuEconomics: string;
     nccuFintech: string;
   };
-  projects: {
-    title: string;
-    subtitle: string;
-    visitGithub: string;
-  };
-  blog: {
-    title: string;
-    subtitle: string;
-    checkItOut: string;
-  };
-  qrModal: {
-    scanToConnect: string;
-  };
-  header: {
-    home: string;
-    about: string;
-    projects: string;
-    blog: string;
-  };
+  projects: { title: string; subtitle: string; visitGithub: string };
+  blog: { title: string; subtitle: string; checkItOut: string };
+  qrModal: { scanToConnect: string };
+  header: { home: string; about: string; projects: string; blog: string };
   footer: {
     contactMe: string;
     services: string;

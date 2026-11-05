@@ -18,6 +18,7 @@ prefix: SITE
 
 `/resume` 是非公開預覽 route，保留程式中的 client route 與共用履歷功能，但不列入公開導覽或 production prerender。前端 wildcard 導向不能當成靜態 hosting 的 fallback 保證。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R1.1 公開首頁 | 直接開啟 production build 的 `/`，回傳首頁文件，依序找到四個區塊。 | browser |
@@ -31,6 +32,7 @@ prefix: SITE
 
 目前 Header 在捲動距離小於一個 viewport 高度時隱藏，超過門檻後顯示。這是現有門檻，不代表所有 viewport 的可用性都已通過；短螢幕問題見 [Roadmap](../roadmap.md#短螢幕裁切)。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R2.1 首頁區塊連結 | 由 Hero 的 About、Projects、Blog 或顯示中的 Header 連結導覽，網址 hash 與落點指向所選區塊。 | browser |
@@ -53,6 +55,7 @@ flowchart TD
   browser -->|否| english[使用英文]
 ```
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R3.1 儲存英文優先 | 儲存值為 `en`、瀏覽器語言為中文，仍顯示英文。 | unit |
@@ -65,6 +68,7 @@ flowchart TD
 
 語言按鈕在英文與繁中之間切換，標示目前語言並提示下一個語言。切換後更新頁面字典、`html.lang` 與儲存偏好。開著的作品詳情與 QR code 保留狀態，內容依目前語言顯示；履歷內容政策見 SITE-R10。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R4.1 雙向切換 | 在兩種語言各按一次切換，姓名、導覽與區塊文案改成另一語言，按鈕標示同步。 | unit、browser |
@@ -79,6 +83,7 @@ flowchart TD
 
 Hero 呈現姓名、頭像、問候、目前職務、教育背景、email、社群與區塊導覽。職務取工作資料第一筆及其目前語言內容；頭像提供 QR code 入口。Email 供選取與複製，現行頁面沒有點擊寄信或複製按鈕。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R5.1 個人摘要 | 在兩種語言載入首頁，姓名、第一筆工作對應的職稱與公司、教育 badge 均與負責資料一致。 | unit、manual |
@@ -94,6 +99,7 @@ Footer 提供聯絡文字、服務項目、社群與當年度姓名版權資訊�
 
 Blog 區塊連到外部文章列表。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R6.1 工作與翻譯 | 工作順序與資料一致，各欄位使用目前語言內容；測試缺少翻譯的資料時回到對應資料值。 | unit |
@@ -120,6 +126,7 @@ stateDiagram-v2
   selected --> selected: 重載，選取 Taigu
 ```
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R7.1 初始作品清單 | 首次載入有三個作品分頁，順序及 Logo 符合資料，第一個作品已選取，只有其展示區可見且可操作，其餘內容不進入輔助工具或鍵盤順序。 | unit、browser |
@@ -135,6 +142,7 @@ stateDiagram-v2
 
 社群、學校、部落格與作品目的地由現有來源維護，驗收區分本網站操作與外站可用性。作品目的地與「原始碼」使用原生 anchor，以 `target=_blank` 及 `rel=noopener noreferrer` 在新分頁開啟原有 URL。依作品顯示網站或商店名稱；外連箭頭只用於外連，作品分頁使用 Logo、名稱及選取提示。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R8.1 作品展示 | 逐一選取作品，操作主要 anchor，在新分頁開啟現有 demo URL，名稱能辨認網站或商店。 | unit、manual |
@@ -158,6 +166,7 @@ stateDiagram-v2
   qr_open --> qr_closed: 點 overlay、關閉按鈕或按 Escape，解除 scroll lock
 ```
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R9.1 開啟 QR code | 點頭像旁 QR code 入口，出現一份具名稱的 dialog，body 不再捲動。 | browser |
@@ -172,6 +181,7 @@ stateDiagram-v2
 
 首頁的 print sheet 在 mount 後放到 body portal，螢幕上不顯示；非公開預覽則直接顯示紙張。重掛載或切換 route 不能遺留重複 print sheet。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R10.1 首頁列印入口 | 在目前可見履歷按鈕的桌面 viewport，點擊按鈕並等待字型，呼叫瀏覽器列印。 | unit、manual |
@@ -184,6 +194,7 @@ stateDiagram-v2
 
 履歷使用 A4，匯出時只保留履歷，不包含網站 Header、Footer 與語言切換器。內容需可選取與擷取，保留聯絡與社群連結。改動履歷內容、版面或列印行為時，依 [Resume Skill](../../.agents/skills/resume-writer/SKILL.md) 檢查來源事實、紙張、頁數、裁切、文字與連結。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R11.1 A4 與完整內容 | 從公開匯出及本機預覽匯出 PDF，核對預期 A4 單頁、全部內容可見，沒有裁切或額外空白頁。 | browser、manual |
@@ -207,6 +218,7 @@ stateDiagram-v2
 - 語言切換器保留在右下，並考慮 safe area。
 - 本機履歷預覽的固定紙張使用容器捲動閱讀。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R12.1 Hero 分支 | 檢查 719 與 720 px 邊界的直排及左右組成，核對目前各元素的可見性；現行裁切問題見 [Roadmap](../roadmap.md#短螢幕裁切)。 | manual |
@@ -218,6 +230,7 @@ stateDiagram-v2
 
 問候在載入與文字改變時逐字顯示，完成後移除游標；Hero 入場與下滑提示提供視覺引導。目前 reduced-motion 分支會停用部分 Hero 入場與下滑提示，其他動態的待處理事項見 [Roadmap](../roadmap.md#reduced-motion)。作品切換立即反映，圖片可短暫淡入並輕微位移；reduced-motion 下停用作品動畫及 transition，任何模式都不因作品選取自動捲動。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R13.1 完整問候與清理 | 問候文字改變或元件卸載時清理前一次 timer；最終只顯示目前完整文字，完成後游標消失。 | unit |
@@ -229,6 +242,7 @@ stateDiagram-v2
 
 Production build 在 CRA compile 後執行首頁 prerender，使用繁中與台北時區擷取 `#root` 的內容，保留原 shell head，排除 body portal。首頁產生可在 JavaScript 啟動前讀取的文字；需要操作的功能仍依賴 JavaScript。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R14.1 完整 Build | 從乾淨的 CRA 輸出完成 build 與 postbuild，產生首頁靜態內容；不能以獨立 prerender 已處理過的 HTML 代替。 | browser |
@@ -240,6 +254,7 @@ Production build 在 CRA compile 後執行首頁 prerender，使用繁中與台�
 
 網站沒有 first-party API 或 application server。現行入口停用 service worker 註冊，保留的 Workbox 檔與 manifest 不代表已提供離線 cache 或更新 UI。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R15.1 新瀏覽器環境 | 在新的 browser context 開啟 production build，不建立 service worker registration，也沒有 controller。 | browser |
@@ -251,6 +266,7 @@ Production build 在 CRA compile 後執行首頁 prerender，使用繁中與台�
 
 `main` push 與手動觸發執行共同檢查；Pages artifact 上傳與部署只允許 `refs/heads/main`。驗證失敗時不發布。
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R16.1 首頁 Metadata | Build 後保留 public shell 的首頁 title、canonical、description、OG 與圖示連結，沒有意外改成非公開 route。 | browser |

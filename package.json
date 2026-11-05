@@ -9,11 +9,15 @@
     "postbuild": "npm run prerender",
     "prerender": "node scripts/prerender.mjs",
     "preview": "node scripts/serve-build.mjs",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "lint": "eslint src scripts tests --ext .js,.jsx,.mjs,.ts,.tsx --max-warnings 0",
+    "lint:fix": "npm run lint -- --fix",
     "check:scenarios": "node scripts/check-scenarios.mjs",
     "test:checker": "node --test tests/check-scenarios.test.mjs",
     "test:unit": "react-scripts test --watchAll=false --runInBand",
     "test:browser": "node --test tests/browser/*.test.mjs",
-    "check": "npm run check:scenarios && npm run test:checker && npm run test:unit && npm run build && npm run test:browser",
+    "check": "npm run format:check && npm run lint && npm run check:scenarios && npm run test:checker && npm run test:unit && npm run build && npm run test:browser",
     "eject": "react-scripts eject"
   },
   "jest": {
@@ -23,9 +27,41 @@
     ]
   },
   "eslintConfig": {
+    "root": true,
     "extends": [
       "react-app",
-      "react-app/jest"
+      "prettier"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "src/**/*.{test,spec}.{js,jsx,ts,tsx}",
+          "src/**/__tests__/**/*.{js,jsx,ts,tsx}"
+        ],
+        "extends": [
+          "react-app/jest"
+        ]
+      },
+      {
+        "files": [
+          "scripts/**/*.mjs",
+          "tests/**/*.mjs"
+        ],
+        "env": {
+          "browser": false,
+          "node": true,
+          "jest": false
+        }
+      },
+      {
+        "files": [
+          "scripts/prerender.mjs",
+          "tests/browser/site.test.mjs"
+        ],
+        "env": {
+          "browser": true
+        }
+      }
     ]
   },
   "browserslist": {
@@ -70,6 +106,9 @@
     "workbox-streams": "^6.5.4"
   },
   "devDependencies": {
+    "eslint": "^8.57.1",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.10",
     "puppeteer": "^25.5.0"
   }
 }

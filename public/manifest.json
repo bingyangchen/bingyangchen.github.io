@@ -13,8 +13,5 @@
   "orientation": "portrait",
   "theme_color": "#ffffff",
   "background_color": "#ffffff",
-  "capture_links": [
-    "new-client",
-    "existing-client-navigate"
-  ]
+  "capture_links": ["new-client", "existing-client-navigate"]
 }

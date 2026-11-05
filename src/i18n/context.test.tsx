@@ -4,14 +4,26 @@ import { LanguageSwitcher } from "../components/LanguageSwitcher/LanguageSwitche
 
 function LanguageProbe() {
   const { language, dictionary } = useTranslation();
-  return <output>{language}:{dictionary.name}</output>;
+  return (
+    <output>
+      {language}:{dictionary.name}
+    </output>
+  );
 }
 
 function showLanguage(browserLanguage: string, saved?: string) {
   localStorage.clear();
   if (saved) localStorage.setItem("preferred_language", saved);
-  Object.defineProperty(navigator, "language", { configurable: true, value: browserLanguage });
-  return render(<LanguageProvider><LanguageProbe /><LanguageSwitcher /></LanguageProvider>);
+  Object.defineProperty(navigator, "language", {
+    configurable: true,
+    value: browserLanguage,
+  });
+  return render(
+    <LanguageProvider>
+      <LanguageProbe />
+      <LanguageSwitcher />
+    </LanguageProvider>,
+  );
 }
 
 afterEach(cleanup);

@@ -8,11 +8,7 @@ export type WorkExperienceData = {
   skills?: string[];
 };
 
-export type SkillItem = {
-  id: string;
-  title: string;
-  logo: string;
-};
+export type SkillItem = { id: string; title: string; logo: string };
 
 export type Project = {
   icon: React.ReactNode;

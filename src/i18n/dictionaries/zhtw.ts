@@ -9,11 +9,7 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     downloadResume: "下載履歷",
     scrollDown: "下滑了解更多",
   },
-  navigation: {
-    about: "簡歷",
-    projects: "專案",
-    blog: "文章",
-  },
+  navigation: { about: "簡歷", projects: "專案", blog: "文章" },
   about: {
     title: "簡歷",
     subtitle:
@@ -36,15 +32,8 @@ export const traditionalChineseDictionary: TranslationDictionary = {
       "這裡記錄的是學習筆記、技術心得，也包括一些把問題想清楚的過程。畢竟很多事一旦寫下來，才知道自己是不是真的懂了。",
     checkItOut: "查看文章",
   },
-  qrModal: {
-    scanToConnect: "掃描以取得連結",
-  },
-  header: {
-    home: "首頁",
-    about: "簡歷",
-    projects: "專案",
-    blog: "文章",
-  },
+  qrModal: { scanToConnect: "掃描以取得連結" },
+  header: { home: "首頁", about: "簡歷", projects: "專案", blog: "文章" },
   footer: {
     contactMe: "聯繫方式",
     services: "服務項目",

@@ -1,45 +1,45 @@
 @use "../../global_variables" as _;
 
 .main {
-    display: flex;
-    align-items: flex-end;
+  display: flex;
+  align-items: flex-end;
+  & > .product_name {
+    color: _.$black;
+    white-space: nowrap;
+  }
+  &.invert {
+    & > .logo {
+      filter: invert(1);
+    }
     & > .product_name {
-        color: _.$black;
-        white-space: nowrap;
+      color: _.$white;
     }
-    &.invert {
-        & > .logo {
-            filter: invert(1);
-        }
-        & > .product_name {
-            color: _.$white;
-        }
+  }
+  &.s {
+    gap: 8px;
+    & > .logo {
+      width: 35px;
     }
-    &.s {
-        gap: 8px;
-        & > .logo {
-            width: 35px;
-        }
-        & > .product_name {
-            font-size: 0.9 * _.$base-font-size;
-        }
+    & > .product_name {
+      font-size: 0.9 * _.$base-font-size;
     }
-    &.m {
-        gap: 8px;
-        & > .logo {
-            width: 50px;
-        }
-        & > .product_name {
-            font-size: 1.25 * _.$base-font-size;
-        }
+  }
+  &.m {
+    gap: 8px;
+    & > .logo {
+      width: 50px;
     }
-    &.l {
-        gap: 10px;
-        & > .logo {
-            width: 100px;
-        }
-        & > .product_name {
-            font-size: 2.5 * _.$base-font-size;
-        }
+    & > .product_name {
+      font-size: 1.25 * _.$base-font-size;
     }
+  }
+  &.l {
+    gap: 10px;
+    & > .logo {
+      width: 100px;
+    }
+    & > .product_name {
+      font-size: 2.5 * _.$base-font-size;
+    }
+  }
 }

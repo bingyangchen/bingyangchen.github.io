@@ -26,12 +26,19 @@ The build includes prerendering. Preview serves the build over loopback HTTP wit
 
 Run `npm run check` for all automated checks, including a fresh production build. Individual checks are also available:
 
+<!-- prettier-ignore -->
 | Command | Purpose |
 | --- | --- |
+| `npm run format` | Format maintained source, configuration, and documentation with Prettier. |
+| `npm run format:check` | Check formatting without modifying files. |
+| `npm run lint` | Check source, scripts, and tests with ESLint; warnings fail the check. |
+| `npm run lint:fix` | Apply available ESLint fixes. |
 | `npm run check:scenarios` | Validate spec and scenario coverage links. |
 | `npm run test:checker` | Test the scenario checker. |
 | `npm run test:unit` | Run Jest tests. |
 | `npm run test:browser` | Run Chromium tests against the production build; run `npm run build` first. |
+
+Prettier owns formatting; ESLint extends CRA's React and Jest rules, with `eslint-config-prettier` disabling conflicting style rules. ESLint stays on version 8 for compatibility with CRA 5. Node scripts and tests have Node globals, and the Puppeteer modules also have browser globals for callbacks executed in the page. Formatting excludes archived plans, agent skills, static artwork, generated files, and the lockfile.
 
 See [manual checks](tests/manual/site.md) for verification methods and coverage requirements, and the [roadmap](docs/roadmap.md) for future requirement goals, known issues, and questions awaiting investigation or product decisions. Record actual execution results in commit bodies and delivery reports.
 
@@ -39,6 +46,7 @@ See [manual checks](tests/manual/site.md) for verification methods and coverage 
 
 Read the [design context](docs/design.md) for product and visual direction, the [site spec](docs/specs/site.md) for implemented behavior, and [AGENTS.md](AGENTS.md) for engineering conventions. The [SDD skill](.agents/skills/sdd/SKILL.md) defines the full workflow:
 
+<!-- prettier-ignore -->
 | Request | Use for |
 | --- | --- |
 | `/sdd plan` | Propose new or changed behavior and substantial design changes. |

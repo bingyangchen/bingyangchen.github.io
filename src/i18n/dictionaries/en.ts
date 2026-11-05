@@ -9,11 +9,7 @@ export const englishDictionary: TranslationDictionary = {
     downloadResume: "Download Resume",
     scrollDown: "Scroll down",
   },
-  navigation: {
-    about: "About",
-    projects: "Projects",
-    blog: "Blog",
-  },
+  navigation: { about: "About", projects: "Projects", blog: "Blog" },
   about: {
     title: "ABOUT",
     subtitle:
@@ -36,15 +32,8 @@ export const englishDictionary: TranslationDictionary = {
       "This is where I keep learning notes, technical write-ups, and some of the thinking behind them. A surprising number of things only make sense once you try to write them down.",
     checkItOut: "Check it out",
   },
-  qrModal: {
-    scanToConnect: "Scan to connect",
-  },
-  header: {
-    home: "HOME",
-    about: "ABOUT",
-    projects: "PROJECTS",
-    blog: "BLOG",
-  },
+  qrModal: { scanToConnect: "Scan to connect" },
+  header: { home: "HOME", about: "ABOUT", projects: "PROJECTS", blog: "BLOG" },
   footer: {
     contactMe: "Contact Me",
     services: "Services",
@@ -95,23 +84,25 @@ export const englishDictionary: TranslationDictionary = {
   },
   projectsData: {
     Taigu: {
-      tags: ["PWA","Investment"],
+      tags: ["PWA", "Investment"],
       purpose: "A clearer view of your investments.",
-      description: "Track transactions, review asset allocation, and monitor performance in one place.",
+      description:
+        "Track transactions, review asset allocation, and monitor performance in one place.",
       image_description: "Taigu investment overview and asset allocation screens",
       visit_label: "Explore Taigu",
     },
     Noads: {
-      tags: ["Chrome Extension","Ad Blocker"],
+      tags: ["Chrome Extension", "Ad Blocker"],
       purpose: "A cleaner web, on your terms.",
       description: "Choose which page elements to remove with custom CSS selectors.",
       image_description: "Noads extension interface for configuring CSS selectors",
       visit_label: "Chrome Web Store",
     },
     Leechai: {
-      tags: ["Personal Finance","App"],
+      tags: ["Personal Finance", "App"],
       purpose: "Everyday finances, made clearer.",
-      description: "Keep track of daily income and expenses, and manage your budget in one app.",
+      description:
+        "Keep track of daily income and expenses, and manage your budget in one app.",
       image_description: "Leechai account overview and personal settings screens",
       visit_label: "View on the App Store",
     },

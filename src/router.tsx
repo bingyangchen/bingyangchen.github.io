@@ -49,13 +49,7 @@ export function withRouter(Component: any) {
     return (
       <Component
         {...props}
-        router={{
-          location,
-          navigate,
-          params,
-          searchParams,
-          setSearchParams,
-        }}
+        router={{ location, navigate, params, searchParams, setSearchParams }}
       />
     );
   };
