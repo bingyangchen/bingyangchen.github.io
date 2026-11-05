@@ -11,8 +11,8 @@ import { startStaticServer } from "../../scripts/serve-build.mjs";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const BUILD = resolve(ROOT, "build");
-const DETAIL = '[class*="project_detail_container"]';
-const CARDS = '[class*="project_list_container"] > div';
+const DETAIL = '#projects [role="tabpanel"]:not([inert])';
+const TABS = '#projects [role="tab"]';
 const QR = '[class*="qr_avatar_fab"]';
 let server;
 let browser;
@@ -56,9 +56,9 @@ async function openHome(hash = "") {
   await page.waitForFunction(() => document.documentElement.lang === "en" && document.querySelector('[data-resume-root]'));
 }
 
-async function openProject(index = 1) {
-  await page.click(`${CARDS}:nth-child(${index})`);
-  await page.waitForSelector(`${DETAIL} h3`);
+async function selectProject(index = 1) {
+  await page.click(`${TABS}:nth-child(${index})`);
+  await page.waitForFunction((selector) => document.querySelector(selector).getAttribute("aria-selected") === "true", {}, `${TABS}:nth-child(${index})`);
 }
 
 async function enterPreview() {
@@ -92,8 +92,8 @@ test("SITE-R1.1 SITE-R1.2 SITE-R7.1 公開首頁與初始作品", async () => {
   await openHome();
   assert.deepEqual(await page.$$eval("#home,#about,#projects,#blog", (elements) => elements.map((element) => element.id)), ["home", "about", "projects", "blog"]);
   assert.equal(await page.$$eval("main > header,main > footer", (elements) => elements.length), 2);
-  assert.deepEqual(await page.$$eval(`${CARDS} [class*="title"]`, (elements) => elements.map((element) => element.textContent)), ["Taigu", "Noads", "Leechai"]);
-  assert.equal(await page.$(`${DETAIL} h3`), null);
+  assert.deepEqual(await page.$$eval(TABS, (elements) => elements.map((element) => element.textContent)), ["Taigu", "Noads", "Leechai"]);
+  assert.equal(await page.$eval(`${DETAIL} h3`, (element) => element.textContent), "Taigu");
 });
 
 test("SITE-R1.3 非公開履歷與未知路徑不使用 SPA fallback", async () => {
@@ -149,7 +149,7 @@ test("SITE-R4.1 SITE-R4.2 雙向切換與 reload 持久化", async () => {
 
 test("SITE-R4.3 作品詳情中切換語言", async () => {
   await openHome();
-  await openProject();
+  await selectProject();
   const english = await page.$eval(`${DETAIL} [class*="description"]`, (element) => element.textContent);
   await page.click('[aria-label="Toggle language"]');
   await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
@@ -194,20 +194,103 @@ test("SITE-R5.4 SITE-R6.4 社群、學校與外部部落格目的地", async () 
   }
 });
 
-test("SITE-R7.2 SITE-R7.3 SITE-R7.4 SITE-R7.7 作品開啟、替換、關閉與重載", async () => {
+test("SITE-R7.2 SITE-R7.3 SITE-R7.7 作品切換與重載", async () => {
   await openHome();
-  await openProject();
-  assert.equal(await page.$eval(`${DETAIL} h3`, (element) => element.textContent), "Taigu");
-  await page.waitForFunction((selector) => Math.abs(document.querySelector(selector).getBoundingClientRect().top) < 3, {}, DETAIL);
-  assert.equal(await page.$$eval(`${CARDS} [class*="thumbnail_container"]`, (elements) => elements.length), 0);
-  await openProject(2);
-  await page.waitForFunction((selector) => document.querySelector(`${selector} h3`).textContent === "Noads", {}, DETAIL);
-  await page.click(`${DETAIL} [class*="button_container"] > div`);
-  await page.waitForFunction((selector) => !document.querySelector(`${selector} h3`), {}, DETAIL);
-  assert.equal(await page.$$eval(`${CARDS} [class*="thumbnail_container"]`, (elements) => elements.length), 3);
-  await openProject(3);
+  await page.$eval("#projects", (element) => element.scrollIntoView({ behavior: "instant" }));
+  await page.evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  const before = await page.evaluate(() => ({ scroll: scrollY, height: document.documentElement.scrollHeight }));
+  await selectProject(2);
+  assert.equal(await page.$eval(`${DETAIL} h3`, (element) => element.textContent), "Noads");
+  assert.equal(await page.$$eval(DETAIL, (elements) => elements.length), 1);
+  assert.equal(await page.$eval(`${DETAIL} a`, (element) => element.href), "https://chromewebstore.google.com/detail/noads/mcdfnneilaagajpfcfiofdjibclkflhg");
+  assert.deepEqual(await page.evaluate(() => ({ scroll: scrollY, height: document.documentElement.scrollHeight })), before);
+  await selectProject(2);
+  assert.equal(await page.$eval(`${DETAIL} h3`, (element) => element.textContent), "Noads");
+  await selectProject(3);
+  assert.equal(await page.$eval(`${DETAIL} h3`, (element) => element.textContent), "Leechai");
   await page.reload({ waitUntil: "networkidle0" });
-  assert.equal(await page.$(`${DETAIL} h3`), null);
+  assert.equal(await page.$eval(`${DETAIL} h3`, (element) => element.textContent), "Taigu");
+});
+
+test("SITE-R7.8 鍵盤操作作品", async () => {
+  await page.setViewport({ width: 390, height: 700 });
+  await openHome();
+  await selectProject();
+  await page.evaluate(() => window.scrollTo({ top: document.getElementById("projects").offsetTop + 500, behavior: "instant" }));
+  const before = await page.evaluate(() => scrollY);
+  for (const [key, title] of [["ArrowLeft", "Leechai"], ["ArrowRight", "Taigu"], ["End", "Leechai"], ["Home", "Taigu"]]) {
+    await page.keyboard.press(key);
+    assert.equal(await page.$eval(`${DETAIL} h3`, (element) => element.textContent), title);
+    assert.equal(await page.evaluate(() => document.activeElement.textContent.trim()), title);
+    assert.equal(await page.evaluate(() => scrollY), before);
+  }
+  await page.keyboard.press("Space");
+  await page.keyboard.press("Enter");
+  assert.equal(await page.$eval(`${DETAIL} h3`, (element) => element.textContent), "Taigu");
+  assert.equal(await page.evaluate(() => getComputedStyle(document.activeElement).outlineStyle), "solid");
+  await page.keyboard.press("Tab");
+  assert.equal(await page.evaluate(() => document.activeElement.getAttribute("role")), "tabpanel");
+  await page.keyboard.press("Tab");
+  assert.equal(await page.evaluate(() => document.activeElement.textContent.trim()), "Explore Taigu");
+  await page.keyboard.press("Tab");
+  assert.equal(await page.evaluate(() => document.activeElement.textContent.trim()), "Source Code");
+  const client = await page.createCDPSession();
+  const tree = await client.send("Accessibility.getFullAXTree");
+  assert.equal(tree.nodes.filter((node) => node.role?.value === "tabpanel" && !node.ignored).length, 1);
+});
+
+test("SITE-R12.3 作品詳情分支", async () => {
+  await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+  await openHome();
+  for (const width of [320, 390, 512, 513, 720, 721, 1024, 1025, 1440]) {
+    await page.setViewport({ width, height: 844 });
+    for (const language of ["en", "zh-TW"]) {
+      if (await page.$eval("html", (element) => element.lang) !== language) await page.evaluate(() => document.querySelector('[aria-label="Toggle language"]').click());
+      let height;
+      for (const index of [1, 2, 3]) {
+        await page.$eval("#projects", (element) => element.scrollIntoView({ behavior: "instant", block: "start" }));
+        await selectProject(index);
+        await page.evaluate(async () => Promise.all([...document.querySelectorAll("#projects img")].map((image) => image.decode())));
+        const metrics = await page.$eval(DETAIL, (panel) => {
+          const stage = panel.querySelector('[class*="productStage"]').getBoundingClientRect();
+          const intro = panel.querySelector('[class*="projectIntro"]').getBoundingClientRect();
+          const content = panel.querySelector('[class*="projectContent"]').getBoundingClientRect();
+          return {
+            pageHeight: document.documentElement.scrollHeight,
+            sectionWidth: document.getElementById("projects").scrollWidth,
+            vertical: stage.top >= intro.bottom && content.top >= stage.bottom,
+            imageBounds: [...panel.querySelector('[class*="productArt"]').children].filter((element) => getComputedStyle(element).display !== "none").every((element) => { const rect = element.getBoundingClientRect(); return rect.left >= stage.left - 0.5 && rect.right <= stage.right + 0.5 && rect.top >= stage.top - 0.5 && rect.bottom <= stage.bottom + 0.5; }),
+            targets: [...document.querySelectorAll('#projects [role="tab"], #projects [aria-hidden="false"] a')].map((element) => element.getBoundingClientRect().height),
+          };
+        });
+        assert.ok(metrics.sectionWidth <= width, `overflow at ${width} ${language}`);
+        assert.equal(metrics.vertical, width <= 720, `layout at ${width} ${language}`);
+        assert.ok(metrics.imageBounds, `artwork outside stage at ${width} ${language}`);
+        assert.ok(metrics.targets.every((target) => target >= 44));
+        if (height !== undefined) assert.equal(metrics.pageHeight, height, `unstable height at ${width} ${language}`);
+        height = metrics.pageHeight;
+        for (const link of await page.$$(`${DETAIL} a`)) {
+          await link.evaluate((element) => {
+            const rect = element.getBoundingClientRect();
+            const switcher = document.querySelector('[aria-label="Toggle language"]').getBoundingClientRect();
+            const targetCenter = (switcher.top + switcher.bottom) / 2;
+            window.scrollBy({ top: rect.top + rect.height / 2 - targetCenter, behavior: "instant" });
+          });
+          assert.ok(await link.evaluate((element) => { const rect = element.getBoundingClientRect(); return element.contains(document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2)); }), `obstructed action at ${width} ${language}`);
+        }
+      }
+    }
+  }
+});
+
+test("SITE-R13.4 作品動態偏好", async () => {
+  await openHome();
+  await selectProject(2);
+  assert.notEqual(await page.$eval(`${DETAIL} [class*="productArt"]`, (element) => getComputedStyle(element).animationName), "none");
+  await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+  await selectProject(3);
+  assert.equal(await page.$eval(`${DETAIL} [class*="productArt"]`, (element) => getComputedStyle(element).animationName), "none");
+  assert.equal(await page.$eval(`${DETAIL} a`, (element) => getComputedStyle(element).transitionDuration), "0s");
 });
 
 test("SITE-R9.1 SITE-R9.2 SITE-R9.3 SITE-R9.4 QR 的所有關閉入口", async () => {

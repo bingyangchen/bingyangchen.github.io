@@ -28,7 +28,7 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     title: "專案",
     subtitle:
       "閒暇時間會透過個人專案探索新技術，順便確認哪些想法不只聽起來不錯，也值得真的做出來。",
-    visitGithub: "我的 GitHub",
+    visitGithub: "GitHub",
   },
   blog: {
     title: "文章",
@@ -96,22 +96,30 @@ export const traditionalChineseDictionary: TranslationDictionary = {
   projectsData: {
     Taigu: {
       tags: ["PWA", "投資理財"],
-      description: "透過詳細的數據分析，幫助你輕鬆追蹤並監控投資績效。",
+      purpose: "投資績效，一目了然。",
+      description: "從交易紀錄、資產配置到績效分析，讓每一筆投資都有清楚的紀錄。",
+      image_description: "Taigu 投資總覽與資產配置介面",
+      visit_label: "探索 Taigu",
     },
     Noads: {
       tags: ["Chrome 外掛", "廣告阻擋"],
-      description:
-        "一款輕量級的廣告阻擋工具，能透過自訂 CSS 選擇器精準移除網頁上的特定元素。",
+      purpose: "讓網頁，留下你想看的內容。",
+      description: "用自訂 CSS 選擇器，移除網頁上指定的元素。",
+      image_description: "Noads 擴充功能的 CSS 選擇器設定介面",
+      visit_label: "前往 Chrome 商店",
     },
     Leechai: {
       tags: ["個人理財", "原生 App"],
-      description:
-        "一款專為個人理財設計的記帳應用程式，幫助你輕鬆記錄日常收支並管理財務。",
+      purpose: "日常收支，清楚掌握。",
+      description: "記錄日常收支、管理預算，在同一個 App 裡掌握個人財務。",
+      image_description: "Leechai 帳戶總覽與個人設定介面",
+      visit_label: "前往 App Store",
     },
   },
   projectCommon: {
     present: "至今",
-    visit: "前往網站",
     sourceCode: "原始碼",
+    chooseProject: "選擇作品",
+    maintained: "維護期間",
   },
 };

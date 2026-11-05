@@ -10,14 +10,12 @@ import { createPortal } from "react-dom";
 
 import {
   Button,
-  ProjectCard,
-  ProjectDetail,
+  Projects,
   RoundButton,
   Skill,
   TypingGreeting,
   WorkExperience,
 } from "../../../components";
-import { homeProjects } from "../../../data/projects";
 import { homeSkillItems } from "../../../data/skills";
 import { workExperienceItems } from "../../../data/workExperience";
 import { useTranslation } from "../../../i18n/context";
@@ -35,7 +33,6 @@ import {
   IconXLarge,
 } from "../../../icons";
 import { openResumePrintDialog } from "../../../resume/print";
-import type { Project } from "../../../types";
 import ResumeSheet from "../Resume/ResumeSheet";
 
 const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
@@ -46,7 +43,6 @@ const NCCU_ECONOMICS_URL = "https://econo.nccu.edu.tw/";
 
 export default function Home() {
   const { dictionary } = useTranslation();
-  const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -54,7 +50,6 @@ export default function Home() {
   const aboutRef = useRef<HTMLDivElement>(null);
   const projectsRef = useRef<HTMLDivElement>(null);
   const blogRef = useRef<HTMLDivElement>(null);
-  const projectDetailRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
@@ -101,16 +96,6 @@ export default function Home() {
   }, [isQrModalOpen]);
 
   useEffect(() => {
-    if (!activeProject) {
-      return;
-    }
-    projectDetailRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, [activeProject]);
-
-  useEffect(() => {
     return () => {
       document.body.style.overflow = "";
     };
@@ -140,14 +125,6 @@ export default function Home() {
 
   function handleDownloadResume(): void {
     openResumePrintDialog();
-  }
-
-  function handleClickProjectCard(project: Project) {
-    return () => {
-      setTimeout(() => {
-        setActiveProject(project);
-      }, 250);
-    };
   }
 
   return (
@@ -323,7 +300,7 @@ export default function Home() {
                 className={styles.degree}
                 href="https://econo.nccu.edu.tw/"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 {dictionary.about.nccuEconomics}
               </a>
@@ -331,89 +308,26 @@ export default function Home() {
                 className={styles.degree}
                 href="https://www.ftrc.nccu.edu.tw/wordpresseng/?page_id=3053"
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 {dictionary.about.nccuFintech}
               </a>
             </div>
           </div>
         </div>
-        <div
-          id="projects"
-          className={`${styles.projects} ${styles.section}`}
-          ref={projectsRef}
-        >
-          <h2>{dictionary.projects.title}</h2>
-          <div className={styles.subtitle}>{dictionary.projects.subtitle}</div>
-          <hr />
-          <div
-            className={`${styles.project_detail_container} ${
-              activeProject ? styles.active : ""
-            }`}
-            ref={projectDetailRef}
-          >
-            {activeProject && (
-              <>
-                <div className={styles.button_container}>
-                  <RoundButton className="p-8" onClick={() => setActiveProject(null)}>
-                    <IconXLarge sideLength="18" />
-                  </RoundButton>
-                </div>
-                <ProjectDetail
-                  thumbnail={activeProject.thumbnail}
-                  icon={activeProject.icon}
-                  title={activeProject.title}
-                  description={
-                    dictionary.projectsData[activeProject.title]?.description ||
-                    activeProject.description
-                  }
-                  tags={
-                    dictionary.projectsData[activeProject.title]?.tags ||
-                    activeProject.tags
-                  }
-                  maintaining_time_range={activeProject.maintaining_time_range}
-                  source_code_url={activeProject.source_code_url}
-                  demo_url={activeProject.demo_url}
-                />
-              </>
-            )}
-          </div>
-          <div className={styles.project_list_container}>
-            {homeProjects.map((project) => {
-              const translation = dictionary.projectsData[project.title];
-              return (
-                <div key={project.title} onClick={handleClickProjectCard(project)}>
-                  <ProjectCard
-                    thumbnail={activeProject ? undefined : project.thumbnail}
-                    icon={project.icon}
-                    title={project.title}
-                    tags={translation?.tags || project.tags}
-                    maintaining_time_range={project.maintaining_time_range}
-                  />
-                </div>
-              );
-            })}
-          </div>
-          <div className={styles.footer}>
-            <a
-              href="https://github.com/bingyangchen"
-              target="_blank"
-              rel="noreferrer"
-              title={dictionary.projects.visitGithub}
-            >
-              <Button className="primary_fill xl">
-                <IconGitHub sideLength="28" />
-                {dictionary.projects.visitGithub}
-              </Button>
-            </a>
-          </div>
+        <div id="projects" className={styles.section} ref={projectsRef}>
+          <Projects />
         </div>
         <div id="blog" className={`${styles.blog} ${styles.section}`} ref={blogRef}>
           <h2>{dictionary.blog.title}</h2>
           <div className={styles.subtitle}>{dictionary.blog.subtitle}</div>
           <hr />
           <div className={styles.footer}>
-            <a href="https://blog.byc1999.com/list" target="_blank" rel="noreferrer">
+            <a
+              href="https://blog.byc1999.com/list"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <Button className="primary_fill xl">
                 <IconBlogText sideLength="28" />
                 {dictionary.blog.checkItOut}

@@ -23,11 +23,11 @@ Chromium 實測發現以下導覽問題：
 
 ### 鍵盤與焦點
 
-實測作品卡及 QR code opener 是不可用 Tab 到達的 div，開啟後焦點停在 body；作品關閉缺原生鍵盤入口，沒有焦點移入與還原。
+實測 QR code opener 是不可用 Tab 到達的 div，開啟後焦點停在 body，關閉後缺少焦點還原。
 
 後續需依設計方向補齊鍵盤操作與焦點行為。現有滑鼠測試不表示整體已符合可及性要求。
 
-相關規格：[SITE-R7](specs/site.md#site-r7-作品選取與詳情)、[SITE-R9](specs/site.md#site-r9-qr-code-顯示與關閉)；方向依據：[Interaction and Motion](design.md#interaction-and-motion)。
+相關規格：[SITE-R9](specs/site.md#site-r9-qr-code-顯示與關閉)；方向依據：[Interaction and Motion](design.md#interaction-and-motion)。
 
 ### Reduced Motion
 

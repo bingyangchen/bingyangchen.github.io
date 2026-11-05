@@ -15,10 +15,12 @@ export type SkillItem = {
 };
 
 export type Project = {
-  thumbnail: React.ReactNode;
   icon: React.ReactNode;
   title: string;
+  purpose: string;
   description: string;
+  image_description: string;
+  visit_label: string;
   tags: string[];
   maintaining_time_range: [Date, Date] | [Date];
   source_code_url: string;

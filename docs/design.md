@@ -10,8 +10,13 @@ Keep the site focused on one person's professional story. Long-form writing belo
 
 ## Main Experience
 
-* `/` is the main scrolling page, organized into Home, About, Projects, and Blog. About covers work experience, skills, and education; Projects provides work samples and details; Blog leads to the external publication.
-* Keep contact and social links, language selection, and resume export easy to find. The public resume export uses browser printing from the main page. `/resume` is a non-public preview route and is intentionally excluded from production prerendering and public navigation.
+* `/` is the main scrolling page, organized into Home, About, Projects, and Blog.
+* About covers work experience, skills, and education.
+* Projects emphasizes each product's purpose and real interface imagery, with consistent neutral staging.
+* Blog leads to the external publication.
+* Keep contact and social links, language selection, and resume export easy to find.
+* The public resume export uses browser printing from the main page.
+* `/resume` is a non-public preview route and is intentionally excluded from production prerendering and public navigation.
 
 ## Language and Copy
 
@@ -36,5 +41,4 @@ Motion should support reading and navigation, with a clear purpose and respect f
 
 * Preserve section navigation, predictable URL hash updates, and browser history behavior.
 * Keep navigation, contact actions, and project details usable on smaller screens and with keyboard input.
-* Project details need an obvious dismiss action and clear focus behavior.
 * Provide immediate feedback for navigation and toggles, with visible keyboard focus and comfortable touch targets.

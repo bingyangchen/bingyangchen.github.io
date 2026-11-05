@@ -25,10 +25,10 @@ export const englishDictionary: TranslationDictionary = {
     nccuFintech: "National Chengchi University, Financial Technology Program",
   },
   projects: {
-    title: "PROJECTS",
+    title: "Projects",
     subtitle:
       "In my spare time, I use personal projects to explore new technologies and to find out which ideas are not just interesting in theory, but worth building for real.",
-    visitGithub: "Visit My GitHub",
+    visitGithub: "GitHub",
   },
   blog: {
     title: "BLOG",
@@ -95,24 +95,31 @@ export const englishDictionary: TranslationDictionary = {
   },
   projectsData: {
     Taigu: {
-      tags: ["PWA", "Investment"],
-      description:
-        "Track and monitor your investment performance with detailed analytics.",
+      tags: ["PWA","Investment"],
+      purpose: "A clearer view of your investments.",
+      description: "Track transactions, review asset allocation, and monitor performance in one place.",
+      image_description: "Taigu investment overview and asset allocation screens",
+      visit_label: "Explore Taigu",
     },
     Noads: {
-      tags: ["Chrome Extension", "Ad Blocker"],
-      description:
-        "A simple ad blocker that removes specific DOM elements using CSS selectors.",
+      tags: ["Chrome Extension","Ad Blocker"],
+      purpose: "A cleaner web, on your terms.",
+      description: "Choose which page elements to remove with custom CSS selectors.",
+      image_description: "Noads extension interface for configuring CSS selectors",
+      visit_label: "Chrome Web Store",
     },
     Leechai: {
-      tags: ["Personal Finance", "App"],
-      description:
-        "A personal finance app designed to help you easily track expenses and manage daily budgets.",
+      tags: ["Personal Finance","App"],
+      purpose: "Everyday finances, made clearer.",
+      description: "Keep track of daily income and expenses, and manage your budget in one app.",
+      image_description: "Leechai account overview and personal settings screens",
+      visit_label: "View on the App Store",
     },
   },
   projectCommon: {
     present: "Present",
-    visit: "Visit",
     sourceCode: "Source Code",
+    chooseProject: "Choose a project",
+    maintained: "Maintained",
   },
 };

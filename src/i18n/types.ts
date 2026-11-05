@@ -66,11 +66,15 @@ export interface TranslationDictionary {
     {
       tags: string[];
       description: string;
+      purpose: string;
+      image_description: string;
+      visit_label: string;
     }
   >;
   projectCommon: {
     present: string;
-    visit: string;
     sourceCode: string;
+    chooseProject: string;
+    maintained: string;
   };
 }

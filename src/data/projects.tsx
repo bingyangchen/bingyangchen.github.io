@@ -1,17 +1,16 @@
 import leechaiLogo from "../assets/leechai_logo.webp";
-import leechaiThumbnail from "../assets/leechai_thumbnail.webp";
 import noadsLogo from "../assets/noads_logo.webp";
-import noadsThumbnail from "../assets/noads_thumbnail.webp";
 import taiguLogo from "../assets/taigu_logo.webp";
-import taiguThumbnail from "../assets/taigu_thumbnail.webp";
 
 import type { Project } from "../types";
 
 export const homeProjects: Project[] = [
   {
-    thumbnail: <img src={taiguThumbnail} alt="Taigu" />,
     icon: <img src={taiguLogo} alt="Taigu" />,
     title: "Taigu",
+    purpose: "A clearer view of your investments.",
+    image_description: "Taigu investment overview and asset allocation screens",
+    visit_label: "Explore Taigu",
     tags: ["PWA", "Investment"],
     maintaining_time_range: [new Date(2021, 1, 1)],
     description:
@@ -20,9 +19,11 @@ export const homeProjects: Project[] = [
     demo_url: "https://taigu.tw/welcome",
   },
   {
-    thumbnail: <img src={noadsThumbnail} alt="Noads" />,
     icon: <img src={noadsLogo} alt="Noads" />,
     title: "Noads",
+    purpose: "A cleaner web, on your terms.",
+    image_description: "Noads extension interface for configuring CSS selectors",
+    visit_label: "Chrome Web Store",
     tags: ["Chrome Extension", "Ad Blocker"],
     maintaining_time_range: [new Date(2024, 1, 1), new Date(2024, 1, 1)],
     description:
@@ -32,9 +33,11 @@ export const homeProjects: Project[] = [
       "https://chromewebstore.google.com/detail/noads/mcdfnneilaagajpfcfiofdjibclkflhg",
   },
   {
-    thumbnail: <img src={leechaiThumbnail} alt="Leechai 理柴" />,
     icon: <img src={leechaiLogo} alt="Leechai 理柴" />,
     title: "Leechai",
+    purpose: "Everyday finances, made clearer.",
+    image_description: "Leechai account overview and personal settings screens",
+    visit_label: "View on the App Store",
     tags: ["Personal Finance", "App"],
     maintaining_time_range: [new Date(2026, 1, 1)],
     description:

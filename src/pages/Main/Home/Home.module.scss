@@ -640,58 +640,6 @@
       }
     }
   }
-  & > .projects {
-    padding-bottom: 30px;
-    & > .project_detail_container {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      width: min(100%, _.$extra-large);
-      margin: 0 auto 30px;
-      padding-top: _.$header-height;
-      height: 0;
-      overflow: hidden;
-      transition: height 300ms ease-in-out;
-      @media (max-width: _.$small) {
-        transition: none;
-      }
-      &.active {
-        height: calc(70vh + _.$header-height);
-        background-color: _.$noisy-white;
-        @media (max-width: _.$small) {
-          height: auto;
-        }
-      }
-      & > .button_container {
-        position: absolute;
-        top: calc(_.$header-height + 8px);
-        right: clamp(24px, 4vw, 48px);
-        width: fit-content;
-        height: fit-content;
-        z-index: 10;
-      }
-    }
-    & > .project_list_container {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      max-width: _.$extra-large;
-      margin: 0 auto;
-      padding: 0 30px;
-      overflow: auto;
-      &::-webkit-scrollbar {
-        display: none;
-      }
-      @media (max-width: _.$small) {
-        flex-direction: column;
-      }
-    }
-    & > .footer {
-      display: flex;
-      justify-content: center;
-      margin: 15vh 0;
-    }
-  }
   & > .blog {
     min-height: fit-content;
     background-image: url("../../../assets/gitbook.svg");
