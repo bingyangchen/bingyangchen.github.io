@@ -605,11 +605,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 50px;
+      gap: 32px;
       padding: 30px 30px 20vh;
       @media (max-width: _.$small) {
         flex-direction: column;
-        gap: 40px;
+        gap: 24px;
       }
       & > .school_logo {
         width: 260px;
@@ -621,19 +621,19 @@
         display: flex;
         flex-direction: column;
         gap: 20px;
+        font-size: 1.125 * _.$base-font-size;
         @media (max-width: _.$small) {
           font-size: _.$base-font-size;
         }
         & > .degree {
-          font-family: Georgia, "Times New Roman", Times, serif;
-          font-style: italic;
-          line-height: 1.5 * _.$base-font-size;
-          color: _.$gray;
+          font-family: _.$body-font-family;
+          line-height: 1.5;
+          color: _.$deep-gray;
           text-decoration: underline;
           transition-duration: 150ms;
           @media (hover: hover) {
             &:hover {
-              color: _.$deep-gray;
+              color: _.$theme-color;
             }
           }
         }
