@@ -425,6 +425,30 @@ test("SITE-R7.8 鍵盤操作作品", async () => {
   );
 });
 
+test("SITE-R12.2 學歷跨 breakpoint 時立即套用字級", async () => {
+  await page.setViewport({ width: 512, height: 844 });
+  await openHome();
+  for (const language of ["en", "zh-TW"]) {
+    if ((await page.$eval("html", (element) => element.lang)) !== language)
+      await page.evaluate(() =>
+        document.querySelector('[aria-label="Toggle language"]').click(),
+      );
+    for (const [width, fontSize] of [
+      [513, "18px"],
+      [512, "16px"],
+    ]) {
+      await page.setViewport({ width, height: 844 });
+      assert.deepEqual(
+        await page.$$eval('#about [class*="degree_list"] > a', (elements) =>
+          elements.map((element) => getComputedStyle(element).fontSize),
+        ),
+        [fontSize, fontSize],
+        `education font size at ${width} ${language}`,
+      );
+    }
+  }
+});
+
 test("SITE-R12.3 作品詳情分支", async () => {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },

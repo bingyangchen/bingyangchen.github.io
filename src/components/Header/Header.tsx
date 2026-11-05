@@ -58,8 +58,10 @@ export default function Header() {
 
   return (
     <header className={mainClass}>
-      <Logo size="s" />
-      <div className={styles.nav_bar_tab_container}>{subpageTabs}</div>
+      <div className={styles.inner}>
+        <Logo size="s" />
+        <div className={styles.nav_bar_tab_container}>{subpageTabs}</div>
+      </div>
     </header>
   );
 }

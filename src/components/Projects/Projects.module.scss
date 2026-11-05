@@ -6,7 +6,7 @@
   box-sizing: border-box;
   font-family: _.$body-font-family;
   color: _.$theme-color;
-  padding: calc(_.$header-height + 38px) 48px 112px;
+  padding: calc(_.$header-height + 38px) _.$desktop-content-padding 112px;
   * {
     box-sizing: border-box;
     letter-spacing: normal;

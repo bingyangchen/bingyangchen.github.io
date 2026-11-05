@@ -630,7 +630,7 @@
           line-height: 1.5;
           color: _.$deep-gray;
           text-decoration: underline;
-          transition-duration: 150ms;
+          transition: color 150ms;
           @media (hover: hover) {
             &:hover {
               color: _.$theme-color;
