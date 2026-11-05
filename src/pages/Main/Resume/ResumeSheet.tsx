@@ -36,7 +36,8 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               <li>
                 <span className={styles.skillLabel}>Languages &amp; Frameworks</span>
                 <span className={styles.skillDetail}>
-                  Python, TypeScript, JavaScript, Django, FastAPI, React, Vue
+                  Python, TypeScript, JavaScript, Dart, Django, FastAPI, React, Vue,
+                  Flutter
                 </span>
               </li>
               <li>
