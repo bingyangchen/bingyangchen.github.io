@@ -89,7 +89,9 @@ flowchart TD
 
 ### SITE-R4 語言切換與持久化
 
-語言按鈕在英文與繁中之間切換，顯示下一個語言，並以目前語言提供操作名稱。切換後更新頁面字典、`html.lang` 與儲存偏好。開著的作品詳情與 QR code 保留狀態，內容依目前語言顯示；履歷內容政策見 SITE-R10。
+語言按鈕在英文與繁中之間切換，顯示下一個語言，並以目前語言提供操作名稱。切換後更新頁面字典、`html.lang` 與儲存偏好。開著的作品詳情保留選取，內容依目前語言顯示；履歷內容政策見 SITE-R10。
+
+QR code 的網址不隨語言改變，dialog 只提供掃描內容與關閉操作。需要切換語言時，先關閉 dialog，再使用 Header 的語言控制，重新開啟後顯示目前語言的姓名與提示。
 
 語言切換先更新本次頁面的選擇，再嘗試儲存。儲存失敗時不顯示提示或產生未處理的例外，仍可繼續切換與瀏覽；重載時依 SITE-R3 重新選擇，沒有可讀的有效偏好時使用瀏覽器語言。
 
@@ -99,7 +101,7 @@ flowchart TD
 | SITE-R4.1 雙向切換 | 在兩種語言各按一次切換，姓名、導覽與區塊文案改成另一語言，按鈕標示同步。 | unit、browser |
 | SITE-R4.2 儲存與重載 | 切換後 `preferred_language` 與 `html.lang` 對應所選語言；reload 後仍使用該偏好。 | browser |
 | SITE-R4.3 作品詳情中切換 | 開著作品時切換語言，選取仍保留，描述、標籤與進行中期間文字更新。 | browser |
-| SITE-R4.4 QR code 中切換 | QR code 開啟時切換語言，dialog 保留，姓名與提示更新。 | browser |
+| SITE-R4.4 QR Code 關閉後切換語言 | 開啟並關閉 QR code，透過 Header 切換語言後重新開啟，姓名、掃描提示與關閉按鈕名稱使用目前語言，QR code 維持相同，dialog 內只有關閉操作。 | browser |
 | SITE-R4.5 鍵盤切換語言 | 使用 Tab 找到原生語言按鈕，以 Enter 或 Space 切換；不需要滑鼠。 | browser、manual |
 | SITE-R4.6 儲存寫入失敗 | 存取 localStorage 或呼叫 setItem 時發生例外，字典、html.lang 與按鈕仍同步切換，本頁導覽保留選擇且沒有錯誤提示或未處理的例外；新選擇未儲存，重載後依初始語言規則選擇。 | unit、browser |
 
@@ -182,24 +184,30 @@ stateDiagram-v2
 
 QR code dialog 顯示個人網站的 QR code、姓名與目前語言提示，狀態依下圖切換。
 
+入口是原生按鈕，按鈕名稱依目前語言顯示，並提供 dialog 提示與可見的鍵盤焦點。開啟後焦點移至 dialog 內的關閉按鈕，背景內容暫停操作及鍵盤聚焦；關閉後還原至入口，Tab 從入口接續。關閉按鈕的名稱依目前語言顯示，兩個按鈕均至少 44 px 高。
+
+使用原生 `dialog.showModal()`，由瀏覽器處理 modal 的背景停用與輔助工具語意，避免自行維護背景元素的焦點狀態，做法依 [W3C H102](https://www.w3.org/WAI/WCAG22/Techniques/html/H102)。關閉及卸載時還原開啟前的 body 捲動設定。
+
 ```mermaid
 stateDiagram-v2
   state "QR code 關閉" as qr_closed
   state "QR code 開啟" as qr_open
   [*] --> qr_closed
-  qr_closed --> qr_open: 點 QR code 入口，停止 body 捲動
+  qr_closed --> qr_open: 啟用 QR code 入口，停止 body 捲動
   qr_open --> qr_open: 點內容
-  qr_open --> qr_closed: 點 overlay、關閉按鈕或按 Escape，解除 scroll lock
+  qr_open --> qr_closed: 點 overlay、關閉按鈕或按 Escape，還原捲動與入口焦點
 ```
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R9.1 開啟 QR code | 點頭像旁 QR code 入口，出現一份具名稱的 dialog，body 不再捲動。 | browser |
-| SITE-R9.2 點內容與背景 | 點 dialog 內容不關閉；點 overlay 關閉且恢復捲動。 | browser |
-| SITE-R9.3 關閉按鈕 | 點原生關閉按鈕，dialog 消失並恢復捲動；再次開啟仍可使用。 | browser |
-| SITE-R9.4 Escape 關閉 | QR code 開啟時按 Escape，dialog 消失並解除本次 scroll lock。 | browser |
+| SITE-R9.1 開啟 QR code | 點頭像旁 QR code 入口，出現一份具名稱的 modal dialog，焦點移至關閉按鈕，body 不再捲動。 | browser |
+| SITE-R9.2 點內容與背景 | 點 dialog 內容不關閉；點 overlay 關閉，還原捲動設定及入口焦點。 | browser |
+| SITE-R9.3 關閉按鈕 | 點原生關閉按鈕，dialog 消失並還原捲動設定及入口焦點；再次開啟仍可使用。 | browser |
+| SITE-R9.4 Escape 關閉 | QR code 開啟時按 Escape，dialog 消失，還原捲動設定及入口焦點。 | browser |
 | SITE-R9.5 QR Code 目的地 | 以實機掃描 QR code，辨識為個人網站 URL；姓名與提示對應目前語言。 | manual |
+| SITE-R9.6 QR Code 鍵盤入口 | 以兩種語言分別在桌面與窄版視窗中，用 Tab 到達入口並以 Enter 或 Space 開啟，焦點移至關閉按鈕；按鈕名稱符合目前語言，焦點可見且操作區域至少 44 px 高。 | browser、manual |
+| SITE-R9.7 Dialog 焦點與卸載清理 | 開啟後以 Tab 及 Shift+Tab 操作，背景控制不取得焦點；輔助工具取得 modal 的姓名與提示，背景內容暫停操作。關閉後 Tab 從入口接續，卸載也會解除 modal 並還原原有捲動設定。 | browser、manual |
 
 ### SITE-R10 履歷來源與列印入口
 

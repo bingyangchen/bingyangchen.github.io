@@ -2,9 +2,9 @@ import styles from "./RoundButton.module.scss";
 
 import React, { MouseEventHandler } from "react";
 
-interface RoundButtonProperties {
+interface RoundButtonProperties extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
-  onClick: MouseEventHandler;
+  onClick: MouseEventHandler<HTMLButtonElement>;
   className: string;
   hintText: string;
 }
@@ -14,13 +14,22 @@ export default function RoundButton({
   onClick,
   className,
   hintText,
+  ...buttonProperties
 }: RoundButtonProperties) {
   const rootClassName = `${styles.main} round_button ${className}`;
 
   return (
-    <div className={rootClassName} onClick={onClick}>
+    <button
+      {...buttonProperties}
+      type="button"
+      className={rootClassName}
+      onClick={onClick}
+      aria-label={hintText}
+    >
       {children}
-      <div className={styles.hint_text}>{hintText}</div>
-    </div>
+      <span className={styles.hint_text} aria-hidden="true">
+        {hintText}
+      </span>
+    </button>
   );
 }

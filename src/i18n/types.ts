@@ -25,7 +25,7 @@ export interface TranslationDictionary {
     articleLanguage: string;
     articles: Record<BlogArticleId, { category: string; summary: string }>;
   };
-  qrModal: { scanToConnect: string };
+  qrModal: { open: string; close: string; scanToConnect: string };
   header: {
     home: string;
     about: string;

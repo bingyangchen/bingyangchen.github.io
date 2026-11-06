@@ -23,6 +23,7 @@ const BUILD = resolve(ROOT, "build");
 const DETAIL = '#projects [role="tabpanel"]:not([inert])';
 const TABS = '#projects [role="tab"]';
 const QR = '[class*="qr_avatar_fab"]';
+const QR_DIALOG = 'dialog[aria-labelledby="qr-modal-title"]';
 let server;
 let browser;
 let context;
@@ -680,16 +681,69 @@ test("SITE-R4.3 作品詳情中切換語言", async () => {
   );
 });
 
-test("SITE-R4.4 QR 中切換語言保留 dialog", async () => {
-  await openHome();
-  await page.click(QR);
-  await page.evaluate(() => document.querySelector("[data-language-switcher]").click());
-  await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
-  assert.ok(
-    (await page.$eval('[role="dialog"]', (element) => element.textContent)).includes(
-      "陳秉洋",
-    ),
-  );
+test("SITE-R4.4 QR Code 關閉後切換語言", async () => {
+  for (const width of [1440, 390]) {
+    await page.setViewport({ width, height: 844 });
+    await openHome();
+    await page.click(QR);
+    const qrCode = await page.$eval(
+      '[class*="qr_modal_code_panel"] svg',
+      (element) => element.outerHTML,
+    );
+    for (const language of ["zh-TW", "en"]) {
+      await page.click(`${QR_DIALOG} button`);
+      await page.waitForFunction(
+        (selector) => !document.querySelector(selector),
+        {},
+        QR_DIALOG,
+      );
+      if (width === 390)
+        await page.click('header button[aria-controls="site-navigation"]');
+      await page.click("header [data-language-switcher]");
+      await page.waitForFunction(
+        (expected) => document.documentElement.lang === expected,
+        {},
+        language,
+      );
+      if (width === 390) await page.keyboard.press("Escape");
+      await page.click(QR);
+      await page.waitForSelector(`${QR_DIALOG}[open]`);
+      assert.equal(
+        await page.$eval("#qr-modal-title", (element) => element.textContent),
+        language === "en" ? "Bing-Yang Chen" : "陳秉洋",
+      );
+      assert.equal(
+        await page.$eval("#qr-modal-description", (element) => element.textContent),
+        language === "en" ? "Scan to connect" : "掃描以取得連結",
+      );
+      assert.equal(
+        await page.$eval(`${QR_DIALOG} button`, (element) =>
+          element.getAttribute("aria-label"),
+        ),
+        language === "en" ? "Close QR code" : "關閉 QR code",
+      );
+      assert.equal(
+        await page.$eval(
+          '[class*="qr_modal_code_panel"] svg',
+          (element) => element.outerHTML,
+        ),
+        qrCode,
+      );
+      assert.equal(
+        await page.$$eval(`${QR_DIALOG} button`, (elements) => elements.length),
+        1,
+      );
+      assert.equal(
+        await page.$$eval(
+          `${QR_DIALOG} a, ${QR_DIALOG} [data-language-switcher]`,
+          (elements) => elements.length,
+        ),
+        0,
+      );
+      assert.ok(await page.$eval(QR_DIALOG, (element) => element.matches(":modal")));
+    }
+    await page.click(`${QR_DIALOG} button`);
+  }
 });
 
 test("SITE-R4.5 Tab、Enter 與 Space 操作語言按鈕", async () => {
@@ -1025,20 +1079,170 @@ test("SITE-R13.4 作品動態偏好", async () => {
 
 test("SITE-R9.1 SITE-R9.2 SITE-R9.3 SITE-R9.4 QR 的所有關閉入口", async () => {
   await openHome();
+  for (const overflow of ["", "scroll"]) {
+    await page.evaluate((value) => {
+      document.body.style.overflow = value;
+    }, overflow);
+    for (const closeWith of ["overlay", "button", "Escape"]) {
+      await page.click(QR);
+      await page.waitForSelector(`${QR_DIALOG}[open]`);
+      assert.equal(await page.evaluate(() => document.body.style.overflow), "hidden");
+      assert.equal(
+        await page.$eval(
+          QR_DIALOG,
+          (element) => element.querySelectorAll("button").length,
+        ),
+        1,
+      );
+      await page.click('[class*="qr_modal_content"]');
+      assert.ok(await page.$(`${QR_DIALOG}[open]`));
+      if (closeWith === "overlay")
+        await page.click(QR_DIALOG, { offset: { x: 5, y: 5 } });
+      else if (closeWith === "button") await page.click(`${QR_DIALOG} button`);
+      else await page.keyboard.press("Escape");
+      await page.waitForFunction(
+        (selector) => !document.querySelector(selector),
+        {},
+        QR_DIALOG,
+      );
+      assert.equal(await page.evaluate(() => document.body.style.overflow), overflow);
+      assert.ok(await page.$eval(QR, (element) => document.activeElement === element));
+    }
+  }
+});
+
+test("SITE-R9.6 QR Code 鍵盤入口", async () => {
+  await openHome();
+  for (const width of [1440, 390]) {
+    await page.setViewport({ width, height: 900 });
+    for (const language of ["en", "zh-TW"]) {
+      await page.evaluate(() => localStorage.setItem("preferred_language", "en"));
+      await openHome();
+      if (language === "zh-TW") {
+        await page.evaluate(() =>
+          document.querySelector("[data-language-switcher]").click(),
+        );
+        await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
+      }
+      let reached = false;
+      for (let index = 0; index < 20; index += 1) {
+        await page.keyboard.press("Tab");
+        reached = await page.$eval(QR, (element) => document.activeElement === element);
+        if (reached) break;
+      }
+      assert.ok(reached, `Tab reaches QR opener at ${width}px in ${language}`);
+      const opener = await page.$eval(QR, (element) => ({
+        tag: element.tagName,
+        label: element.getAttribute("aria-label"),
+        popup: element.getAttribute("aria-haspopup"),
+        width: element.getBoundingClientRect().width,
+        height: element.getBoundingClientRect().height,
+        outline: getComputedStyle(element).outlineStyle,
+      }));
+      assert.equal(opener.tag, "BUTTON");
+      assert.equal(opener.label, language === "en" ? "Show QR code" : "顯示 QR code");
+      assert.equal(opener.popup, "dialog");
+      assert.ok(opener.width >= 44 && opener.height >= 44);
+      assert.equal(opener.outline, "solid");
+      for (const key of ["Enter", "Space"]) {
+        await page.keyboard.press(key);
+        await page.waitForSelector(`${QR_DIALOG}[open]`);
+        assert.ok(
+          await page.$eval(
+            `${QR_DIALOG} button`,
+            (element) => document.activeElement === element,
+          ),
+        );
+        const closeButton = await page.$eval(`${QR_DIALOG} button`, (element) => ({
+          label: element.getAttribute("aria-label"),
+          width: element.getBoundingClientRect().width,
+          height: element.getBoundingClientRect().height,
+          outline: getComputedStyle(element).outlineStyle,
+        }));
+        assert.equal(
+          closeButton.label,
+          language === "en" ? "Close QR code" : "關閉 QR code",
+        );
+        assert.ok(closeButton.width >= 44 && closeButton.height >= 44);
+        assert.equal(closeButton.outline, "solid");
+        await page.keyboard.press("Enter");
+        await page.waitForFunction(
+          (selector) => !document.querySelector(selector),
+          {},
+          QR_DIALOG,
+        );
+        assert.ok(
+          await page.$eval(QR, (element) => document.activeElement === element),
+        );
+      }
+    }
+  }
+});
+
+test("SITE-R9.7 Dialog 焦點與卸載清理", async () => {
+  await openHome();
   await page.click(QR);
-  await page.waitForSelector('[role="dialog"]');
-  assert.equal(await page.evaluate(() => document.body.style.overflow), "hidden");
-  await page.click('[role="dialog"]');
-  assert.ok(await page.$('[role="dialog"]'));
-  await page.click('[class*="qr_modal_overlay"]', { offset: { x: 5, y: 5 } });
-  assert.equal(await page.$('[role="dialog"]'), null);
-  await page.click(QR);
-  await page.click('[aria-label="Close QR code"]');
-  assert.equal(await page.$('[role="dialog"]'), null);
-  await page.click(QR);
+  assert.ok(await page.$eval(QR_DIALOG, (element) => element.matches(":modal")));
+  assert.ok(
+    await page.$eval(
+      `${QR_DIALOG} button`,
+      (element) => document.activeElement === element,
+    ),
+  );
+  const accessibility = await page.accessibility.snapshot({ interestingOnly: false });
+  const dialog = await page.accessibility.snapshot({
+    root: await page.$(QR_DIALOG),
+    interestingOnly: false,
+  });
+  assert.ok(dialog);
+  assert.equal(dialog.name, "Bing-Yang Chen");
+  assert.equal(dialog.description, "Scan to connect");
+  assert.equal(dialog.modal, true);
+  assert.equal(JSON.stringify(accessibility).includes('"role":"link"'), false);
+  for (const reverse of [false, true]) {
+    if (reverse) await page.keyboard.down("Shift");
+    for (let index = 0; index < 8; index += 1) {
+      await page.keyboard.press("Tab");
+      assert.ok(
+        await page.$eval(
+          QR_DIALOG,
+          (element) =>
+            document.activeElement === document.body ||
+            element.contains(document.activeElement),
+        ),
+      );
+    }
+    if (reverse) await page.keyboard.up("Shift");
+  }
+  await page.$eval(QR, (element) => element.focus());
+  assert.equal(
+    await page.$eval(QR, (element) => document.activeElement === element),
+    false,
+  );
   await page.keyboard.press("Escape");
-  await page.waitForFunction(() => !document.querySelector('[role="dialog"]'));
-  assert.equal(await page.evaluate(() => document.body.style.overflow), "");
+  await page.waitForFunction(
+    (selector) => !document.querySelector(selector),
+    {},
+    QR_DIALOG,
+  );
+  assert.ok(await page.$eval(QR, (element) => document.activeElement === element));
+  await page.keyboard.press("Tab");
+  assert.ok(
+    await page.evaluate(() =>
+      document.activeElement.href?.includes("econo.nccu.edu.tw"),
+    ),
+  );
+  await page.evaluate(() => {
+    document.body.style.overflow = "scroll";
+  });
+  await page.click(QR);
+  await enterPreview();
+  assert.equal(await page.$(QR_DIALOG), null);
+  assert.equal(await page.evaluate(() => document.body.style.overflow), "scroll");
+  await page.$eval('a[href^="mailto:"]', (element) => element.focus());
+  assert.ok(
+    await page.evaluate(() => document.activeElement.href?.startsWith("mailto:")),
+  );
 });
 
 test("SITE-R10.4 SITE-R10.5 英文履歷與單一 portal", async () => {

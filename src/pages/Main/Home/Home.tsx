@@ -47,6 +47,8 @@ export default function Home() {
   useScrollMotion(motionRef);
   const { dictionary } = useTranslation();
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const qrOpenerRef = useRef<HTMLButtonElement | null>(null);
+  const qrDialogRef = useRef<HTMLDialogElement>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -57,24 +59,17 @@ export default function Home() {
     if (!isQrModalOpen) {
       return undefined;
     }
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsQrModalOpen(false);
-      }
-    }
-    document.addEventListener("keydown", handleEscape);
+    const dialog = qrDialogRef.current!;
+    const opener = qrOpenerRef.current;
+    const previousOverflow = document.body.style.overflow;
+    dialog.showModal();
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "";
+      dialog.close();
+      document.body.style.overflow = previousOverflow;
+      if (opener?.isConnected) opener.focus({ preventScroll: true });
     };
   }, [isQrModalOpen]);
-
-  useEffect(() => {
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, []);
 
   const primaryWorkExperience = workExperienceItems[0];
   const primaryWorkTranslation = dictionary.workExperiences[primaryWorkExperience.id];
@@ -132,8 +127,12 @@ export default function Home() {
                   />
                   <RoundButton
                     className={styles.qr_avatar_fab}
-                    hintText="Show QR Code"
-                    onClick={() => setIsQrModalOpen(true)}
+                    hintText={dictionary.qrModal.open}
+                    aria-haspopup="dialog"
+                    onClick={(event) => {
+                      qrOpenerRef.current = event.currentTarget;
+                      setIsQrModalOpen(true);
+                    }}
                   >
                     <IconQrCode sideLength="18" />
                   </RoundButton>
@@ -310,40 +309,39 @@ export default function Home() {
         )}
       {isQrModalOpen
         ? createPortal(
-            <div
+            <dialog
+              ref={qrDialogRef}
               className={styles.qr_modal_overlay}
-              role="presentation"
-              onClick={() => setIsQrModalOpen(false)}
+              aria-labelledby="qr-modal-title"
+              aria-describedby="qr-modal-description"
+              onCancel={(event) => {
+                event.preventDefault();
+                setIsQrModalOpen(false);
+              }}
+              onClick={(event) => {
+                if (event.target === event.currentTarget) setIsQrModalOpen(false);
+              }}
             >
               <button
                 type="button"
                 className={styles.qr_modal_close_button}
-                aria-label="Close QR code"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setIsQrModalOpen(false);
-                }}
+                aria-label={dictionary.qrModal.close}
+                onClick={() => setIsQrModalOpen(false)}
               >
                 <IconXLarge sideLength="20" />
               </button>
-              <div
-                className={styles.qr_modal_content}
-                role="dialog"
-                aria-modal="true"
-                aria-labelledby="qr-modal-title"
-                onClick={(event) => event.stopPropagation()}
-              >
+              <div className={styles.qr_modal_content}>
                 <div className={styles.qr_modal_code_panel}>
                   <QRCodeSVG value={SITE_URL_FOR_QR} size={240} level="M" />
                 </div>
                 <div className={styles.qr_modal_title} id="qr-modal-title">
                   {dictionary.name}
                 </div>
-                <p className={styles.qr_modal_cta}>
+                <p className={styles.qr_modal_cta} id="qr-modal-description">
                   {dictionary.qrModal.scanToConnect}
                 </p>
               </div>
-            </div>,
+            </dialog>,
             document.body,
           )
         : null}

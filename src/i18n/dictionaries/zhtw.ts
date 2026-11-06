@@ -49,7 +49,11 @@ export const traditionalChineseDictionary: TranslationDictionary = {
       },
     },
   },
-  qrModal: { scanToConnect: "掃描以取得連結" },
+  qrModal: {
+    open: "顯示 QR code",
+    close: "關閉 QR code",
+    scanToConnect: "掃描以取得連結",
+  },
   header: {
     home: "回到首頁",
     about: "簡歷",

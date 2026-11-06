@@ -5,9 +5,13 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  border: none;
+  background-color: transparent;
+  font: inherit;
   border-radius: 100px;
-  width: min-content;
-  height: min-content;
+  min-width: _.$minimum-control-size;
+  min-height: _.$minimum-control-size;
   aspect-ratio: 1;
   padding: 6px;
   margin: 0;
@@ -16,6 +20,10 @@
   cursor: pointer;
   &:active {
     background-color: _.$transparent-black;
+  }
+  &:focus-visible {
+    outline: 2px solid _.$brand-olive-ink;
+    outline-offset: 3px;
   }
   @media (hover: hover) {
     &:hover {

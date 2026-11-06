@@ -51,7 +51,11 @@ export const englishDictionary: TranslationDictionary = {
       },
     },
   },
-  qrModal: { scanToConnect: "Scan to connect" },
+  qrModal: {
+    open: "Show QR code",
+    close: "Close QR code",
+    scanToConnect: "Scan to connect",
+  },
   header: {
     home: "Back to home",
     about: "About",

@@ -26,14 +26,6 @@
 
 ## 已確認問題
 
-### 鍵盤與焦點
-
-實測 QR code opener 是不可用 Tab 到達的 div，開啟後焦點停在 body，關閉後缺少焦點還原。
-
-後續需依設計方向補齊鍵盤操作與焦點行為。現有滑鼠測試不表示整體已符合可及性要求。
-
-相關規格：[SITE-R9](specs/site.md#site-r9-qr-code-顯示與關閉)；方向依據：[Interaction and Motion](design.md#interaction-and-motion)。
-
 ### 短螢幕裁切
 
 實測 320 × 568 與 390 × 568，Hero 卡片裁掉部分社群與導覽。

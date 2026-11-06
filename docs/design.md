@@ -22,6 +22,8 @@ Keep the site focused on one person's professional story. Long-form writing belo
 
 The main site supports English and Traditional Chinese and respects the visitor's language preference. The resume remains in English.
 
+Use the Header to change languages; close the QR code dialog before switching. Reopening it uses the current language.
+
 Language selection remains available when browser storage is blocked. Keep the visitor's choice for the current page without showing a storage warning; on reload, use a readable saved preference or the browser language.
 
 - Experience and education copy should be direct, professional, and specific about scope and outcomes. Distinguish personal projects from production work.
