@@ -5,11 +5,38 @@ import { IconEnvelope, IconLocation } from "../../../icons";
 
 const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
   function ResumeSheet(_props, forwardedReference) {
+    React.useEffect(() => {
+      let screenLanguage: string | undefined;
+      const setPrintLanguage = () => {
+        if (screenLanguage === undefined) {
+          screenLanguage = document.documentElement.lang;
+        }
+
+        // Chromium takes the PDF catalog language from the document, not the sheet.
+        document.documentElement.lang = "en";
+      };
+      const restoreScreenLanguage = () => {
+        if (screenLanguage !== undefined) {
+          document.documentElement.lang = screenLanguage;
+          screenLanguage = undefined;
+        }
+      };
+      window.addEventListener("beforeprint", setPrintLanguage);
+      window.addEventListener("afterprint", restoreScreenLanguage);
+      return () => {
+        window.removeEventListener("beforeprint", setPrintLanguage);
+        window.removeEventListener("afterprint", restoreScreenLanguage);
+        restoreScreenLanguage();
+      };
+    }, []);
+
     return (
-      <div ref={forwardedReference} className={styles.a4} data-resume-root>
+      <div ref={forwardedReference} className={styles.a4} lang="en" data-resume-root>
         <div className={styles.contentArea}>
           <header className={styles.header}>
-            <h1 className={styles.name}>CHEN, BING-YANG (陳秉洋)</h1>
+            <h1 className={styles.name}>
+              CHEN, BING-YANG (<span lang="zh-TW">陳秉洋</span>)
+            </h1>
             <div className={styles.contactRow}>
               <span className={styles.contactItem}>
                 <IconLocation

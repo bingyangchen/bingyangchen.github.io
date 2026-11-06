@@ -207,13 +207,15 @@ stateDiagram-v2
 
 首頁的 print sheet 在 mount 後放到 body portal，螢幕上不顯示；非公開預覽則直接顯示紙張。重掛載或切換 route 不能遺留重複 print sheet。
 
+共用履歷與英文預覽介面獨立標示 `lang="en"`，履歷中的中文姓名標示 `lang="zh-TW"`。列印期間把文件語言設為英文，結束、取消或卸載履歷時還原原有介面語言；這讓 Chromium 產生的 PDF 文件語言為英文，因為 PDF 的主要語言取自文件而非履歷子元素。
+
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R10.1 首頁列印入口 | 在目前可見履歷按鈕的桌面 viewport，點擊按鈕並等待字型，呼叫瀏覽器列印。 | unit、manual |
 | SITE-R10.2 非公開預覽列印 | 在本機預覽點 Download PDF，使用同一個列印 helper 與相同履歷內容。 | unit、manual |
 | SITE-R10.3 字型等待與替代路徑 | 有 fonts.ready 時等待 promise；缺少該能力時直接列印，不呼叫其他下載服務。 | unit |
-| SITE-R10.4 英文履歷 | 主網站使用英文或繁中時，兩個入口的履歷內容仍為英文。 | browser、manual |
+| SITE-R10.4 英文履歷 | 主網站使用英文或繁中時，兩個入口的履歷內容與語言標記仍為英文，中文姓名保留繁中標記；Chromium 匯出的 PDF 文件語言為英文，列印結束或取消後還原介面語言。 | unit、browser、manual |
 | SITE-R10.5 單一 Print Sheet | React 啟動後及首頁與本機預覽切換後，各入口都只有一份 print sheet；prerender HTML 不包含 body portal。 | browser |
 
 ### SITE-R11 PDF 內容與版面

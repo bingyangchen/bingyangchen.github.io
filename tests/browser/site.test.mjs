@@ -154,6 +154,9 @@ async function getPrintResult() {
     metrics,
     pages: pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)?.length,
     mediaBox: pdf.toString("latin1").match(/\/MediaBox\s*\[([^\]]+)\]/)?.[1],
+    language: pdf
+      .toString("latin1")
+      .match(/\/Type\s*\/Catalog\b[\s\S]*?\/Lang\s*\(([^)]+)\)/)?.[1],
   };
 }
 
@@ -1045,44 +1048,73 @@ test("SITE-R10.4 SITE-R10.5 英文履歷與單一 portal", async () => {
     1,
   );
   assert.equal(await page.$("#root [data-resume-root]"), null);
-  await page.click("[data-language-switcher]");
-  assert.ok(
-    (await page.$eval("[data-resume-root]", (element) => element.textContent)).includes(
-      "Career Summary",
-    ),
-  );
-  await enterPreview();
-  assert.equal(
-    await page.$$eval("[data-resume-root]", (elements) => elements.length),
-    1,
-  );
-  assert.ok(
-    (await page.$eval("[data-resume-root]", (element) => element.textContent)).includes(
-      "Career Summary",
-    ),
-  );
+  for (const language of ["en", "zh-TW"]) {
+    if (language === "zh-TW") await page.click("[data-language-switcher]");
+    await page.waitForFunction(
+      (expected) => document.documentElement.lang === expected,
+      {},
+      language,
+    );
+    const home = await page.$eval("[data-resume-root]", (element) => ({
+      text: element.textContent,
+      language: element.closest("[lang]").lang,
+    }));
+    assert.equal(home.language, "en");
+    assert.ok(home.text.includes("Career Summary"));
+    await enterPreview();
+    assert.equal(
+      await page.$$eval("[data-resume-root]", (elements) => elements.length),
+      1,
+    );
+    assert.deepEqual(
+      await page.$eval("[data-resume-root]", (element) => ({
+        text: element.textContent,
+        language: element.closest("[lang]").lang,
+      })),
+      home,
+    );
+    assert.equal(
+      await page.$eval('[class*="resumePage"]', (element) => element.lang),
+      "en",
+    );
+    await page.goBack();
+    await page.waitForSelector("#home");
+  }
 });
 
-test("SITE-R11.1 SITE-R11.2 SITE-R11.4 A4、列印隔離與共用結果", async () => {
+test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 A4、列印語言與共用結果", async () => {
   await openHome();
-  const home = await getPrintResult();
-  await enterPreview();
-  const preview = await getPrintResult();
-  assert.equal(home.pages, 1);
-  assert.equal(preview.pages, 1);
-  assert.equal(home.mediaBox, preview.mediaBox);
-  const dimensions = home.mediaBox.trim().split(/\s+/).map(Number);
-  assert.ok(Math.abs(dimensions[2] - 595) < 2 && Math.abs(dimensions[3] - 842) < 2);
-  assert.equal(home.metrics.text, preview.metrics.text);
-  for (const result of [home, preview]) {
-    assert.equal(result.metrics.count, 1);
-    assert.equal(result.metrics.visible, "visible");
-    assert.ok(result.metrics.bottom <= result.metrics.height + 1);
-    assert.equal(result.metrics.header, "none");
-    assert.equal(result.metrics.footer, "none");
-    assert.equal(result.metrics.language, "hidden");
-    for (const section of ["SKILLS", "CAREER SUMMARY", "EDUCATION", "SOCIAL LINKS"])
-      assert.ok(result.metrics.text.includes(section));
+  for (const language of ["en", "zh-TW"]) {
+    if (language === "zh-TW") await page.click("[data-language-switcher]");
+    await page.waitForFunction(
+      (expected) => document.documentElement.lang === expected,
+      {},
+      language,
+    );
+    const home = await getPrintResult();
+    assert.equal(await page.evaluate(() => document.documentElement.lang), language);
+    await enterPreview();
+    const preview = await getPrintResult();
+    assert.equal(await page.evaluate(() => document.documentElement.lang), language);
+    assert.equal(home.pages, 1);
+    assert.equal(preview.pages, 1);
+    assert.equal(home.mediaBox, preview.mediaBox);
+    const dimensions = home.mediaBox.trim().split(/\s+/).map(Number);
+    assert.ok(Math.abs(dimensions[2] - 595) < 2 && Math.abs(dimensions[3] - 842) < 2);
+    assert.equal(home.metrics.text, preview.metrics.text);
+    for (const result of [home, preview]) {
+      assert.equal(result.language, "en");
+      assert.equal(result.metrics.count, 1);
+      assert.equal(result.metrics.visible, "visible");
+      assert.ok(result.metrics.bottom <= result.metrics.height + 1);
+      assert.equal(result.metrics.header, "none");
+      assert.equal(result.metrics.footer, "none");
+      assert.equal(result.metrics.language, "hidden");
+      for (const section of ["SKILLS", "CAREER SUMMARY", "EDUCATION", "SOCIAL LINKS"])
+        assert.ok(result.metrics.text.includes(section));
+    }
+    await page.goBack();
+    await page.waitForSelector("#home");
   }
 });
 

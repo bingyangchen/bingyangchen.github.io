@@ -10,7 +10,7 @@ export default function Resume() {
   }
 
   return (
-    <div className={styles.resumePage}>
+    <div className={styles.resumePage} lang="en">
       <h1 className={styles.title}>Resume</h1>
       <p className={styles.subtitle}>
         Experience, education, and skills at a glance. Save the PDF when you need a

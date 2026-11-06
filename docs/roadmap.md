@@ -42,14 +42,6 @@
 
 相關規格：[SITE-R12](specs/site.md#site-r12-響應式組成)。
 
-### 英文履歷語意
-
-ResumeSheet 未獨立設定 `lang`，Chromium 實測繁中介面下履歷繼承 `zh-TW`。
-
-已確認需讓英文履歷獨立標示 `lang="en"`，並在實作時驗證輔助工具行為與產生 PDF 的語言資訊。
-
-相關規格：[SITE-R10.4](specs/site.md#site-r10-履歷來源與列印入口)、[SITE-R11](specs/site.md#site-r11-pdf-內容與版面)。
-
 ### 隱藏履歷的焦點
 
 在現有 production build，以 Chromium 的 390 × 844 繁中頁面循序按 Tab，焦點會進入螢幕外履歷的 email 連結。首頁 offscreen portal 使用 aria-hidden，未設定 inert。
