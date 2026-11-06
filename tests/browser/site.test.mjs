@@ -33,7 +33,13 @@ before(async () => {
   await stat(join(BUILD, "index.html"));
   server = await startStaticServer(BUILD);
   browser = await puppeteer.launch({
-    args: ["--no-sandbox", "--disable-dev-shm-usage"],
+    args: [
+      "--no-sandbox",
+      "--disable-dev-shm-usage",
+
+      // Headless input defaults differ across hosts; start with a desktop mouse.
+      "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
+    ],
   });
 });
 
@@ -91,6 +97,14 @@ async function selectProject(index = 1) {
       document.querySelector(selector).getAttribute("aria-selected") === "true",
     {},
     `${TABS}:nth-child(${index})`,
+  );
+}
+
+async function assertHoverCapability(expected) {
+  assert.equal(
+    await page.evaluate(() => matchMedia("(hover: hover)").matches),
+    expected,
+    "Hover capability must match the test input device",
   );
 }
 
@@ -1333,6 +1347,7 @@ test("SITE-R17.4 各尺寸文章與操作範圍", async () => {
 
 test("SITE-R13.6 外連箭頭一致性", async () => {
   await openHome("#projects");
+  await assertHoverCapability(true);
   const sharedLinks = [
     '#projects a[class*="github"]',
     '#blog a[class*="archiveLink"]',
@@ -1406,7 +1421,7 @@ test("SITE-R13.6 外連箭頭一致性", async () => {
   await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
   await page.goto("about:blank");
   await openHome("#blog");
-  assert.equal(await page.evaluate(() => matchMedia("(hover: hover)").matches), false);
+  await assertHoverCapability(false);
   for (const selector of [...sharedLinks, ...projectLinks]) {
     await hoverLink(selector);
     await assertArrowState(
@@ -1418,7 +1433,11 @@ test("SITE-R13.6 外連箭頭一致性", async () => {
 });
 
 test("SITE-R17.5 文章焦點、Hover 與減少動態", async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "no-preference" },
+  ]);
   await openHome("#blog");
+  await assertHoverCapability(true);
   const links = await page.$$eval("#blog a", (elements) =>
     elements.map((element) => element.href),
   );
