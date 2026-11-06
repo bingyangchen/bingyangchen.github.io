@@ -91,6 +91,15 @@ async function openHome(hash = "") {
 }
 
 async function selectProject(index = 1) {
+  await page.$eval(`${TABS}:nth-child(${index})`, (element) => {
+    const rect = element.getBoundingClientRect();
+    const headerBottom = document
+      .querySelector("header")
+      .getBoundingClientRect().bottom;
+    if (rect.top < headerBottom || rect.bottom > window.innerHeight)
+      element.scrollIntoView({ block: "center", behavior: "instant" });
+  });
+  await settleMotion();
   await page.click(`${TABS}:nth-child(${index})`);
   await page.waitForFunction(
     (selector) =>
@@ -775,6 +784,29 @@ test("SITE-R12.2 學歷跨 breakpoint 時立即套用字級", async () => {
         [fontSize, fontSize],
         `education font size at ${width} ${language}`,
       );
+      const skills = await page.$$eval('[data-scroll-motion="skill"]', (elements) =>
+        elements.map((element) => ({
+          title: element.textContent.trim(),
+          top: element.offsetTop,
+          width: element.offsetWidth,
+          height: element.offsetHeight,
+          display: getComputedStyle(element).display,
+        })),
+      );
+      assert.ok(skills.length > 10);
+      assert.equal(new Set(skills.map((skill) => skill.title)).size, skills.length);
+      assert.ok(new Set(skills.map((skill) => skill.top)).size > 1, "skills wrap");
+      assert.ok(
+        skills.every(
+          (skill) => skill.width > 0 && skill.height > 0 && skill.display !== "none",
+        ),
+      );
+      assert.ok(
+        await page.$eval(
+          '[class*="skills_inner"]',
+          (element) => element.scrollWidth <= element.clientWidth,
+        ),
+      );
     }
   }
 });
@@ -970,17 +1002,93 @@ test("SITE-R11.1 SITE-R11.2 SITE-R11.4 A4、列印隔離與共用結果", async 
   }
 });
 
-test("SITE-R13.3 已有 reduced-motion 分支", async () => {
+test("SITE-R13.3 完整減少動態與即時切換", async () => {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
   await openHome();
-  const animations = await page.$$eval(
-    '[class*="hero_enter"],[class*="scroll_down_chevron"]',
-    (elements) => elements.map((element) => getComputedStyle(element).animationName),
+  async function assertStaticMotion() {
+    await page.hover('#home [class*="avatar_container"]');
+    assert.equal(
+      await page.$eval(
+        '#home [class*="avatar"][class*="front"]',
+        (element) => getComputedStyle(element).transform,
+      ),
+      "none",
+    );
+    assert.equal(
+      await page.$eval(
+        '#home [class*="avatar"][class*="back"]',
+        (element) => getComputedStyle(element).display,
+      ),
+      "none",
+    );
+    await page.hover('#home [aria-label="GitHub"]');
+    assert.equal(
+      await page.$eval(
+        '#home [aria-label="GitHub"]',
+        (element) => getComputedStyle(element).transform,
+      ),
+      "none",
+    );
+    assert.equal(await page.$("[data-scroll-motion-active]"), null);
+    const states = await page.$$eval("[data-scroll-motion]", (elements) =>
+      elements
+        .filter((element) => !element.closest("[inert]"))
+        .map((element) => ({
+          opacity: getComputedStyle(element).opacity,
+          transform: getComputedStyle(element).transform,
+        })),
+    );
+    assert.ok(states.length > 30);
+    assert.ok(
+      states.every((state) => state.opacity === "1" && state.transform === "none"),
+    );
+    assert.equal(
+      await page.$$eval(
+        "#home *, #about *, #projects *, #blog *",
+        (elements) =>
+          elements.filter(
+            (element) =>
+              getComputedStyle(element).animationName !== "none" ||
+              getComputedStyle(element).transitionDuration !== "0s",
+          ).length,
+      ),
+      0,
+    );
+    assert.equal(
+      await page.$eval("html", (element) => getComputedStyle(element).scrollBehavior),
+      "auto",
+    );
+  }
+  await assertStaticMotion();
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "no-preference" },
+  ]);
+  await page.waitForSelector("[data-scroll-motion-active]");
+  await page.hover('#home [class*="avatar_container"]');
+  await page.waitForFunction(() => {
+    const element = document.querySelector('#home [class*="avatar"][class*="front"]');
+    return new DOMMatrixReadOnly(getComputedStyle(element).transform).m11 < 0;
+  });
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await settleMotion();
+  await assertStaticMotion();
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "no-preference" },
+  ]);
+  await page.waitForSelector("[data-scroll-motion-active]");
+  await moveMotionTarget(
+    '#projects [role="tabpanel"]:not([inert]) [data-scroll-motion="stage"]',
+    700,
   );
-  assert.ok(animations.length > 0);
-  assert.ok(animations.every((name) => name === "none"));
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await settleMotion();
+  await assertStaticMotion();
 });
 
 test("SITE-R14.1 SITE-R14.2 SITE-R14.3 完整 build、靜態文字與擷取範圍", async () => {
@@ -1494,4 +1602,266 @@ test("SITE-R17.6 精選文章不依賴 JavaScript 或 GitBook 回應", async () 
   await page.waitForFunction(() => document.documentElement.lang === "en");
   assert.equal(await page.$$eval("#blog h3", (headings) => headings.length), 3);
   assert.deepEqual(blogRequests, []);
+});
+
+async function settleMotion() {
+  await page.evaluate(
+    () =>
+      new Promise((resolveFrame) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolveFrame)),
+      ),
+  );
+}
+
+async function moveMotionTarget(selector, viewportTop) {
+  await page.evaluate(
+    (targetSelector, top) => {
+      dispatchEvent(new WheelEvent("wheel"));
+      const element = document.querySelector(targetSelector);
+      let documentTop = 0;
+      for (let parent = element; parent; parent = parent.offsetParent)
+        documentTop += parent.offsetTop;
+      window.scrollTo({ top: documentTop - top, behavior: "instant" });
+    },
+    selector,
+    viewportTop,
+  );
+  await settleMotion();
+}
+
+async function getMotionState(selector) {
+  return page.$eval(selector, (element) => {
+    const style = getComputedStyle(element);
+    const matrix = new DOMMatrixReadOnly(
+      style.transform === "none" ? undefined : style.transform,
+    );
+    return {
+      opacity: Number(style.opacity),
+      x: matrix.m41,
+      y: matrix.m42,
+      scale: Math.hypot(matrix.m11, matrix.m12, matrix.m13),
+      transform: style.transform,
+    };
+  });
+}
+
+test("SITE-R13.2 Hero 往返動態", async () => {
+  await openHome();
+  const hero = '#home [data-scroll-motion="hero"]';
+  const initial = await getMotionState(hero);
+  assert.equal(initial.opacity, 1);
+  assert.equal(initial.scale, 1);
+  await moveMotionTarget("#home", -250);
+  const away = await getMotionState(hero);
+  assert.ok(away.y < -20);
+  assert.ok(away.opacity < 0.9 && away.opacity > 0);
+  assert.ok(away.scale < 0.98);
+  assert.equal((await getMotionState('#home [data-scroll-motion="hint"]')).opacity, 0);
+  await moveMotionTarget("#home", 0);
+  assert.deepEqual(await getMotionState(hero), initial);
+});
+
+test("SITE-R13.7 各段落三次往返還原與停止", async () => {
+  await openHome();
+  const selectors = [
+    '#about [data-scroll-motion="content"]',
+    `${DETAIL} [data-scroll-motion="stage"]`,
+    '#blog [data-scroll-motion="feature"]',
+  ];
+  for (const selector of selectors) {
+    await moveMotionTarget(selector, 700);
+    const entering = await getMotionState(selector);
+    assert.ok(entering.y > 10 && entering.opacity < 0.95, selector);
+    await moveMotionTarget(selector, 250);
+    const reading = await getMotionState(selector);
+    assert.equal(reading.opacity, 1, selector);
+    assert.equal(reading.y, 0, selector);
+    assert.equal(reading.scale, 1, selector);
+    const height = await page.$eval(selector, (element) => element.offsetHeight);
+    for (let cycle = 0; cycle < 3; cycle++) {
+      await moveMotionTarget(selector, -height + 100);
+      const exiting = await getMotionState(selector);
+      assert.ok(exiting.opacity < 0.7 && exiting.y < 0, selector);
+      await moveMotionTarget(selector, 700);
+      assert.deepEqual(await getMotionState(selector), entering, selector);
+    }
+    await settleMotion();
+    assert.deepEqual(
+      await getMotionState(selector),
+      entering,
+      `${selector} holds when idle`,
+    );
+  }
+  const reading = '#blog [data-scroll-motion="content"]';
+  await moveMotionTarget(reading, 700);
+  const entering = await getMotionState(reading);
+  assert.ok(entering.opacity < 1);
+  for (let cycle = 0; cycle < 3; cycle++) {
+    await moveMotionTarget(reading, 300);
+    assert.equal((await getMotionState(reading)).opacity, 1);
+    await moveMotionTarget(reading, 700);
+    assert.deepEqual(await getMotionState(reading), entering);
+  }
+});
+
+test("SITE-R13.8 長段落與作品焦點", async () => {
+  await page.setViewport({ width: 390, height: 844 });
+  await openHome();
+  const longContent =
+    '#about [data-scroll-timeline]:nth-child(2) [data-scroll-motion="content"]';
+  assert.ok(
+    await page.$eval(
+      longContent,
+      (element) => element.offsetHeight > window.innerHeight,
+    ),
+  );
+  for (const top of [100, -250]) {
+    await moveMotionTarget(longContent, top);
+    const state = await getMotionState(longContent);
+    assert.equal(state.opacity, 1);
+    assert.equal(state.y, 0);
+    assert.equal(state.scale, 1);
+  }
+  await page.setViewport({ width: 1440, height: 900 });
+  const stage = `${DETAIL} [data-scroll-motion="stage"]`;
+  await moveMotionTarget(stage, 700);
+  assert.ok((await getMotionState(stage)).opacity < 1);
+  const before = await page.evaluate(() => window.scrollY);
+  await page.$eval(DETAIL, (panel) => panel.focus({ preventScroll: true }));
+  await settleMotion();
+  assert.equal(await page.evaluate(() => window.scrollY), before);
+  for (const kind of ["content", "stage", "device", "secondary-device"]) {
+    const state = await getMotionState(`${DETAIL} [data-scroll-motion="${kind}"]`);
+    assert.equal(state.opacity, 1);
+    assert.equal(state.scale, 1);
+    assert.equal(state.x, 0);
+    assert.equal(state.y, 0);
+  }
+  await page.focus("[data-language-switcher]");
+  await settleMotion();
+  assert.ok((await getMotionState(stage)).opacity < 1);
+});
+
+test("SITE-R13.9 Hash 直達與重載的動態狀態", async () => {
+  const selectors = {
+    home: '#home [data-scroll-motion="hero"]',
+    about: '#about [data-scroll-motion="heading"]',
+    projects: `${DETAIL} [data-scroll-motion="stage"]`,
+    blog: '#blog [data-scroll-motion="feature"]',
+  };
+  for (const [section, selector] of Object.entries(selectors)) {
+    await page.goto("about:blank");
+    await openHome(`#${section}`);
+    await waitForSection(section);
+    await settleMotion();
+    const state = await getMotionState(selector);
+    const top = await page.evaluate(() => window.scrollY);
+    await page.reload({ waitUntil: "networkidle0" });
+    await page.waitForFunction(
+      (position) => Math.abs(window.scrollY - position) <= 1,
+      {},
+      top,
+    );
+    await settleMotion();
+    assert.deepEqual(await getMotionState(selector), state, section);
+  }
+});
+
+test("SITE-R13.9 雙語與尺寸重算", async () => {
+  await openHome();
+  const selector =
+    '#about [data-scroll-timeline]:nth-child(3) [data-scroll-motion="content"]';
+  for (const [language, width] of [
+    ["en", 720],
+    ["zh-TW", 721],
+    ["en", 390],
+  ]) {
+    await page.setViewport({ width, height: 844 });
+    if ((await page.$eval("html", (element) => element.lang)) !== language)
+      await page.$eval("[data-language-switcher]", (element) => element.click());
+    await page.waitForFunction(
+      (expected) => document.documentElement.lang === expected,
+      {},
+      language,
+    );
+    await moveMotionTarget(selector, 600);
+    const state = await getMotionState(selector);
+    const top = await page.evaluate(() => window.scrollY);
+    await page.reload({ waitUntil: "networkidle0" });
+    await page.evaluate((position) => {
+      dispatchEvent(new WheelEvent("wheel"));
+      window.scrollTo({ top: position, behavior: "instant" });
+    }, top);
+    await settleMotion();
+    assert.deepEqual(await getMotionState(selector), state, `${language} ${width}`);
+    assert.ok(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+    );
+  }
+});
+
+test("SITE-R13.10 原生捲動與閒置更新", async () => {
+  await openHome();
+  await moveMotionTarget('#about [data-scroll-motion="content"]', 500);
+  const before = await page.evaluate(() => window.scrollY);
+  await page.mouse.wheel({ deltaY: 300 });
+  await page.waitForFunction(
+    (position) => window.scrollY >= position + 299,
+    {},
+    before,
+  );
+  await settleMotion();
+  assert.ok(Math.abs((await page.evaluate(() => window.scrollY)) - before - 300) < 2);
+  const mutations = await page.evaluate(
+    () =>
+      new Promise((resolveIdle) => {
+        let writes = 0;
+        const observer = new MutationObserver((records) => {
+          writes += records.length;
+        });
+        observer.observe(document.querySelector("[data-scroll-motion-active]"), {
+          attributes: true,
+          subtree: true,
+          attributeFilter: ["style"],
+        });
+        let frames = 0;
+        const sample = () => {
+          if (++frames === 6) {
+            observer.disconnect();
+            resolveIdle(writes);
+          } else requestAnimationFrame(sample);
+        };
+        requestAnimationFrame(sample);
+      }),
+  );
+  assert.equal(mutations, 0, "idle motion must not keep writing styles");
+});
+
+test("SITE-R13.11 靜態內容與列印隔離", async () => {
+  const html = await readFile(join(BUILD, "index.html"), "utf8");
+  assert.ok(!html.includes("data-scroll-motion-active"));
+  assert.ok(!html.includes("--scroll-"));
+  await page.setJavaScriptEnabled(false);
+  await page.goto(server.origin, { waitUntil: "networkidle0" });
+  const states = await page.$$eval("[data-scroll-motion]:not([inert])", (elements) =>
+    elements
+      .filter((element) => !element.closest("[inert]"))
+      .map((element) => ({
+        opacity: getComputedStyle(element).opacity,
+        transform: getComputedStyle(element).transform,
+      })),
+  );
+  assert.ok(states.length > 30);
+  assert.ok(
+    states.every((state) => state.opacity === "1" && state.transform === "none"),
+  );
+  await page.setJavaScriptEnabled(true);
+  await openHome();
+  const result = await getPrintResult();
+  assert.equal(result.pages, 1);
+  assert.equal(result.metrics.count, 1);
+  assert.equal(result.metrics.header, "none");
+  await page.waitForSelector("[data-scroll-motion-active]");
 });

@@ -18,12 +18,12 @@ export default function WorkExperience({
   skills,
 }: WorkExperienceProperties) {
   return (
-    <div className={styles.main}>
+    <div className={styles.main} data-scroll-timeline="">
       <div className={styles.left}>
         <div className={styles.head} />
         <div className={styles.line} />
       </div>
-      <div className={styles.body}>
+      <div className={styles.body} data-scroll-motion="content">
         <div className={styles.work_duration}>{work_duration}</div>
         <div className={styles.job_title}>{job_title}</div>
         <div className={styles.company_name}>

@@ -206,6 +206,9 @@ async function main() {
     });
 
     await page.emulateTimezone(PRERENDER_TIMEZONE);
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ]);
 
     for (const route of ROUTES) {
       const startedAt = process.hrtime.bigint();

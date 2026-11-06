@@ -1,0 +1,24 @@
+@use "global_variables" as _;
+
+@mixin scope {
+  @each $name, $value in _.$scroll-motion {
+    --motion-#{$name}: #{$value};
+  }
+
+  @media (max-width: _.$medium) {
+    --motion-content-distance: #{_.$scroll-motion-compact-distance};
+    --motion-stage-distance: #{_.$scroll-motion-compact-stage-distance};
+    --motion-depth-scale: #{_.$scroll-motion-compact-depth-scale};
+  }
+
+  @media screen and (prefers-reduced-motion: no-preference) {
+    &[data-scroll-motion-active] [data-scroll-motion] {
+      transform-origin: center;
+      transform: perspective(var(--motion-perspective))
+        translate3d(var(--scroll-x, 0px), var(--scroll-y, 0px), 0)
+        rotateX(var(--scroll-tilt, 0deg)) rotate(var(--scroll-rotate, 0deg))
+        scale(var(--scroll-scale, 1));
+      opacity: var(--scroll-opacity, 1);
+    }
+  }
+}

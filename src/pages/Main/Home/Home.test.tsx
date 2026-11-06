@@ -5,6 +5,7 @@ import { homeSkillItems } from "../../../data/skills";
 import { workExperienceItems } from "../../../data/workExperience";
 import * as language from "../../../i18n/context";
 import { englishDictionary } from "../../../i18n/dictionaries/en";
+import { traditionalChineseDictionary } from "../../../i18n/dictionaries/zhtw";
 import * as printing from "../../../resume/print";
 import Resume from "../Resume/Resume";
 import Home from "./Home";
@@ -49,6 +50,30 @@ test("SITE-R5.1 個人摘要", () => {
   ).toBeInTheDocument();
 });
 
+test("SITE-R13.1 完整問候", () => {
+  const view = render(<Home />);
+  expect(
+    within(view.container).getByText(englishDictionary.home.greeting),
+  ).toBeInTheDocument();
+  jest
+    .spyOn(language, "useTranslation")
+    .mockReturnValue({
+      language: "zh-TW",
+      setLanguage: jest.fn(),
+      dictionary: traditionalChineseDictionary,
+    });
+  view.rerender(<Home />);
+  expect(
+    within(view.container).getByText(traditionalChineseDictionary.home.greeting),
+  ).toBeInTheDocument();
+  expect(
+    within(view.container).queryByText(englishDictionary.home.greeting),
+  ).not.toBeInTheDocument();
+  expect(within(view.container).queryByText("|")).not.toBeInTheDocument();
+  view.unmount();
+  expect(jest.getTimerCount()).toBe(0);
+});
+
 test("SITE-R6.1 工作與翻譯", () => {
   const first = workExperienceItems[0];
   const saved = { ...first };
@@ -79,9 +104,7 @@ test("SITE-R6.1 工作與翻譯", () => {
 test("SITE-R6.2 技能與教育", () => {
   const { container } = render(<Home />);
   for (const skill of homeSkillItems)
-    expect(within(container).getAllByText(skill.title).length).toBeGreaterThanOrEqual(
-      1,
-    );
+    expect(within(container).getAllByText(skill.title)).toHaveLength(1);
   expect(
     within(container).getByRole("link", {
       name: englishDictionary.about.nccuEconomics,

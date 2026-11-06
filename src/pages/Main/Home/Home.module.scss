@@ -1,6 +1,8 @@
 @use "../../../global_variables" as _;
+@use "../../../motion";
 
 .main {
+  @include motion.scope;
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -61,29 +63,6 @@
     box-sizing: border-box;
     overflow: hidden;
     isolation: isolate;
-    $hero-enter-ease: cubic-bezier(0.16, 1, 0.3, 1);
-    $hero-enter-duration: 800ms;
-    & .hero_enter_avatar {
-      opacity: 0;
-      animation: heroFadeIn $hero-enter-duration $hero-enter-ease 0ms forwards;
-    }
-    & .hero_enter_name,
-    & .hero_enter_greeting {
-      opacity: 0;
-      animation: fadeSlideUp $hero-enter-duration $hero-enter-ease 100ms both;
-    }
-    & .hero_enter_badges {
-      opacity: 0;
-      animation: fadeSlideUp $hero-enter-duration $hero-enter-ease 200ms both;
-    }
-    & .hero_enter_contact {
-      opacity: 0;
-      animation: fadeSlideUp $hero-enter-duration $hero-enter-ease 300ms both;
-    }
-    & .hero_enter_cta {
-      opacity: 0;
-      animation: fadeSlideUp $hero-enter-duration $hero-enter-ease 400ms both;
-    }
     & > .home_atmosphere {
       position: absolute;
       inset: -20%;
@@ -105,7 +84,6 @@
         120% 120%,
         120% 120%,
         100% 100%;
-      animation: homeAtmosphereDrift 48s ease-in-out infinite alternate;
     }
     & > .business_card {
       position: relative;
@@ -202,15 +180,11 @@
         object-fit: cover;
         backface-visibility: hidden;
         transition-duration: 300ms;
-        &.front {
-          animation: autoFlipFront 720ms ease-in-out 1000ms;
-        }
         &.back {
           transform: rotateY(180deg);
-          animation: autoFlipBack 720ms ease-in-out 1000ms;
         }
       }
-      @media (hover: hover) {
+      @media (hover: hover) and (prefers-reduced-motion: no-preference) {
         &:hover {
           & > .avatar {
             &.front {
@@ -220,6 +194,11 @@
               transform: rotateY(0deg);
             }
           }
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        & > .avatar.back {
+          display: none;
         }
       }
       & > .qr_avatar_fab {
@@ -382,11 +361,6 @@
           font-size: 0.92 * _.$base-font-size;
           line-height: 1.7;
         }
-        & > .cursor {
-          display: inline-block;
-          margin-left: 2px;
-          animation: blink 1s infinite;
-        }
       }
     }
     & .contact_row {
@@ -439,7 +413,9 @@
       @media (hover: hover) {
         &:hover {
           color: _.$brand-olive;
-          transform: translateY(-2px);
+          @media (prefers-reduced-motion: no-preference) {
+            transform: translateY(-2px);
+          }
         }
       }
     }
@@ -523,44 +499,18 @@
     & > .scroll_down_hint {
       position: absolute;
       bottom: 24px;
-      left: 50%;
+      left: 0;
+      right: 0;
       z-index: 2;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
       color: _.$gray;
       font-family: Geneva, sans-serif;
       font-size: 0.85 * _.$base-font-size;
-      transform: translateX(-50%);
-      &.hero_enter_scroll_hint {
-        opacity: 0;
-        animation: heroScrollHintFadeIn $hero-enter-duration $hero-enter-ease 800ms both;
-        & > .scroll_down_chevron {
-          display: inline-flex;
-          animation: scrollChevronBounce 1.4s ease-in-out 1600ms infinite;
-        }
-      }
       & > .scroll_down_chevron {
         display: inline-flex;
-      }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      & .hero_enter_avatar,
-      & .hero_enter_name,
-      & .hero_enter_greeting,
-      & .hero_enter_badges,
-      & .hero_enter_contact,
-      & .hero_enter_cta {
-        animation: none;
-        opacity: 1;
-        transform: none;
-      }
-      & > .scroll_down_hint.hero_enter_scroll_hint {
-        animation: none;
-        opacity: 1;
-        & > .scroll_down_chevron {
-          animation: none;
-        }
       }
     }
   }
@@ -583,22 +533,11 @@
       overflow: hidden;
       & > .skills_inner {
         display: flex;
-        width: max-content;
-        animation: 25s moveleft linear infinite;
-        & > .screen {
-          $gap: 25px;
-          display: flex;
-          gap: $gap;
-          padding-right: $gap;
-        }
-        @keyframes moveleft {
-          from {
-            transform: translateX(0);
-          }
-          to {
-            transform: translateX(-50%);
-          }
-        }
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 28px 36px;
+        padding-inline: 24px;
       }
     }
     & > .education_outer {
@@ -741,97 +680,6 @@
   z-index: 0;
   pointer-events: none;
   isolation: isolate;
-}
-
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes heroFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeSlideUp {
-  from {
-    opacity: 0;
-    transform: translateY(24px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes heroScrollHintFadeIn {
-  from {
-    opacity: 0;
-    transform: translateX(-50%);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(-50%);
-  }
-}
-
-@keyframes autoFlipFront {
-  0% {
-    transform: rotateY(0deg);
-  }
-  40% {
-    transform: rotateY(180deg);
-  }
-  60% {
-    transform: rotateY(180deg);
-  }
-  100% {
-    transform: rotateY(0deg);
-  }
-}
-
-@keyframes autoFlipBack {
-  0% {
-    transform: rotateY(180deg);
-  }
-  40% {
-    transform: rotateY(0deg);
-  }
-  60% {
-    transform: rotateY(0deg);
-  }
-  100% {
-    transform: rotateY(180deg);
-  }
-}
-
-@keyframes homeAtmosphereDrift {
-  0% {
-    transform: translate3d(0, 0, 0) scale(1);
-  }
-  100% {
-    transform: translate3d(2%, -1.5%, 0) scale(1.03);
-  }
-}
-
-@keyframes scrollChevronBounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(6px);
-  }
 }
 
 @keyframes qrOverlayFadeIn {

@@ -5,6 +5,5 @@ export { default as Logo } from "./Logo/Logo";
 export { default as Projects } from "./Projects/Projects";
 export { default as RoundButton } from "./RoundButton/RoundButton";
 export { default as Skill } from "./Skill/Skill";
-export { default as TypingGreeting } from "./TypingGreeting/TypingGreeting";
 export { default as WorkExperience } from "./WorkExperience/WorkExperience";
 export { default as Blog } from "./Blog/Blog";

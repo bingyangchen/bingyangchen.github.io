@@ -23,20 +23,39 @@
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%);
         width: 15px;
         aspect-ratio: 1;
         border-radius: 100px;
-        background-color: _.$black;
+        background-color: _.$brand-olive;
+        transform: translate(-50%, -50%) scale(var(--scroll-dot-scale, 1));
         @media (max-width: _.$medium) {
           width: 10px;
         }
       }
+      &::after {
+        position: absolute;
+        content: "";
+        inset: _.$scroll-timeline-ring-outset;
+        border: _.$scroll-timeline-ring-width solid _.$brand-olive;
+        border-radius: inherit;
+        opacity: var(--scroll-line-progress, 1);
+        transform: scale(var(--scroll-dot-scale, 1));
+      }
     }
     & > .line {
+      position: relative;
       flex-grow: 1;
       margin: 0 auto;
       border-left: 1px solid _.$light-gray;
+      &::after {
+        position: absolute;
+        content: "";
+        inset: 0 auto 0 -2px;
+        width: _.$scroll-timeline-width;
+        background: _.$brand-olive;
+        transform-origin: top;
+        transform: scaleY(var(--scroll-line-progress, 1));
+      }
     }
   }
   & > .body {

@@ -16,6 +16,7 @@ const projectTitleToArtwork: Record<string, ReactNode> = {
     <>
       <img
         className={`${styles.device} ${styles.deviceMain}`}
+        data-scroll-motion="device"
         src={taiguOverview}
         alt=""
         width={732}
@@ -23,6 +24,7 @@ const projectTitleToArtwork: Record<string, ReactNode> = {
       />
       <img
         className={`${styles.device} ${styles.deviceSecondary}`}
+        data-scroll-motion="secondary-device"
         src={taiguAllocation}
         alt=""
         width={732}
@@ -33,6 +35,7 @@ const projectTitleToArtwork: Record<string, ReactNode> = {
   Noads: (
     <img
       className={`${styles.device} ${styles.extension}`}
+      data-scroll-motion="device"
       src={noadsInterface}
       alt=""
       width={1200}
@@ -43,6 +46,7 @@ const projectTitleToArtwork: Record<string, ReactNode> = {
     <>
       <img
         className={`${styles.device} ${styles.leechaiMain}`}
+        data-scroll-motion="device"
         src={leechaiAccounts}
         alt=""
         width={885}
@@ -50,6 +54,7 @@ const projectTitleToArtwork: Record<string, ReactNode> = {
       />
       <img
         className={`${styles.device} ${styles.leechaiSecondary}`}
+        data-scroll-motion="secondary-device"
         src={leechaiSettings}
         alt=""
         width={885}
@@ -94,7 +99,7 @@ export default function Projects() {
 
   return (
     <div className={styles.main}>
-      <div className={styles.sectionHeader}>
+      <div className={styles.sectionHeader} data-scroll-motion="heading">
         <div>
           <h2 className={styles.sectionTitle}>{dictionary.projects.title}</h2>
           <p>{dictionary.projects.subtitle}</p>
@@ -154,24 +159,29 @@ export default function Projects() {
               id={`${id}-panel-${index}`}
               className={styles.showcase}
               role="tabpanel"
+              data-scroll-focus-group=""
               aria-labelledby={`${id}-tab-${index}`}
               aria-hidden={!selected}
               tabIndex={selected ? 0 : -1}
               {...{ inert: selected ? undefined : "" }}
             >
-              <div className={styles.projectIntro}>
+              <div className={styles.projectIntro} data-scroll-motion="content">
                 <h3 className={styles.projectTitle}>{project.title}</h3>
                 <p className={styles.projectPurpose}>
                   {translation?.purpose || project.purpose}
                 </p>
               </div>
-              <figure className={styles.productStage}>
+              <figure
+                className={styles.productStage}
+                data-scroll-motion="stage"
+                data-scroll-anchor=""
+              >
                 <div className={styles.productArt}>{artwork}</div>
                 <figcaption className={styles.imageDescription}>
                   {translation?.image_description || project.image_description}
                 </figcaption>
               </figure>
-              <div className={styles.projectContent}>
+              <div className={styles.projectContent} data-scroll-motion="content">
                 <p className={styles.description}>
                   {translation?.description || project.description}
                 </p>

@@ -36,3 +36,52 @@ $small: 512px;
 $medium: 720px;
 $large: 1024px;
 $extra-large: 1280px;
+
+$scroll-motion: (
+  content-distance: 96,
+  stage-distance: 144,
+  depth-scale: 1,
+  perspective: 1200px,
+  entrance-start: 1.04,
+  entrance-end: 0.42,
+  long-content-threshold: 0.65,
+  long-content-end: 0.62,
+  exit-start: 0.24,
+  exit-end: 0.08,
+  minimum-opacity: 0.18,
+  content-shrink: 0.035,
+  content-exit-shrink: 0.02,
+  exit-distance-scale: 0.7,
+  hero-distance: 160,
+  atmosphere-distance: 64,
+  hero-fade: 0.78,
+  hero-shrink: 0.14,
+  hero-tilt: 4,
+  hint-exit: 0.25,
+  stage-shrink: 0.14,
+  stage-exit-shrink: 0.06,
+  stage-tilt: 8,
+  stage-exit-tilt: 3,
+  heading-shrink: 0.08,
+  heading-exit-shrink: 0.025,
+  artwork-shrink: 0.18,
+  artwork-exit-shrink: 0.05,
+  artwork-distance-scale: 0.8,
+  artwork-exit-distance-scale: 0.45,
+  skill-stagger: 0.025,
+  device-distance: 140,
+  secondary-device-distance: 240,
+  device-spread: 48,
+  secondary-device-spread: -80,
+  device-rotation: 8,
+  secondary-device-rotation: -12,
+  timeline-reading-line: 0.62,
+  timeline-dot-start: 0.75,
+  timeline-dot-growth: 0.35,
+);
+$scroll-motion-compact-distance: 56;
+$scroll-motion-compact-stage-distance: 88;
+$scroll-motion-compact-depth-scale: 0.6;
+$scroll-timeline-width: 3px;
+$scroll-timeline-ring-width: 2px;
+$scroll-timeline-ring-outset: -4px;

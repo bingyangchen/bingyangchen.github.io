@@ -5,7 +5,7 @@ import nccuLogo from "../../../assets/nccu_logo.webp";
 import styles from "./Home.module.scss";
 
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import {
@@ -14,7 +14,6 @@ import {
   Projects,
   RoundButton,
   Skill,
-  TypingGreeting,
   WorkExperience,
 } from "../../../components";
 import { homeSkillItems } from "../../../data/skills";
@@ -34,6 +33,7 @@ import {
   IconXLarge,
 } from "../../../icons";
 import { openResumePrintDialog } from "../../../resume/print";
+import { useScrollMotion } from "../../../motion/useScrollMotion";
 import ResumeSheet from "../Resume/ResumeSheet";
 
 const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
@@ -43,6 +43,8 @@ const SITE_URL_FOR_QR = "https://byc1999.com";
 const NCCU_ECONOMICS_URL = "https://econo.nccu.edu.tw/";
 
 export default function Home() {
+  const motionRef = useRef<HTMLDivElement>(null);
+  useScrollMotion(motionRef);
   const { dictionary } = useTranslation();
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -102,15 +104,22 @@ export default function Home() {
 
   return (
     <>
-      <div className={styles.main}>
-        <div id="home" className={`${styles.home} ${styles.section}`} tabIndex={-1}>
-          <div className={styles.home_atmosphere} aria-hidden="true" />
-          <div className={styles.business_card}>
+      <div className={styles.main} ref={motionRef}>
+        <div
+          id="home"
+          className={`${styles.home} ${styles.section}`}
+          tabIndex={-1}
+          data-scroll-anchor=""
+        >
+          <div
+            className={styles.home_atmosphere}
+            aria-hidden="true"
+            data-scroll-motion="atmosphere"
+          />
+          <div className={styles.business_card} data-scroll-motion="hero">
             <div className={styles.business_card_inner}>
               <div className={styles.sheet_left}>
-                <div
-                  className={`${styles.avatar_container} ${styles.hero_enter_avatar}`}
-                >
+                <div className={styles.avatar_container}>
                   <img
                     className={`${styles.avatar} ${styles.front}`}
                     src={avatar_2}
@@ -129,21 +138,13 @@ export default function Home() {
                     <IconQrCode sideLength="18" />
                   </RoundButton>
                 </div>
-                <div
-                  className={`${styles.greeting_card} ${styles.hero_enter_greeting}`}
-                >
-                  <TypingGreeting
-                    text={dictionary.home.greeting}
-                    className={styles.greeting}
-                    cursorClassName={styles.cursor}
-                  />
+                <div className={styles.greeting_card}>
+                  <div className={styles.greeting}>{dictionary.home.greeting}</div>
                 </div>
               </div>
               <div className={styles.sheet_right}>
-                <h1 className={`${styles.name} ${styles.hero_enter_name}`}>
-                  {dictionary.name}
-                </h1>
-                <div className={`${styles.role_badge_row} ${styles.hero_enter_badges}`}>
+                <h1 className={styles.name}>{dictionary.name}</h1>
+                <div className={styles.role_badge_row}>
                   <div className={styles.role_badge}>{job_badge_content}</div>
                   <a
                     href={NCCU_ECONOMICS_URL}
@@ -157,7 +158,7 @@ export default function Home() {
                     </span>
                   </a>
                 </div>
-                <div className={`${styles.contact_row} ${styles.hero_enter_contact}`}>
+                <div className={styles.contact_row}>
                   <span className={styles.email_link}>
                     <IconEnvelope sideLength="18" color="currentColor" />
                     <span>{CONTACT_EMAIL}</span>
@@ -195,7 +196,7 @@ export default function Home() {
                     </a>
                   </div>
                 </div>
-                <div className={`${styles.cta_toolbar} ${styles.hero_enter_cta}`}>
+                <div className={styles.cta_toolbar}>
                   <Button
                     className={`brand_fill xl bold ${styles.resume_download_desktop_only}`}
                     onClick={handleDownloadResume}
@@ -220,9 +221,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div
-            className={`${styles.scroll_down_hint} ${styles.hero_enter_scroll_hint}`}
-          >
+          <div className={styles.scroll_down_hint} data-scroll-motion="hint">
             <span className={styles.scroll_down_chevron}>
               <IconChevronDoubleDown sideLength="14" />
             </span>
@@ -230,10 +229,12 @@ export default function Home() {
           </div>
         </div>
         <div id="about" className={`${styles.about} ${styles.section}`} tabIndex={-1}>
-          <h2>{dictionary.about.title}</h2>
-          <div className={styles.subtitle}>{dictionary.about.subtitle}</div>
-          <hr />
-          <h3>{dictionary.about.workExperience}</h3>
+          <h2 data-scroll-motion="heading">{dictionary.about.title}</h2>
+          <div className={styles.subtitle} data-scroll-motion="heading">
+            {dictionary.about.subtitle}
+          </div>
+          <hr data-scroll-motion="heading" />
+          <h3 data-scroll-motion="heading">{dictionary.about.workExperience}</h3>
           <div className={styles.work_experience_outer}>
             {workExperienceItems.map(({ id, ...work }) => {
               const translation = dictionary.workExperiences[id];
@@ -249,26 +250,28 @@ export default function Home() {
               );
             })}
           </div>
-          <h3>{dictionary.about.skills}</h3>
+          <h3 data-scroll-motion="heading">{dictionary.about.skills}</h3>
           <div className={styles.skills_outer}>
             <div className={styles.skills_inner}>
-              {[1, 2].map((screenIndex) => (
-                <div className={styles.screen} key={screenIndex}>
-                  {homeSkillItems.map((skill) => (
-                    <Skill key={skill.id} logo={skill.logo} title={skill.title} />
-                  ))}
-                </div>
+              {homeSkillItems.map((skill, index) => (
+                <Skill
+                  key={skill.id}
+                  logo={skill.logo}
+                  title={skill.title}
+                  motionOrder={index % 4}
+                />
               ))}
             </div>
           </div>
-          <h3>{dictionary.about.education}</h3>
+          <h3 data-scroll-motion="heading">{dictionary.about.education}</h3>
           <div className={styles.education_outer}>
             <img
               className={styles.school_logo}
+              data-scroll-motion="portrait"
               src={nccuLogo}
               alt="NCCU,National Chengchi University,國立政治大學,經濟學系,Department of Economics,金融科技學士學程,Financial Technology Program,陳秉洋"
             />
-            <div className={styles.degree_list}>
+            <div className={styles.degree_list} data-scroll-motion="content">
               <a
                 className={styles.degree}
                 href="https://econo.nccu.edu.tw/"

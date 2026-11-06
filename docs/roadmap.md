@@ -18,14 +18,6 @@
 
 相關規格：[SITE-R9](specs/site.md#site-r9-qr-code-顯示與關閉)；方向依據：[Interaction and Motion](design.md#interaction-and-motion)。
 
-### Reduced Motion
-
-實測 reduce 下背景、頭像、打字、游標與技能輪播仍運作。目前測試只覆蓋已存在的 Hero 入場與下滑提示停用分支。
-
-後續需處理其餘動態效果，並依實際結果驗證 reduced-motion，不能把部分停用當成全面符合。
-
-相關規格：[SITE-R13](specs/site.md#site-r13-動態與-reduced-motion)。
-
 ### 短螢幕裁切
 
 實測 320 × 568 與 390 × 568，Hero 卡片裁掉部分社群與導覽。
