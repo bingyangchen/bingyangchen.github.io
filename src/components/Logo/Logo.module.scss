@@ -24,22 +24,4 @@
       font-size: 0.9 * _.$base-font-size;
     }
   }
-  &.m {
-    gap: 8px;
-    & > .logo {
-      width: 50px;
-    }
-    & > .product_name {
-      font-size: 1.25 * _.$base-font-size;
-    }
-  }
-  &.l {
-    gap: 10px;
-    & > .logo {
-      width: 100px;
-    }
-    & > .product_name {
-      font-size: 2.5 * _.$base-font-size;
-    }
-  }
 }

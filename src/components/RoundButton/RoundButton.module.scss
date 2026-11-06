@@ -14,21 +14,13 @@
   color: _.$gray;
   transition-duration: 150ms;
   cursor: pointer;
-  &.disabled {
-    color: _.$light-gray;
-    cursor: default;
-  }
   &:active {
-    &:not(.disabled) {
-      background-color: _.$transparent-black;
-    }
+    background-color: _.$transparent-black;
   }
   @media (hover: hover) {
     &:hover {
-      &:not(.disabled) {
-        color: _.$deep-gray;
-        background-color: _.$transparent-black;
-      }
+      color: _.$deep-gray;
+      background-color: _.$transparent-black;
       & > .hint_text {
         display: block;
         padding: 3px 10px;

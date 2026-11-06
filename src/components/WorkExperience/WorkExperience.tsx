@@ -6,7 +6,6 @@ interface WorkExperienceProperties {
   company_name: string;
   company_logo?: string;
   description: string;
-  skills?: string[];
 }
 
 export default function WorkExperience({
@@ -15,7 +14,6 @@ export default function WorkExperience({
   company_name,
   company_logo,
   description,
-  skills,
 }: WorkExperienceProperties) {
   return (
     <div className={styles.main} data-scroll-timeline="">
@@ -37,18 +35,6 @@ export default function WorkExperience({
           {company_name}
         </div>
         <div className={styles.description}>{description}</div>
-        {skills && (
-          <div className={styles.tech_stack}>
-            <div className={styles.title}>技能</div>
-            <div className={styles.list}>
-              {skills.map((skill, index) => (
-                <code className={styles.skill_tag} key={index}>
-                  {skill}
-                </code>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

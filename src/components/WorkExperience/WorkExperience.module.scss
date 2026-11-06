@@ -104,26 +104,5 @@
         font-size: 0.9 * _.$base-font-size;
       }
     }
-    & > .tech_stack {
-      & > .title {
-        margin-left: 5px;
-        font-size: 0.9 * _.$base-font-size;
-        color: _.$gray;
-      }
-      & > .list {
-        display: block;
-        padding: 3px 0;
-        & > .skill_tag {
-          display: inline-block;
-          font-size: 0.8 * _.$base-font-size;
-          color: _.$white;
-          padding: 5px 8px;
-          margin: 4px;
-          border-radius: 5px;
-          background-color: _.$yellow;
-          opacity: 0.8;
-        }
-      }
-    }
   }
 }

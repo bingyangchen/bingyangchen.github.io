@@ -1,15 +1,4 @@
-import {
-  Location,
-  Navigate,
-  NavigateFunction,
-  Params,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 // layer one
 import Main from "./pages/Main/Main";
@@ -28,29 +17,4 @@ export default function MyRouter() {
       <Route path="*" element={<Navigate to="" />} />
     </Routes>
   );
-}
-
-export interface IRouter {
-  router: {
-    location: Location;
-    navigate: NavigateFunction;
-    params: Params;
-    searchParams: URLSearchParams;
-    setSearchParams: ReturnType<typeof useSearchParams>[1];
-  };
-}
-
-export function withRouter(Component: any) {
-  return (props: any = {}) => {
-    let location = useLocation();
-    let navigate = useNavigate();
-    let params = useParams();
-    let [searchParams, setSearchParams] = useSearchParams();
-    return (
-      <Component
-        {...props}
-        router={{ location, navigate, params, searchParams, setSearchParams }}
-      />
-    );
-  };
 }

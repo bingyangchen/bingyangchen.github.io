@@ -5,7 +5,6 @@ export type WorkExperienceData = {
   company_name: string;
   company_logo?: string;
   description: string;
-  skills?: string[];
 };
 
 export type SkillItem = { id: string; title: string; logo: string };

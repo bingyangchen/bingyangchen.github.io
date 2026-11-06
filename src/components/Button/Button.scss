@@ -31,28 +31,11 @@
     transition-duration: $transition-duration;
   }
   @media (hover: hover) {
-    &:hover:not(:disabled) {
+    &:hover {
       &::before {
         background-color: _.$transparent-black;
       }
     }
-  }
-  &:disabled {
-    cursor: not-allowed !important;
-    color: _.$light-gray !important;
-    background-color: _.$noisy-white !important;
-  }
-  &.clean {
-    background-color: transparent;
-    color: _.$deep-gray;
-  }
-  &.light {
-    background-color: _.$noisy-white;
-    color: _.$deep-gray;
-  }
-  &.black_fill {
-    background-color: _.$black;
-    color: _.$white;
   }
   &.primary_fill {
     background-color: _.$theme-color;
@@ -61,29 +44,6 @@
   &.brand_fill {
     background-color: _.$brand-olive;
     color: _.$white;
-  }
-  &.primary {
-    background-color: _.$white;
-    color: _.$theme-color;
-  }
-  &.success_fill {
-    background-color: _.$green;
-    color: _.$white;
-  }
-  &.success {
-    background-color: _.$white;
-    color: _.$green;
-  }
-  &.dangerous_fill {
-    background-color: _.$red;
-    color: _.$white;
-  }
-  &.dangerous {
-    background-color: _.$white;
-    color: _.$red;
-  }
-  &.p8-15 {
-    padding: 8px 15px !important;
   }
   &.xl {
     font-size: 1.1 * _.$base-font-size;
@@ -94,18 +54,6 @@
     font-size: 1 * _.$base-font-size;
     padding: 8px 20px;
     gap: 8px;
-  }
-  &.s {
-    font-size: 0.8 * _.$base-font-size;
-    padding: 4px 10px;
-  }
-  &.xs {
-    font-size: 0.7 * _.$base-font-size;
-    padding: 3px 8px;
-    gap: 3px;
-  }
-  &.border {
-    border: 1px solid _.$light-gray;
   }
   &.bold {
     font-weight: bold;

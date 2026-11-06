@@ -68,7 +68,7 @@ export default function Footer() {
           <hr />
         </div>
       </div>
-      <Logo size="s" full invert />
+      <Logo />
       <div className={`${styles.section} ${styles.copyright}`}>
         {`Copyright © ${new Date().getFullYear()} ${dictionary.name} All rights reserved`}
       </div>
