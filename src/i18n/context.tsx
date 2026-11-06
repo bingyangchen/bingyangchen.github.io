@@ -15,9 +15,13 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 const LANGUAGE_STORAGE_KEY = "preferred_language";
 
 function detectPreferredLanguage(): Language {
-  const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-  if (savedLanguage === "en" || savedLanguage === "zh-TW") {
-    return savedLanguage;
+  try {
+    const savedLanguage = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+    if (savedLanguage === "en" || savedLanguage === "zh-TW") {
+      return savedLanguage;
+    }
+  } catch {
+    // Storage is optional; browser language remains available when access is denied.
   }
   return navigator.language.startsWith("zh") ? "zh-TW" : "en";
 }
@@ -29,7 +33,11 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const setLanguage = (newLanguage: Language) => {
     setLanguageState(newLanguage);
-    localStorage.setItem(LANGUAGE_STORAGE_KEY, newLanguage);
+    try {
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, newLanguage);
+    } catch {
+      // Keep the selection in React state when it cannot be persisted.
+    }
   };
 
   useEffect(() => {

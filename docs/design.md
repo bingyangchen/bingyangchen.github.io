@@ -22,6 +22,8 @@ Keep the site focused on one person's professional story. Long-form writing belo
 
 The main site supports English and Traditional Chinese and respects the visitor's language preference. The resume remains in English.
 
+Language selection remains available when browser storage is blocked. Keep the visitor's choice for the current page without showing a storage warning; on reload, use a readable saved preference or the browser language.
+
 - Experience and education copy should be direct, professional, and specific about scope and outcomes. Distinguish personal projects from production work.
 - Projects and Blog may use a warmer, open, curious tone while keeping claims concrete.
 - Preserve shared facts across languages while allowing natural phrasing and different levels of detail. Chinese copy should use natural Traditional Chinese wording consistent with the existing site.

@@ -571,6 +571,90 @@ test("SITE-R4.1 SITE-R4.2 雙向切換與 reload 持久化", async () => {
   await page.waitForFunction(() => document.documentElement.lang === "en");
 });
 
+test("SITE-R3.6 讀取儲存被拒絕時首頁仍可啟動", async () => {
+  await page.evaluateOnNewDocument(() => {
+    Storage.prototype.getItem = () => {
+      throw new DOMException("Storage access denied", "SecurityError");
+    };
+  });
+
+  await openHome();
+  assert.equal(
+    await page.$eval("#home h1", (element) => element.textContent),
+    "Bing-Yang Chen",
+  );
+  await page.click("[data-language-switcher]");
+  await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
+  assert.equal(
+    await page.$eval("#home h1", (element) => element.textContent),
+    "陳秉洋",
+  );
+
+  await page.reload({ waitUntil: "networkidle0" });
+  assert.equal(await page.$eval("html", (element) => element.lang), "en");
+});
+
+test("SITE-R3.6 SITE-R4.6 localStorage 本身被拒絕時可切換且重載後使用瀏覽器語言", async () => {
+  await page.evaluateOnNewDocument(() => {
+    Object.defineProperty(window, "localStorage", {
+      get() {
+        throw new DOMException("Storage access denied", "SecurityError");
+      },
+    });
+  });
+
+  await openHome();
+  await page.click("[data-language-switcher]");
+  await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
+  assert.equal(
+    await page.$eval("#home h1", (element) => element.textContent),
+    "陳秉洋",
+  );
+  await page.click("[data-language-switcher]");
+  await page.waitForFunction(() => document.documentElement.lang === "en");
+  await page.click("[data-language-switcher]");
+  await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
+
+  await page.reload({ waitUntil: "networkidle0" });
+  assert.equal(await page.$eval("html", (element) => element.lang), "en");
+  assert.equal(
+    await page.$eval("#home h1", (element) => element.textContent),
+    "Bing-Yang Chen",
+  );
+});
+
+test("SITE-R4.6 寫入失敗時保留本頁選擇並可繼續導覽", async () => {
+  for (const errorName of ["SecurityError", "QuotaExceededError"]) {
+    await page.evaluateOnNewDocument((name) => {
+      Storage.prototype.setItem = () => {
+        throw new DOMException("Cannot save preference", name);
+      };
+    }, errorName);
+
+    await openHome();
+    await page.click("[data-language-switcher]");
+    await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
+    assert.equal(
+      await page.$eval("#home h1", (element) => element.textContent),
+      "陳秉洋",
+    );
+    assert.equal(
+      await page.evaluate(() => localStorage.getItem("preferred_language")),
+      null,
+    );
+    await page.click('header a[href="#about"]');
+    await page.waitForFunction(() => window.location.hash === "#about");
+    assert.equal(await page.$eval("html", (element) => element.lang), "zh-TW");
+
+    await page.reload({ waitUntil: "networkidle0" });
+    assert.equal(await page.$eval("html", (element) => element.lang), "en");
+    assert.equal(
+      await page.$eval("#home h1", (element) => element.textContent),
+      "Bing-Yang Chen",
+    );
+  }
+});
+
 test("SITE-R4.3 作品詳情中切換語言", async () => {
   await openHome();
   await selectProject();

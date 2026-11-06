@@ -66,22 +66,6 @@ ResumeSheet 未獨立設定 `lang`，Chromium 實測繁中介面下履歷繼承 
 
 相關規格：[SITE-R10.5](specs/site.md#site-r10-履歷來源與列印入口)。
 
-### 儲存被拒絕
-
-以 Chromium 模擬 localStorage 丟出 `SecurityError`，已確認以下結果：
-
-- `getItem` 失敗時，React 啟動失敗，首頁空白。
-- `setItem` 失敗時，語言仍能切換，但偏好無法保存，並出現未處理的例外。
-
-已確認儲存不可用時，網站仍應支援瀏覽與語言切換，不另顯示提示。語言選擇依以下規則處理：
-
-- 使用者切換語言後，網站在本次頁面保留選擇。
-- 使用者重新載入頁面時，網站依瀏覽器語言決定顯示語言。
-
-後續需處理讀寫例外並驗證降級規則。
-
-相關規格：[SITE-R3](specs/site.md#site-r3-初始語言選擇)、[SITE-R4](specs/site.md#site-r4-語言切換與持久化)。
-
 ## 待調查與待決策
 
 暫無。

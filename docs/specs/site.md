@@ -64,13 +64,15 @@ Header 使用半透明白色底與背景模糊，讓下方白色及灰色背景�
 
 ### SITE-R3 初始語言選擇
 
-網站支援 `en` 與 `zh-TW`，初始語言依下圖選擇。
+網站支援 `en` 與 `zh-TW`，初始語言依下圖選擇。`localStorage` 無法存取或讀取失敗時，首頁仍可啟動。
 
 ```mermaid
 flowchart TD
-  saved[讀取 preferred_language] --> valid{值為 en 或 zh-TW？}
+  saved[讀取 preferred_language] --> readable{讀取成功？}
+  readable -->|是| valid{值為 en 或 zh-TW？}
+  readable -->|否| browser{瀏覽器語言以 zh 開頭？}
   valid -->|是| use_saved[使用儲存偏好]
-  valid -->|否| browser{瀏覽器語言以 zh 開頭？}
+  valid -->|否| browser
   browser -->|是| chinese[使用繁中]
   browser -->|否| english[使用英文]
 ```
@@ -83,10 +85,13 @@ flowchart TD
 | SITE-R3.3 中文瀏覽器 | 沒有有效偏好且瀏覽器語言為 `zh-TW` 或 `zh-CN`，顯示繁中。 | unit |
 | SITE-R3.4 非中文瀏覽器 | 沒有有效偏好且瀏覽器語言為 `en-US` 或其他非中文值，顯示英文。 | unit |
 | SITE-R3.5 無效偏好 | 儲存值不在支援範圍時，依瀏覽器語言選擇，不能用該無效值選字典。 | unit |
+| SITE-R3.6 儲存讀取失敗 | 存取 localStorage 或呼叫 getItem 時發生例外，首頁仍啟動並依瀏覽器語言選擇；中文使用繁中，其餘使用英文。 | unit、browser |
 
 ### SITE-R4 語言切換與持久化
 
 語言按鈕在英文與繁中之間切換，顯示下一個語言，並以目前語言提供操作名稱。切換後更新頁面字典、`html.lang` 與儲存偏好。開著的作品詳情與 QR code 保留狀態，內容依目前語言顯示；履歷內容政策見 SITE-R10。
+
+語言切換先更新本次頁面的選擇，再嘗試儲存。儲存失敗時不顯示提示或產生未處理的例外，仍可繼續切換與瀏覽；重載時依 SITE-R3 重新選擇，沒有可讀的有效偏好時使用瀏覽器語言。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
@@ -96,6 +101,7 @@ flowchart TD
 | SITE-R4.3 作品詳情中切換 | 開著作品時切換語言，選取仍保留，描述、標籤與進行中期間文字更新。 | browser |
 | SITE-R4.4 QR code 中切換 | QR code 開啟時切換語言，dialog 保留，姓名與提示更新。 | browser |
 | SITE-R4.5 鍵盤切換語言 | 使用 Tab 找到原生語言按鈕，以 Enter 或 Space 切換；不需要滑鼠。 | browser、manual |
+| SITE-R4.6 儲存寫入失敗 | 存取 localStorage 或呼叫 setItem 時發生例外，字典、html.lang 與按鈕仍同步切換，本頁導覽保留選擇且沒有錯誤提示或未處理的例外；新選擇未儲存，重載後依初始語言規則選擇。 | unit、browser |
 
 ## 個人內容與外部目的地
 
