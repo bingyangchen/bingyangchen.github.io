@@ -42,14 +42,6 @@
 
 相關規格：[SITE-R12](specs/site.md#site-r12-響應式組成)。
 
-### Leechai Fallback 文案
-
-程式碼盤點發現原始作品資料的描述與兩份字典不一致，目前正常顯示使用字典，因此尚無證據顯示訪客在正常操作下看到錯誤內容。
-
-後續需依確認過的內容來源處理 fallback 文案，不把錯誤資料寫成產品要求。
-
-相關規格：[SITE-R7.5](specs/site.md#site-r7-作品選取與詳情)。
-
 ### 英文履歷語意
 
 ResumeSheet 未獨立設定 `lang`，Chromium 實測繁中介面下履歷繼承 `zh-TW`。

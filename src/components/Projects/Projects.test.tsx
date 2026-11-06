@@ -4,6 +4,7 @@ import { homeProjects } from "../../data/projects";
 import * as translation from "../../i18n/context";
 import { englishDictionary } from "../../i18n/dictionaries/en";
 import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";
+import type { Language } from "../../i18n/types";
 
 beforeEach(() => {
   jest
@@ -69,6 +70,52 @@ test("SITE-R7.5 內容與翻譯", () => {
     expect(content.getByText(project.tags.join(" · "))).toBeInTheDocument();
   }
 });
+
+test.each<Language>(["en", "zh-TW"])(
+  "SITE-R7.5 Leechai 描述在 %s 翻譯缺漏時維持個人理財內容",
+  (language) => {
+    const dictionary =
+      language === "en" ? englishDictionary : traditionalChineseDictionary;
+    const context = { language, setLanguage: jest.fn(), dictionary };
+    const useTranslation = jest.spyOn(translation, "useTranslation");
+    useTranslation.mockReturnValue(context);
+    const view = render(<Projects />);
+    fireEvent.click(screen.getByRole("tab", { name: "Leechai" }));
+    const content = within(screen.getByRole("tabpanel"));
+    expect(
+      content.getByText(dictionary.projectsData.Leechai.description),
+    ).toBeInTheDocument();
+
+    const { Leechai, ...otherProjects } = dictionary.projectsData;
+    useTranslation.mockReturnValue({
+      ...context,
+      dictionary: { ...dictionary, projectsData: otherProjects },
+    });
+    view.rerender(<Projects />);
+    expect(
+      content.getByText(englishDictionary.projectsData.Leechai.description),
+    ).toBeInTheDocument();
+
+    useTranslation.mockReturnValue({
+      ...context,
+      dictionary: {
+        ...dictionary,
+        projectsData: { ...otherProjects, Leechai: { ...Leechai, description: "" } },
+      },
+    });
+    view.rerender(<Projects />);
+    expect(
+      content.getByText(englishDictionary.projectsData.Leechai.description),
+    ).toBeInTheDocument();
+    expect(content.getByText(Leechai.purpose)).toBeInTheDocument();
+    expect(content.getByText(Leechai.image_description)).toBeInTheDocument();
+    expect(content.getByText(Leechai.tags.join(" · "))).toBeInTheDocument();
+    expect(content.getByRole("link", { name: Leechai.visit_label })).toHaveAttribute(
+      "href",
+      "https://apps.apple.com/tw/app/leechai-%E7%90%86%E6%9F%B4/id6761012779",
+    );
+  },
+);
 
 test("SITE-R7.6 期間顯示", () => {
   const project = homeProjects[0];

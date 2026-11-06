@@ -41,7 +41,7 @@ export const homeProjects: Project[] = [
     tags: ["Personal Finance", "App"],
     maintaining_time_range: [new Date(2026, 1, 1)],
     description:
-      "Explore various pathfinding algorithms and maze generation algorithms.",
+      "Keep track of daily income and expenses, and manage your budget in one app.",
     source_code_url: "https://github.com/bingyangchen/leechai",
     demo_url: "https://apps.apple.com/tw/app/leechai-%E7%90%86%E6%9F%B4/id6761012779",
   },
