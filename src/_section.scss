@@ -1,0 +1,125 @@
+@use "global_variables" as _;
+
+@mixin container {
+  width: min(100%, #{_.$extra-large});
+  margin-inline: auto;
+  box-sizing: border-box;
+  font-family: _.$body-font-family;
+  color: _.$theme-color;
+  padding: calc(_.$header-height + 38px) _.$desktop-content-padding 112px;
+
+  @media (max-width: _.$large) {
+    padding: calc(_.$header-height + 14px) 32px 88px;
+  }
+  @media (max-width: _.$medium) {
+    padding: calc(_.$header-height + 6px) 24px 88px;
+  }
+  @media (max-width: _.$small) {
+    padding: calc(_.$header-height + 22px) 24px 96px;
+  }
+}
+
+@mixin header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 48px;
+
+  @media (max-width: _.$medium) {
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  @media (max-width: _.$small) {
+    gap: 12px;
+  }
+}
+
+@mixin title {
+  margin: 0;
+  font: normal clamp(2.75rem, 4.2vw, 3.5rem)/1.12 _.$heading-font-family;
+  letter-spacing: -0.025em;
+  text-align: left;
+  color: _.$theme-color;
+
+  @media (max-width: _.$medium) {
+    font-size: 2.75rem;
+  }
+  @media (max-width: _.$small) {
+    font-size: 2.5rem;
+  }
+}
+
+@mixin description {
+  margin: 20px 0 0;
+  color: _.$body-muted;
+  font-size: 1rem;
+  line-height: 1.8;
+  text-wrap: pretty;
+
+  @media (max-width: _.$medium) {
+    max-width: 30ch;
+    margin-top: 16px;
+    font-size: 0.9375rem;
+  }
+}
+
+@mixin link {
+  flex: none;
+  display: inline-flex;
+  min-height: _.$minimum-control-size;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.875rem;
+  text-underline-offset: 5px;
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+  &:hover {
+    text-decoration: underline;
+  }
+  @media (max-width: _.$medium) {
+    margin-top: 6px;
+  }
+  @media (max-width: _.$small) {
+    font-size: 0.8125rem;
+    gap: 6px;
+  }
+}
+
+@mixin body {
+  font-size: 1rem;
+  line-height: 1.9;
+  color: _.$body-muted;
+  text-wrap: pretty;
+
+  @media (max-width: _.$large) {
+    font-size: 0.9375rem;
+  }
+  @media (max-width: _.$medium) {
+    font-size: 1rem;
+  }
+}
+
+@mixin action {
+  min-height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.875rem;
+
+  svg {
+    width: 15px;
+    height: 15px;
+    flex: none;
+  }
+}
+
+@mixin metadata {
+  color: _.$body-muted;
+  font-size: 0.75rem;
+  line-height: 1.8;
+}

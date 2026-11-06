@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 
 import {
+  Blog,
   Button,
   Projects,
   RoundButton,
@@ -291,21 +292,7 @@ export default function Home() {
           <Projects />
         </div>
         <div id="blog" className={`${styles.blog} ${styles.section}`} tabIndex={-1}>
-          <h2>{dictionary.blog.title}</h2>
-          <div className={styles.subtitle}>{dictionary.blog.subtitle}</div>
-          <hr />
-          <div className={styles.footer}>
-            <a
-              href="https://blog.byc1999.com/list"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button className="primary_fill xl">
-                <IconBlogText sideLength="28" />
-                {dictionary.blog.checkItOut}
-              </Button>
-            </a>
-          </div>
+          <Blog />
         </div>
       </div>
       {isMounted &&

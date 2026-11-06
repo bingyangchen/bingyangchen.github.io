@@ -117,7 +117,7 @@ About 顯示工作經歷、技能與教育。工作內容按資料順序，以 i
 
 Footer 提供聯絡文字、服務項目、社群與當年度姓名版權資訊。
 
-Blog 區塊連到外部文章列表。
+Blog 提供精選文章與外部完整筆記列表入口，詳細行為見 SITE-R17。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
@@ -125,7 +125,7 @@ Blog 區塊連到外部文章列表。
 | SITE-R6.1 工作與翻譯 | 工作順序與資料一致，各欄位使用目前語言內容；測試缺少翻譯的資料時回到對應資料值。 | unit |
 | SITE-R6.2 技能與教育 | 技能名稱及圖示與技能資料一致，教育連結指向經濟學系與金融科技學程。 | unit、manual |
 | SITE-R6.3 Footer 內容 | Footer 顯示完整 email、服務與三個社群入口，版權年度依執行時間，姓名依目前語言。 | unit、manual |
-| SITE-R6.4 外部部落格 | Blog CTA 開啟外部部落格列表，不產生站內文章閱讀或發表流程。 | browser、manual |
+| SITE-R6.4 外部部落格 | Blog 的完整筆記入口以新分頁開啟 `https://blog.byc1999.com/list`。 | browser、manual |
 
 ### SITE-R7 作品選取與詳情
 
@@ -249,6 +249,8 @@ stateDiagram-v2
 
 問候在載入與文字改變時逐字顯示，完成後移除游標；Hero 入場與下滑提示提供視覺引導。目前 reduced-motion 分支會停用部分 Hero 入場與下滑提示，其他動態的待處理事項見 [Roadmap](../roadmap.md#reduced-motion)。作品切換立即反映，圖片可短暫淡入並輕微位移；reduced-motion 下停用作品動畫及 transition，任何模式都不因作品選取自動捲動。
 
+使用 `IconArrowUpRight` 的連結共用同一種 Hover 回饋：有 Hover 能力且未啟用 reduced-motion 時，滑鼠移入整個連結即觸發箭頭向右上各位移 3 px，以 220 ms 過場；移出後回到原位。Reduced-motion 下箭頭維持原位且沒有過場。
+
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
@@ -257,6 +259,7 @@ stateDiagram-v2
 | SITE-R13.3 已有 Reduce 分支 | 模擬 reduced-motion，Hero 入場與下滑箭頭的停用分支生效；其餘動態的待處理事項見 [Roadmap](../roadmap.md#reduced-motion)。 | browser、manual |
 | SITE-R13.4 作品動態偏好 | 一般模式切換沒有 timer 等待；reduced-motion 下切換三個作品，沒有圖片位移動畫或自動捲動，選取及內容仍立即正確。 | browser、manual |
 | SITE-R13.5 導覽動態偏好 | 減少動態設定下 anchor 立即定位，Header 選單圖示與目前區塊提示沒有過場動畫，操作結果與一般模式相同。 | browser、manual |
+| SITE-R13.6 外連箭頭一致性 | Projects 與 Blog 中所有使用 `IconArrowUpRight` 的連結，在整個連結 Hover 時提供相同位移與過場，移出後回到原位；無 Hover 能力或啟用 reduced-motion 時，箭頭保持原位。 | browser、manual |
 
 ### SITE-R14 靜態輸出與 Prerender
 
@@ -293,3 +296,25 @@ Production build 在 CRA compile 後執行首頁 prerender，使用繁中與台�
 | SITE-R16.2 Robots 與 Sitemap | 靜態輸出保留 robots 與 sitemap，robots 指向正確的 sitemap 位置；不加入 `/resume`。 | browser |
 | SITE-R16.3 主分支發布 | `main` push 或對 `main` 手動觸發時，共同檢查通過後才以 `build/` 上傳與部署。 | manual |
 | SITE-R16.4 非主分支不得發布 | 對其他 ref 手動觸發時，不上傳 Pages artifact，也不執行 production deploy。 | manual |
+
+### SITE-R17 精選文章與閱讀入口
+
+Blog 顯示人工挑選的一篇主打文章與兩篇延伸閱讀，每篇提供分類、原文標題、符合文章內容的摘要及閱讀動作。主打文章另有與內容相關的示意。文章選擇維護於本站資料，與目前語言的介紹及摘要共同在 build 時輸出；瀏覽時可直接操作，不等待 GitBook 回應。
+
+兩種介面語言都保留文章原文標題。介紹、分類、摘要與閱讀動作依全站語言切換，英文介面在文章之前提示主要內容使用繁體中文，並在閱讀連結標示 GitBook。
+
+每篇文章以單一原生 anchor 開啟對應 GitBook 文章的新分頁，提供 `noopener noreferrer`。連結名稱包含文章標題與閱讀動作，目錄示意不重複加入輔助工具的連結名稱。
+
+大於 720 px 時，主打文章左文右圖，延伸閱讀並排；720 px 以下改為單欄，保留全部文章及完整筆記入口。各尺寸可用頁面捲動讀完內容，文章區塊不產生水平或巢狀捲動，互動區域至少 44 px 高。
+
+區塊標題、副標題、完整筆記外連與容器留白沿用 Projects 的響應式尺度。文章主要摘要、分類與閱讀動作的文字及圖示大小對齊對應的作品內容元素，文章標題保留主打與延伸閱讀的層級。
+
+<!-- prettier-ignore -->
+| 情境 | 條件、動作與結果 | 驗證方式 |
+| --- | --- | --- |
+| SITE-R17.1 精選內容 | 載入首頁時，顯示一篇主打文章與兩篇延伸閱讀，各篇標題、摘要及目的地符合本站維護的文章資料；示意對應主打文章內容。 | unit、manual |
+| SITE-R17.2 文章外連 | 用滑鼠、鍵盤與修飾鍵操作三篇文章，原生 anchor 指向各自 GitBook 文章，提供新分頁隔離，連結名稱包含標題與閱讀動作。 | unit、browser |
+| SITE-R17.3 雙語與原文 | 在兩種語言切換，文章選擇、順序、原文標題與目的地保留，介紹及摘要等介面文案更新；英文介面的語言提示出現在文章之前，繁中介面隱藏該提示。 | unit、browser、manual |
+| SITE-R17.4 各尺寸組成 | 檢查 320、390、512、720、721、1024 及 1440 px 的兩種語言，排列符合規則，共同元素的字級、字重、行高、連結尺寸與容器留白對齊 Projects；文字不裁切、沒有水平或巢狀捲動，全部入口可達且至少 44 px 高。 | browser、manual |
+| SITE-R17.5 互動回饋 | 鍵盤能依序到達完整筆記及三篇文章，焦點清楚；有 Hover 能力時閱讀動作提供回饋，reduced-motion 停用箭頭位移動畫。 | browser、manual |
+| SITE-R17.6 靜態可讀 | 檢查 production build 的首頁文件，包含精選標題、摘要及目的地；停用 JavaScript 或阻擋 GitBook 網路連線，仍可讀取並操作原生連結。 | browser |

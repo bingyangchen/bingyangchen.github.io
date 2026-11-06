@@ -1,9 +1,15 @@
 import { asIcon, type IconSvgChildProperties } from "./IconLayout";
+import styles from "./IconArrowUpRight.module.scss";
 
-function IconArrowUpRight(_properties: IconSvgChildProperties) {
+function ArrowUpRightPath(_properties: IconSvgChildProperties) {
   return (
-    <path d="M20,0H11c-.553,0-1,.448-1,1s.447,1,1,1h9c.179,0,.352,.024,.518,.068L.293,22.293c-.391,.391-.391,1.023,0,1.414,.195,.195,.451,.293,.707,.293s.512-.098,.707-.293L21.932,3.482c.044,.165,.068,.339,.068,.518V13c0,.552,.447,1,1,1s1-.448,1-1V4c0-2.206-1.794-4-4-4Z" />
+    <path d="M22,0H10V2h10.586L.043,22.543l1.414,1.414L22,3.414V14h2V2c0-1.103-.897-2-2-2Z" />
   );
 }
 
-export default asIcon(IconArrowUpRight);
+const ArrowUpRightSvg = asIcon(ArrowUpRightPath);
+
+export default function IconArrowUpRight(properties: IconSvgChildProperties) {
+  const className = [styles.main, properties.className].filter(Boolean).join(" ");
+  return <ArrowUpRightSvg {...properties} className={className} />;
+}

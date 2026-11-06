@@ -1,12 +1,8 @@
 @use "../../global_variables" as _;
+@use "../../section";
 
 .main {
-  width: min(100%, #{_.$extra-large});
-  margin-inline: auto;
-  box-sizing: border-box;
-  font-family: _.$body-font-family;
-  color: _.$theme-color;
-  padding: calc(_.$header-height + 38px) _.$desktop-content-padding 112px;
+  @include section.container;
   * {
     box-sizing: border-box;
     letter-spacing: normal;
@@ -27,41 +23,15 @@
   }
 
   .sectionHeader {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 32px;
-    margin-bottom: 48px;
-
+    @include section.header;
     h2.sectionTitle {
-      margin: 0;
-      font: normal clamp(2.75rem, 4.2vw, 3.5rem)/1.12 _.$heading-font-family;
-      letter-spacing: -0.025em;
-      text-align: left;
-      color: _.$theme-color;
+      @include section.title;
     }
     p {
-      margin: 20px 0 0;
-      color: _.$body-muted;
-      font-size: 1rem;
-      line-height: 1.8;
-      text-wrap: pretty;
+      @include section.description;
     }
     .github {
-      flex: none;
-      display: inline-flex;
-      min-height: 44px;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.875rem;
-      text-underline-offset: 5px;
-      svg {
-        width: 16px;
-        height: 16px;
-      }
-      &:hover {
-        text-decoration: underline;
-      }
+      @include section.link;
     }
   }
 
@@ -230,10 +200,7 @@
       .description {
         max-width: 35ch;
         margin: 20px 0 0;
-        font-size: 1rem;
-        line-height: 1.9;
-        color: _.$body-muted;
-        text-wrap: pretty;
+        @include section.body;
       }
       p,
       p span {
@@ -246,17 +213,7 @@
         gap: 12px 24px;
         margin-top: 28px;
         a {
-          min-height: 48px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          font-size: 0.875rem;
-          svg {
-            width: 15px;
-            height: 15px;
-            flex: none;
-          }
+          @include section.action;
         }
         .visit {
           border-radius: 24px;
@@ -279,14 +236,12 @@
         white-space: nowrap;
       }
       .projectMeta {
+        @include section.metadata;
         display: flex;
         align-items: center;
         flex-wrap: wrap;
         gap: 10px 12px;
         margin: 40px 0 0;
-        color: _.$body-muted;
-        font-size: 0.75rem;
-        line-height: 1.8;
         .metaSeparator {
           width: 1px;
           height: 12px;
@@ -297,7 +252,6 @@
   }
 
   @media (max-width: _.$large) {
-    padding: calc(_.$header-height + 14px) 32px 88px;
     .showcase {
       column-gap: 36px;
       .projectIntro {
@@ -307,9 +261,6 @@
         }
       }
       .projectContent {
-        .description {
-          font-size: 0.9375rem;
-        }
         .projectMeta {
           margin-top: 28px;
         }
@@ -348,22 +299,6 @@
   }
 
   @media (max-width: _.$medium) {
-    padding: calc(_.$header-height + 6px) 24px 88px;
-    .sectionHeader {
-      align-items: flex-start;
-      margin-bottom: 24px;
-      h2.sectionTitle {
-        font-size: 2.75rem;
-      }
-      p {
-        max-width: 30ch;
-        margin-top: 16px;
-        font-size: 0.9375rem;
-      }
-      .github {
-        margin-top: 6px;
-      }
-    }
     .projectPicker {
       gap: 32px;
       .projectTab {
@@ -422,7 +357,6 @@
         .description {
           max-width: 48ch;
           margin: 0;
-          font-size: 1rem;
         }
         .actions {
           margin-top: 20px;
@@ -435,17 +369,6 @@
   }
 
   @media (max-width: _.$small) {
-    padding: calc(_.$header-height + 22px) 24px 96px;
-    .sectionHeader {
-      gap: 12px;
-      .github {
-        font-size: 0.8125rem;
-        gap: 6px;
-      }
-      h2.sectionTitle {
-        font-size: 2.5rem;
-      }
-    }
     .projectPicker {
       justify-content: space-between;
       gap: 12px;

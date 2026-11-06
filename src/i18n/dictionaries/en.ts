@@ -27,10 +27,29 @@ export const englishDictionary: TranslationDictionary = {
     visitGithub: "GitHub",
   },
   blog: {
-    title: "BLOG",
-    subtitle:
-      "This is where I keep learning notes, technical write-ups, and some of the thinking behind them. A surprising number of things only make sense once you try to write them down.",
-    checkItOut: "Check it out",
+    title: "Blog",
+    subtitle: "Writing things down is how I find out whether I really understand them.",
+    browseAll: "Browse all notes",
+    featured: "Featured essay",
+    readArticle: "Read on GitBook",
+    articleLanguage: "Primarily in Traditional Chinese.",
+    articles: {
+      directoryStructure: {
+        category: "Software design",
+        summary:
+          "From layers to features: how the way we organize files shapes the dependencies between modules.",
+      },
+      rateLimiter: {
+        category: "System design",
+        summary:
+          "Five rate limiting algorithms, with trade-offs in burst traffic, accuracy, and implementation cost.",
+      },
+      cleanArchitecture: {
+        category: "Reading notes",
+        summary:
+          "Notes on dependency rules, framework coupling, and the trade-offs behind the principles.",
+      },
+    },
   },
   qrModal: { scanToConnect: "Scan to connect" },
   header: {

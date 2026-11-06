@@ -1,3 +1,5 @@
+import type { BlogArticleId } from "../data/articles";
+
 export type Language = "en" | "zh-TW";
 
 export interface TranslationDictionary {
@@ -14,7 +16,15 @@ export interface TranslationDictionary {
     nccuFintech: string;
   };
   projects: { title: string; subtitle: string; visitGithub: string };
-  blog: { title: string; subtitle: string; checkItOut: string };
+  blog: {
+    title: string;
+    subtitle: string;
+    browseAll: string;
+    featured: string;
+    readArticle: string;
+    articleLanguage: string;
+    articles: Record<BlogArticleId, { category: string; summary: string }>;
+  };
   qrModal: { scanToConnect: string };
   header: {
     home: string;

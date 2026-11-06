@@ -28,9 +28,26 @@ export const traditionalChineseDictionary: TranslationDictionary = {
   },
   blog: {
     title: "文章",
-    subtitle:
-      "這裡記錄的是學習筆記、技術心得，也包括一些把問題想清楚的過程。畢竟很多事一旦寫下來，才知道自己是不是真的懂了。",
-    checkItOut: "查看文章",
+    subtitle: "很多事寫下來之後，才知道自己是不是真的懂了。",
+    browseAll: "查看完整筆記",
+    featured: "精選文章",
+    readArticle: "閱讀全文",
+    articleLanguage: "文章以繁體中文為主。",
+    articles: {
+      directoryStructure: {
+        category: "軟體設計",
+        summary: "從依技術分層到依功能分組，重新理解目錄結構如何影響模組之間的依賴。",
+      },
+      rateLimiter: {
+        category: "系統設計",
+        summary:
+          "比較五種 rate limit 演算法，整理流量突增、精確度與實作成本之間的取捨。",
+      },
+      cleanArchitecture: {
+        category: "閱讀筆記",
+        summary: "從依賴方向到框架耦合，整理書中的原則與實務上的取捨。",
+      },
+    },
   },
   qrModal: { scanToConnect: "掃描以取得連結" },
   header: {
