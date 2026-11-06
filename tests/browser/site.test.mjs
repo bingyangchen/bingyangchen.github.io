@@ -1709,18 +1709,37 @@ test("SITE-R13.8 長段落與作品焦點", async () => {
   await openHome();
   const longContent =
     '#about [data-scroll-timeline]:nth-child(2) [data-scroll-motion="content"]';
-  assert.ok(
+
+  // Explicit lines keep this case taller than the viewport across fonts and copy changes.
+  await page.$eval(longContent, (element) => {
+    const description = element.lastElementChild;
+    description.replaceChildren();
+    for (let line = 0; line < 40; line++)
+      description.append("Work experience detail.", document.createElement("br"));
+  });
+  for (const fontFamily of ["Arial, sans-serif", "monospace"]) {
     await page.$eval(
       longContent,
-      (element) => element.offsetHeight > window.innerHeight,
-    ),
-  );
-  for (const top of [100, -250]) {
-    await moveMotionTarget(longContent, top);
-    const state = await getMotionState(longContent);
-    assert.equal(state.opacity, 1);
-    assert.equal(state.y, 0);
-    assert.equal(state.scale, 1);
+      (element, font) => {
+        element.style.fontFamily = font;
+      },
+      fontFamily,
+    );
+    await settleMotion();
+    assert.ok(
+      await page.$eval(
+        longContent,
+        (element) => element.offsetHeight > window.innerHeight,
+      ),
+      `Long-content fixture must exceed the viewport with ${fontFamily}`,
+    );
+    for (const top of [100, -250]) {
+      await moveMotionTarget(longContent, top);
+      const state = await getMotionState(longContent);
+      assert.equal(state.opacity, 1, fontFamily);
+      assert.equal(state.y, 0, fontFamily);
+      assert.equal(state.scale, 1, fontFamily);
+    }
   }
   await page.setViewport({ width: 1440, height: 900 });
   const stage = `${DETAIL} [data-scroll-motion="stage"]`;
