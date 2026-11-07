@@ -162,7 +162,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
       const entranceStart = height * getParameter("entrance-start");
       const exitStart = headerBottom + height * getParameter("exit-start");
       const exitEnd = headerBottom - height * getParameter("exit-end");
-      const focusedGroup = document.activeElement?.closest("[data-scroll-focus-group]");
       const poses = targets
         .filter(({ element }) => !element.closest("[inert]"))
         .map((target) => {
@@ -244,13 +243,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
             rotate = depth * getParameter(`${prefix}-rotation`) * depthScale;
             opacity = 1;
             scale = 1;
-          }
-          if (
-            target.element.matches(":focus-within") ||
-            focusedGroup?.contains(target.element)
-          ) {
-            x = y = tilt = rotate = 0;
-            opacity = scale = 1;
           }
           return { element: target.element, x, y, opacity, scale, tilt, rotate };
         });
@@ -341,8 +333,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
     window.addEventListener("scroll", schedule, { passive: true });
     window.addEventListener("resize", invalidate);
     scope.addEventListener("load", invalidate, true);
-    document.addEventListener("focusin", schedule);
-    document.addEventListener("focusout", schedule);
     document.addEventListener("visibilitychange", updateVisibility);
     reducedMotion.addEventListener("change", updatePreference);
     printMedia.addEventListener("change", updatePreference);
@@ -359,8 +349,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
       window.removeEventListener("scroll", schedule);
       window.removeEventListener("resize", invalidate);
       scope.removeEventListener("load", invalidate, true);
-      document.removeEventListener("focusin", schedule);
-      document.removeEventListener("focusout", schedule);
       document.removeEventListener("visibilitychange", updateVisibility);
       reducedMotion.removeEventListener("change", updatePreference);
       printMedia.removeEventListener("change", updatePreference);

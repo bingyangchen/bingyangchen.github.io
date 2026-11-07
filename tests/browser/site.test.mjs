@@ -2185,7 +2185,7 @@ test("SITE-R13.7 各段落三次往返還原與停止", async () => {
   }
 });
 
-test("SITE-R13.8 長段落與作品焦點", async () => {
+test("SITE-R13.8 長段落閱讀區", async () => {
   await page.setViewport({ width: 390, height: 844 });
   await openHome();
   const longContent =
@@ -2222,24 +2222,68 @@ test("SITE-R13.8 長段落與作品焦點", async () => {
       assert.equal(state.scale, 1, fontFamily);
     }
   }
-  await page.setViewport({ width: 1440, height: 900 });
+});
+
+test("SITE-R13.8 聚焦維持進退場與景深", async () => {
+  const hero = '#home [data-scroll-motion="hero"]';
   const stage = `${DETAIL} [data-scroll-motion="stage"]`;
-  await moveMotionTarget(stage, 700);
-  assert.ok((await getMotionState(stage)).opacity < 1);
-  const before = await page.evaluate(() => window.scrollY);
-  await page.$eval(DETAIL, (panel) => panel.focus({ preventScroll: true }));
-  await settleMotion();
-  assert.equal(await page.evaluate(() => window.scrollY), before);
-  for (const kind of ["content", "stage", "device", "secondary-device"]) {
-    const state = await getMotionState(`${DETAIL} [data-scroll-motion="${kind}"]`);
-    assert.equal(state.opacity, 1);
-    assert.equal(state.scale, 1);
-    assert.equal(state.x, 0);
-    assert.equal(state.y, 0);
+  const feature = '#blog [data-scroll-motion="feature"]';
+  const reading = '#blog [data-scroll-motion="content"]';
+  const cases = [
+    { anchor: hero, targets: [hero], focus: [`${hero} a`] },
+    {
+      anchor: stage,
+      targets: [
+        `${DETAIL} > [data-scroll-motion="content"]:first-child`,
+        stage,
+        `${DETAIL} [data-scroll-motion="device"]`,
+        `${DETAIL} [data-scroll-motion="secondary-device"]`,
+        `${DETAIL} > [data-scroll-motion="content"]:last-child`,
+      ],
+      focus: [DETAIL, `${DETAIL} a`],
+    },
+    { anchor: feature, targets: [feature], focus: [feature] },
+    { anchor: reading, targets: [reading], focus: [reading] },
+  ];
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewport(viewport);
+    await openHome();
+    for (const { anchor, targets, focus } of cases) {
+      const height = await page.$eval(anchor, (element) => element.offsetHeight);
+      const positions =
+        anchor === hero ? [-250] : [viewport.height * 0.78, -height + 100];
+      const getStates = () => Promise.all(targets.map(getMotionState));
+      for (const position of positions) {
+        await moveMotionTarget(anchor, position);
+        const before = await getStates();
+        assert.ok(before[anchor === stage ? 1 : 0].opacity < 1, anchor);
+        const scrollTop = await page.evaluate(() => window.scrollY);
+        for (const selector of focus) {
+          await page.$eval(selector, (element) =>
+            element.focus({ preventScroll: true }),
+          );
+          await settleMotion();
+          assert.equal(await page.evaluate(() => window.scrollY), scrollTop);
+          assert.deepEqual(await getStates(), before, `${selector} focused`);
+          await page.evaluate(
+            (top) => window.scrollTo({ top: top - 40, behavior: "instant" }),
+            scrollTop,
+          );
+          await settleMotion();
+          const focusedScroll = await getStates();
+          assert.notDeepEqual(focusedScroll, before, `${selector} scrolls with focus`);
+          await page.$eval(selector, (element) => element.blur());
+          await settleMotion();
+          assert.deepEqual(await getStates(), focusedScroll, `${selector} blurred`);
+          await moveMotionTarget(anchor, position);
+          assert.deepEqual(await getStates(), before, `${selector} restored`);
+        }
+      }
+    }
   }
-  await page.focus("[data-language-switcher]");
-  await settleMotion();
-  assert.ok((await getMotionState(stage)).opacity < 1);
 });
 
 test("SITE-R13.9 Hash 直達與重載的動態狀態", async () => {

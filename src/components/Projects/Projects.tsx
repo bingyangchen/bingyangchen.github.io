@@ -159,7 +159,6 @@ export default function Projects() {
               id={`${id}-panel-${index}`}
               className={styles.showcase}
               role="tabpanel"
-              data-scroll-focus-group=""
               aria-labelledby={`${id}-tab-${index}`}
               aria-hidden={!selected}
               tabIndex={selected ? 0 : -1}

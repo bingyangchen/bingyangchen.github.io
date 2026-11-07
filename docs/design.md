@@ -47,7 +47,7 @@ Maintain a calm, professional presentation with readable hierarchy and restraine
 Motion should support reading and navigation, with a clear purpose and respect for reduced-motion preferences.
 
 - Keep section navigation and browser history predictable, and preserve focus continuity.
-- Keep navigation, contact actions, and project details usable on smaller screens and with keyboard input.
+- Keep navigation, contact actions, and project details usable on smaller screens and with keyboard input. Focus preserves the scroll-driven position, scale, tilt, and opacity, including partially entered or exited content.
 - Keep body text selectable and copyable through native browser interactions, including descriptions inside article links. Keep buttons, navigation, and action labels unselectable.
 - Keep the viewport configured to disable user scaling.
 - Provide immediate feedback for navigation and toggles, with visible keyboard focus and comfortable touch targets.
