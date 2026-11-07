@@ -21,10 +21,6 @@
   &:active {
     background-color: _.$transparent-black;
   }
-  &:focus-visible {
-    outline: 2px solid _.$brand-olive-ink;
-    outline-offset: 3px;
-  }
   @media (hover: hover) {
     &:hover {
       color: _.$deep-gray;

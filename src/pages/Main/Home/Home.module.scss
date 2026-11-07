@@ -1,13 +1,21 @@
 @use "../../../global_variables" as _;
 @use "../../../motion";
+@use "../../../focus";
 
 .main {
+  --focus-color: #{_.$focus-color-content};
+
   @include motion.scope;
   display: flex;
   flex-direction: column;
   width: 100%;
   & > .section {
     min-height: 100vh;
+    @media screen {
+      &:focus-visible {
+        outline-offset: -(_.$focus-ring-width);
+      }
+    }
     &:nth-child(odd) {
       background-color: _.$noisy-white;
     }
@@ -64,6 +72,11 @@
     box-sizing: border-box;
     overflow: hidden;
     isolation: isolate;
+    @media screen {
+      &:focus-visible {
+        @include focus.inset-outline;
+      }
+    }
     & > .home_atmosphere {
       position: absolute;
       inset: -20%;
@@ -276,10 +289,6 @@
           border-color: rgba(159, 167, 110, 0.28);
         }
       }
-      &:focus-visible {
-        outline: 2px solid _.$brand-olive;
-        outline-offset: 2px;
-      }
     }
     & .role_badge_company_logo {
       flex-shrink: 0;
@@ -415,10 +424,6 @@
       user-select: none;
       min-width: 0;
       min-height: _.$minimum-control-size;
-      &:focus-visible {
-        outline: 2px solid _.$brand-olive-ink;
-        outline-offset: 4px;
-      }
     }
     & .cta_toolbar {
       display: flex;
@@ -586,6 +591,8 @@
 }
 
 .qr_modal_overlay {
+  --focus-color: #{_.$focus-color-content};
+
   position: fixed;
   inset: 0;
   display: flex;
@@ -635,10 +642,6 @@
       &:hover {
         background-color: rgba(0, 0, 0, 0.05);
       }
-    }
-    &:focus-visible {
-      outline: 2px solid _.$brand-olive-ink;
-      outline-offset: 2px;
     }
   }
   & > .qr_modal_content {

@@ -37,6 +37,7 @@ Language selection remains available when browser storage is blocked. Keep the v
 Maintain a calm, professional presentation with readable hierarchy and restrained accents.
 
 - **Palette:** Neutral backgrounds and dark text, with olive as an accent.
+- **Consistency:** Equivalent roles and surfaces share visual rules. Vary color or treatment when contrast, hierarchy, or layout gives the difference a purpose.
 - **Typography:** Geneva/sans-serif for body and UI text; Georgia/Times/serif for established section titles and subtitles. Preserve the existing hierarchy and spacing rhythm.
 - **Shared section scale:** Projects and Blog use the same responsive container spacing, section titles, introductory text, metadata, and equivalent external-link sizes. Preserve each section's content hierarchy.
 - **Layout:** Keep sections distinct and reading widths comfortable. Align the header with the page's centered content bounds while allowing full-width surfaces. Adapt composition to the viewport and the surrounding layout.
@@ -52,6 +53,7 @@ Motion should support reading and navigation, with a clear purpose and respect f
 - Keep body text selectable and copyable through native browser interactions, including descriptions inside article links. Keep buttons, navigation, and action labels unselectable.
 - Keep the viewport configured to disable user scaling.
 - Provide immediate feedback for navigation and toggles, with visible keyboard focus and comfortable touch targets.
+- Focus indicators share a consistent line weight and use the existing palette by context: charcoal for the Header, main landmark, and resume preview; dark olive for homepage content and the QR code dialog; light olive for the dark Footer. Filled buttons follow their region's focus color when the outline sits on a light surrounding surface. Keep spacing consistent within ordinary controls and large content surfaces, and use inset outlines for full-width navigation targets. Preserve each control's shape and the system's focus colors in forced-colors mode.
 - Links using `IconArrowUpRight` share the same subtle arrow movement when the link is hovered. Disable that movement when reduced motion is requested.
 
 The main page uses clearly perceptible, reversible motion tied to scroll position. Content unfolds across the lower half of the viewport, stays still and fully readable through the reading area, and recedes toward the top. Scrolling back retraces the same motion without a replay delay. Project imagery carries the strongest depth effect through scale, tilt, and layered movement; professional history uses a drawing timeline and grouped entrances, while article text settles into a stable reading position. Keep primary navigation and project controls stable, preserve native scrolling, and show complete static content when reduced motion is requested. Greetings appear in full and skills remain available in a wrapping list without timed animation.

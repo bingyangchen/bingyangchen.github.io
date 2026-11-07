@@ -2720,3 +2720,331 @@ test("SITE-R13.11 靜態內容與列印隔離", async () => {
   await page.goBack();
   await page.waitForSelector("[data-scroll-motion-active]");
 });
+
+async function assertFocusRing(color, offset = 3) {
+  await page.waitForFunction(
+    (expectedOffset) => {
+      const style = getComputedStyle(document.activeElement);
+      return (
+        style.outlineWidth === "2px" && style.outlineOffset === `${expectedOffset}px`
+      );
+    },
+    {},
+    offset,
+  );
+  const ring = await page.evaluate(() => {
+    const element = document.activeElement;
+    const style = getComputedStyle(element);
+    return {
+      color: style.outlineColor,
+      width: style.outlineWidth,
+      style: style.outlineStyle,
+      offset: style.outlineOffset,
+      visible: element.matches(":focus-visible"),
+    };
+  });
+  assert.deepEqual(ring, {
+    color,
+    width: "2px",
+    style: "solid",
+    offset: `${offset}px`,
+    visible: true,
+  });
+}
+
+test("SITE-R18.1 依區域與控制尺寸共用鍵盤焦點框", async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await openHome();
+  for (const width of [1440, 390]) {
+    await page.setViewport({ width, height: width === 1440 ? 900 : 844 });
+    for (const language of ["en", "zh-TW"]) {
+      await page.evaluate(() => localStorage.setItem("preferred_language", "en"));
+      await openHome();
+      if (language === "zh-TW")
+        await page.$eval("[data-language-switcher]", (element) => element.click());
+      const reached = { header: 0, content: 0, footer: 0, surfaces: 0 };
+      for (let index = 0; index < 40; index += 1) {
+        await page.keyboard.press("Tab");
+        const target = await page.evaluate(() => {
+          const element = document.activeElement;
+          return {
+            body: element === document.body,
+            skip: element.getAttribute("href") === "#main-content",
+            region: element.closest("header")
+              ? "header"
+              : element.closest("footer")
+                ? "footer"
+                : "content",
+            surface:
+              element.getAttribute("role") === "tabpanel" ||
+              (element.closest("#blog") && !element.className.includes("archiveLink")),
+            menu: element.getAttribute("aria-controls") === "site-navigation",
+          };
+        });
+        if (target.body || (index > 0 && target.skip)) break;
+        reached[target.region] += 1;
+        if (target.surface) reached.surfaces += 1;
+        await assertFocusRing(
+          target.region === "header"
+            ? "rgb(34, 34, 34)"
+            : target.region === "footer"
+              ? "rgb(159, 167, 110)"
+              : "rgb(82, 92, 48)",
+          target.surface ? 5 : 3,
+        );
+        if (target.menu) await page.keyboard.press("Enter");
+      }
+      assert.equal(reached.header, width === 1440 ? 6 : 7);
+      assert.equal(reached.content, 20);
+      assert.equal(reached.footer, 4);
+      assert.equal(reached.surfaces, 4);
+
+      await page.focus(`${TABS}:first-child`);
+      for (let index = 0; index < 3; index += 1) {
+        await assertFocusRing("rgb(82, 92, 48)");
+        assert.equal(
+          await page.$eval(`${TABS}:nth-child(${index + 1})`, (element) =>
+            element.getAttribute("aria-selected"),
+          ),
+          "true",
+        );
+        await page.keyboard.press("Tab");
+        await assertFocusRing("rgb(82, 92, 48)", 5);
+        await page.keyboard.press("Tab");
+        await assertFocusRing("rgb(82, 92, 48)");
+        await page.keyboard.press("Tab");
+        await assertFocusRing("rgb(82, 92, 48)");
+        await page.focus(`${TABS}:nth-child(${index + 1})`);
+        if (index < 2) await page.keyboard.press("ArrowRight");
+      }
+
+      await page.focus(QR);
+      await page.keyboard.press("Enter");
+      await page.waitForSelector(`${QR_DIALOG}[open]`);
+      await assertFocusRing("rgb(82, 92, 48)");
+      await page.keyboard.press("Escape");
+      await assertFocusRing("rgb(82, 92, 48)");
+
+      await enterPreview();
+      await page.focus('[class*="resumePage"] button');
+      await assertFocusRing("rgb(34, 34, 34)");
+      await page.focus('[data-resume-root] a[href^="mailto:"]');
+      await assertFocusRing("rgb(34, 34, 34)");
+    }
+  }
+});
+
+test("SITE-R18.2 深淺背景對比與滿版目的地的實際可見框線", async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await openHome();
+  await page.keyboard.press("Tab");
+  for (const [selector, surface] of [
+    ["header [data-language-switcher]", ".site-layout"],
+    [`${DETAIL} a[class*="visit"]`, "#projects"],
+    ['#blog a[class*="featured"]', ".site-layout"],
+    ['footer a[title="GitHub"]', "footer"],
+  ]) {
+    await page.$eval(selector, (element) => {
+      element.scrollIntoView({ block: "center", behavior: "instant" });
+      element.focus({ preventScroll: true });
+    });
+    await settleMotion();
+    const colors = await page.$eval(
+      selector,
+      (element, surfaceSelector) => [
+        getComputedStyle(element).outlineColor,
+        getComputedStyle(document.querySelector(surfaceSelector)).backgroundColor,
+      ],
+      surface,
+    );
+    const luminances = colors.map((color) => {
+      const channels = color
+        .match(/[\d.]+/g)
+        .slice(0, 3)
+        .map(Number)
+        .map((value) => {
+          const channel = value / 255;
+          return channel <= 0.04045
+            ? channel / 12.92
+            : ((channel + 0.055) / 1.055) ** 2.4;
+        });
+      return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+    });
+    assert.ok(
+      (Math.max(...luminances) + 0.05) / (Math.min(...luminances) + 0.05) >= 3,
+      `${selector}: ${colors.join(" on ")}`,
+    );
+  }
+
+  for (const width of [1440, 390]) {
+    await page.setViewport({ width, height: 900 });
+    await page.evaluate(() => localStorage.setItem("preferred_language", "en"));
+    await openHome();
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Enter");
+    assert.equal(await page.evaluate(() => document.activeElement.id), "main-content");
+    await assertFocusRing("rgb(34, 34, 34)", -2);
+    await assertVisibleEdges([34, 34, 34]);
+    for (const section of ["home", "about", "projects", "blog"]) {
+      if (width === 390) {
+        await page.focus('header button[aria-controls="site-navigation"]');
+        await page.keyboard.press("Enter");
+      }
+      await page.focus(`header a[href="#${section}"]`);
+      await page.keyboard.press("Enter");
+      await waitForSection(section);
+      assert.equal(await page.evaluate(() => document.activeElement.id), section);
+      await assertFocusRing("rgb(82, 92, 48)", -2);
+      await assertVisibleEdges([82, 92, 48]);
+      assert.equal(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth > window.innerWidth,
+        ),
+        false,
+      );
+    }
+  }
+});
+
+async function assertVisibleEdges(color) {
+  await settleMotion();
+  const screenshot = await page.screenshot({ encoding: "base64" });
+  const edges = await page.evaluate(async (base64) => {
+    const image = new Image();
+    image.src = `data:image/png;base64,${base64}`;
+    await image.decode();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.width;
+    canvas.height = image.height;
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0);
+    const scale = image.width / window.innerWidth;
+    const y = Math.round(
+      (document.querySelector("header").getBoundingClientRect().bottom + 20) * scale,
+    );
+    return [0, image.width - 1].map((x) =>
+      [...context.getImageData(x, y, 1, 1).data].slice(0, 3),
+    );
+  }, screenshot);
+  assert.deepEqual(edges, [color, color]);
+}
+
+test("SITE-R18.3 強制色彩使用系統焦點色並保留外框", async () => {
+  // Puppeteer's media-feature helper does not support forced-colors.
+  const client = await page.createCDPSession();
+  await client.send("Emulation.setEmulatedMedia", {
+    media: "screen",
+    features: [
+      { name: "forced-colors", value: "active" },
+      { name: "prefers-reduced-motion", value: "reduce" },
+    ],
+  });
+  await openHome();
+  assert.equal(
+    await page.evaluate(() => matchMedia("(forced-colors: active)").matches),
+    true,
+  );
+  const systemColor = await page.evaluate(() => {
+    const sample = document.createElement("span");
+    sample.style.color = "Highlight";
+    document.body.append(sample);
+    const color = getComputedStyle(sample).color;
+    sample.remove();
+    return color;
+  });
+  await page.keyboard.press("Tab");
+  for (const [selector, offset] of [
+    ["[data-language-switcher]", 3],
+    [TABS, 3],
+    [DETAIL, 5],
+    [`${DETAIL} a`, 3],
+    ['#blog a[class*="featured"]', 5],
+    ['footer a[title="GitHub"]', 3],
+  ]) {
+    await page.focus(selector);
+    await assertFocusRing(systemColor, offset);
+  }
+  await page.focus(QR);
+  await page.keyboard.press("Enter");
+  await page.waitForSelector(`${QR_DIALOG}[open]`);
+  await assertFocusRing(systemColor);
+  await page.keyboard.press("Escape");
+  await assertFocusRing(systemColor);
+});
+
+test("SITE-R18.4 焦點樣式保留輸入方式、選取、dialog 與列印行為", async () => {
+  for (const reduced of [false, true]) {
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: reduced ? "reduce" : "no-preference" },
+    ]);
+    await openHome("#projects");
+    await selectProject(2);
+    assert.equal(
+      await page.$eval(`${TABS}:nth-child(2)`, (element) =>
+        element.matches(":focus-visible"),
+      ),
+      false,
+    );
+    await page.keyboard.press("Tab");
+    await assertFocusRing("rgb(82, 92, 48)", 5);
+    await page.keyboard.down("Shift");
+    await page.keyboard.press("Tab");
+    await page.keyboard.up("Shift");
+    await assertFocusRing("rgb(82, 92, 48)");
+    await page.keyboard.press("End");
+    assert.equal(
+      await page.$eval(`${TABS}:nth-child(3)`, (element) =>
+        element.getAttribute("aria-selected"),
+      ),
+      "true",
+    );
+    await page.keyboard.press("Home");
+    await page.keyboard.press("ArrowRight");
+    assert.equal(
+      await page.$eval(`${TABS}:nth-child(2)`, (element) =>
+        element.getAttribute("aria-selected"),
+      ),
+      "true",
+    );
+    assert.equal(
+      await page.$eval('header a[href="#projects"]', (element) =>
+        element.getAttribute("aria-current"),
+      ),
+      "location",
+    );
+
+    await page.focus(QR);
+    await page.keyboard.press("Enter");
+    await page.waitForSelector(`${QR_DIALOG}[open]`);
+    await assertFocusRing("rgb(82, 92, 48)");
+    await page.keyboard.press("Escape");
+    assert.ok(await page.$eval(QR, (element) => document.activeElement === element));
+    await assertFocusRing("rgb(82, 92, 48)");
+    await enterPreview();
+    await page.focus('[data-resume-root] a[href^="mailto:"]');
+    await assertFocusRing("rgb(34, 34, 34)");
+    await page.emulateMediaType("print");
+    const printRing = await page.evaluate(() => {
+      const style = getComputedStyle(document.activeElement);
+      return { style: style.outlineStyle, offset: style.outlineOffset };
+    });
+    const browserPrintRing = await page.evaluate(() => {
+      const sheets = [...document.styleSheets].filter((sheet) => !sheet.disabled);
+      sheets.forEach((sheet) => {
+        sheet.disabled = true;
+      });
+      const style = getComputedStyle(document.activeElement);
+      const ring = { style: style.outlineStyle, offset: style.outlineOffset };
+      sheets.forEach((sheet) => {
+        sheet.disabled = false;
+      });
+      return ring;
+    });
+    assert.deepEqual(printRing, browserPrintRing);
+    await page.emulateMediaType("screen");
+  }
+});

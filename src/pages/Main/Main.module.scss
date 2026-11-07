@@ -1,8 +1,14 @@
 @use "../../global_variables" as _;
+@use "../../focus";
 
 .main {
   display: flex;
   flex-direction: column;
   width: 100%;
   background-color: _.$white;
+  @media screen {
+    & > main:focus-visible {
+      @include focus.inset-outline;
+    }
+  }
 }

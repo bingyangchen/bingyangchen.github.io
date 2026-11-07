@@ -35,8 +35,6 @@
   }
   a:focus-visible,
   button:focus-visible {
-    outline: 2px solid _.$theme-color;
-    outline-offset: 3px;
     border-radius: 4px;
   }
   & > .skip_link {

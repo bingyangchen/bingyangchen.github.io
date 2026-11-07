@@ -48,3 +48,16 @@ a {
   text-decoration: none;
   color: inherit;
 }
+
+@media screen {
+  :focus-visible {
+    outline: _.$focus-ring-width solid var(--focus-color, #{_.$focus-color-neutral});
+    outline-offset: _.$focus-ring-offset;
+  }
+
+  @media (forced-colors: active) {
+    :focus-visible {
+      outline-color: Highlight;
+    }
+  }
+}

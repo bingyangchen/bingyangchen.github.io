@@ -15,12 +15,6 @@
     font: inherit;
     cursor: pointer;
   }
-  a:focus-visible,
-  button:focus-visible,
-  [role="tabpanel"]:focus-visible {
-    outline: 2px solid _.$theme-color;
-    outline-offset: 5px;
-  }
 
   .sectionHeader {
     @include section.header;
@@ -98,6 +92,11 @@
     align-items: start;
     padding-top: 48px;
     min-width: 0;
+    @media screen {
+      &:focus-visible {
+        outline-offset: _.$focus-ring-surface-offset;
+      }
+    }
     &[inert] {
       visibility: hidden;
     }

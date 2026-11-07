@@ -24,10 +24,6 @@
       text-underline-offset: 5px;
     }
   }
-  &:focus-visible {
-    outline: 2px solid _.$theme-color;
-    outline-offset: 3px;
-  }
   &:active {
     opacity: 0.65;
   }
