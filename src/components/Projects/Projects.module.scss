@@ -124,10 +124,6 @@
         letter-spacing: -0.025em;
         text-wrap: balance;
       }
-      h3,
-      p {
-        user-select: text;
-      }
     }
 
     .productStage {
@@ -201,10 +197,6 @@
         max-width: 35ch;
         margin: 20px 0 0;
         @include section.body;
-      }
-      p,
-      p span {
-        user-select: text;
       }
       .actions {
         display: flex;

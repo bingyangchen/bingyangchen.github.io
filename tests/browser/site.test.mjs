@@ -126,6 +126,38 @@ async function enterPreview() {
   await page.waitForSelector('[class*="resumePage"]');
 }
 
+async function dragText(selector) {
+  await page.$eval(selector, (element) =>
+    element.scrollIntoView({ block: "center", behavior: "instant" }),
+  );
+  await settleMotion();
+  const selection = await page.$eval(selector, (element) => {
+    window.getSelection().removeAllRanges();
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    let text = walker.nextNode();
+    while (text && !text.textContent.trim()) text = walker.nextNode();
+    const start = text.textContent.search(/\S/);
+    const end = Math.min(start + 8, text.textContent.length);
+    const range = document.createRange();
+    range.setStart(text, start);
+    range.setEnd(text, start + 1);
+    const first = range.getBoundingClientRect();
+    range.setStart(text, end - 1);
+    range.setEnd(text, end);
+    const last = range.getBoundingClientRect();
+    return {
+      start: { x: first.left + 0.1, y: first.top + first.height / 2 },
+      end: { x: last.right - 0.1, y: last.top + last.height / 2 },
+      text: text.textContent.slice(start, end),
+    };
+  });
+  await page.mouse.move(selection.start.x, selection.start.y);
+  await page.mouse.down();
+  await page.mouse.move(selection.end.x, selection.end.y, { steps: 16 });
+  await page.mouse.up();
+  return selection.text;
+}
+
 async function getPrintResult() {
   await page.emulateMediaType("print");
   await page.waitForFunction(
@@ -1047,6 +1079,133 @@ test("SITE-R12.3 作品詳情分支", async () => {
   }
 });
 
+test("SITE-R12.5 正文可拖選並以原生複製取得文字", { timeout: 45000 }, async () => {
+  await openHome();
+  await context.overridePermissions(server.origin, [
+    "clipboard-read",
+    "clipboard-write",
+  ]);
+  for (const language of ["en", "zh-TW"]) {
+    if (language === "zh-TW") {
+      await page.setViewport({ width: 1440, height: 900 });
+      await page.click("[data-language-switcher]");
+      await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
+    }
+    for (const width of [1440, 390]) {
+      await page.setViewport({ width, height: 900 });
+      for (const selector of [
+        '#about [class*="description"]',
+        `${DETAIL} [class*="description"]`,
+        '#blog [class*="featuredCopy"] p',
+        '#blog [class*="reading"] p',
+        'footer [class*="contact_me"] [class*="body"]',
+      ]) {
+        const expected = await dragText(selector);
+        assert.equal(
+          await page.evaluate(() => window.getSelection().toString()),
+          expected,
+          `${language}, ${width}px: ${selector}`,
+        );
+        assert.equal(
+          await page.evaluate(() => document.hasFocus()),
+          true,
+          "dragging text keeps the page active for copying",
+        );
+        await page.keyboard.press("KeyC", { commands: ["Copy"] });
+        assert.equal(
+          await page.evaluate(() => navigator.clipboard.readText()),
+          expected,
+          "native copy preserves the selected body text",
+        );
+      }
+    }
+  }
+});
+
+test(
+  "SITE-R12.5 SITE-R12.6 觸控與桌面均依文字用途設定選取",
+  { timeout: 45000 },
+  async () => {
+    await openHome();
+    for (const language of ["en", "zh-TW"]) {
+      if (language === "zh-TW") {
+        await page.setViewport({ width: 1440, height: 900 });
+        await page.click("[data-language-switcher]");
+        await page.waitForFunction(() => document.documentElement.lang === "zh-TW");
+      }
+      for (const hasTouch of [false, true]) {
+        await page.setViewport({ width: hasTouch ? 390 : 1440, height: 900, hasTouch });
+        if (hasTouch) await page.click('header button[aria-expanded="false"]');
+        const styles = await page.evaluate(() => {
+          const bodySelectors = [
+            "#home h1",
+            '#home [class*="greeting"]',
+            '#about [class*="job_title"]',
+            '#about [class*="company_name"]',
+            '#about [class*="description"]',
+            '#about [class*="degree_list"] a',
+            '#projects [role="tabpanel"]:not([inert]) h3',
+            '#projects [role="tabpanel"]:not([inert]) p span',
+            '#blog [class*="featuredCopy"] h3',
+            '#blog [class*="featuredCopy"] p',
+            '#blog [class*="reading"] p',
+            'footer [class*="contact_me"] [class*="body"]',
+            'footer [class*="services"] [class*="item"]',
+          ];
+          const controlSelectors = [
+            "button",
+            "button span",
+            "header nav a",
+            '#home [class*="nav_ghost"] span',
+            '#projects [class*="actions"] a',
+            '#blog [class*="archiveLink"] span',
+            '#blog [class*="featuredAction"] span',
+            '#blog [class*="readingAction"]',
+            'footer [class*="social_media"] a span',
+            'footer [class*="product_name"]',
+          ];
+          function getSelectionStyles(selectors) {
+            return selectors.flatMap((selector) => {
+              const elements = [...document.querySelectorAll(selector)].filter(
+                (element) => element.getBoundingClientRect().height > 0,
+              );
+              if (!elements.length)
+                throw new Error(`Missing visible text: ${selector}`);
+              return elements.map((element) => ({
+                selector,
+                value: getComputedStyle(element).userSelect,
+              }));
+            });
+          }
+          return {
+            body: getSelectionStyles(bodySelectors),
+            controls: getSelectionStyles(controlSelectors),
+            email: getComputedStyle(
+              document.querySelector('#home [class*="email_link"] span'),
+            ).userSelect,
+          };
+        });
+        for (const { selector, value } of styles.body)
+          assert.ok(["auto", "text"].includes(value), `${selector}: ${value}`);
+        for (const { selector, value } of styles.controls)
+          assert.equal(value, "none", selector);
+        assert.equal(styles.email, "all");
+        if (hasTouch) await page.click('header button[aria-expanded="true"]');
+      }
+    }
+    await page.setViewport({ width: 1440, height: 900, hasTouch: false });
+    await dragText('header a[href="#about"]');
+    assert.equal(await page.evaluate(() => window.getSelection().toString()), "");
+    await page.click('header a[href="#projects"]');
+    await page.waitForFunction(() => window.location.hash === "#projects");
+    await selectProject(2);
+    assert.equal(
+      await page.$eval(`${DETAIL} h3`, (element) => element.textContent),
+      "Noads",
+    );
+  },
+);
+
 test("SITE-R13.4 作品動態偏好", async () => {
   await openHome();
   await selectProject(2);
@@ -1553,6 +1712,8 @@ test("SITE-R17.2 SITE-R17.3 文章鍵盤啟用與雙語", { timeout: 45000 }, as
   for (const selector of selectors) {
     const destination = await page.$eval(selector, (link) => link.href);
     for (const activation of ["keyboard", "mouse", "modifier"]) {
+      await page.bringToFront();
+      await dragText(`${selector} p`);
       const existingTargets = new Set(browser.targets());
       const popupTarget = browser.waitForTarget(
         (target) =>
@@ -1569,12 +1730,12 @@ test("SITE-R17.2 SITE-R17.3 文章鍵盤啟用與雙語", { timeout: 45000 }, as
         const modifier = process.platform === "darwin" ? "Meta" : "Control";
         await page.keyboard.down(modifier);
         try {
-          await page.click(selector);
+          await page.click(`${selector} p`);
         } finally {
           await page.keyboard.up(modifier);
         }
       } else {
-        await page.click(selector);
+        await page.click(`${selector} p`);
       }
       const target = await popupTarget;
       assert.equal(target.url(), destination, activation);

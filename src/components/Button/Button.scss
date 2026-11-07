@@ -17,7 +17,6 @@
   height: fit-content;
   transition-duration: $transition-duration;
   letter-spacing: _.$base-letter-spacing;
-  user-select: none;
   cursor: pointer;
   &::before {
     content: "";

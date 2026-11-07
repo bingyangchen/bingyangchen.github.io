@@ -16,14 +16,6 @@
 
 相關規格：[SITE-R10](specs/site.md#site-r10-履歷來源與列印入口)、[SITE-R11](specs/site.md#site-r11-pdf-內容與版面)、[SITE-R1.3](specs/site.md#site-r1-頁面與公開範圍)；相關問題：[短螢幕裁切](#短螢幕裁切)。
 
-### 正文選取與複製
-
-已確認工作經歷、作品說明等正文可選取與複製，按鈕與操作控制維持不可選取。
-
-現況多數文字預設不可選取，email 等另有例外。後續需依文字用途調整，並驗證桌面選取與手機長按。
-
-相關規格：[SITE-R5](specs/site.md#site-r5-hero-與聯絡資訊)、[SITE-R12](specs/site.md#site-r12-響應式組成)。
-
 ## 已確認問題
 
 ### 短螢幕裁切

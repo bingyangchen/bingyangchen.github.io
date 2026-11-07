@@ -19,11 +19,15 @@ body {
 *:after {
   scroll-behavior: smooth;
   box-sizing: border-box;
-  user-select: none;
   letter-spacing: _.$base-letter-spacing;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 img {

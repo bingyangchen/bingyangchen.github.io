@@ -13,6 +13,8 @@
   color: _.$theme-color;
   z-index: 20;
   font-family: _.$body-font-family;
+  -webkit-user-select: none;
+  user-select: none;
 
   @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
     background: rgba(_.$white, 0.78);

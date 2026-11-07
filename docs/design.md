@@ -48,6 +48,7 @@ Motion should support reading and navigation, with a clear purpose and respect f
 
 - Keep section navigation and browser history predictable, and preserve focus continuity.
 - Keep navigation, contact actions, and project details usable on smaller screens and with keyboard input.
+- Keep body text selectable and copyable through native browser interactions, including descriptions inside article links. Keep buttons, navigation, and action labels unselectable.
 - Keep the viewport configured to disable user scaling.
 - Provide immediate feedback for navigation and toggles, with visible keyboard focus and comfortable touch targets.
 - Links using `IconArrowUpRight` share the same subtle arrow movement when the link is hovered. Disable that movement when reduced motion is requested.

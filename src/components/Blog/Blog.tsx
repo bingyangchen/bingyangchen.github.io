@@ -1,8 +1,10 @@
-import { useId } from "react";
+import { MouseEvent, PointerEvent, useId, useRef } from "react";
 import { additionalArticles, featuredArticle } from "../../data/articles";
 import { useTranslation } from "../../i18n/context";
 import { IconArrowUpRight } from "../../icons";
 import styles from "./Blog.module.scss";
+
+const TEXT_SELECTION_DRAG_DISTANCE = 4;
 
 function DirectoryIllustration() {
   return (
@@ -53,6 +55,34 @@ export default function Blog() {
   const { dictionary, language } = useTranslation();
   const id = useId();
   const featuredCopy = dictionary.blog.articles[featuredArticle.id];
+  const articlePointerOrigin = useRef<{ x: number; y: number } | null>(null);
+
+  function handleArticlePointerDown(event: PointerEvent<HTMLAnchorElement>) {
+    articlePointerOrigin.current = { x: event.clientX, y: event.clientY };
+  }
+
+  function handleArticleClick(event: MouseEvent<HTMLAnchorElement>) {
+    const origin = articlePointerOrigin.current;
+    articlePointerOrigin.current = null;
+    if (
+      !origin ||
+      event.detail === 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey ||
+      Math.hypot(event.clientX - origin.x, event.clientY - origin.y) <=
+        TEXT_SELECTION_DRAG_DISTANCE
+    )
+      return;
+    const selection = window.getSelection();
+    if (
+      selection &&
+      !selection.isCollapsed &&
+      selection.containsNode(event.currentTarget, true)
+    )
+      event.preventDefault();
+  }
 
   return (
     <div className={styles.main}>
@@ -77,6 +107,9 @@ export default function Blog() {
 
       <a
         className={styles.featured}
+        draggable={false}
+        onPointerDown={handleArticlePointerDown}
+        onClick={handleArticleClick}
         data-scroll-motion="feature"
         href={featuredArticle.url}
         target="_blank"
@@ -109,6 +142,9 @@ export default function Blog() {
           return (
             <a
               className={styles.reading}
+              draggable={false}
+              onPointerDown={handleArticlePointerDown}
+              onClick={handleArticleClick}
               data-scroll-motion="content"
               key={article.id}
               href={article.url}

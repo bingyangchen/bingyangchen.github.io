@@ -395,6 +395,7 @@
 
       & span {
         cursor: text;
+        -webkit-user-select: all;
         user-select: all;
       }
     }
@@ -451,6 +452,8 @@
       }
     }
     & .nav_links {
+      -webkit-user-select: none;
+      user-select: none;
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
       gap: 12px;
@@ -497,6 +500,8 @@
       }
     }
     & > .scroll_down_hint {
+      -webkit-user-select: none;
+      user-select: none;
       position: absolute;
       bottom: 24px;
       left: 0;

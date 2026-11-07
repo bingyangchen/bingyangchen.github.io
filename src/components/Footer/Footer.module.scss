@@ -13,10 +13,6 @@
   color: _.$noisy-white;
   font-family: Georgia, "Times New Roman", Times, serif;
   font-size: 0.8 * _.$base-font-size;
-  &,
-  & * {
-    user-select: text;
-  }
   & > .section {
     display: flex;
     flex-direction: column;
@@ -28,6 +24,12 @@
     }
     &.contact_me > .body {
       font-size: _.$base-font-size;
+    }
+    &.social_media {
+      a {
+        -webkit-user-select: none;
+        user-select: none;
+      }
     }
     &.social_media > .list,
     &.services > .list {
