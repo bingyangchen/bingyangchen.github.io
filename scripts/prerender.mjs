@@ -14,6 +14,12 @@ const ROOT_PLACEHOLDER = '<div id="root"></div>';
 const DOM_IDLE_MS = 1_000;
 const DOM_SETTLE_TIMEOUT_MS = 60_000;
 const MIN_VISIBLE_TEXT_CHARS = 500;
+const RESUME_PDF_FONT_NAMES = [
+  "Georgia",
+  "Georgia-Bold",
+  "Georgia-Italic",
+  "NotoSerifTC-Bold",
+];
 
 const MIME_TYPES = {
   ".css": "text/css; charset=utf-8",
@@ -140,6 +146,20 @@ async function generateResumePdf(page, origin) {
       !/\/Lang\s*\(en\)/.test(content)
     )
       throw new Error("Invalid resume PDF: expected one English A4 page");
+    const fontNames = new Set(
+      Array.from(
+        content.matchAll(/\/(?:BaseFont|FontName)\s*\/(?:[A-Z]{6}\+)?([A-Za-z0-9-]+)/g),
+        (match) => match[1],
+      ),
+    );
+    if (
+      fontNames.size !== RESUME_PDF_FONT_NAMES.length ||
+      RESUME_PDF_FONT_NAMES.some((fontName) => !fontNames.has(fontName))
+    )
+      throw new Error(
+        `Unexpected resume PDF fonts: ${Array.from(fontNames).join(", ")}. ` +
+          `Expected Georgia and the bundled Noto Serif TC subset.`,
+      );
     await writeFile(join(BUILD_DIR, "resume.pdf"), pdf);
     console.log(
       `generated resume.pdf (${(pdf.length / 1024).toFixed(1)} kB, one A4 page)`,

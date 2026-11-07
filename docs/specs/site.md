@@ -230,6 +230,10 @@ PDF 在 build 時以目前的 ResumeSheet 與 print CSS 產生，等待字型及
 
 ### SITE-R11 PDF 內容與版面
 
+英文、分隔符號與項目符號使用 Georgia，PDF 包含 regular、bold 與 italic。中文姓名使用專案內附的開源 Noto Serif TC 子集，CSS unicode range 限於陳、秉、洋，PDF 只使用 bold。Production 維持 Ubuntu，在 CI 校驗 repo 內的 Georgia TTF 後直接安裝並註冊字型；TTF、SHA-256 校驗檔與 EULA 保留於 `vendor/corefonts/`，不發布到網站。中文不依賴作業系統字型或瀏覽時的外部字型服務。等待字型載入不代表指定的系統字型存在，因此產檔後另核對 PDF 的實際字型，避免 Liberation Serif 等替換與中文字缺失。
+
+職稱與公司以較淡的中點「·」分隔，任職年資放在日期後的括號中。成就使用原生圓點清單與懸掛縮排，正文使用 12 px 字級、1 px 字距、1.8 倍行高、兩端對齊及自動斷字；工作經歷間距為 16 px。聯絡資訊保留定位與信封圖示，使用 11 px 尺寸、5 px 圖文間距及微量垂直校正。
+
 履歷維持英文單頁 A4。公開下載與非公開預覽列印只保留履歷，文字可選取與擷取，保留 email、GitHub 與個人網站連結。改動履歷相關行為時，依 [resume-writer skill](../../.agents/skills/resume-writer/SKILL.md) 檢查紙張、頁數、完整內容、閱讀順序、字型與連結。
 
 <!-- prettier-ignore -->
@@ -238,7 +242,7 @@ PDF 在 build 時以目前的 ResumeSheet 與 print CSS 產生，等待字型及
 | SITE-R11.1 A4 與完整內容 | 檢查 build 的下載檔案與本機預覽列印均為單頁 A4，全部履歷文字可見，沒有裁切或額外空白頁。 | browser、manual |
 | SITE-R11.2 僅輸出履歷 | 下載 PDF 與預覽列印均不出現網站 Header、Footer、語言切換器或重複履歷。 | browser、manual |
 | SITE-R11.3 文字與連結 | 檢查擷取文字涵蓋所有區塊，人工確認可讀性及閱讀順序，並核對 email、GitHub 與個人網站連結。 | manual |
-| SITE-R11.4 共用結果 | 下載 PDF 與預覽列印使用相同 ResumeSheet 及 print CSS，內容、頁數、紙張與連結相同，沒有因產檔入口不同而漏印。 | browser、manual |
+| SITE-R11.4 共用結果 | 下載 PDF 與預覽列印使用相同 ResumeSheet 及 print CSS，內容、頁數、紙張、字型與連結相同，中文姓名、分隔符號、項目符號與換行完整，沒有因產檔入口不同而漏印。 | browser、manual |
 
 ## 響應式、動態與執行環境
 
@@ -348,7 +352,7 @@ flowchart TD
 | SITE-R14.1 完整 Build | 從乾淨的 CRA 輸出完成 build 與 postbuild，同時產生首頁靜態內容與當次 ResumeSheet 的 PDF；不能以既有輸出檔案代替當次產檔。 | browser |
 | SITE-R14.2 靜態首頁內容 | 讀取 build 的 HTML，或停用 JavaScript 開啟首頁，仍有主要區塊文字；不要求 QR code 或語言切換在無 JavaScript 時可操作。 | browser |
 | SITE-R14.3 擷取範圍 | HTML 保留 shell metadata，root 內有繁中內容及下載連結，root 外沒有 print portal；首頁啟動後沒有隱藏履歷或重複內容。 | browser |
-| SITE-R14.4 失敗回報 | 空 root、JavaScript error、錯誤 HTTP、不足的內容、履歷載入失敗、超出紙張、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
+| SITE-R14.4 失敗回報 | 空 root、JavaScript error、錯誤 HTTP、不足的內容、履歷載入失敗、超出紙張、字型缺漏或替換、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
 
 ### SITE-R15 Service Worker 與執行環境
 
@@ -364,7 +368,7 @@ flowchart TD
 
 首頁提供 title、description、canonical、社群預覽、圖示與 manifest，robots 指向 sitemap，這些內容由 public 檔案維護。
 
-`main` push 與手動觸發執行共同檢查；Pages artifact 上傳與部署只允許 `refs/heads/main`。驗證失敗時不發布。
+由 `main` push 或手動觸發的 workflow 均在 Ubuntu 執行，從 repo 準備 Georgia 後執行共同檢查與產檔；Pages artifact 上傳與部署只允許 `refs/heads/main`。驗證失敗時不發布。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |

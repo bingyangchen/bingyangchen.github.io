@@ -41,7 +41,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               <span className={styles.contactItem}>
                 <IconLocation
                   className={styles.contactIcon}
-                  sideLength="12"
+                  sideLength="11"
                   aria-hidden
                 />
                 Taipei, Taiwan
@@ -49,7 +49,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               <span className={styles.contactItem}>
                 <IconEnvelope
                   className={styles.contactIcon}
-                  sideLength="12"
+                  sideLength="11"
                   aria-hidden
                 />
                 <a href="mailto:bryan.chen.429@gmail.com">bryan.chen.429@gmail.com</a>
@@ -91,7 +91,10 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
             <div className={styles.experience}>
               <div className={styles.job}>
                 <div className={styles.roleRow}>
-                  <span className={styles.roleText}>Backend Engineer．Swag</span>
+                  <span className={styles.roleText}>
+                    Backend Engineer<span className={styles.roleSeparator}> · </span>
+                    Swag
+                  </span>
                   <span className={styles.roleDates}>Jan. 2026 – Present</span>
                 </div>
                 <ul className={styles.bulletList}>
@@ -120,9 +123,12 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
 
               <div className={styles.job}>
                 <div className={styles.roleRow}>
-                  <span className={styles.roleText}>Senior Backend Engineer．Gaia</span>
+                  <span className={styles.roleText}>
+                    Senior Backend Engineer
+                    <span className={styles.roleSeparator}> · </span>Gaia
+                  </span>
                   <span className={styles.roleDates}>
-                    Dec. 2024 – Dec. 2025．1 yr 1 mo
+                    Dec. 2024 – Dec. 2025 (1 yr 1 mo)
                   </span>
                 </div>
                 <ul className={styles.bulletList}>
@@ -151,9 +157,12 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
 
               <div className={styles.job}>
                 <div className={styles.roleRow}>
-                  <span className={styles.roleText}>Backend Engineer．Pinkoi</span>
+                  <span className={styles.roleText}>
+                    Backend Engineer<span className={styles.roleSeparator}> · </span>
+                    Pinkoi
+                  </span>
                   <span className={styles.roleDates}>
-                    Mar. 2023 – Dec. 2024．1 yr 10 mos
+                    Mar. 2023 – Dec. 2024 (1 yr 10 mos)
                   </span>
                 </div>
                 <ul className={styles.bulletList}>
@@ -176,9 +185,12 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
 
               <div className={styles.job}>
                 <div className={styles.roleRow}>
-                  <span className={styles.roleText}>Backend Engineer．Sysfeather</span>
+                  <span className={styles.roleText}>
+                    Backend Engineer<span className={styles.roleSeparator}> · </span>
+                    Sysfeather
+                  </span>
                   <span className={styles.roleDates}>
-                    Mar. 2022 – Mar. 2023．1 yr 1 mo
+                    Mar. 2022 – Mar. 2023 (1 yr 1 mo)
                   </span>
                 </div>
                 <ul className={styles.bulletList}>

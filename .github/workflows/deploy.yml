@@ -31,11 +31,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/puppeteer
-          key: puppeteer-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-          restore-keys: puppeteer-${{ runner.os }}-
+          key: puppeteer-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('package-lock.json') }}
+          restore-keys: puppeteer-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Install resume fonts
+        run: |
+          sha256sum --check --strict vendor/corefonts/SHA256SUMS
+          resume_fonts_dir="$HOME/.local/share/fonts/georgia"
+          mkdir -p "$resume_fonts_dir"
+          install -m 644 vendor/corefonts/*.TTF "$resume_fonts_dir/"
+          fc-cache --force "$resume_fonts_dir"
 
       - name: Check
         run: npm run check

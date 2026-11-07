@@ -6,7 +6,7 @@ A React and TypeScript personal website built with Create React App and deployed
 
 ## Development
 
-Use Node.js 22 and npm, matching CI.
+Use Node.js 22 and npm, matching CI. Resume PDF builds require Georgia: macOS supplies it, while Ubuntu CI installs the TTF files in [vendor/corefonts](vendor/corefonts/README.md), without downloading or extracting fonts. Noto Serif TC is bundled for the Chinese name, so no system CJK font is needed. `npm run build` rejects missing or substituted PDF fonts; `npm run dev` remains available without the PDF build fonts.
 
 ```sh
 npm ci

@@ -188,6 +188,16 @@ async function getPrintResult() {
 
 function parsePdfMetadata(pdf) {
   return {
+    fonts: Array.from(
+      new Set(
+        Array.from(
+          pdf
+            .toString("latin1")
+            .matchAll(/\/(?:BaseFont|FontName)\s*\/(?:[A-Z]{6}\+)?([A-Za-z0-9-]+)/g),
+          (match) => match[1],
+        ),
+      ),
+    ).sort(),
     pages: pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)?.length,
     mediaBox: pdf.toString("latin1").match(/\/MediaBox\s*\[([^\]]+)\]/)?.[1],
     language: pdf
@@ -1564,6 +1574,15 @@ test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 下載與預覽共用英文 A4
   const built = parsePdfMetadata(await readFile(join(BUILD, "resume.pdf")));
   assert.equal(built.pages, 1);
   assert.equal(built.language, "en");
+  assert.deepEqual(built.fonts, [
+    "Georgia",
+    "Georgia-Bold",
+    "Georgia-Italic",
+    "NotoSerifTC-Bold",
+  ]);
+  const fontLicense = await fetch(server.origin + "/fonts/OFL-NotoSerifTC.txt");
+  assert.equal(fontLicense.status, 200);
+  assert.ok((await fontLicense.text()).includes("SIL OPEN FONT LICENSE Version 1.1"));
   const dimensions = built.mediaBox.trim().split(/\s+/).map(Number);
   assert.ok(Math.abs(dimensions[2] - 595) < 2 && Math.abs(dimensions[3] - 842) < 2);
   for (const url of [
@@ -1582,6 +1601,7 @@ test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 下載與預覽共用英文 A4
     assert.equal(preview.language, built.language);
     assert.equal(preview.mediaBox, built.mediaBox);
     assert.deepEqual(preview.links, built.links);
+    assert.deepEqual(preview.fonts, built.fonts);
     assert.equal(preview.metrics.count, 1);
     assert.equal(preview.metrics.visible, "visible");
     assert.ok(preview.metrics.bottom <= preview.metrics.height + 1);
@@ -1836,6 +1856,26 @@ test("SITE-R14.4 履歷缺漏、裁切與圖片失敗阻止產檔", { timeout: 6
     assert.notEqual(result.code, 0);
     assert.ok(result.output.includes(message), result.output);
   }
+});
+
+test("SITE-R14.4 字型替換時停止履歷產檔", async () => {
+  const markup = `<style>
+    @page { size: A4; margin: 0; }
+    body { margin: 0; }
+    [data-resume-root] {
+      width: 210mm; height: 297mm;
+      font: 12px "Missing Resume Font", Arial, sans-serif;
+    }
+  </style><div data-resume-root>${"Resume content ".repeat(70)}</div>`;
+  const result = await runPrerenderFixture(`
+    if (location.pathname === "/resume") {
+      document.getElementById("root").innerHTML = ${JSON.stringify(markup)};
+    } else {
+      document.getElementById("root").textContent = "Homepage content ".repeat(100);
+    }
+  `);
+  assert.notEqual(result.code, 0, "A loaded fallback font must not pass the build");
+  assert.ok(result.output.includes("Unexpected resume PDF fonts"), result.output);
 });
 
 test("SITE-R17.2 SITE-R17.3 文章鍵盤啟用與雙語", { timeout: 45000 }, async () => {

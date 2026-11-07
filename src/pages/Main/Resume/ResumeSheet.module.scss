@@ -1,5 +1,14 @@
 @use "../../../global_variables" as _;
 
+@font-face {
+  font-family: "Resume CJK Serif";
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  src: url("../../../assets/fonts/noto-serif-tc.woff2") format("woff2");
+  unicode-range: U+6D0B, U+79C9, U+9673;
+}
+
 $resume-navy: #234a8c;
 
 @mixin resume-emphasis-font {
@@ -15,7 +24,7 @@ $resume-navy: #234a8c;
   box-sizing: border-box;
   background-color: _.$white;
   color: _.$black;
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: _.$resume-font-family;
   font-size: 12px;
   line-height: 1.8;
   -webkit-font-smoothing: antialiased;
@@ -41,7 +50,7 @@ $resume-navy: #234a8c;
         margin: 0;
         flex: 1 1 12rem;
         min-width: 0;
-        font-family: Georgia, "Times New Roman", serif;
+        font-family: _.$resume-font-family;
         font-size: 20px;
         font-weight: bold;
         letter-spacing: 0.02em;
@@ -62,7 +71,7 @@ $resume-navy: #234a8c;
         .contactItem {
           display: inline-flex;
           align-items: center;
-          gap: 4px;
+          gap: 5px;
 
           & a {
             text-decoration: none;
@@ -75,6 +84,7 @@ $resume-navy: #234a8c;
           .contactIcon {
             flex-shrink: 0;
             color: _.$deep-gray;
+            transform: translateY(0.25px);
           }
         }
       }
@@ -82,7 +92,7 @@ $resume-navy: #234a8c;
 
     .sectionHeading {
       margin: 0 0 8px;
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: _.$resume-font-family;
       font-size: 16px;
       font-weight: bold;
       letter-spacing: 0.04em;
@@ -141,6 +151,12 @@ $resume-navy: #234a8c;
               @include resume-emphasis-font;
               flex: 1 1 auto;
               min-width: 0;
+
+              .roleSeparator {
+                margin: 0 0.1em;
+                color: _.$gray;
+                font-weight: normal;
+              }
             }
 
             .roleDates {
@@ -154,24 +170,17 @@ $resume-navy: #234a8c;
           .bulletList {
             margin: 0;
             padding-left: 0;
-            list-style: none;
+            list-style: disc;
 
             & li {
-              position: relative;
-              padding-left: 1.25em;
+              margin-left: 1em;
+              padding-left: 0.25em;
               margin-bottom: 3px;
               text-align: justify;
               hyphens: auto;
 
-              &::before {
-                content: "．";
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 0.6em;
-                @include resume-emphasis-font;
-                text-align: center;
-                line-height: 1.8;
+              &::marker {
+                font-size: 0.72em;
               }
             }
           }
