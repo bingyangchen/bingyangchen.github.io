@@ -43,9 +43,25 @@ export default function Home() {
   const motionRef = useRef<HTMLDivElement>(null);
   useScrollMotion(motionRef);
   const { dictionary } = useTranslation();
+  const [isAvatarFlipped, setIsAvatarFlipped] = useState(false);
+  const [isAvatarHoverSuppressed, setIsAvatarHoverSuppressed] = useState(false);
+  const avatarPointerPositionRef = useRef<{ clientX: number; clientY: number } | null>(
+    null,
+  );
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const qrOpenerRef = useRef<HTMLButtonElement | null>(null);
   const qrDialogRef = useRef<HTMLDialogElement>(null);
+
+  useEffect(() => {
+    const recordPointerPosition = (event: PointerEvent) => {
+      avatarPointerPositionRef.current = {
+        clientX: event.clientX,
+        clientY: event.clientY,
+      };
+    };
+    document.addEventListener("pointermove", recordPointerPosition, { passive: true });
+    return () => document.removeEventListener("pointermove", recordPointerPosition);
+  }, []);
 
   useEffect(() => {
     if (!isQrModalOpen) {
@@ -102,17 +118,45 @@ export default function Home() {
           <div className={styles.business_card} data-scroll-motion="hero">
             <div className={styles.business_card_inner}>
               <div className={styles.sheet_left}>
-                <div className={styles.avatar_container}>
-                  <img
-                    className={`${styles.avatar} ${styles.front}`}
-                    src={avatar_2}
-                    alt="陳秉洋 (Bing-Yang Chen)"
-                  />
-                  <img
-                    className={`${styles.avatar} ${styles.back}`}
-                    src={avatar_1}
-                    alt="陳秉洋 (Bing-Yang Chen)"
-                  />
+                <div
+                  className={styles.avatar_container}
+                  onPointerLeave={() => setIsAvatarHoverSuppressed(false)}
+                >
+                  <button
+                    type="button"
+                    className={styles.avatar_button}
+                    aria-label={dictionary.home.flipAvatar}
+                    aria-pressed={isAvatarFlipped}
+                    data-hover-suppressed={isAvatarHoverSuppressed || undefined}
+                    onClick={(event) => {
+                      const avatarContainer = event.currentTarget.parentElement!;
+                      const bounds = avatarContainer.getBoundingClientRect();
+                      const pointer = avatarPointerPositionRef.current;
+                      setIsAvatarFlipped((flipped) => !flipped);
+
+                      // Closing a dialog can delay :hover restoration past a keyboard click.
+                      setIsAvatarHoverSuppressed(
+                        event.detail > 0 ||
+                          avatarContainer.matches(":hover") ||
+                          (pointer !== null &&
+                            pointer.clientX >= bounds.left &&
+                            pointer.clientX < bounds.right &&
+                            pointer.clientY >= bounds.top &&
+                            pointer.clientY < bounds.bottom),
+                      );
+                    }}
+                  >
+                    <img
+                      className={`${styles.avatar} ${styles.front}`}
+                      src={avatar_2}
+                      alt="陳秉洋 (Bing-Yang Chen)"
+                    />
+                    <img
+                      className={`${styles.avatar} ${styles.back}`}
+                      src={avatar_1}
+                      alt="陳秉洋 (Bing-Yang Chen)"
+                    />
+                  </button>
                   <RoundButton
                     className={styles.qr_avatar_fab}
                     hintText={dictionary.qrModal.open}

@@ -6,6 +6,7 @@ export const englishDictionary: TranslationDictionary = {
     greeting:
       "Software engineer focused on web apps that stay maintainable after launch.",
     role: "B.A. Economics, NCCU",
+    flipAvatar: "Flip portrait",
     downloadResume: "Download Resume",
     scrollDown: "Scroll down",
   },

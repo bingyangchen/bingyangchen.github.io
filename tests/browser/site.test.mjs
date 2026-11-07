@@ -23,6 +23,7 @@ const BUILD = resolve(ROOT, "build");
 const DETAIL = '#projects [role="tabpanel"]:not([inert])';
 const TABS = '#projects [role="tab"]';
 const QR = '[class*="qr_avatar_fab"]';
+const AVATAR = '#home button[class*="avatar_button"]';
 const QR_DIALOG = 'dialog[aria-labelledby="qr-modal-title"]';
 let server;
 let browser;
@@ -1615,27 +1616,118 @@ test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 下載與預覽共用英文 A4
   }
 });
 
+test("SITE-R5.5 頭像 Hover、點按保持、鍵盤、觸控與減少動態", async () => {
+  async function assertAvatarFace(flipped, pressed = flipped) {
+    assert.equal(
+      await page.$eval(AVATAR, (button) => button.getAttribute("aria-pressed")),
+      String(pressed),
+    );
+    await page.waitForFunction(
+      (selector, flipped) => {
+        const images = document.querySelector(selector).querySelectorAll("img");
+        return Array.from(images).every((image, index) => {
+          const matrix = new DOMMatrixReadOnly(getComputedStyle(image).transform);
+          return Math.abs(matrix.m11 - (flipped === (index === 0) ? -1 : 1)) < 0.001;
+        });
+      },
+      {},
+      AVATAR,
+      flipped,
+    );
+  }
+
+  await openHome();
+  await assertHoverCapability(true);
+  assert.equal(
+    await page.$eval(AVATAR, (button) => button.getAttribute("aria-label")),
+    "Flip portrait",
+  );
+  assert.deepEqual(
+    await page.$$eval(`${AVATAR} img`, (images) => images.map((image) => image.alt)),
+    ["陳秉洋 (Bing-Yang Chen)", "陳秉洋 (Bing-Yang Chen)"],
+  );
+  await assertAvatarFace(false);
+  await page.hover(AVATAR);
+  await assertAvatarFace(true, false);
+  await page.mouse.move(0, 0);
+  await assertAvatarFace(false);
+  await page.hover(AVATAR);
+  await assertAvatarFace(true, false);
+  await page.click(AVATAR);
+  await assertAvatarFace(true);
+  await page.click(AVATAR);
+  await assertAvatarFace(false);
+  await page.mouse.move(0, 0);
+  await assertAvatarFace(false);
+  await page.hover(AVATAR);
+  await assertAvatarFace(true, false);
+  await page.click(AVATAR);
+  await assertAvatarFace(true);
+  await page.mouse.move(0, 0);
+  await page.click(QR);
+  await page.waitForSelector(`${QR_DIALOG}[open]`);
+  await page.keyboard.press("Escape");
+  await page.waitForSelector(QR_DIALOG, { hidden: true });
+  await assertAvatarFace(true);
+  await page.focus(AVATAR);
+  await page.keyboard.press("Enter");
+  await assertAvatarFace(false);
+  assert.equal(
+    await page.$eval(AVATAR, (button) => getComputedStyle(button).outlineStyle),
+    "solid",
+  );
+  await page.keyboard.press("Space");
+  await assertAvatarFace(true);
+  await page.mouse.move(0, 0);
+  await page.keyboard.press("Enter");
+  await assertAvatarFace(false);
+  await page.hover(AVATAR);
+  await assertAvatarFace(true, false);
+  await page.click(AVATAR);
+  await assertAvatarFace(true);
+  await page.evaluate(() => document.querySelector("[data-language-switcher]").click());
+  await page.waitForFunction(
+    (selector) =>
+      document.querySelector(selector).getAttribute("aria-label") === "翻轉頭像",
+    {},
+    AVATAR,
+  );
+  await assertAvatarFace(true);
+
+  await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+  await page.goto("about:blank");
+  await page.goto(server.origin);
+  await page.evaluate(() => localStorage.setItem("preferred_language", "en"));
+  await openHome();
+  await assertHoverCapability(false);
+  for (const preference of ["no-preference", "reduce"]) {
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: preference },
+    ]);
+    await assertAvatarFace(false);
+    await page.tap(AVATAR);
+    await assertAvatarFace(true);
+    await page.touchscreen.tap(5, 120);
+    await assertAvatarFace(true);
+    if (preference === "reduce") {
+      assert.deepEqual(
+        await page.$$eval(`${AVATAR} img`, (images) =>
+          images.map((image) => getComputedStyle(image).transitionDuration),
+        ),
+        ["0s", "0s"],
+      );
+    }
+    await page.tap(AVATAR);
+    await assertAvatarFace(false);
+  }
+});
+
 test("SITE-R13.3 完整減少動態與即時切換", async () => {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
   await openHome();
   async function assertStaticMotion() {
-    await page.hover('#home [class*="avatar_container"]');
-    assert.equal(
-      await page.$eval(
-        '#home [class*="avatar"][class*="front"]',
-        (element) => getComputedStyle(element).transform,
-      ),
-      "none",
-    );
-    assert.equal(
-      await page.$eval(
-        '#home [class*="avatar"][class*="back"]',
-        (element) => getComputedStyle(element).display,
-      ),
-      "none",
-    );
     await page.hover('#home [aria-label="GitHub"]');
     assert.equal(
       await page.$eval(
@@ -1679,11 +1771,6 @@ test("SITE-R13.3 完整減少動態與即時切換", async () => {
     { name: "prefers-reduced-motion", value: "no-preference" },
   ]);
   await page.waitForSelector("[data-scroll-motion-active]");
-  await page.hover('#home [class*="avatar_container"]');
-  await page.waitForFunction(() => {
-    const element = document.querySelector('#home [class*="avatar"][class*="front"]');
-    return new DOMMatrixReadOnly(getComputedStyle(element).transform).m11 < 0;
-  });
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
@@ -2375,7 +2462,7 @@ test("SITE-R12.1 雙語短螢幕、橫向與分界的 Hero 完整可操作", asy
         assert.equal(metrics.clipped, false, label);
         assert.equal(metrics.greetingScroll, false, label);
         assert.equal(metrics.columns, width < 720 ? 1 : 2, label);
-        assert.equal(metrics.actions.length, 9, label);
+        assert.equal(metrics.actions.length, 10, label);
         assert.ok(
           metrics.actions.every(
             (action) => action.contained && action.width >= 44 && action.height >= 44,
@@ -2797,7 +2884,7 @@ test("SITE-R18.1 依區域與控制尺寸共用鍵盤焦點框", async () => {
         if (target.menu) await page.keyboard.press("Enter");
       }
       assert.equal(reached.header, width === 1440 ? 6 : 7);
-      assert.equal(reached.content, 20);
+      assert.equal(reached.content, 21);
       assert.equal(reached.footer, 4);
       assert.equal(reached.surfaces, 4);
 

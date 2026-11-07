@@ -6,6 +6,7 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     greeting:
       "以前是個靠寫 code 維生的打工仔，現在是個使喚 AI 幫我寫 code 的打工仔。平常喜歡研究魔法史，還有一點經濟學！",
     role: "政治大學 經濟學系",
+    flipAvatar: "翻轉頭像",
     downloadResume: "下載履歷",
     scrollDown: "下滑了解更多",
   },
