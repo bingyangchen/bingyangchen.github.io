@@ -230,7 +230,11 @@ PDF 在 build 時以目前的 ResumeSheet 與 print CSS 產生，等待字型及
 
 ### SITE-R11 PDF 內容與版面
 
-英文、分隔符號與項目符號使用 Georgia，PDF 包含 regular、bold 與 italic。中文姓名使用專案內附的開源 Noto Serif TC 子集，CSS unicode range 限於陳、秉、洋，PDF 只使用 bold。Production 維持 Ubuntu，在 CI 校驗 repo 內的 Georgia TTF 後直接安裝並註冊字型；TTF、SHA-256 校驗檔與 EULA 保留於 `vendor/corefonts/`，不發布到網站。中文不依賴作業系統字型或瀏覽時的外部字型服務。等待字型載入不代表指定的系統字型存在，因此產檔後另核對 PDF 的實際字型，避免 Liberation Serif 等替換與中文字缺失。
+英文、分隔符號與項目符號使用 Georgia，PDF 包含 regular、bold 與 italic。中文姓名使用專案內附、固定為 700 字重的開源 Noto Serif TC 靜態字型子集，CSS unicode range 限於陳、秉、洋，PDF 字型名稱為 `NotoSerifTC-Bold`。固定字重與內部名稱可避免可變字型在不同作業系統下輸出不同的 PDF 字型名稱，中文也不依賴作業系統字型或瀏覽時的外部字型服務。
+
+Production 維持 Ubuntu，在 CI 校驗 repo 內的 Georgia TTF 後直接安裝並註冊字型；TTF、SHA-256 校驗檔與 EULA 保留於 `vendor/corefonts/`，不發布到網站。
+
+等待字型載入不代表指定的系統字型存在，因此產檔後另核對 PDF 的實際字型，避免 Liberation Serif 等替換與中文字缺失。
 
 職稱與公司以較淡的中點「·」分隔，任職年資放在日期後的括號中。成就使用原生圓點清單與懸掛縮排，正文使用 12 px 字級、1 px 字距、1.8 倍行高、兩端對齊及自動斷字；工作經歷間距為 16 px。聯絡資訊保留定位與信封圖示，使用 11 px 尺寸、5 px 圖文間距及微量垂直校正。
 
