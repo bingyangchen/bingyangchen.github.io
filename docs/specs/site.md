@@ -213,7 +213,9 @@ stateDiagram-v2
 
 公開首頁的履歷匯出與非公開預覽共用同一份英文 ResumeSheet，主網站切換語言不翻譯履歷。公開頁面以瀏覽器列印匯出，等待字型載入完成後呼叫 `window.print()`；不承諾自動下載檔案或指定瀏覽器儲存名稱。
 
-首頁的 print sheet 在 mount 後放到 body portal，螢幕上不顯示；非公開預覽則直接顯示紙張。重掛載或切換 route 不能遺留重複 print sheet。
+首頁的 print sheet 在 mount 後放到 body portal，螢幕上不顯示，也不接受鍵盤或程式聚焦；非公開預覽則直接顯示紙張，連結仍可聚焦。重掛載或切換 route 不能遺留重複 print sheet。
+
+首頁隱藏履歷以螢幕媒體的 `visibility: hidden` 排除焦點，列印媒體沿用共用 print CSS 顯示紙張，讓列印文字與連結保持可用。
 
 共用履歷與英文預覽介面獨立標示 `lang="en"`，履歷中的中文姓名標示 `lang="zh-TW"`。列印期間把文件語言設為英文，結束、取消或卸載履歷時還原原有介面語言；這讓 Chromium 產生的 PDF 文件語言為英文，因為 PDF 的主要語言取自文件而非履歷子元素。
 
@@ -225,6 +227,7 @@ stateDiagram-v2
 | SITE-R10.3 字型等待與替代路徑 | 有 fonts.ready 時等待 promise；缺少該能力時直接列印，不呼叫其他下載服務。 | unit |
 | SITE-R10.4 英文履歷 | 主網站使用英文或繁中時，兩個入口的履歷內容與語言標記仍為英文，中文姓名保留繁中標記；Chromium 匯出的 PDF 文件語言為英文，列印結束或取消後還原介面語言。 | unit、browser、manual |
 | SITE-R10.5 單一 Print Sheet | React 啟動後及首頁與本機預覽切換後，各入口都只有一份 print sheet；prerender HTML 不包含 body portal。 | browser |
+| SITE-R10.6 隱藏履歷不取得焦點 | 在兩種語言及桌面、窄版首頁以 Tab、Shift+Tab 或程式聚焦，焦點不進入隱藏履歷；列印結束及從本機預覽返回首頁後仍符合此規則，預覽內的可見連結可聚焦。 | browser、manual |
 
 ### SITE-R11 PDF 內容與版面
 

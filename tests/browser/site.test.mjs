@@ -1445,6 +1445,82 @@ test("SITE-R10.4 SITE-R10.5 英文履歷與單一 portal", async () => {
   }
 });
 
+test("SITE-R10.6 隱藏履歷不取得焦點", async () => {
+  await openHome();
+  for (const width of [390, 1440]) {
+    await page.setViewport({ width, height: 844 });
+    for (const language of ["en", "zh-TW"]) {
+      await page.evaluate((value) => {
+        localStorage.setItem("preferred_language", value);
+      }, language);
+      await page.reload({ waitUntil: "networkidle0" });
+      await page.waitForFunction(
+        (expected) =>
+          document.documentElement.lang === expected &&
+          document.querySelector("[data-resume-root]"),
+        {},
+        language,
+      );
+
+      await page.$$eval(".site-layout > footer a", (elements) =>
+        elements[elements.length - 1].focus(),
+      );
+      await page.keyboard.press("Tab");
+      assert.equal(
+        await page.evaluate(() =>
+          Boolean(document.activeElement.closest(".resume-print-area")),
+        ),
+        false,
+        `${width}px ${language}: Tab must skip the hidden resume`,
+      );
+
+      await page.$eval('a[href="#main-content"]', (element) => element.focus());
+      await page.keyboard.down("Shift");
+      await page.keyboard.press("Tab");
+      await page.keyboard.up("Shift");
+      assert.equal(
+        await page.evaluate(() =>
+          Boolean(document.activeElement.closest(".resume-print-area")),
+        ),
+        false,
+        `${width}px ${language}: Shift+Tab must skip the hidden resume`,
+      );
+
+      assert.ok(
+        await page.$$eval(".resume-print-area a", (elements) => {
+          const previous = document.activeElement;
+          return (
+            elements.length > 0 &&
+            elements.every((element) => {
+              element.focus();
+              return document.activeElement === previous;
+            })
+          );
+        }),
+        `${width}px ${language}: hidden resume links must reject programmatic focus`,
+      );
+
+      await enterPreview();
+      await page.$eval('a[href^="mailto:"]', (element) => element.focus());
+      assert.ok(
+        await page.evaluate(() => document.activeElement.href?.startsWith("mailto:")),
+        "the visible preview must keep its links focusable",
+      );
+      await page.goBack();
+      await page.waitForSelector("#home");
+      await page.$eval('a[href="#main-content"]', (element) => element.focus());
+      await page.$eval('.resume-print-area a[href^="mailto:"]', (element) =>
+        element.focus(),
+      );
+      assert.equal(
+        await page.evaluate(() => document.activeElement.getAttribute("href")),
+        "#main-content",
+        "the remounted hidden resume must reject focus",
+      );
+    }
+  }
+});
+
 test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 A4、列印語言與共用結果", async () => {
   await openHome();
   for (const language of ["en", "zh-TW"]) {
@@ -1455,6 +1531,15 @@ test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 A4、列印語言與共用結�
       language,
     );
     const home = await getPrintResult();
+    await page.$eval('a[href="#main-content"]', (element) => element.focus());
+    await page.$eval('.resume-print-area a[href^="mailto:"]', (element) =>
+      element.focus(),
+    );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.getAttribute("href")),
+      "#main-content",
+      "returning from print must keep the hidden resume out of focus",
+    );
     assert.equal(await page.evaluate(() => document.documentElement.lang), language);
     await enterPreview();
     const preview = await getPrintResult();
