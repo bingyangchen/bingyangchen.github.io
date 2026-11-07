@@ -195,7 +195,11 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
           let tilt = 0;
           let rotate = 0;
           if (["hero", "atmosphere", "hint"].includes(target.kind)) {
-            const progress = clamp(-top / Math.max(1, target.height - headerBottom));
+            const readingDistance = Math.max(0, target.height - height);
+            const progress = clamp(
+              (-top - readingDistance) /
+                Math.max(1, Math.min(height, target.height) - headerBottom),
+            );
             y =
               -progress *
               getParameter(

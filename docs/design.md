@@ -16,7 +16,7 @@ Keep the site focused on one person's professional story. Long-form writing belo
 - Blog introduces the author's thinking through one featured article and two additional reading selections, with a clear route to the full external publication. Keep long-form reading on GitBook.
 - Keep contact and social links, language selection, and resume export easy to find.
 - Keep the primary navigation available throughout the page and make the current section recognizable.
-- Offer public resume export from the main page; keep `/resume` as a non-public preview.
+- Offer the same prebuilt English A4 resume PDF from the main page on all screen sizes; keep `/resume` as a non-public preview with browser printing.
 
 ## Language and Copy
 
@@ -47,6 +47,7 @@ Maintain a calm, professional presentation with readable hierarchy and restraine
 Motion should support reading and navigation, with a clear purpose and respect for reduced-motion preferences.
 
 - Keep section navigation and browser history predictable, and preserve focus continuity.
+- Let the Hero card grow with its content and use page scrolling on short screens. Keep the card still and fully opaque until the bottom of the Hero has entered the viewport, then apply its reversible exit motion.
 - Keep navigation, contact actions, and project details usable on smaller screens and with keyboard input. Focus preserves the scroll-driven position, scale, tilt, and opacity, including partially entered or exited content.
 - Keep body text selectable and copyable through native browser interactions, including descriptions inside article links. Keep buttons, navigation, and action labels unselectable.
 - Keep the viewport configured to disable user scaling.

@@ -1,6 +1,6 @@
 import { openResumePrintDialog } from "./print";
 
-test("SITE-R10.3 字型等待與替代路徑", async () => {
+test("SITE-R10.3 預覽字型等待", async () => {
   const descriptor = Object.getOwnPropertyDescriptor(document, "fonts");
   const print = jest.spyOn(window, "print").mockImplementation(() => {});
   let ready: () => void = () => {};

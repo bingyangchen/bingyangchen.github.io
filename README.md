@@ -20,7 +20,9 @@ npm run build
 npm run preview
 ```
 
-The build includes prerendering. Preview serves the build over loopback HTTP without an SPA fallback. Resume export uses browser printing from the homepage; `/resume` is a non-public preview available through `npm run dev`.
+The build prerenders the homepage and generates `build/resume.pdf` from the shared ResumeSheet. Use the production preview to test homepage downloads; the development server does not generate the PDF.
+
+Preview serves the build over loopback HTTP without an SPA fallback. `/resume` remains a non-public preview with browser printing, available through `npm run dev`.
 
 ## Verification
 

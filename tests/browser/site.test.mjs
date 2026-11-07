@@ -87,7 +87,7 @@ async function openHome(hash = "") {
   await page.waitForFunction(
     () =>
       document.documentElement.lang === "en" &&
-      document.querySelector("[data-resume-root]"),
+      document.querySelector("#home a[download]"),
   );
 }
 
@@ -183,13 +183,20 @@ async function getPrintResult() {
     await page.pdf({ preferCSSPageSize: true, printBackground: true }),
   );
   await page.emulateMediaType("screen");
+  return { metrics, ...parsePdfMetadata(pdf) };
+}
+
+function parsePdfMetadata(pdf) {
   return {
-    metrics,
     pages: pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)?.length,
     mediaBox: pdf.toString("latin1").match(/\/MediaBox\s*\[([^\]]+)\]/)?.[1],
     language: pdf
       .toString("latin1")
       .match(/\/Type\s*\/Catalog\b[\s\S]*?\/Lang\s*\(([^)]+)\)/)?.[1],
+    links: Array.from(
+      pdf.toString("latin1").matchAll(/\/URI\s*\(([^)]+)\)/g),
+      (match) => match[1],
+    ).sort(),
   };
 }
 
@@ -1404,163 +1411,185 @@ test("SITE-R9.7 Dialog 焦點與卸載清理", async () => {
   );
 });
 
-test("SITE-R10.4 SITE-R10.5 英文履歷與單一 portal", async () => {
+test("SITE-R10.1 雙語與各尺寸下載同一份 PDF", async () => {
+  const directory = await mkdtemp(join(tmpdir(), "resume-download-"));
+  const session = await page.createCDPSession();
+  await session.send("Browser.setDownloadBehavior", {
+    behavior: "allow",
+    browserContextId: context.id,
+    downloadPath: directory,
+    eventsEnabled: true,
+  });
+  try {
+    await openHome();
+    await page.evaluate(() => {
+      window.print = () => {
+        throw new Error("Homepage must download, not print");
+      };
+    });
+    const expected = await readFile(join(BUILD, "resume.pdf"));
+    for (const width of [390, 1440]) {
+      await page.setViewport({ width, height: 568 });
+      for (const language of ["en", "zh-TW"]) {
+        if ((await page.$eval("html", (element) => element.lang)) !== language)
+          await page.$eval("[data-language-switcher]", (element) => element.click());
+        await page.waitForFunction(
+          (expectedLanguage) => document.documentElement.lang === expectedLanguage,
+          {},
+          language,
+        );
+        const downloaded = new Promise((resolveDownload, rejectDownload) => {
+          const timer = setTimeout(() => {
+            session.off("Browser.downloadProgress", onProgress);
+            rejectDownload(new Error("PDF download timed out"));
+          }, 10000);
+          function onProgress(event) {
+            if (event.state === "inProgress") return;
+            clearTimeout(timer);
+            session.off("Browser.downloadProgress", onProgress);
+            if (event.state === "completed") resolveDownload();
+            else rejectDownload(new Error("PDF download canceled"));
+          }
+          session.on("Browser.downloadProgress", onProgress);
+        });
+        await page.$eval("#home a[download]", (element) =>
+          element.scrollIntoView({ block: "center", behavior: "instant" }),
+        );
+        await settleMotion();
+        await page.click("#home a[download]");
+        await downloaded;
+        const path = join(directory, "Bing-Yang Chen - 陳秉洋.pdf");
+        assert.deepEqual(await readFile(path), expected);
+        await rm(path);
+        assert.equal(new URL(page.url()).pathname, "/");
+      }
+    }
+  } finally {
+    await session.detach();
+    await rm(directory, { recursive: true, force: true });
+  }
+});
+
+test("SITE-R10.4 SITE-R10.5 英文預覽與首頁沒有隱藏履歷", async () => {
   await openHome();
-  assert.equal(
-    await page.$$eval("[data-resume-root]", (elements) => elements.length),
-    1,
-  );
-  assert.equal(await page.$("#root [data-resume-root]"), null);
+  let firstPreview;
   for (const language of ["en", "zh-TW"]) {
     if (language === "zh-TW") await page.click("[data-language-switcher]");
-    await page.waitForFunction(
-      (expected) => document.documentElement.lang === expected,
-      {},
-      language,
-    );
-    const home = await page.$eval("[data-resume-root]", (element) => ({
-      text: element.textContent,
-      language: element.closest("[lang]").lang,
-    }));
-    assert.equal(home.language, "en");
-    assert.ok(home.text.includes("Career Summary"));
+    assert.equal(await page.$("[data-resume-root]"), null);
+    assert.equal(await page.$(".resume-print-area"), null);
     await enterPreview();
-    assert.equal(
-      await page.$$eval("[data-resume-root]", (elements) => elements.length),
-      1,
-    );
-    assert.deepEqual(
-      await page.$eval("[data-resume-root]", (element) => ({
+    const preview = await page.$$eval("[data-resume-root]", (elements) =>
+      elements.map((element) => ({
         text: element.textContent,
-        language: element.closest("[lang]").lang,
+        language: element.lang,
       })),
-      home,
     );
+    assert.equal(preview.length, 1);
+    assert.equal(preview[0].language, "en");
+    assert.ok(preview[0].text.includes("Career Summary"));
+    if (firstPreview) assert.deepEqual(preview, firstPreview);
+    firstPreview = preview;
     assert.equal(
       await page.$eval('[class*="resumePage"]', (element) => element.lang),
       "en",
     );
     await page.goBack();
     await page.waitForSelector("#home");
+    assert.equal(await page.$("[data-resume-root]"), null);
   }
 });
 
-test("SITE-R10.6 隱藏履歷不取得焦點", async () => {
+test("SITE-R10.6 首頁下載焦點與預覽連結", async () => {
   await openHome();
   for (const width of [390, 1440]) {
     await page.setViewport({ width, height: 844 });
     for (const language of ["en", "zh-TW"]) {
-      await page.evaluate((value) => {
-        localStorage.setItem("preferred_language", value);
-      }, language);
-      await page.reload({ waitUntil: "networkidle0" });
-      await page.waitForFunction(
-        (expected) =>
-          document.documentElement.lang === expected &&
-          document.querySelector("[data-resume-root]"),
-        {},
+      await page.evaluate(
+        (value) => localStorage.setItem("preferred_language", value),
         language,
       );
-
-      await page.$$eval(".site-layout > footer a", (elements) =>
-        elements[elements.length - 1].focus(),
-      );
+      await page.reload({ waitUntil: "networkidle0" });
+      await page.waitForSelector("#home a[download]");
+      await page.$eval('#home a[aria-label="Cake"]', (element) => element.focus());
       await page.keyboard.press("Tab");
       assert.equal(
-        await page.evaluate(() =>
-          Boolean(document.activeElement.closest(".resume-print-area")),
-        ),
-        false,
-        `${width}px ${language}: Tab must skip the hidden resume`,
+        await page.evaluate(() => document.activeElement.getAttribute("download")),
+        "Bing-Yang Chen - 陳秉洋.pdf",
       );
-
-      await page.$eval('a[href="#main-content"]', (element) => element.focus());
+      assert.notEqual(
+        await page.$eval(
+          "#home a[download]",
+          (element) => getComputedStyle(element).outlineStyle,
+        ),
+        "none",
+      );
       await page.keyboard.down("Shift");
       await page.keyboard.press("Tab");
       await page.keyboard.up("Shift");
       assert.equal(
-        await page.evaluate(() =>
-          Boolean(document.activeElement.closest(".resume-print-area")),
-        ),
-        false,
-        `${width}px ${language}: Shift+Tab must skip the hidden resume`,
+        await page.evaluate(() => document.activeElement.getAttribute("aria-label")),
+        "Cake",
       );
-
-      assert.ok(
-        await page.$$eval(".resume-print-area a", (elements) => {
-          const previous = document.activeElement;
-          return (
-            elements.length > 0 &&
-            elements.every((element) => {
-              element.focus();
-              return document.activeElement === previous;
-            })
-          );
-        }),
-        `${width}px ${language}: hidden resume links must reject programmatic focus`,
-      );
-
+      assert.equal(await page.$(".resume-print-area"), null);
       await enterPreview();
       await page.$eval('a[href^="mailto:"]', (element) => element.focus());
       assert.ok(
         await page.evaluate(() => document.activeElement.href?.startsWith("mailto:")),
-        "the visible preview must keep its links focusable",
       );
       await page.goBack();
       await page.waitForSelector("#home");
-      await page.$eval('a[href="#main-content"]', (element) => element.focus());
-      await page.$eval('.resume-print-area a[href^="mailto:"]', (element) =>
-        element.focus(),
-      );
-      assert.equal(
-        await page.evaluate(() => document.activeElement.getAttribute("href")),
-        "#main-content",
-        "the remounted hidden resume must reject focus",
-      );
+      assert.equal(await page.$(".resume-print-area"), null);
     }
   }
 });
 
-test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 A4、列印語言與共用結果", async () => {
+test("SITE-R10.7 停用 JavaScript 與直接請求 PDF", async () => {
+  await page.setJavaScriptEnabled(false);
+  await page.goto(server.origin, { waitUntil: "networkidle0" });
+  const link = await page.$eval("#home a[download]", (element) => ({
+    href: element.getAttribute("href"),
+    name: element.getAttribute("download"),
+  }));
+  assert.deepEqual(link, { href: "/resume.pdf", name: "Bing-Yang Chen - 陳秉洋.pdf" });
+  const response = await fetch(server.origin + link.href);
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "application/pdf");
+  assert.deepEqual(
+    Buffer.from(await response.arrayBuffer()),
+    await readFile(join(BUILD, "resume.pdf")),
+  );
+});
+
+test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 下載與預覽共用英文 A4", async () => {
+  const built = parsePdfMetadata(await readFile(join(BUILD, "resume.pdf")));
+  assert.equal(built.pages, 1);
+  assert.equal(built.language, "en");
+  const dimensions = built.mediaBox.trim().split(/\s+/).map(Number);
+  assert.ok(Math.abs(dimensions[2] - 595) < 2 && Math.abs(dimensions[3] - 842) < 2);
+  for (const url of [
+    "mailto:bryan.chen.429@gmail.com",
+    "https://github.com/bingyangchen",
+    "https://byc1999.com/",
+  ])
+    assert.ok(built.links.includes(url), url);
   await openHome();
   for (const language of ["en", "zh-TW"]) {
     if (language === "zh-TW") await page.click("[data-language-switcher]");
-    await page.waitForFunction(
-      (expected) => document.documentElement.lang === expected,
-      {},
-      language,
-    );
-    const home = await getPrintResult();
-    await page.$eval('a[href="#main-content"]', (element) => element.focus());
-    await page.$eval('.resume-print-area a[href^="mailto:"]', (element) =>
-      element.focus(),
-    );
-    assert.equal(
-      await page.evaluate(() => document.activeElement.getAttribute("href")),
-      "#main-content",
-      "returning from print must keep the hidden resume out of focus",
-    );
-    assert.equal(await page.evaluate(() => document.documentElement.lang), language);
     await enterPreview();
     const preview = await getPrintResult();
-    assert.equal(await page.evaluate(() => document.documentElement.lang), language);
-    assert.equal(home.pages, 1);
-    assert.equal(preview.pages, 1);
-    assert.equal(home.mediaBox, preview.mediaBox);
-    const dimensions = home.mediaBox.trim().split(/\s+/).map(Number);
-    assert.ok(Math.abs(dimensions[2] - 595) < 2 && Math.abs(dimensions[3] - 842) < 2);
-    assert.equal(home.metrics.text, preview.metrics.text);
-    for (const result of [home, preview]) {
-      assert.equal(result.language, "en");
-      assert.equal(result.metrics.count, 1);
-      assert.equal(result.metrics.visible, "visible");
-      assert.ok(result.metrics.bottom <= result.metrics.height + 1);
-      assert.equal(result.metrics.header, "none");
-      assert.equal(result.metrics.footer, "none");
-      assert.equal(result.metrics.language, "hidden");
-      for (const section of ["SKILLS", "CAREER SUMMARY", "EDUCATION", "SOCIAL LINKS"])
-        assert.ok(result.metrics.text.includes(section));
-    }
+    assert.equal(await page.$eval("html", (element) => element.lang), language);
+    assert.equal(preview.pages, built.pages);
+    assert.equal(preview.language, built.language);
+    assert.equal(preview.mediaBox, built.mediaBox);
+    assert.deepEqual(preview.links, built.links);
+    assert.equal(preview.metrics.count, 1);
+    assert.equal(preview.metrics.visible, "visible");
+    assert.ok(preview.metrics.bottom <= preview.metrics.height + 1);
+    assert.equal(preview.metrics.header, "none");
+    assert.equal(preview.metrics.footer, "none");
+    assert.equal(preview.metrics.language, "hidden");
+    for (const section of ["SKILLS", "CAREER SUMMARY", "EDUCATION", "SOCIAL LINKS"])
+      assert.ok(preview.metrics.text.includes(section));
     await page.goBack();
     await page.waitForSelector("#home");
   }
@@ -1662,6 +1691,10 @@ test("SITE-R14.1 SITE-R14.2 SITE-R14.3 完整 build、靜態文字與擷取範�
   assert.ok(!html.includes("data-resume-root"));
   const newestSource = await stat(join(ROOT, "src/index.tsx"));
   assert.ok((await stat(join(BUILD, "index.html"))).mtimeMs >= newestSource.mtimeMs);
+  assert.ok(
+    (await stat(join(BUILD, "resume.pdf"))).mtimeMs >=
+      (await stat(join(ROOT, "src/pages/Main/Resume/ResumeSheet.tsx"))).mtimeMs,
+  );
   await page.setJavaScriptEnabled(false);
   await page.goto(server.origin, { waitUntil: "networkidle0" });
   assert.equal(
@@ -1778,6 +1811,33 @@ test(
     }
   },
 );
+test("SITE-R14.4 履歷缺漏、裁切與圖片失敗阻止產檔", { timeout: 60000 }, async () => {
+  const content = "Resume content ".repeat(70);
+  const fixtures = [
+    ["<p>No resume sheet</p>", "Expected one resume sheet"],
+    ["<div data-resume-root>thin</div>", "Resume has insufficient content"],
+    [
+      `<div data-resume-root style="width:794px;height:1123px;position:absolute;left:0;top:0"><p style="position:absolute;top:1200px">${content}</p></div>`,
+      "Resume content overflows A4",
+    ],
+    [
+      `<div data-resume-root>${content}<img src="/missing-image.png"></div>`,
+      "source image cannot be decoded",
+    ],
+  ];
+  for (const [markup, message] of fixtures) {
+    const result = await runPrerenderFixture(`
+      if(location.pathname==="/resume") {
+        document.getElementById("root").innerHTML=${JSON.stringify(markup)};
+      } else {
+        document.getElementById("root").textContent="Homepage content ".repeat(100);
+      }
+    `);
+    assert.notEqual(result.code, 0);
+    assert.ok(result.output.includes(message), result.output);
+  }
+});
+
 test("SITE-R17.2 SITE-R17.3 文章鍵盤啟用與雙語", { timeout: 45000 }, async () => {
   await openHome("#blog");
   const original = await page.$$eval("#blog a", (links) =>
@@ -2211,6 +2271,129 @@ async function getMotionState(selector) {
   });
 }
 
+test("SITE-R12.1 雙語短螢幕、橫向與分界的 Hero 完整可操作", async () => {
+  await openHome();
+  for (const preference of ["no-preference", "reduce"]) {
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: preference },
+    ]);
+    for (const language of ["en", "zh-TW"]) {
+      if ((await page.$eval("html", (element) => element.lang)) !== language)
+        await page.$eval("[data-language-switcher]", (element) => element.click());
+      await page.waitForFunction(
+        (expected) => document.documentElement.lang === expected,
+        {},
+        language,
+      );
+      for (const [width, height] of [
+        [320, 568],
+        [390, 568],
+        [390, 844],
+        [568, 320],
+        [719, 568],
+        [720, 568],
+        [844, 390],
+        [1440, 900],
+      ]) {
+        await page.setViewport({ width, height });
+        await page.evaluate(() => {
+          dispatchEvent(new WheelEvent("wheel"));
+          window.scrollTo({ top: 0, behavior: "instant" });
+        });
+        await settleMotion();
+        const label = `${language} ${preference} ${width}x${height}`;
+        const metrics = await page.$eval(
+          '#home [data-scroll-motion="hero"]',
+          (card) => {
+            const bounds = card.getBoundingClientRect();
+            const inner = card.firstElementChild;
+            const greeting = card.querySelector('[class*="greeting_card"]');
+            return {
+              horizontal: document.documentElement.scrollWidth > window.innerWidth,
+              clipped:
+                card.scrollHeight > card.clientHeight + 1 ||
+                card.scrollWidth > card.clientWidth + 1 ||
+                inner.scrollWidth > inner.clientWidth + 1,
+              greetingScroll: greeting.scrollHeight > greeting.clientHeight + 1,
+              columns: getComputedStyle(inner).gridTemplateColumns.split(" ").length,
+              actions: Array.from(card.querySelectorAll("a,button"), (element) => {
+                const rect = element.getBoundingClientRect();
+                return {
+                  width: rect.width,
+                  height: rect.height,
+                  contained:
+                    rect.left >= bounds.left &&
+                    rect.right <= bounds.right + 1 &&
+                    rect.top >= bounds.top &&
+                    rect.bottom <= bounds.bottom + 1,
+                };
+              }),
+            };
+          },
+        );
+        assert.equal(metrics.horizontal, false, label);
+        assert.equal(metrics.clipped, false, label);
+        assert.equal(metrics.greetingScroll, false, label);
+        assert.equal(metrics.columns, width < 720 ? 1 : 2, label);
+        assert.equal(metrics.actions.length, 9, label);
+        assert.ok(
+          metrics.actions.every(
+            (action) => action.contained && action.width >= 44 && action.height >= 44,
+          ),
+          label + JSON.stringify(metrics.actions),
+        );
+        const actions = await page.$$(
+          '#home [data-scroll-motion="hero"] a, #home [data-scroll-motion="hero"] button',
+        );
+        for (const action of actions) {
+          await action.evaluate((element) =>
+            element.scrollIntoView({ block: "center", behavior: "instant" }),
+          );
+          await settleMotion();
+          assert.ok(
+            await action.evaluate((element) => {
+              const rect = element.getBoundingClientRect();
+              const x = rect.left + rect.width / 2,
+                y = rect.top + rect.height / 2;
+              return (
+                y > document.querySelector("header").getBoundingClientRect().bottom &&
+                y < window.innerHeight &&
+                element.contains(document.elementFromPoint(x, y))
+              );
+            }),
+            label + ": each control must be reachable by page scrolling",
+          );
+          await action.dispose();
+        }
+      }
+    }
+  }
+});
+
+test("SITE-R13.2 長 Hero 讀完前保持清楚並可往返退場", async () => {
+  await openHome();
+  await page.setViewport({ width: 390, height: 568 });
+  const hero = '#home [data-scroll-motion="hero"]';
+  for (const language of ["en", "zh-TW"]) {
+    if (language === "zh-TW")
+      await page.$eval("[data-language-switcher]", (element) => element.click());
+    await moveMotionTarget("#home", 0);
+    const initial = await getMotionState(hero);
+    const readingDistance = await page.$eval(
+      "#home",
+      (element) => element.offsetHeight - window.innerHeight,
+    );
+    assert.ok(readingDistance > 0);
+    await moveMotionTarget("#home", -readingDistance + 1);
+    assert.deepEqual(await getMotionState(hero), initial);
+    await moveMotionTarget("#home", -readingDistance - 150);
+    const exiting = await getMotionState(hero);
+    assert.ok(exiting.opacity < 1 && exiting.scale < 1 && exiting.y < 0);
+    await moveMotionTarget("#home", -readingDistance + 1);
+    assert.deepEqual(await getMotionState(hero), initial);
+  }
+});
+
 test("SITE-R13.2 Hero 往返動態", async () => {
   await openHome();
   const hero = '#home [data-scroll-motion="hero"]';
@@ -2488,9 +2671,12 @@ test("SITE-R13.11 靜態內容與列印隔離", async () => {
   );
   await page.setJavaScriptEnabled(true);
   await openHome();
+  assert.ok(await page.$("#home a[download]"));
+  await enterPreview();
   const result = await getPrintResult();
   assert.equal(result.pages, 1);
   assert.equal(result.metrics.count, 1);
   assert.equal(result.metrics.header, "none");
+  await page.goBack();
   await page.waitForSelector("[data-scroll-motion-active]");
 });

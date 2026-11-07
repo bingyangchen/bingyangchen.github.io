@@ -127,18 +127,28 @@ test("SITE-R6.3 Footer 內容", () => {
     );
 });
 
-test("SITE-R10.1 首頁列印入口", () => {
-  const print = jest
-    .spyOn(printing, "openResumePrintDialog")
-    .mockImplementation(() => {});
-  const { container } = render(<Home />);
-  fireEvent.click(
-    within(container).getByRole("button", {
-      name: englishDictionary.home.downloadResume,
-    }),
-  );
-  expect(print).toHaveBeenCalledTimes(1);
-});
+test.each([englishDictionary, traditionalChineseDictionary])(
+  "SITE-R10.1 首頁下載入口",
+  (dictionary) => {
+    jest
+      .spyOn(language, "useTranslation")
+      .mockReturnValue({
+        language: dictionary === englishDictionary ? "en" : "zh-TW",
+        setLanguage: jest.fn(),
+        dictionary,
+      });
+    const print = jest.spyOn(window, "print").mockImplementation(() => {});
+    const { container } = render(<Home />);
+    const link = within(container).getByRole("link", {
+      name: dictionary.home.downloadResume,
+    });
+    expect(link).toHaveAttribute("href", "/resume.pdf");
+    expect(link).toHaveAttribute("download", "Bing-Yang Chen - 陳秉洋.pdf");
+    fireEvent.click(link);
+    expect(print).not.toHaveBeenCalled();
+    expect(within(container).queryByText("Career Summary")).not.toBeInTheDocument();
+  },
+);
 
 test("SITE-R10.2 非公開預覽列印", () => {
   const print = jest

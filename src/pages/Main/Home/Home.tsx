@@ -10,7 +10,6 @@ import { createPortal } from "react-dom";
 
 import {
   Blog,
-  Button,
   Projects,
   RoundButton,
   Skill,
@@ -32,9 +31,7 @@ import {
   IconQrCode,
   IconXLarge,
 } from "../../../icons";
-import { openResumePrintDialog } from "../../../resume/print";
 import { useScrollMotion } from "../../../motion/useScrollMotion";
-import ResumeSheet from "../Resume/ResumeSheet";
 
 const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
 
@@ -49,11 +46,6 @@ export default function Home() {
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const qrOpenerRef = useRef<HTMLButtonElement | null>(null);
   const qrDialogRef = useRef<HTMLDialogElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!isQrModalOpen) {
@@ -92,10 +84,6 @@ export default function Home() {
       <span>{job_badge_label}</span>
     </>
   );
-
-  function handleDownloadResume(): void {
-    openResumePrintDialog();
-  }
 
   return (
     <>
@@ -196,12 +184,13 @@ export default function Home() {
                   </div>
                 </div>
                 <div className={styles.cta_toolbar}>
-                  <Button
-                    className={`brand_fill xl bold ${styles.resume_download_desktop_only}`}
-                    onClick={handleDownloadResume}
+                  <a
+                    className={`button brand_fill xl bold ${styles.resume_download}`}
+                    href="/resume.pdf"
+                    download="Bing-Yang Chen - 陳秉洋.pdf"
                   >
                     {dictionary.home.downloadResume}
-                  </Button>
+                  </a>
                   <div className={styles.nav_links}>
                     <a href="#about" className={styles.nav_ghost}>
                       <IconFilePerson sideLength="22" />
@@ -297,16 +286,6 @@ export default function Home() {
           <Blog />
         </div>
       </div>
-      {isMounted &&
-        createPortal(
-          <div
-            className={`${styles.resume_export_slot} resume-print-area`}
-            aria-hidden="true"
-          >
-            <ResumeSheet />
-          </div>,
-          document.body,
-        )}
       {isQrModalOpen
         ? createPortal(
             <dialog

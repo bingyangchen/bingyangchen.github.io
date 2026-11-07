@@ -209,37 +209,36 @@ stateDiagram-v2
 | SITE-R9.6 QR Code 鍵盤入口 | 以兩種語言分別在桌面與窄版視窗中，用 Tab 到達入口並以 Enter 或 Space 開啟，焦點移至關閉按鈕；按鈕名稱符合目前語言，焦點可見且操作區域至少 44 px 高。 | browser、manual |
 | SITE-R9.7 Dialog 焦點與卸載清理 | 開啟後以 Tab 及 Shift+Tab 操作，背景控制不取得焦點；輔助工具取得 modal 的姓名與提示，背景內容暫停操作。關閉後 Tab 從入口接續，卸載也會解除 modal 並還原原有捲動設定。 | browser、manual |
 
-### SITE-R10 履歷來源與列印入口
+### SITE-R10 履歷來源與下載入口
 
-公開首頁的履歷匯出與非公開預覽共用同一份英文 ResumeSheet，主網站切換語言不翻譯履歷。公開頁面以瀏覽器列印匯出，等待字型載入完成後呼叫 `window.print()`；不承諾自動下載檔案或指定瀏覽器儲存名稱。
+公開首頁以原生同源 anchor 取得 `/resume.pdf`，提供 `download="Bing-Yang Chen - 陳秉洋.pdf"` 作為檔名建議。所有尺寸與介面語言使用同一份英文檔案，入口沿用既有下載文案，不另外標示檔案格式、語言、紙張與頁數。實際儲存、開啟或分享由瀏覽器及作業系統決定。
 
-首頁的 print sheet 在 mount 後放到 body portal，螢幕上不顯示，也不接受鍵盤或程式聚焦；非公開預覽則直接顯示紙張，連結仍可聚焦。重掛載或切換 route 不能遺留重複 print sheet。
+PDF 在 build 時以目前的 ResumeSheet 與 print CSS 產生，等待字型及履歷圖片完成載入。產檔使用英文文件語言、A4、背景列印及 CSS 紙張設定。檔案直接由靜態 hosting 提供，首頁不呼叫列印，也不掛載供列印的隱藏履歷。首頁下載連結保留在 prerender HTML 中。
 
-首頁隱藏履歷以螢幕媒體的 `visibility: hidden` 排除焦點，列印媒體沿用共用 print CSS 顯示紙張，讓列印文字與連結保持可用。
-
-共用履歷與英文預覽介面獨立標示 `lang="en"`，履歷中的中文姓名標示 `lang="zh-TW"`。列印期間把文件語言設為英文，結束、取消或卸載履歷時還原原有介面語言；這讓 Chromium 產生的 PDF 文件語言為英文，因為 PDF 的主要語言取自文件而非履歷子元素。
+`/resume` 保留非公開 client route、可見的英文 ResumeSheet 與瀏覽器列印入口，不產生對應的公開 HTML。只有預覽列印使用既有字型等待 helper；沒有 `fonts.ready` 時直接列印。預覽列印期間將文件語言設為英文，結束、取消或卸載時還原介面語言。履歷及英文預覽標示 `lang="en"`，履歷中的中文姓名標示 `lang="zh-TW"`。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R10.1 首頁列印入口 | 在目前可見履歷按鈕的桌面 viewport，點擊按鈕並等待字型，呼叫瀏覽器列印。 | unit、manual |
-| SITE-R10.2 非公開預覽列印 | 在本機預覽點 Download PDF，使用同一個列印 helper 與相同履歷內容。 | unit、manual |
-| SITE-R10.3 字型等待與替代路徑 | 有 fonts.ready 時等待 promise；缺少該能力時直接列印，不呼叫其他下載服務。 | unit |
-| SITE-R10.4 英文履歷 | 主網站使用英文或繁中時，兩個入口的履歷內容與語言標記仍為英文，中文姓名保留繁中標記；Chromium 匯出的 PDF 文件語言為英文，列印結束或取消後還原介面語言。 | unit、browser、manual |
-| SITE-R10.5 單一 Print Sheet | React 啟動後及首頁與本機預覽切換後，各入口都只有一份 print sheet；prerender HTML 不包含 body portal。 | browser |
-| SITE-R10.6 隱藏履歷不取得焦點 | 在兩種語言及桌面、窄版首頁以 Tab、Shift+Tab 或程式聚焦，焦點不進入隱藏履歷；列印結束及從本機預覽返回首頁後仍符合此規則，預覽內的可見連結可聚焦。 | browser、manual |
+| SITE-R10.1 首頁下載入口 | 在兩種語言與桌面、窄版 viewport 操作首頁原生下載連結，目的地與建議檔名符合規則，取得同一份有效 PDF，首頁不呼叫 window.print。 | unit、browser、manual |
+| SITE-R10.2 非公開預覽列印 | 在本機預覽操作 Download PDF，等待字型後使用瀏覽器列印目前的共用履歷。 | unit、manual |
+| SITE-R10.3 預覽字型等待 | 預覽列印有 fonts.ready 時等待 promise；缺少該能力時直接列印。 | unit |
+| SITE-R10.4 英文履歷 | 主網站使用英文或繁中時，下載檔案及預覽列印皆為英文履歷，PDF 文件語言為英文；預覽列印結束、取消或卸載後還原介面語言。 | unit、browser、manual |
+| SITE-R10.5 共用履歷來源 | Build 產檔與非公開預覽使用同一個 ResumeSheet；首頁沒有隱藏履歷，進入預覽時只有一份可見履歷，返回首頁後不遺留。 | browser |
+| SITE-R10.6 首頁焦點順序 | 在兩種語言及桌面、窄版首頁使用 Tab、Shift+Tab，PDF 下載連結可聚焦且焦點可見，沒有隱藏履歷連結進入順序；非公開預覽的可見履歷連結仍可聚焦。 | browser、manual |
+| SITE-R10.7 靜態下載 | 停用 JavaScript 或直接請求 PDF URL，嚴格靜態 server 回傳同一份 PDF 及 application/pdf，prerender 首頁仍提供可操作的下載 anchor；不依賴 SPA fallback。 | browser |
 
 ### SITE-R11 PDF 內容與版面
 
-履歷使用 A4，匯出時只保留履歷，不包含網站 Header、Footer 與語言切換器。內容需可選取與擷取，保留聯絡與社群連結。改動履歷內容、版面或列印行為時，依 [Resume Skill](../../.agents/skills/resume-writer/SKILL.md) 檢查來源事實、紙張、頁數、裁切、文字與連結。
+履歷維持英文單頁 A4。公開下載與非公開預覽列印只保留履歷，文字可選取與擷取，保留 email、GitHub 與個人網站連結。改動履歷相關行為時，依 [resume-writer skill](../../.agents/skills/resume-writer/SKILL.md) 檢查紙張、頁數、完整內容、閱讀順序、字型與連結。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R11.1 A4 與完整內容 | 從公開匯出及本機預覽匯出 PDF，核對預期 A4 單頁、全部內容可見，沒有裁切或額外空白頁。 | browser、manual |
-| SITE-R11.2 僅列印履歷 | PDF 不出現網站導覽、Footer、語言切換器或重複履歷。 | browser、manual |
+| SITE-R11.1 A4 與完整內容 | 檢查 build 的下載檔案與本機預覽列印均為單頁 A4，全部履歷文字可見，沒有裁切或額外空白頁。 | browser、manual |
+| SITE-R11.2 僅輸出履歷 | 下載 PDF 與預覽列印均不出現網站 Header、Footer、語言切換器或重複履歷。 | browser、manual |
 | SITE-R11.3 文字與連結 | 檢查擷取文字涵蓋所有區塊，人工確認可讀性及閱讀順序，並核對 email、GitHub 與個人網站連結。 | manual |
-| SITE-R11.4 共用結果 | 兩個入口使用相同內容與 print CSS，匯出結果沒有因 portal 或外框不同而漏印。 | browser、manual |
+| SITE-R11.4 共用結果 | 下載 PDF 與預覽列印使用相同 ResumeSheet 及 print CSS，內容、頁數、紙張與連結相同，沒有因產檔入口不同而漏印。 | browser、manual |
 
 ## 響應式、動態與執行環境
 
@@ -247,7 +246,7 @@ stateDiagram-v2
 
 版面依 viewport 調整，各區域遵循以下規則：
 
-- Hero 在窄畫面直排，較寬時改左右分區。
+- Hero 在小於 720 px 時直排，720 px 起左右分區。卡片寬度依可用畫面決定，高度隨內容延伸；問候不使用巢狀捲動。各尺寸可透過頁面捲動閱讀全部內容，QR code、社群、履歷下載與區塊導覽均可達，不產生水平溢出或被卡片裁切，操作區域至少 44 × 44 px。
 - 學歷在小螢幕直排。
 - 技能清單只顯示一份內容，依可用寬度自然換行；兩種語言及所有尺寸均能以頁面捲動讀到完整技能。
 - 作品在所有尺寸保留三個可見分頁。
@@ -266,7 +265,7 @@ stateDiagram-v2
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R12.1 Hero 分支 | 檢查 719 與 720 px 邊界的直排及左右組成，核對目前各元素的可見性；現行裁切問題見 [Roadmap](../roadmap.md#短螢幕裁切)。 | manual |
+| SITE-R12.1 Hero 分支 | 在兩種語言及一般／減少動態設定下，檢查 320 × 568、390 × 568、390 × 844、568 × 320、719 × 568、720 × 568、844 × 390、1440 × 900；組成符合 breakpoint，內容完整、沒有水平或巢狀捲動，所有入口可透過頁面捲動到達且操作區域至少 44 × 44 px。 | browser、manual |
 | SITE-R12.2 清單與學歷分支 | 檢查 512 與 513 px 的學歷、技能及作品區塊；三個作品分頁均可見，完整技能自然換行且只有一份，學歷維持既有 breakpoint，字級跨過 breakpoint 時立即套用。 | browser、manual |
 | SITE-R12.3 作品詳情分支 | 在 320、390、512、513、720、721、1024、1025 及 1440 px 切換各作品，核對排列順序、無水平溢出、素材取景、文字完整及操作可達性；互動目標至少 44 px 高。 | browser、manual |
 | SITE-R12.4 語言與預覽容器 | 窄畫面能在 Header 選單中切換語言；本機履歷紙張可在專用容器捲動，不把紙張縮到不可讀。 | browser、manual |
@@ -280,6 +279,19 @@ stateDiagram-v2
 問候在首次載入與切換語言時立即完整顯示。頭像自動翻轉、打字游標、背景、下滑箭頭及技能輪播的定時動畫停用；一般模式保留滑鼠觸發的頭像翻轉。技能完整換行並依各項位置分別進退場，校徽與學位分別進場。
 
 內容從頂端位於 viewport 高度的 104% 處開始進場，在頂端抵達 42% 高度時完成；高度超過 viewport 的 65% 時，提前在 62% 高度完成。直到整組內容的底端接近 Header 下方 24% viewport 高度，才開始退場，並在底端通過 Header 上方 8% viewport 高度時完成。進度使用 smoothstep 曲線；在進場完成與退場開始之間維持不透明度 1、位移 0 與尺度 1，作品介面內層保留有限景深位移。
+
+Hero 退場依目前捲動位置重新計算，反向捲動也使用同一規則：
+
+```mermaid
+flowchart TD
+  position[捲動或尺寸改變] --> tall{Hero 高於 viewport？}
+  tall -->|是| bottom{Hero 底端已進入 viewport？}
+  bottom -->|否| reading[名片維持原始位置、尺度及不透明度]
+  bottom -->|是| delayed[依底端進入後的捲動距離退場]
+  tall -->|否| original[沿用原有退場起點與效果]
+```
+
+延後退場的進度分母使用 viewport 與 Hero 較小的高度扣除 Header 高度。背景與下滑提示使用相同的閱讀延遲，其他區塊動態維持原有規則。
 
 - 首頁名片與背景：名片離開首頁時最多上移 160 px、縮小至 86%、後傾 4 度、不透明度降至 0.22；背景最多上移 64 px，下滑提示在離開前 25% 進度內淡出。720 px 以下，位移使用桌面的 60%。
 - 標題與一般文字：位移最多 96 px，退場最多 67.2 px；不透明度由 0.18 到 1。標題由 92%、一般文字由 96.5% 恢復原始尺度，退場分別縮小至 97.5%、98%。720 px 以下，位移最多 56 px，退場最多 39.2 px。
@@ -300,7 +312,7 @@ Reduced-motion 下停用首頁全部非必要動畫及過場，完整顯示問�
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R13.1 完整問候 | 首次載入與切換兩種語言時立即顯示目前完整問候，沒有打字等待或游標；卸載後沒有問候動畫計時器。 | unit |
-| SITE-R13.2 Hero 動態 | 首頁頂端立即完整可讀；下捲時名片、背景與提示依設計稿退場，再上捲到相同位置時恢復相同狀態，社群、QR code 與履歷操作持續可用。 | browser、manual |
+| SITE-R13.2 Hero 動態 | 名片超過 viewport 時，捲到 Hero 底端進入畫面前，保持原始位置、尺度及不透明度；繼續下捲才退場，往上捲到相同位置時還原，閱讀期間社群、QR code 與履歷操作持續清楚可用。 | browser、manual |
 | SITE-R13.3 完整減少動態 | 初次以 reduce 開啟及瀏覽中切換偏好，所有首頁非必要動態與過場停用，名片、完整問候、時間軸、技能及選取的作品完整可讀；切回一般模式直接使用當下位置。 | browser、manual |
 | SITE-R13.4 作品動態偏好 | 一般模式選取三個作品立即反映，圖片進場與捲動圖層不互相覆蓋；reduce 下沒有位移、縮放或過場。各模式維持分頁焦點與頁面位置，展示高度不縮短。 | browser、manual |
 | SITE-R13.5 導覽動態偏好 | 減少動態設定下 anchor 立即定位，Header 選單圖示與目前區塊提示沒有過場動畫，操作結果與一般模式相同。 | browser、manual |
@@ -309,19 +321,34 @@ Reduced-motion 下停用首頁全部非必要動畫及過場，完整顯示問�
 | SITE-R13.8 閱讀與焦點 | 短內容與長於 viewport 的工作段落在閱讀區維持不透明度 1 及原始位置；聚焦或離開部分進退場的元件時，維持當下捲動位置的視覺狀態，作品 panel 及內部連結也保留文字與介面的景深；聚焦期間捲動仍依位置更新。 | browser、manual |
 | SITE-R13.9 直達與重新定位 | 分別直接開啟各 section hash、reload、使用前後頁、切換語言及調整 viewport；定位後內容依當下位置正確呈現，沒有從頁頂重播或改動歷史紀錄。 | browser、manual |
 | SITE-R13.10 捲動與效能 | 用觸控板、滾輪、觸控及鍵盤捲動，頁面保留原生速度及方向，沒有額外等待、強制定格或新增水平溢出；指定桌面與實機手機檢查快捲、反轉及停住時的連續性。 | browser、manual |
-| SITE-R13.11 靜態與列印 | 檢查新 production build 的靜態首頁，停用 JavaScript 時仍顯示完整問候與主要內容；啟動後沒有隱藏閃爍，首頁列印履歷的文字、頁數及連結保持原有結果。 | browser、manual |
+| SITE-R13.11 靜態與列印 | 新 production build 在停用 JavaScript 時仍顯示完整問候、主要內容與 PDF 下載連結；啟動後沒有隱藏閃爍，非公開預覽列印保持單頁 A4、完整文字與連結。 | browser、manual |
 
 ### SITE-R14 靜態輸出與 Prerender
 
 Production build 在 CRA compile 後執行首頁 prerender，使用繁中、台北時區及減少動態設定擷取 `#root` 的內容，保留原 shell head，排除 body portal。HTML 不包含滾動動態的啟用標記或暫存視覺狀態，首頁產生可在 JavaScript 啟動前讀取的文字；需要操作的功能仍依賴 JavaScript。
 
+CRA compile 後的 postbuild 同時完成首頁 prerender 與履歷 PDF 產檔。產檔可在內部使用 `/resume` 的 client route，但公開輸出仍只有首頁 HTML 與 PDF，不新增 `/resume/index.html`。
+
+履歷檢查要求只有一份 ResumeSheet、字型與圖片載入成功，以及文字與連結位於紙張範圍內。產檔錯誤沿用現有 CI 阻止發布：
+
+```mermaid
+flowchart TD
+  sheet[檢查履歷載入與紙張範圍] --> ready{通過？}
+  ready -->|是| generate[產生 PDF]
+  ready -->|否| fail[Build 以非零狀態結束，CI 停止發布]
+  generate --> valid{有效且為英文單頁 A4？}
+  generate -->|產檔失敗| fail
+  valid -->|是| done[完成 Build 輸出]
+  valid -->|否| fail
+```
+
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R14.1 完整 Build | 從乾淨的 CRA 輸出完成 build 與 postbuild，產生首頁靜態內容；不能以獨立 prerender 已處理過的 HTML 代替。 | browser |
+| SITE-R14.1 完整 Build | 從乾淨的 CRA 輸出完成 build 與 postbuild，同時產生首頁靜態內容與當次 ResumeSheet 的 PDF；不能以既有輸出檔案代替當次產檔。 | browser |
 | SITE-R14.2 靜態首頁內容 | 讀取 build 的 HTML，或停用 JavaScript 開啟首頁，仍有主要區塊文字；不要求 QR code 或語言切換在無 JavaScript 時可操作。 | browser |
-| SITE-R14.3 擷取範圍 | HTML 保留 shell metadata，root 內有繁中內容，root 外沒有擷取到的 print portal；啟動後也不重複。 | browser |
-| SITE-R14.4 失敗回報 | 空 root、擷取期 JavaScript error、錯誤 HTTP 或不足的內容使 prerender 失敗，不上傳該次失敗產物。 | browser |
+| SITE-R14.3 擷取範圍 | HTML 保留 shell metadata，root 內有繁中內容及下載連結，root 外沒有 print portal；首頁啟動後沒有隱藏履歷或重複內容。 | browser |
+| SITE-R14.4 失敗回報 | 空 root、JavaScript error、錯誤 HTTP、不足的內容、履歷載入失敗、超出紙張、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
 
 ### SITE-R15 Service Worker 與執行環境
 

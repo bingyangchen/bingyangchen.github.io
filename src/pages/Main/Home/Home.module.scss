@@ -59,7 +59,8 @@
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding: calc(_.$header-height + 28px) 16px 72px;
+    padding: calc(_.$header-height + env(safe-area-inset-top, 0px) + 28px)
+      _.$hero-page-padding 72px;
     box-sizing: border-box;
     overflow: hidden;
     isolation: isolate;
@@ -91,7 +92,6 @@
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
-      max-height: calc(100dvh - 108px);
       overflow: hidden;
       border-radius: 24px;
       border: 1px solid rgba(255, 255, 255, 0.5);
@@ -101,13 +101,14 @@
         0 1px 3px rgba(0, 0, 0, 0.03);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      /* US standard 2in x 3.5in: portrait 4:7, landscape 7:4 */
-      width: min(100%, calc((100dvh - 108px) * 4 / 7));
-      aspect-ratio: 4 / 7;
+      width: min(100%, _.$hero-card-portrait-width);
       padding: 28px;
       @media (min-width: _.$medium) {
-        width: min(100%, 900px, calc((100dvh - 108px) * 7 / 4));
-        aspect-ratio: 7 / 4;
+        width: min(100%, _.$hero-card-landscape-width);
+        min-height: min(
+          calc((100vw - 2 * _.$hero-page-padding) * 4 / 7),
+          calc(_.$hero-card-landscape-width * 4 / 7)
+        );
         padding: 44px 48px;
       }
     }
@@ -115,16 +116,14 @@
       display: grid;
       width: 100%;
       flex: 1;
-      min-height: 0;
-      overflow: hidden;
       justify-items: center;
       row-gap: 22px;
       column-gap: 52px;
-      grid-template-columns: 1fr;
-      grid-template-rows: auto auto auto minmax(0, 1fr) auto auto;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: auto auto auto auto auto auto;
       @media (min-width: _.$medium) {
-        grid-template-columns: minmax(0, 38%) 1fr;
-        grid-template-rows: minmax(0, 1fr);
+        grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
+        grid-template-rows: minmax(min-content, 1fr);
         align-items: stretch;
         justify-items: stretch;
       }
@@ -135,7 +134,6 @@
       @media (min-width: _.$medium) {
         display: flex;
         flex-direction: column;
-        min-height: 0;
       }
     }
     & .sheet_left {
@@ -253,6 +251,7 @@
       align-items: center;
       gap: 8px;
       max-width: 100%;
+      min-height: _.$minimum-control-size;
       padding: 7px 12px;
       border-radius: 999px;
       border: 1px solid rgba(0, 0, 0, 0.06);
@@ -322,26 +321,13 @@
       text-align: center;
       grid-column: 1;
       grid-row: 4;
-      min-height: 0;
-      overflow-x: hidden;
-      overflow-y: auto;
+
       @media (min-width: _.$medium) {
         grid-column: unset;
         grid-row: unset;
         margin: 0;
         flex: 1 1 0;
         max-width: 280px;
-      }
-      -webkit-overflow-scrolling: touch;
-      scrollbar-gutter: stable;
-      @media (hover: hover) {
-        &::-webkit-scrollbar {
-          width: 5px;
-        }
-        &::-webkit-scrollbar-thumb {
-          background-color: rgba(0, 0, 0, 0.12);
-          border-radius: 3px;
-        }
       }
       & > .greeting {
         margin: 0 auto;
@@ -403,10 +389,14 @@
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 18px;
+      gap: 12px;
     }
     & .social_icon_link {
       display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: _.$minimum-control-size;
+      min-height: _.$minimum-control-size;
       color: _.$deep-gray;
       transition:
         color 150ms ease,
@@ -420,10 +410,14 @@
         }
       }
     }
-    & .resume_download_desktop_only {
-      display: none;
-      @media (min-width: _.$medium) {
-        display: flex;
+    & .resume_download {
+      -webkit-user-select: none;
+      user-select: none;
+      min-width: 0;
+      min-height: _.$minimum-control-size;
+      &:focus-visible {
+        outline: 2px solid _.$brand-olive-ink;
+        outline-offset: 4px;
       }
     }
     & .cta_toolbar {
@@ -472,7 +466,9 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      padding: 14px 10px;
+      padding: 14px 6px;
+      min-width: 0;
+      min-height: _.$minimum-control-size;
       border-radius: 14px;
       border: 1px solid _.$light-gray;
       background-color: rgba(255, 255, 255, 0.45);
@@ -673,22 +669,6 @@
       color: _.$body-muted;
       text-align: center;
     }
-  }
-}
-
-.resume_export_slot {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 794px;
-  height: 1123px;
-  transform: translate3d(calc(-100vw - 100%), 0, 0);
-  z-index: 0;
-  pointer-events: none;
-  isolation: isolate;
-
-  @media screen {
-    visibility: hidden;
   }
 }
 
