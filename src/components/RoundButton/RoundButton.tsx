@@ -1,6 +1,7 @@
 import styles from "./RoundButton.module.scss";
 
 import React, { MouseEventHandler } from "react";
+import Tooltip from "../Tooltip/Tooltip";
 
 interface RoundButtonProperties extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
@@ -19,17 +20,16 @@ export default function RoundButton({
   const rootClassName = `${styles.main} round_button ${className}`;
 
   return (
-    <button
-      {...buttonProperties}
-      type="button"
-      className={rootClassName}
-      onClick={onClick}
-      aria-label={hintText}
-    >
-      {children}
-      <span className={styles.hint_text} aria-hidden="true">
-        {hintText}
-      </span>
-    </button>
+    <Tooltip text={hintText}>
+      <button
+        {...buttonProperties}
+        type="button"
+        className={rootClassName}
+        onClick={onClick}
+        aria-label={hintText}
+      >
+        {children}
+      </button>
+    </Tooltip>
   );
 }

@@ -75,6 +75,10 @@
         width: 32px;
         height: 32px;
       }
+      & > [data-tooltip-content] {
+        left: 0;
+        transform: translateY(100%);
+      }
     }
     & > .menu_button {
       display: none;
@@ -218,7 +222,7 @@
         overflow-y: auto;
         overscroll-behavior: contain;
         padding: 12px max(24px, env(safe-area-inset-right, 0px))
-          max(24px, env(safe-area-inset-bottom, 0px))
+          max(32px, env(safe-area-inset-bottom, 0px))
           max(24px, env(safe-area-inset-left, 0px));
         border-bottom: 1px solid $divider-color;
         background: _.$white;

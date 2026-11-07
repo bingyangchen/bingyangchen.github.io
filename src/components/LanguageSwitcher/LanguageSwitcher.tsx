@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useTranslation } from "../../i18n/context";
+import Tooltip from "../Tooltip/Tooltip";
 import styles from "./LanguageSwitcher.module.scss";
 
 export const LanguageSwitcher: React.FC = () => {
@@ -11,17 +12,18 @@ export const LanguageSwitcher: React.FC = () => {
   };
 
   return (
-    <button
-      className={styles.switcher}
-      type="button"
-      data-language-switcher
-      onClick={toggleLanguage}
-      aria-label={dictionary.header.switchLanguage}
-      title={dictionary.header.switchLanguage}
-    >
-      <span lang={language === "en" ? "zh-TW" : "en"}>
-        {language === "en" ? "中文" : "English"}
-      </span>
-    </button>
+    <Tooltip text={dictionary.header.switchLanguage}>
+      <button
+        className={styles.switcher}
+        type="button"
+        data-language-switcher
+        onClick={toggleLanguage}
+        aria-label={dictionary.header.switchLanguage}
+      >
+        <span lang={language === "en" ? "zh-TW" : "en"}>
+          {language === "en" ? "中文" : "English"}
+        </span>
+      </button>
+    </Tooltip>
   );
 };

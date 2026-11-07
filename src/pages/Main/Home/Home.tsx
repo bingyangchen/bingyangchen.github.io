@@ -13,6 +13,7 @@ import {
   Projects,
   RoundButton,
   Skill,
+  Tooltip,
   WorkExperience,
 } from "../../../components";
 import { homeSkillItems } from "../../../data/skills";
@@ -195,36 +196,39 @@ export default function Home() {
                     <span>{CONTACT_EMAIL}</span>
                   </span>
                   <div className={styles.social_icons}>
-                    <a
-                      href="https://github.com/bingyangchen"
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className={styles.social_icon_link}
-                      title="GitHub"
-                      aria-label="GitHub"
-                    >
-                      <IconGitHub sideLength="22" />
-                    </a>
-                    <a
-                      href="https://www.linkedin.com/in/bing-yang-chen/"
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className={styles.social_icon_link}
-                      title="LinkedIn"
-                      aria-label="LinkedIn"
-                    >
-                      <IconLinkedIn sideLength="22" />
-                    </a>
-                    <a
-                      href="https://www.cake.me/me/BingYangChen"
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className={styles.social_icon_link}
-                      title="Cake"
-                      aria-label="Cake"
-                    >
-                      <IconCSquareFill sideLength="22" />
-                    </a>
+                    <Tooltip text="GitHub">
+                      <a
+                        href="https://github.com/bingyangchen"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={styles.social_icon_link}
+                        aria-label="GitHub"
+                      >
+                        <IconGitHub sideLength="22" />
+                      </a>
+                    </Tooltip>
+                    <Tooltip text="LinkedIn">
+                      <a
+                        href="https://www.linkedin.com/in/bing-yang-chen/"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={styles.social_icon_link}
+                        aria-label="LinkedIn"
+                      >
+                        <IconLinkedIn sideLength="22" />
+                      </a>
+                    </Tooltip>
+                    <Tooltip text="Cake">
+                      <a
+                        href="https://www.cake.me/me/BingYangChen"
+                        target="_blank"
+                        rel="noreferrer noopener"
+                        className={styles.social_icon_link}
+                        aria-label="Cake"
+                      >
+                        <IconCSquareFill sideLength="22" />
+                      </a>
+                    </Tooltip>
                   </div>
                 </div>
                 <div className={styles.cta_toolbar}>

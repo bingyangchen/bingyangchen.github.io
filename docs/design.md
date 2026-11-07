@@ -53,6 +53,7 @@ Motion should support reading and navigation, with a clear purpose and respect f
 - Keep body text selectable and copyable through native browser interactions, including descriptions inside article links. Keep buttons, navigation, and action labels unselectable.
 - Keep the viewport configured to disable user scaling.
 - Provide immediate feedback for navigation and toggles, with visible keyboard focus and comfortable touch targets.
+- Hover hints share the QR code control's custom tooltip treatment: small, rounded dark surfaces below the control, with white text. Align hints near the viewport edges to keep the full text visible. Use the same treatment on keyboard focus and retain each control's accessible name.
 - Focus indicators share a consistent line weight and use the existing palette by context: charcoal for the Header, main landmark, and resume preview; dark olive for homepage content and the QR code dialog; light olive for the dark Footer. Filled buttons follow their region's focus color when the outline sits on a light surrounding surface. Keep spacing consistent within ordinary controls and large content surfaces, and use inset outlines for full-width navigation targets. Preserve each control's shape and the system's focus colors in forced-colors mode.
 - Links using `IconArrowUpRight` share the same subtle arrow movement when the link is hovered. Disable that movement when reduced motion is requested.
 

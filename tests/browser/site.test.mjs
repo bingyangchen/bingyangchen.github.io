@@ -307,7 +307,13 @@ test("SITE-R2.5 SITE-R2.6 常駐 Header 與 Logo 回頂端", async () => {
     true,
   );
   assert.equal(
-    await page.$eval('header a[href="#home"]', (element) => element.textContent.trim()),
+    await page.$eval('header a[href="#home"]', (element) =>
+      [...element.childNodes]
+        .filter((node) => node.nodeType === Node.TEXT_NODE)
+        .map((node) => node.textContent)
+        .join("")
+        .trim(),
+    ),
     "",
   );
 });
@@ -2933,7 +2939,7 @@ test("SITE-R18.2 深淺背景對比與滿版目的地的實際可見框線", asy
     ["header [data-language-switcher]", ".site-layout"],
     [`${DETAIL} a[class*="visit"]`, "#projects"],
     ['#blog a[class*="featured"]', ".site-layout"],
-    ['footer a[title="GitHub"]', "footer"],
+    ['footer a[href="https://github.com/bingyangchen"]', "footer"],
   ]) {
     await page.$eval(selector, (element) => {
       element.scrollIntoView({ block: "center", behavior: "instant" });
@@ -3050,7 +3056,7 @@ test("SITE-R18.3 強制色彩使用系統焦點色並保留外框", async () => 
     [DETAIL, 5],
     [`${DETAIL} a`, 3],
     ['#blog a[class*="featured"]', 5],
-    ['footer a[title="GitHub"]', 3],
+    ['footer a[href="https://github.com/bingyangchen"]', 3],
   ]) {
     await page.focus(selector);
     await assertFocusRing(systemColor, offset);
@@ -3133,5 +3139,117 @@ test("SITE-R18.4 焦點樣式保留輸入方式、選取、dialog 與列印行�
     });
     assert.deepEqual(printRing, browserPrintRing);
     await page.emulateMediaType("screen");
+  }
+});
+
+test("SITE-R19.1 共用提示", async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  const controls = [
+    'header a[href="#home"]',
+    "[data-language-switcher]",
+    QR,
+    ...["#home", "footer"].flatMap((region) =>
+      ["github.com", "linkedin.com", "cake.me"].map(
+        (domain) => `${region} a[href*="${domain}"]`,
+      ),
+    ),
+  ];
+
+  for (const width of [1440, 1024, 721, 390, 320]) {
+    await page.setViewport({ width, height: 900 });
+    await page.evaluateOnNewDocument(() =>
+      localStorage.setItem("preferred_language", "en"),
+    );
+    await openHome();
+    for (const language of ["en", "zh-TW"]) {
+      if (language === "zh-TW") {
+        await page.evaluate(() =>
+          document.querySelector("[data-language-switcher]").click(),
+        );
+      }
+      assert.equal(await page.$("[title]"), null, "no native HTML tooltips");
+      let sharedAppearance;
+      for (const selector of controls) {
+        if (selector === "[data-language-switcher]" && width <= 720) {
+          await page.click('header button[aria-controls="site-navigation"]');
+        }
+        await page.$eval(selector, (control) =>
+          control.scrollIntoView({ block: "center", behavior: "instant" }),
+        );
+        const destination = await page.$eval(selector, (control) =>
+          control.getAttribute("href"),
+        );
+        const tooltip = `${selector} > [data-tooltip-content]`;
+        await page.hover(selector);
+        const appearance = await page.$eval(tooltip, (content) => {
+          const style = getComputedStyle(content);
+          const bounds = content.getBoundingClientRect();
+          if (style.display === "none") throw new Error("Tooltip is hidden");
+          if (bounds.left < 0 || bounds.right > window.innerWidth)
+            throw new Error(
+              `${content.textContent} extends outside ${window.innerWidth}px viewport: ${bounds.left} to ${bounds.right}`,
+            );
+          let ancestor = content.parentElement;
+          while (ancestor) {
+            const ancestorStyle = getComputedStyle(ancestor);
+            const ancestorBounds = ancestor.getBoundingClientRect();
+            if (
+              /(hidden|auto|scroll|clip)/.test(ancestorStyle.overflowY) &&
+              (bounds.top < ancestorBounds.top || bounds.bottom > ancestorBounds.bottom)
+            )
+              throw new Error("Tooltip is clipped vertically");
+            ancestor = ancestor.parentElement;
+          }
+          return {
+            background: style.backgroundColor,
+            color: style.color,
+            radius: style.borderRadius,
+            font: style.font,
+            padding: style.padding,
+            opacity: style.opacity,
+          };
+        });
+        if (!sharedAppearance) sharedAppearance = appearance;
+        assert.deepEqual(appearance, sharedAppearance, `${width}px ${selector}`);
+        assert.equal(
+          await page.$eval(tooltip, (content) => content.getAttribute("aria-hidden")),
+          "true",
+        );
+        if (selector === "[data-language-switcher]" || selector === QR) {
+          assert.equal(
+            await page.$eval(selector, (control) => control.getAttribute("aria-label")),
+            await page.$eval(tooltip, (content) => content.textContent),
+          );
+        }
+        await page.mouse.move(width - 1, 899);
+        await page.$eval(selector, (control) => control.focus({ preventScroll: true }));
+        await page.keyboard.down("Shift");
+        await page.keyboard.press("Tab");
+        await page.keyboard.up("Shift");
+        await page.keyboard.press("Tab");
+        assert.equal(
+          await page.$eval(tooltip, (content) => getComputedStyle(content).display),
+          "block",
+          "keyboard focus shows the same tooltip",
+        );
+        await page.keyboard.down("Shift");
+        await page.keyboard.press("Tab");
+        await page.keyboard.up("Shift");
+        assert.equal(
+          await page.$eval(tooltip, (content) => getComputedStyle(content).display),
+          "none",
+          "leaving hover and focus hides the tooltip",
+        );
+        assert.equal(
+          await page.$eval(selector, (control) => control.getAttribute("href")),
+          destination,
+        );
+        if (selector === "[data-language-switcher]" && width <= 720) {
+          await page.click('header button[aria-controls="site-navigation"]');
+        }
+      }
+    }
   }
 });

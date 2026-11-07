@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 
 import logo from "../../assets/logo.webp";
 import { LanguageSwitcher } from "../LanguageSwitcher/LanguageSwitcher";
+import Tooltip from "../Tooltip/Tooltip";
 import { useTranslation } from "../../i18n/context";
 import { useSectionNavigation } from "../../navigation/useSectionNavigation";
 import styles from "./Header.module.scss";
@@ -108,18 +109,19 @@ export default function Header() {
         {dictionary.header.skipToContent}
       </a>
       <div className={styles.inner}>
-        <a
-          className={styles.identity}
-          href={getSectionHref("home")}
-          aria-label={dictionary.name}
-          aria-current={
-            pathname === "/" && activeSection === "home" ? "location" : undefined
-          }
-          title={dictionary.header.home}
-          onClick={(event) => handleSectionClick(event, "home")}
-        >
-          <img src={logo} width={32} height={32} alt="" />
-        </a>
+        <Tooltip text={dictionary.header.home}>
+          <a
+            className={styles.identity}
+            href={getSectionHref("home")}
+            aria-label={dictionary.name}
+            aria-current={
+              pathname === "/" && activeSection === "home" ? "location" : undefined
+            }
+            onClick={(event) => handleSectionClick(event, "home")}
+          >
+            <img src={logo} width={32} height={32} alt="" />
+          </a>
+        </Tooltip>
         <button
           className={styles.menu_button}
           type="button"

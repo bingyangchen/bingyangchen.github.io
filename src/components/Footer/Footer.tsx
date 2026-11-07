@@ -3,6 +3,7 @@ import styles from "./Footer.module.scss";
 import { useTranslation } from "../../i18n/context";
 import { IconCSquareFill, IconGitHub, IconLinkedIn } from "../../icons";
 import Logo from "../Logo/Logo";
+import Tooltip from "../Tooltip/Tooltip";
 
 export default function Footer() {
   const { dictionary } = useTranslation();
@@ -33,38 +34,41 @@ export default function Footer() {
       <div className={`${styles.section} ${styles.social_media}`}>
         <div className={styles.title}>{footer.socialMedia}</div>
         <div className={styles.list}>
-          <a
-            href="https://github.com/bingyangchen"
-            target="_blank"
-            rel="noreferrer noopener"
-            className={styles.item}
-            title="GitHub"
-          >
-            <IconGitHub sideLength="20" />
-            <span>GitHub</span>
-          </a>
+          <Tooltip text="GitHub">
+            <a
+              href="https://github.com/bingyangchen"
+              target="_blank"
+              rel="noreferrer noopener"
+              className={styles.item}
+            >
+              <IconGitHub sideLength="20" />
+              <span className={styles.label}>GitHub</span>
+            </a>
+          </Tooltip>
           <hr />
-          <a
-            href="https://www.linkedin.com/in/bing-yang-chen/"
-            target="_blank"
-            rel="noreferrer noopener"
-            className={styles.item}
-            title="LinkedIn"
-          >
-            <IconLinkedIn sideLength="18.5" />
-            <span>LinkedIn</span>
-          </a>
+          <Tooltip text="LinkedIn">
+            <a
+              href="https://www.linkedin.com/in/bing-yang-chen/"
+              target="_blank"
+              rel="noreferrer noopener"
+              className={styles.item}
+            >
+              <IconLinkedIn sideLength="18.5" />
+              <span className={styles.label}>LinkedIn</span>
+            </a>
+          </Tooltip>
           <hr />
-          <a
-            href="https://www.cake.me/me/BingYangChen"
-            target="_blank"
-            rel="noreferrer noopener"
-            className={styles.item}
-            title="Cake"
-          >
-            <IconCSquareFill sideLength="18.5" />
-            <span>Cake</span>
-          </a>
+          <Tooltip text="Cake">
+            <a
+              href="https://www.cake.me/me/BingYangChen"
+              target="_blank"
+              rel="noreferrer noopener"
+              className={styles.item}
+            >
+              <IconCSquareFill sideLength="18.5" />
+              <span className={styles.label}>Cake</span>
+            </a>
+          </Tooltip>
           <hr />
         </div>
       </div>
