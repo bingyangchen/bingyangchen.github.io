@@ -16,4 +16,4 @@
 
 # 待決策
 
-- 可讀性政策：建議解除 viewport 的 user scaling 限制，見 [計劃 0001 的 Spec 變更](plans/0001-codebase-technical-debt.md#spec-變更)。此調整涉及現行設計，核准前保留原規則，相關需求為 SITE-R12。
+暫無。

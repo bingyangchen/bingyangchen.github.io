@@ -31,12 +31,11 @@ depends_on: []
 
 ### 優先順序
 
-P1 優先處理已確認的可讀性、操作問題；P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結構；P3 處理可獨立安排的小型整理與調查。
+P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結構，以及已確認的操作問題；P3 處理可獨立安排的小型整理與調查。
 
 <!-- prettier-ignore -->
 | 編號 | 優先順序 | 調整主題 | 證據種類 |
 | --- | --- | --- | --- |
-| TD-05 | P1 | 允許使用者縮放頁面 | 程式碼確認，涉及設計決策變更 |
 | TD-06 | P2 | 補齊 Footer 的最小操作高度 | 已重現 |
 | TD-07 | P2 | 收緊工作經歷、字典與 fallback 的資料約定 | 程式碼確認 |
 | TD-08 | P2 | 用穩定作品 ID 整合作品資料與素材 | 程式碼確認 |
@@ -62,17 +61,9 @@ P1 優先處理已確認的可讀性、操作問題；P2 處理會持續增加�
 
 ## 設計稿
 
-無大幅版面或資訊架構變更，因此不新增畫面設計稿。TD-05、TD-06 涉及局部操作修正，須以修改前後的雙語桌面、窄版畫面及鍵盤狀態驗收。建議操作及縮放政策寫在下方 Spec 變更，核准前不改動現行設計文件。
+無大幅版面或資訊架構變更，因此不新增畫面設計稿。TD-06 涉及局部操作修正，須以修改前後的雙語桌面、窄版畫面及鍵盤狀態驗收。Footer 操作高度的驗證要求寫在下方 Spec 變更。
 
 ## 檢查發現與調整方案
-
-### TD-05：解除頁面縮放限制
-
-證據：[`index.html`](../../index.html) 設定 `maximum-scale=1, user-scalable=0`；[設計方向](../design.md) 也明確要求停用 user scaling。這是既有設計決策，不是誤寫，建議在本計劃核准範圍內修訂政策。
-
-建議保留 `width=device-width`、`initial-scale=1`、`viewport-fit=cover`，移除縮放上限與禁用設定，讓需要放大文字的訪客使用瀏覽器原生操作。[W3C 的 viewport 檢查](https://www.w3.org/WAI/standards-guidelines/act/rules/b4f0c3/) 將這個設定與文字放大需求連結；各瀏覽器是否忽略限制，需要分別實測。
-
-完成條件：200% 放大時可瀏覽、切換語言、操作選單、作品及 QR code，內容可透過頁面捲動讀完。真實手機確認 pinch zoom，不能以縮小桌面 viewport 代替。履歷 PDF 的 A4 幾何尺寸保持原有規則。
 
 ### TD-06：讓 Footer 符合既有操作高度
 
@@ -327,17 +318,14 @@ flowchart TD
 
 此節為待核准的提案。沒有產品行為變化的重構沿用既有 scenario IDs；工具設定與資料完整性由工程驗收檢查，不為內部檔案搬移建立產品規格。
 
-### SITE-R12：補足操作高度與縮放
+### SITE-R12：補足 Footer 操作高度驗證
 
-沿用 SITE-R12 的版面、最小操作高度及文字選取規則。新增規則：網站允許瀏覽器原生頁面縮放；放大後可透過頁面捲動使用首頁功能。Footer anchor 也必須符合既有 44 px 最小高度。
+沿用 SITE-R12 的版面、最小操作高度及文字選取規則，補上 Footer anchor 符合既有 44 px 最小高度的驗證情境。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R12.8 頁面放大 | 頁面未禁止原生縮放；200% 放大及真實手機 pinch zoom 後，能讀完文字並操作選單、語言、作品、QR code 與履歷下載，沒有新增只能水平捲動才可讀完的正文。 | browser、manual |
 | SITE-R12.9 Footer 操作尺寸 | 在雙語及窄版、桌面畫面量測所有 Footer 社群與 Logo 連結，均至少 44 px 高，focus 完整可見且目的地維持。 | browser |
-
-設計文件的完整替代文字為：「Keep native browser zoom available. Enlarged content remains readable through page scrolling, and navigation, language selection, project controls, the QR code dialog, and resume download remain operable.」取代目前停用 user scaling 的規則，其他文案政策維持。
 
 ### SITE-R15：精確清理已知舊版 Registration
 
@@ -361,7 +349,7 @@ SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-
 
 ```mermaid
 flowchart TD
-  baseline[保留驗證基準與情境對應] --> fixes[TD-05、TD-06：局部缺陷]
+  baseline[保留驗證基準與情境對應] --> fixes[TD-06：Footer 操作高度]
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-07 到 TD-10、TD-24：內容與功能分工]
   tooling --> tests[TD-13、TD-14、TD-22：測試與診斷]
@@ -373,7 +361,7 @@ flowchart TD
   build --> optional[TD-25、TD-26：靜態資料與載入整理]
 ```
 
-Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留兩組 runner，確認對應後刪除舊的測試基礎設施，避免長期維護重複套件。P1 的小修正可先完成，不能等整個目錄重構才處理。
+Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留兩組 runner，確認對應後刪除舊的測試基礎設施，避免長期維護重複套件。Footer 的操作高度修正可先完成，不必等整個目錄重構。
 
 ### 需要特別保留的規則
 
@@ -390,7 +378,6 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 <!-- prettier-ignore -->
 | 情境 | 驗證方式 |
 | --- | --- |
-| SITE-R12.8 頁面放大 | browser、manual，檢查 viewport 設定與放大版面，另測真實手機 pinch zoom。 |
 | SITE-R12.9 Footer 操作尺寸 | browser，量測所有 Footer anchor 的矩形與 focus。 |
 | SITE-R15.2 既有 Registration 清理 | 使用 unit、browser、manual 驗證符合清理條件與應保留的 registrations，並涵蓋有 waiting worker、沒有 active worker，以及既有 controller 仍控制頁面的情況。 |
 | SITE-R15.3 Registration 查詢失敗 | unit，涵蓋 API 不存在、查詢拒絕及不屬於本站的紀錄。 |
