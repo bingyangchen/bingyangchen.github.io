@@ -4,6 +4,8 @@
 
 原始頭像、作品截圖及 Logo 保留在 [`src/assets/`](../src/assets/)，網站使用 [`src/assets/responsive/`](../src/assets/responsive/) 的縮圖。社群預覽圖的原始檔保留在 [`design/cover-source.png`](../design/cover-source.png)，輸出維持 [`public/cover.png`](../public/cover.png)。
 
+網站 Logo 的向量原檔為 [`logo.svg`](../src/assets/logo.svg)。WebP 與 favicon 使用透明背景，可見與半透明像素的 RGB 均為純黑；`src/assets/logo.webp` 與 `public/logo.webp` 保持一致，96 px 縮圖由完整 WebP 產生。
+
 更新原圖後執行 `npm run images:generate`，再檢查實際畫面並執行 `npm run check`。產生腳本使用 [libwebp 的 cwebp](https://developers.google.com/speed/webp/docs/cwebp) 與 dwebp，本次使用 1.6.0；一般開發、CI 與 production build 直接使用已提交的縮圖，不需要安裝這兩個工具。
 
 <!-- prettier-ignore -->

@@ -55,6 +55,8 @@ Vitest discovers `src/**/*.{test,spec}.{js,jsx,ts,tsx}` and excludes `fixtures` 
 
 Browser tests use the production assets without substituting remote images. The shared `scripts/browser-resources.mjs` monitor blocks unexpected external requests and rejects HTTP errors, failed requests, undecodable images, console errors, and uncaught JavaScript errors. Failure tests use isolated pages and explicitly verify their expected errors. External link destinations are checked separately from third-party availability.
 
+Motion checks wait for the rendered hover position and media-query cleanup state. A completed emulation command, a fixed number of animation frames, or an empty animation list does not guarantee that those changes have reached the renderer and event listeners.
+
 Vite's JavaScript targets and PostCSS Autoprefixer use the existing production Browserslist policy. CSS uses Vite's default Lightning CSS minifier. The dormant Workbox source remains for TD-19, but Vite neither bundles nor emits a service worker.
 
 The `@typescript-eslint/typescript-estree` override selects patched `minimatch` 11 for [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249). It affects ESLint's project-file matching only. Remove the override once typescript-eslint requires a patched version itself, after checking lint and project matching.
