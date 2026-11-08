@@ -38,7 +38,7 @@ Language selection remains available when browser storage is blocked. Keep the v
 
 Maintain a calm, professional presentation with readable hierarchy and restrained accents.
 
-- **Palette:** Neutral backgrounds and dark text, with olive as an accent.
+- **Palette:** Neutral backgrounds and dark text, with olive as an accent. Use a dedicated olive action color with white text for brand buttons, visually coordinated with the portrait. Keep the resume action label at the body UI scale with normal tracking so it stays clear without overpowering the card. Preserve a distinct lighter text color for dates and other supporting information. Choose the lightest neutral gray that maintains at least 4.5:1 contrast on the existing white and light gray surfaces; reserve paler gray for decoration. Use dark olive for text and action icons on light surfaces, including hover states.
 - **Consistency:** Equivalent roles and surfaces share visual rules. Vary color or treatment when contrast, hierarchy, or layout gives the difference a purpose.
 - **Typography:** Geneva/sans-serif for body and UI text; Georgia/Times/serif for established section titles, subtitles, and the Footer, using the same serif family and fallback order. Preserve the existing hierarchy and spacing rhythm.
 - **Shared section scale:** Projects and Blog use the same responsive container spacing, section titles, introductory text, metadata, and equivalent external-link sizes. Preserve each section's content hierarchy.

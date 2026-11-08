@@ -246,7 +246,7 @@
         }
         @media (hover: hover) {
           &:hover {
-            color: _.$brand-olive;
+            color: _.$brand-olive-ink;
             background-color: rgba(_.$white, 0.92);
           }
         }
@@ -421,7 +421,7 @@
         transform _.$motion-duration-feedback ease;
       @media (hover: hover) {
         &:hover {
-          color: _.$brand-olive;
+          color: _.$brand-olive-ink;
           @media (prefers-reduced-motion: no-preference) {
             transform: translateY(-2px);
           }
@@ -430,6 +430,9 @@
     }
     & .resume_download {
       @include controls.unselectable;
+      font-size: _.$base-font-size;
+      font-weight: 600;
+      letter-spacing: normal;
       min-width: 0;
       min-height: _.$minimum-control-size;
       width: 100%;
@@ -500,7 +503,7 @@
       @media (hover: hover) {
         &:hover {
           border-color: rgba(_.$brand-olive, 0.45);
-          color: _.$brand-olive;
+          color: _.$brand-olive-ink;
           background-color: rgba(_.$brand-olive, 0.08);
         }
       }

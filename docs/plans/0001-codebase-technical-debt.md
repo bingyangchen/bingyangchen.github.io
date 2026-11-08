@@ -36,7 +36,6 @@ P1 優先處理已確認的可讀性、操作問題；P2 處理會持續增加�
 <!-- prettier-ignore -->
 | 編號 | 優先順序 | 調整主題 | 證據種類 |
 | --- | --- | --- | --- |
-| TD-03 | P1 | 修正文字與品牌按鈕的對比 | 已重現 |
 | TD-04 | P1 | 改善 Tooltip 的關閉與游標操作 | 已重現、程式碼確認 |
 | TD-05 | P1 | 允許使用者縮放頁面 | 程式碼確認，涉及設計決策變更 |
 | TD-06 | P2 | 補齊 Footer 的最小操作高度 | 已重現 |
@@ -64,19 +63,9 @@ P1 優先處理已確認的可讀性、操作問題；P2 處理會持續增加�
 
 ## 設計稿
 
-無大幅版面或資訊架構變更，因此不新增畫面設計稿。TD-03、TD-04、TD-05、TD-06 涉及局部配色或操作修正，須以修改前後的雙語桌面、窄版畫面及鍵盤狀態驗收。建議配色及縮放政策寫在下方 Spec 變更，核准前不改動現行設計文件。
+無大幅版面或資訊架構變更，因此不新增畫面設計稿。TD-04、TD-05、TD-06 涉及局部操作修正，須以修改前後的雙語桌面、窄版畫面及鍵盤狀態驗收。建議操作及縮放政策寫在下方 Spec 變更，核准前不改動現行設計文件。
 
 ## 檢查發現與調整方案
-
-### TD-03：修正文字與品牌按鈕的對比
-
-證據：[`_tokens.scss`](../../src/styles/_tokens.scss) 的 `$text-muted` 為 `#888`，用在工作日期、公司名稱、技能及部分履歷文字。閱讀狀態下，`#888` 對白色約為 3.545：1，對 `#f5f5f5` 約為 3.252：1。實測工作日期為 14.4 px，未達一般文字 4.5：1 的要求。
-
-[`Button.module.scss`](../../src/components/Button/Button.module.scss) 的品牌按鈕以白字搭配 `#9fa76e`，對比約 2.553：1。實測下載履歷文字為 17.6 px、粗體，連大字標準的 3：1 也未達。[W3C 對比說明](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html) 分別要求一般文字 4.5：1、大字 3：1。
-
-建議保留橄欖色品牌底，品牌按鈕改用既有深灰文字；正文的 muted role 使用既有 `$text-secondary`，淺灰只保留給裝飾。另檢查 Hero 導覽及社群 hover 改成淺橄欖色時的圖示、文字對比，不以 hover 動畫掩蓋不足。
-
-完成條件：閱讀狀態、一般與 hover 狀態的正常文字均達標，履歷日期和教育資訊保持可讀。圖示與 focus 分別按其用途檢查；現有 SITE-R18 的 focus 對比測試仍保留，不能拿 focus 對比代表文字對比。
 
 ### TD-04：使用完整的 Tooltip 互動
 
@@ -380,18 +369,6 @@ Tooltip 保留既有深底、白字、圓角、控制下方位置、靠邊對齊
 | SITE-R19.2 Escape 關閉提示 | 入口 hover 或鍵盤 focus 顯示提示後，按 Escape 關閉提示，原控制焦點及操作不變；離開再進入入口可重新顯示。 | browser、manual |
 | SITE-R19.3 游標移入提示 | 游標從入口移到提示文字時，提示維持可讀，移出入口及提示後才隱藏；靠邊與 dialog 狀態沒有遮住必要操作，提示不重複加入控制名稱。 | browser、manual |
 
-### SITE-R20：文字與操作圖示的對比
-
-閱讀狀態的普通文字與背景至少為 4.5：1，符合大字條件的文字至少為 3：1。品牌按鈕保留橄欖底並使用既有深灰文字；正文次要資訊使用足夠對比的文字 token。可辨認操作所必要的圖示也須有足夠對比，focus 框沿用 SITE-R18。
-
-<!-- prettier-ignore -->
-| 情境 | 條件、動作與結果 | 驗證方式 |
-| --- | --- | --- |
-| SITE-R20.1 正文與按鈕對比 | 在雙語的閱讀狀態、一般及 hover 狀態檢查工作日期、公司、技能、下滑提示、履歷下載及內容控制，普通文字達 4.5：1、大字達 3：1，必要操作圖示可辨識。 | browser、manual |
-| SITE-R20.2 履歷次要資訊 | 預覽與產生的 PDF 中，工作日期、職稱分隔及教育次要資訊維持可讀對比，內容、字型、A4 及單頁規則保持。 | browser、manual |
-
-設計文件新增文字為：「Use the existing dark text colors on olive button fills. Keep secondary reading text at a contrast ratio of at least 4.5:1 against its background; reserve lighter gray for decoration.」Design system 同時記錄 token 的文字與裝飾用途。
-
 ### 其他需求的修訂原則
 
 SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-25 的 noscript 若更新，新增說明「無 JavaScript 仍可閱讀主要內容及取得 PDF；需操作狀態的功能需要 JavaScript」，連結到 SITE-R14.2 的既有情境，不把舊 sitemap 是否存活寫成已確認需求。
@@ -404,7 +381,7 @@ SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-
 
 ```mermaid
 flowchart TD
-  baseline[保留驗證基準與情境對應] --> fixes[TD-03 到 TD-06：局部缺陷]
+  baseline[保留驗證基準與情境對應] --> fixes[TD-04 到 TD-06：局部缺陷]
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-07 到 TD-10、TD-24：內容與功能分工]
   tooling --> tests[TD-13、TD-14、TD-22：測試與診斷]
@@ -439,8 +416,6 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 | SITE-R15.3 Registration 查詢失敗 | unit，涵蓋 API 不存在、查詢拒絕及不屬於本站的紀錄。 |
 | SITE-R19.2 Escape 關閉提示 | browser、manual，涵蓋 hover、focus、重新進入與焦點維持。 |
 | SITE-R19.3 游標移入提示 | browser、manual，涵蓋游標移動、靠邊、Footer、QR code dialog 與雙語。 |
-| SITE-R20.1 正文與按鈕對比 | browser、manual，在不透明閱讀狀態計算實際 foreground/background，再判斷視覺層級。 |
-| SITE-R20.2 履歷次要資訊 | browser、manual，檢查預覽 computed color 與 PDF 視覺，重跑既有 PDF 規則。 |
 
 ### 工程驗收
 

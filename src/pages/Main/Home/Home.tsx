@@ -236,7 +236,6 @@ export default function Home() {
                   <ButtonLink
                     variant="brand"
                     size="extra-large"
-                    bold
                     className={styles.resume_download}
                     href="/resume.pdf"
                     download="Bing-Yang Chen - 陳秉洋.pdf"

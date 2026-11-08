@@ -3358,3 +3358,134 @@ test("SITE-R19.1 共用提示", async () => {
     }
   }
 });
+
+async function assertColorContrast(selector, minimum = 4.5) {
+  const results = await page.$$eval(selector, (elements) => {
+    const parseColor = (color) => {
+      const channels = color.match(/[\d.]+/g).map(Number);
+      return [...channels.slice(0, 3), channels[3] ?? 1];
+    };
+    const compositeColor = (foreground, background) =>
+      background.map(
+        (channel, index) =>
+          foreground[index] * foreground[3] + channel * (1 - foreground[3]),
+      );
+    const getLuminance = (color) => {
+      const channels = color.map((value) => {
+        const channel = value / 255;
+        return channel <= 0.04045
+          ? channel / 12.92
+          : ((channel + 0.055) / 1.055) ** 2.4;
+      });
+      return channels[0] * 0.2126 + channels[1] * 0.7152 + channels[2] * 0.0722;
+    };
+    return elements.map((element) => {
+      const style = getComputedStyle(element);
+      const backgrounds = [];
+      for (
+        let parent = style.backdropFilter === "none" ? element.parentElement : null;
+        parent;
+        parent = parent.parentElement
+      ) {
+        const parentStyle = getComputedStyle(parent);
+        backgrounds.push(parseColor(parentStyle.backgroundColor));
+        if (parentStyle.backdropFilter !== "none" || backgrounds.at(-1)[3] === 1) break;
+      }
+      const overlay = getComputedStyle(element, "::before");
+      const overlayColor = parseColor(overlay.backgroundColor);
+      const ratios = [0, 255].map((channel) => {
+        const underlay = backgrounds.reduceRight(
+          (background, foreground) => compositeColor(foreground, background),
+          [channel, channel, channel],
+        );
+        let background = compositeColor(parseColor(style.backgroundColor), underlay);
+        let foreground = compositeColor(parseColor(style.color), background);
+        if (overlay.content !== "none") {
+          background = compositeColor(overlayColor, background);
+          foreground = compositeColor(overlayColor, foreground);
+        }
+        background = compositeColor([...background, Number(style.opacity)], underlay);
+        foreground = compositeColor([...foreground, Number(style.opacity)], underlay);
+        const luminances = [foreground, background].map(getLuminance);
+        return (Math.max(...luminances) + 0.05) / (Math.min(...luminances) + 0.05);
+      });
+      return { color: style.color, ratios };
+    });
+  });
+  assert.ok(results.length > 0, `Missing contrast target: ${selector}`);
+  for (const result of results)
+    assert.ok(
+      Math.min(...result.ratios) >= minimum,
+      `${selector}: ${result.color}, contrast ${Math.min(...result.ratios)} < ${minimum}`,
+    );
+}
+
+test("SITE-R20.1 雙語正文、品牌按鈕及 hover 操作圖示的實際對比", async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await openHome();
+  for (const width of [1440, 390]) {
+    await page.setViewport({ width, height: width === 1440 ? 900 : 844 });
+    for (const language of ["en", "zh-TW"]) {
+      await page.evaluate(() => localStorage.setItem("preferred_language", "en"));
+      await openHome();
+      if (language === "zh-TW")
+        await page.$eval("[data-language-switcher]", (element) => element.click());
+      for (const selector of [
+        '#about [class*="work_duration"]',
+        '#about [class*="company_name"]',
+        '#about [class*="skills_inner"] > div',
+        '#about [class*="degree_list"] a',
+        '#home [class*="scroll_down_hint"]',
+        '#home [class*="email_link"]',
+      ])
+        await assertColorContrast(selector);
+      for (const selector of [
+        "#home a[download]",
+        '#home a[class*="nav_ghost"]',
+        TABS,
+        `${DETAIL} a[class*="visit"]`,
+        `${DETAIL} a[class*="source"]`,
+      ]) {
+        await page.mouse.move(0, 0);
+        await assertColorContrast(selector);
+        const controls = await page.$$(selector);
+        for (const control of controls) {
+          await control.hover();
+          await assertColorContrast(selector);
+        }
+      }
+      for (const selector of [QR, '#home a[class*="social_icon_link"]']) {
+        await page.mouse.move(0, 0);
+        await assertColorContrast(selector, 3);
+        const controls = await page.$$(selector);
+        for (const control of controls) {
+          await control.hover();
+          await assertColorContrast(selector, 3);
+        }
+      }
+    }
+  }
+});
+
+test("SITE-R20.2 履歷預覽及列印的日期與教育資訊對比", async () => {
+  await openHome();
+  await enterPreview();
+  for (const media of ["screen", "print"]) {
+    await page.emulateMediaType(media);
+    for (const selector of ["roleDates", "roleSeparator", "yearRange", "gpaText"])
+      await assertColorContrast(`[data-resume-root] [class*="${selector}"]`);
+  }
+  await page.emulateMediaType("screen");
+  const built = parsePdfMetadata(
+    Buffer.from(await (await fetch(server.origin + "/resume.pdf")).arrayBuffer()),
+  );
+  const preview = await getPrintResult();
+  assert.equal(built.pages, 1);
+  assert.equal(preview.pages, built.pages);
+  assert.equal(preview.mediaBox, built.mediaBox);
+  assert.deepEqual(preview.fonts, built.fonts);
+  assert.deepEqual(preview.links, built.links);
+  assert.equal(preview.language, "en");
+});
