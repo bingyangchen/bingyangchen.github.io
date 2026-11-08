@@ -8,12 +8,12 @@
 
 # 已確認問題
 
-暫無。
+- 技術債改善：完整檢查及調整提案見 [計劃 0001](plans/0001-codebase-technical-debt.md)（draft，尚未核准）。已重現問候樣式輸出 `719pxpx`、正文及品牌按鈕對比不足、Tooltip 按 Escape 不關閉、Footer 連結不足 44 px，以及未選作品大圖提前下載；另有 CRA 及依賴安全維護、內容型別、模組分工、測試與 build 工具的改善建議。相關需求為 SITE-R2、R6、R7、R11、R12、R13、R14、R15、R19，各項證據與驗收放在計劃。
 
 # 待調查
 
-暫無。
+- 靜態資料校對：確認 sitemap 內其他 GitHub Pages 專案的歸屬與可用性，以及 manifest 圖示宣告是否符合真實尺寸，見 [計劃 0001 的 TD-25](plans/0001-codebase-technical-debt.md#td-25校對-metadatamanifest-與-sitemap)。目前沒有外站失效的實測結論，相關需求為 SITE-R16。
 
 # 待決策
 
-暫無。
+- 可讀性政策：建議解除 viewport 的 user scaling 限制、改善 Tooltip 的關閉與游標操作，以及修正文字對比，見 [計劃 0001 的 Spec 變更](plans/0001-codebase-technical-debt.md#spec-變更)。這些調整涉及現行設計或新增行為，核准前保留原規則，相關需求為 SITE-R12、R19，以及計劃提議新增的 SITE-R20。
