@@ -1,0 +1,14 @@
+@use "tokens" as _;
+
+@mixin unselectable {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+@mixin icon-target($display: inline-flex) {
+  display: $display;
+  align-items: center;
+  justify-content: center;
+  min-width: _.$minimum-control-size;
+  min-height: _.$minimum-control-size;
+}

@@ -2,6 +2,8 @@
 
 This document records the site's product and design direction. Detailed behavior lives in the [site spec](specs/site.md); engineering instructions and task-specific skills live in [AGENTS.md](../AGENTS.md).
 
+The [local design system](../src/styles/README.md) documents the shared tokens, styling patterns, and controls that implement this direction. Shared tokens and global screen and print styles live in `src/styles/`; component styles remain co-located, while artwork composition and resume print geometry retain their contextual rules.
+
 ## Purpose and Audience
 
 [Bing-Yang Chen's personal site](https://byc1999.com/) presents professional background, selected side projects, and links to GitHub and the [external blog](https://blog.byc1999.com/). Recruiters, peers, and potential collaborators should be able to assess experience and work samples quickly.
@@ -38,7 +40,7 @@ Maintain a calm, professional presentation with readable hierarchy and restraine
 
 - **Palette:** Neutral backgrounds and dark text, with olive as an accent.
 - **Consistency:** Equivalent roles and surfaces share visual rules. Vary color or treatment when contrast, hierarchy, or layout gives the difference a purpose.
-- **Typography:** Geneva/sans-serif for body and UI text; Georgia/Times/serif for established section titles and subtitles. Preserve the existing hierarchy and spacing rhythm.
+- **Typography:** Geneva/sans-serif for body and UI text; Georgia/Times/serif for established section titles, subtitles, and the Footer, using the same serif family and fallback order. Preserve the existing hierarchy and spacing rhythm.
 - **Shared section scale:** Projects and Blog use the same responsive container spacing, section titles, introductory text, metadata, and equivalent external-link sizes. Preserve each section's content hierarchy.
 - **Layout:** Keep sections distinct and reading widths comfortable. Align the header with the page's centered content bounds while allowing full-width surfaces. Adapt composition to the viewport and the surrounding layout.
 - **Navigation:** Use the existing logo, readable mixed-case labels, and restrained indicators. A softly translucent, blurred header lets the white and gray page backgrounds show through while preserving foreground contrast. Keep separators subtle. Use solid surfaces for the expanded compact menu or when needed for accessibility.

@@ -1,57 +1,59 @@
-@use "../../../global_variables" as _;
+@use "../../../styles/tokens" as _;
 
 .resumePage {
+  $footer-reserved-space: 50px;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  min-height: calc(100vh - _.$header-height - _.$footer-height);
-  padding: calc(_.$header-height + 24px) 24px 40px;
+  min-height: calc(100vh - _.$header-height - $footer-reserved-space);
+  padding: calc(_.$header-height + _.$space-6) _.$space-6 _.$space-10;
   box-sizing: border-box;
-  background-color: _.$noisy-white;
-}
+  background-color: _.$surface-alternate;
 
-.title {
-  margin: 0 0 12px;
-  font-family: Georgia, Times, "Times New Roman", serif;
-  font-size: 2.2 * _.$base-font-size;
-  font-weight: normal;
-  text-align: center;
-  color: _.$black;
-}
-
-.subtitle {
-  margin: 0 0 16px;
-  max-width: _.$medium;
-  line-height: 1.6;
-  font-size: 1 * _.$base-font-size;
-  text-align: center;
-  color: _.$deep-gray;
-}
-
-.downloadRow {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
-
-.sheetViewport {
-  align-self: stretch;
-  width: 100%;
-  max-width: 100%;
-  overflow-x: auto;
-  overflow-y: auto;
-  padding: 12px;
-  box-sizing: border-box;
-  -webkit-overflow-scrolling: touch;
-
-  * {
-    user-select: text;
+  .title {
+    margin: 0 0 _.$space-3;
+    font-family: _.$heading-font-family;
+    font-size: 2.2 * _.$base-font-size;
+    font-weight: normal;
+    text-align: center;
+    color: _.$text-strong;
   }
 
-  & > div {
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 8px 32px _.$transparent-black;
+  .subtitle {
+    margin: 0 0 _.$space-4;
+    max-width: _.$medium;
+    line-height: 1.6;
+    font-size: 1 * _.$base-font-size;
+    text-align: center;
+    color: _.$text-body;
+  }
+
+  .downloadRow {
+    display: flex;
+    justify-content: center;
+    margin-bottom: _.$space-5;
+  }
+
+  .sheetViewport {
+    align-self: stretch;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    padding: _.$space-3;
+    box-sizing: border-box;
+    -webkit-overflow-scrolling: touch;
+
+    * {
+      user-select: text;
+    }
+
+    & > div {
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 8px 32px _.$transparent-black;
+    }
   }
 }

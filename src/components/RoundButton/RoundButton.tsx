@@ -17,7 +17,7 @@ export default function RoundButton({
   hintText,
   ...buttonProperties
 }: RoundButtonProperties) {
-  const rootClassName = `${styles.main} round_button ${className}`;
+  const rootClassName = `${styles.main} ${className}`;
 
   return (
     <Tooltip text={hintText}>

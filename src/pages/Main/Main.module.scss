@@ -1,11 +1,11 @@
-@use "../../global_variables" as _;
-@use "../../focus";
+@use "../../styles/tokens" as _;
+@use "../../styles/focus";
 
 .main {
   display: flex;
   flex-direction: column;
   width: 100%;
-  background-color: _.$white;
+  background-color: _.$surface-page;
   @media screen {
     & > main:focus-visible {
       @include focus.inset-outline;

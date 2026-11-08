@@ -17,9 +17,7 @@ export default function Resume() {
         formal copy.
       </p>
       <div className={styles.downloadRow}>
-        <Button className="primary_fill l" onClick={handleDownloadPdf}>
-          Download PDF
-        </Button>
+        <Button onClick={handleDownloadPdf}>Download PDF</Button>
       </div>
       <div className={`${styles.sheetViewport} resume-print-area`}>
         <ResumeSheet />

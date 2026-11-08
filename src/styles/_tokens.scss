@@ -1,0 +1,161 @@
+@use "sass:color";
+
+// Foundations: palette, base typography, spacing scale, and breakpoints.
+$white: #fff;
+$noisy-white: #f5f5f5;
+$light-gray: #ddd;
+$gray: #888;
+$muted-gray: #4a4a4a;
+$deep-gray: #444;
+$charcoal: #222;
+$black: #000;
+$transparent-black: #00000009;
+
+$brand-olive: #9fa76e;
+$brand-olive-ink: #525c30;
+
+$base-font-size: 1rem;
+$base-letter-spacing: 1px;
+
+$space-1: 4px;
+$space-2: 8px;
+$space-3: 12px;
+$space-4: 16px;
+$space-5: 20px;
+$space-6: 24px;
+$space-7: 28px;
+$space-8: 32px;
+$space-9: 36px;
+$space-10: 40px;
+$space-12: 48px;
+$space-14: 56px;
+$space-18: 72px;
+$space-22: 88px;
+$space-24: 96px;
+$space-28: 112px;
+
+$small: 512px;
+$medium: 720px;
+$large: 1024px;
+$extra-large: 1280px;
+
+// Semantic tokens: shared visual roles used across components.
+$text-primary: $charcoal;
+$text-body: $deep-gray;
+$text-secondary: $muted-gray;
+$text-muted: $gray;
+$text-strong: $black;
+$text-inverse: $noisy-white;
+$text-on-fill: $white;
+
+$surface-page: $white;
+$surface-alternate: $noisy-white;
+$surface-inverse: $charcoal;
+$brand-olive-faint-bg: rgba($brand-olive, 0.12);
+$border-default: $light-gray;
+
+$body-font-family: Geneva, sans-serif;
+$heading-font-family: Georgia, Times, "Times New Roman", serif;
+$font-size-metadata: 0.75rem;
+$font-size-label-small: 0.8125rem;
+$font-size-label: 0.875rem;
+$font-size-body-small: 0.9375rem;
+$line-height-body: 1.8;
+$line-height-reading: 1.9;
+
+$compact-content-padding: $space-6;
+$tablet-content-padding: $space-8;
+$desktop-content-padding: $space-12;
+$minimum-control-size: 44px;
+$comfortable-control-size: 48px;
+
+$radius-control: 4px;
+$radius-card: 24px;
+$radius-pill: 999px;
+$radius-circle: 50%;
+
+$motion-duration-feedback: 150ms;
+$motion-duration-reveal: 300ms;
+$motion-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
+
+// Component tokens: controls, site regions, and scroll motion.
+$focus-color-neutral: $charcoal;
+$focus-color-content: $brand-olive-ink;
+$focus-color-on-dark: $brand-olive;
+$focus-ring-width: 2px;
+$focus-ring-offset: 3px;
+$focus-ring-surface-offset: 5px;
+
+$button-radius: 15px;
+
+$tooltip-font-size: 0.8 * $base-font-size;
+$tooltip-gap: 2px;
+$tooltip-padding: 3px 10px;
+$tooltip-radius: 3px;
+$tooltip-opacity: 0.7;
+
+$motion-duration-arrow: 220ms;
+
+$header-height: 56px;
+$motion-duration-navigation: 180ms;
+
+$hero-card-portrait-width: 420px;
+$hero-card-landscape-width: 900px;
+$hero-page-padding: $space-4;
+$motion-duration-dialog: 380ms;
+
+$project-stage-bg: color.mix($brand-olive, $noisy-white, 9%);
+$motion-duration-project: 260ms;
+
+$blog-feature-bg: #f2f3eb;
+
+$resume-font-family: Georgia, "Resume CJK Serif", "Times New Roman", serif;
+
+$scroll-motion: (
+  content-distance: 96,
+  stage-distance: 144,
+  depth-scale: 1,
+  perspective: 1200px,
+  entrance-start: 1.04,
+  entrance-end: 0.42,
+  long-content-threshold: 0.65,
+  long-content-end: 0.62,
+  exit-start: 0.24,
+  exit-end: 0.08,
+  minimum-opacity: 0.18,
+  content-shrink: 0.035,
+  content-exit-shrink: 0.02,
+  exit-distance-scale: 0.7,
+  hero-distance: 160,
+  atmosphere-distance: 64,
+  hero-fade: 0.78,
+  hero-shrink: 0.14,
+  hero-tilt: 4,
+  hint-exit: 0.25,
+  stage-shrink: 0.14,
+  stage-exit-shrink: 0.06,
+  stage-tilt: 8,
+  stage-exit-tilt: 3,
+  heading-shrink: 0.08,
+  heading-exit-shrink: 0.025,
+  artwork-shrink: 0.18,
+  artwork-exit-shrink: 0.05,
+  artwork-distance-scale: 0.8,
+  artwork-exit-distance-scale: 0.45,
+  skill-stagger: 0.025,
+  device-distance: 140,
+  secondary-device-distance: 240,
+  device-spread: 48,
+  secondary-device-spread: -80,
+  device-rotation: 8,
+  secondary-device-rotation: -12,
+  timeline-reading-line: 0.62,
+  timeline-dot-start: 0.75,
+  timeline-dot-growth: 0.35,
+);
+$scroll-motion-compact-distance: 56;
+$scroll-motion-compact-stage-distance: 88;
+$scroll-motion-compact-depth-scale: 0.6;
+$scroll-timeline-width: 3px;
+$scroll-timeline-ring-width: 2px;
+$scroll-timeline-ring-outset: -4px;

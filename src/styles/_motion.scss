@@ -1,4 +1,16 @@
-@use "global_variables" as _;
+@use "tokens" as _;
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *:before,
+    *:after {
+      scroll-behavior: auto;
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
 
 @mixin scope {
   @each $name, $value in _.$scroll-motion {

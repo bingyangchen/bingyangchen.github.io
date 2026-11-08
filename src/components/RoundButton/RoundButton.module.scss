@@ -1,29 +1,26 @@
-@use "../../global_variables" as _;
+@use "../../styles/tokens" as _;
+@use "../../styles/controls";
 
 .main {
   position: relative;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  @include controls.icon-target;
   box-sizing: border-box;
   border: none;
   background-color: transparent;
   font: inherit;
   border-radius: 100px;
-  min-width: _.$minimum-control-size;
-  min-height: _.$minimum-control-size;
   aspect-ratio: 1;
   padding: 6px;
   margin: 0;
-  color: _.$gray;
-  transition-duration: 150ms;
+  color: _.$text-muted;
+  transition-duration: _.$motion-duration-feedback;
   cursor: pointer;
   &:active {
     background-color: _.$transparent-black;
   }
   @media (hover: hover) {
     &:hover {
-      color: _.$deep-gray;
+      color: _.$text-body;
       background-color: _.$transparent-black;
     }
   }

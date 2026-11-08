@@ -1,18 +1,15 @@
-@use "../../global_variables" as _;
+@use "../../styles/tokens" as _;
+@use "../../styles/controls";
 
 .switcher {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: _.$minimum-control-size;
-  min-height: _.$minimum-control-size;
-  padding: 0 8px;
+  @include controls.icon-target;
+  padding: 0 _.$space-2;
   border: 0;
-  border-radius: 4px;
+  border-radius: _.$radius-control;
   background: transparent;
-  color: _.$body-muted;
+  color: _.$text-secondary;
   font: inherit;
-  font-size: 0.875rem;
+  font-size: _.$font-size-label;
   cursor: pointer;
   & > span {
     letter-spacing: normal;
@@ -28,7 +25,7 @@
   }
   @media (hover: hover) {
     &:hover {
-      color: _.$theme-color;
+      color: _.$text-primary;
       text-decoration: underline;
       text-underline-offset: 5px;
     }

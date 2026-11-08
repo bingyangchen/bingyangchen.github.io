@@ -10,6 +10,7 @@ import { createPortal } from "react-dom";
 
 import {
   Blog,
+  ButtonLink,
   Projects,
   RoundButton,
   Skill,
@@ -232,13 +233,16 @@ export default function Home() {
                   </div>
                 </div>
                 <div className={styles.cta_toolbar}>
-                  <a
-                    className={`button brand_fill xl bold ${styles.resume_download}`}
+                  <ButtonLink
+                    variant="brand"
+                    size="extra-large"
+                    bold
+                    className={styles.resume_download}
                     href="/resume.pdf"
                     download="Bing-Yang Chen - 陳秉洋.pdf"
                   >
                     {dictionary.home.downloadResume}
-                  </a>
+                  </ButtonLink>
                   <div className={styles.nav_links}>
                     <a href="#about" className={styles.nav_ghost}>
                       <IconFilePerson sideLength="22" />

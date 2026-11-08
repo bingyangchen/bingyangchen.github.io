@@ -1,12 +1,12 @@
-@use "../../global_variables" as _;
+@use "../../styles/tokens" as _;
+@use "../../styles/controls";
 
 .main {
-  -webkit-user-select: none;
-  user-select: none;
+  @include controls.unselectable;
   display: flex;
   align-items: flex-end;
   & > .product_name {
-    color: _.$black;
+    color: _.$text-strong;
     white-space: nowrap;
   }
   &.invert {
@@ -14,11 +14,11 @@
       filter: invert(1);
     }
     & > .product_name {
-      color: _.$white;
+      color: _.$text-on-fill;
     }
   }
   &.s {
-    gap: 8px;
+    gap: _.$space-2;
     & > .logo {
       width: 35px;
     }

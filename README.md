@@ -24,6 +24,8 @@ The build prerenders the homepage and generates `build/resume.pdf` from the shar
 
 Preview serves the build over loopback HTTP without an SPA fallback. `/resume` remains a non-public preview with browser printing, available through `npm run dev`.
 
+The [local design system](src/styles/README.md) documents shared tokens, Sass patterns, and UI controls. Shared tokens, reusable patterns, and global screen and print entry styles live in `src/styles/`; component styles stay in co-located CSS Modules.
+
 ## Verification
 
 Run `npm run check` for all automated checks, including a fresh production build. Individual checks are also available:

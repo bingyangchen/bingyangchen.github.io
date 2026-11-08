@@ -1,5 +1,5 @@
-@use "../../global_variables" as _;
-@use "../../section";
+@use "../../styles/tokens" as _;
+@use "../../styles/section";
 
 .main {
   @include section.container;
@@ -31,8 +31,8 @@
 
   .projectPicker {
     display: flex;
-    gap: 40px;
-    border-bottom: 1px solid _.$light-gray;
+    gap: _.$space-10;
+    border-bottom: 1px solid _.$border-default;
     margin-bottom: 0;
 
     .projectTab {
@@ -41,15 +41,15 @@
       justify-content: center;
       gap: 10px;
       min-height: 64px;
-      scroll-margin-top: calc(_.$header-height + 16px);
-      padding: 8px 4px 16px;
+      scroll-margin-top: calc(_.$header-height + _.$space-4);
+      padding: _.$space-2 _.$space-1 _.$space-4;
       border: 0;
       border-bottom: 2px solid transparent;
       margin-bottom: -1px;
       background: transparent;
-      color: _.$body-muted;
-      font-size: 0.9375rem;
-      transition: color 150ms;
+      color: _.$text-secondary;
+      font-size: _.$font-size-body-small;
+      transition: color _.$motion-duration-feedback;
       .projectIcon {
         width: 26px;
         height: 26px;
@@ -63,13 +63,13 @@
         }
       }
       &[aria-selected="true"] {
-        border-color: _.$theme-color;
-        color: _.$theme-color;
+        border-color: _.$charcoal;
+        color: _.$text-primary;
         font-weight: bold;
       }
       @media (hover: hover) {
         &:hover {
-          color: _.$theme-color;
+          color: _.$text-primary;
         }
       }
       &:active {
@@ -88,9 +88,9 @@
     grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
     grid-template-rows: auto 1fr;
     grid-template-areas: "intro art" "content art";
-    column-gap: clamp(40px, 5vw, 72px);
+    column-gap: clamp(_.$space-10, 5vw, _.$space-18);
     align-items: start;
-    padding-top: 48px;
+    padding-top: _.$space-12;
     min-width: 0;
     @media screen {
       &:focus-visible {
@@ -101,21 +101,21 @@
       visibility: hidden;
     }
     &[aria-hidden="false"] .productArt {
-      animation: enter 260ms cubic-bezier(0.22, 1, 0.36, 1);
+      animation: enter _.$motion-duration-project _.$motion-easing-emphasized;
     }
 
     .projectIntro {
       grid-area: intro;
-      padding-top: 48px;
+      padding-top: _.$space-12;
       h3.projectTitle {
         margin: 0;
         font: normal clamp(3rem, 4.4vw, 4rem)/1.08 _.$heading-font-family;
         letter-spacing: -0.035em;
         text-align: left;
-        color: _.$theme-color;
+        color: _.$text-primary;
       }
       .projectPurpose {
-        margin: 24px 0 0;
+        margin: _.$space-6 0 0;
         max-width: 20ch;
         font-size: clamp(1.375rem, 2vw, 1.75rem);
         font-weight: bold;
@@ -146,7 +146,7 @@
           display: block;
           height: auto;
           object-fit: contain;
-          filter: drop-shadow(0 12px 14px rgba(_.$theme-color, 0.1));
+          filter: drop-shadow(0 12px 14px rgba(_.$charcoal, 0.1));
         }
         .deviceMain {
           width: 36%;
@@ -194,24 +194,24 @@
       min-width: 0;
       .description {
         max-width: 35ch;
-        margin: 20px 0 0;
+        margin: _.$space-5 0 0;
         @include section.body;
       }
       .actions {
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        gap: 12px 24px;
-        margin-top: 28px;
+        gap: _.$space-3 _.$space-6;
+        margin-top: _.$space-7;
         a {
           @include section.action;
         }
         .visit {
           border-radius: 24px;
-          padding: 12px 20px;
-          background: _.$theme-color;
-          color: _.$white;
-          transition: opacity 150ms;
+          padding: _.$space-3 _.$space-5;
+          background: _.$surface-inverse;
+          color: _.$text-on-fill;
+          transition: opacity _.$motion-duration-feedback;
           &:hover {
             opacity: 0.85;
           }
@@ -231,12 +231,12 @@
         display: flex;
         align-items: center;
         flex-wrap: wrap;
-        gap: 10px 12px;
-        margin: 40px 0 0;
+        gap: 10px _.$space-3;
+        margin: _.$space-10 0 0;
         .metaSeparator {
           width: 1px;
           height: 12px;
-          background: _.$light-gray;
+          background: _.$border-default;
         }
       }
     }
@@ -244,16 +244,16 @@
 
   @media (max-width: _.$large) {
     .showcase {
-      column-gap: 36px;
+      column-gap: _.$space-9;
       .projectIntro {
-        padding-top: 16px;
+        padding-top: _.$space-4;
         .projectPurpose {
           font-size: 1.375rem;
         }
       }
       .projectContent {
         .projectMeta {
-          margin-top: 28px;
+          margin-top: _.$space-7;
         }
       }
       .productStage {
@@ -291,18 +291,18 @@
 
   @media (max-width: _.$medium) {
     .projectPicker {
-      gap: 32px;
+      gap: _.$space-8;
       .projectTab {
         min-height: 60px;
-        font-size: 0.875rem;
+        font-size: _.$font-size-label;
       }
     }
     .showcase {
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: auto auto auto;
       grid-template-areas: "intro" "art" "content";
-      row-gap: 28px;
-      padding-top: 32px;
+      row-gap: _.$space-7;
+      padding-top: _.$space-8;
       .projectIntro {
         padding: 0;
         h3.projectTitle {
@@ -310,7 +310,7 @@
         }
         .projectPurpose {
           max-width: none;
-          margin-top: 12px;
+          margin-top: _.$space-3;
           font-size: 1.375rem;
         }
       }
@@ -350,10 +350,10 @@
           margin: 0;
         }
         .actions {
-          margin-top: 20px;
+          margin-top: _.$space-5;
         }
         .projectMeta {
-          margin-top: 24px;
+          margin-top: _.$space-6;
         }
       }
     }
@@ -362,9 +362,9 @@
   @media (max-width: _.$small) {
     .projectPicker {
       justify-content: space-between;
-      gap: 12px;
+      gap: _.$space-3;
       .projectTab {
-        gap: 8px;
+        gap: _.$space-2;
         padding-inline: 0;
         .projectIcon {
           width: 24px;

@@ -12,7 +12,7 @@ Follow [the site design context](../../../docs/design.md) for audience, tone, an
 
 - `src/pages/Main/Resume/ResumeSheet.tsx`: English resume content, maintained separately from the site's dictionaries.
 - Shared facts: `src/data/workExperience.ts`, both `src/i18n/dictionaries/en.ts` and `src/i18n/dictionaries/zhtw.ts`, and `src/pages/Main/Home/Home.tsx`. For skill or project claims, also check `src/data/skills.ts` or `src/data/projects.tsx` and their dictionary entries.
-- Layout and printing: `src/pages/Main/Resume/ResumeSheet.module.scss`, `src/print.scss`, and `src/resume/print.ts`.
+- Layout and printing: `src/pages/Main/Resume/ResumeSheet.module.scss`, `src/styles/print.scss`, and `src/resume/print.ts`.
 
 ## Facts and Editorial Decisions
 

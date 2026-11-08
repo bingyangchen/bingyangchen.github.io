@@ -1,8 +1,6 @@
-@use "../../global_variables" as _;
+@use "../../styles/tokens" as _;
 
 .button {
-  $border-radius: 15px;
-  $transition-duration: 150ms;
   position: relative;
   display: flex;
   align-items: center;
@@ -10,12 +8,12 @@
   text-align: center;
   gap: 5px;
   border: none;
-  border-radius: $border-radius;
-  padding: 5px 12px;
+  border-radius: _.$button-radius;
+  padding: 5px _.$space-3;
   width: max-content;
   min-width: max-content;
   height: fit-content;
-  transition-duration: $transition-duration;
+  transition-duration: _.$motion-duration-feedback;
   letter-spacing: _.$base-letter-spacing;
   cursor: pointer;
   &::before {
@@ -25,9 +23,9 @@
     left: 0;
     width: 100%;
     height: 100%;
-    border-radius: $border-radius;
+    border-radius: _.$button-radius;
     background-color: transparent;
-    transition-duration: $transition-duration;
+    transition-duration: _.$motion-duration-feedback;
   }
   @media (hover: hover) {
     &:hover {
@@ -36,23 +34,23 @@
       }
     }
   }
-  &.primary_fill {
-    background-color: _.$theme-color;
-    color: _.$white;
+  &.primary {
+    background-color: _.$surface-inverse;
+    color: _.$text-on-fill;
   }
-  &.brand_fill {
+  &.brand {
     background-color: _.$brand-olive;
-    color: _.$white;
+    color: _.$text-on-fill;
   }
-  &.xl {
+  &.extra-large {
     font-size: 1.1 * _.$base-font-size;
-    padding: 12px 25px;
-    gap: 12px;
+    padding: _.$space-3 25px;
+    gap: _.$space-3;
   }
-  &.l {
+  &.large {
     font-size: 1 * _.$base-font-size;
-    padding: 8px 20px;
-    gap: 8px;
+    padding: _.$space-2 _.$space-5;
+    gap: _.$space-2;
   }
   &.bold {
     font-weight: bold;

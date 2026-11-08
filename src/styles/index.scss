@@ -1,0 +1,46 @@
+@use "tokens" as _;
+@use "controls";
+@use "focus";
+@use "motion";
+
+html {
+  scroll-padding-top: calc(_.$header-height + env(safe-area-inset-top, 0px));
+  &[data-restoring-scroll] {
+    scroll-behavior: auto;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: _.$body-font-family;
+  color: _.$text-body;
+  font-size: _.$base-font-size;
+}
+
+*,
+*:before,
+*:after {
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  letter-spacing: _.$base-letter-spacing;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  @include controls.unselectable;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+@include motion.reduced-motion;
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+@include focus.defaults;

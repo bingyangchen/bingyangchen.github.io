@@ -1,17 +1,67 @@
-import "./Button.scss";
+import styles from "./Button.module.scss";
 
-import React, { MouseEventHandler } from "react";
+import { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
 
-interface ButtonProperties {
-  children: React.ReactNode;
-  onClick: MouseEventHandler;
-  className: string;
+interface ButtonAppearanceProperties {
+  variant?: "primary" | "brand";
+  size?: "large" | "extra-large";
+  bold?: boolean;
+  className?: string;
 }
 
-export default function Button({ children, onClick, className }: ButtonProperties) {
+interface ButtonProperties
+  extends ButtonAppearanceProperties, ButtonHTMLAttributes<HTMLButtonElement> {}
+
+interface ButtonLinkProperties
+  extends ButtonAppearanceProperties, AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+}
+
+function getButtonClassName({
+  variant = "primary",
+  size = "large",
+  bold = false,
+  className,
+}: ButtonAppearanceProperties): string {
+  return [styles.button, styles[variant], styles[size], bold && styles.bold, className]
+    .filter(Boolean)
+    .join(" ");
+}
+
+export default function Button({
+  variant,
+  size,
+  bold,
+  className,
+  children,
+  type = "button",
+  ...buttonProperties
+}: ButtonProperties) {
   return (
-    <button className={`button ${className}`} onClick={onClick}>
+    <button
+      {...buttonProperties}
+      type={type}
+      className={getButtonClassName({ variant, size, bold, className })}
+    >
       {children}
     </button>
+  );
+}
+
+export function ButtonLink({
+  variant,
+  size,
+  bold,
+  className,
+  children,
+  ...linkProperties
+}: ButtonLinkProperties) {
+  return (
+    <a
+      {...linkProperties}
+      className={getButtonClassName({ variant, size, bold, className })}
+    >
+      {children}
+    </a>
   );
 }

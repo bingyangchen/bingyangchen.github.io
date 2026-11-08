@@ -1,10 +1,10 @@
-@use "../../global_variables" as _;
+@use "../../styles/tokens" as _;
 
 .main {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: _.$gray;
+  gap: _.$space-2;
+  color: _.$text-muted;
   & > .logo {
     height: 50px;
     object-fit: contain;

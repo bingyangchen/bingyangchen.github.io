@@ -1,3 +1,5 @@
+@use "tokens" as _;
+
 @media print {
   @page {
     size: A4;
@@ -6,7 +8,7 @@
 
   html,
   body {
-    background: #fff !important;
+    background: _.$surface-page !important;
     height: 297mm !important;
     max-height: 297mm !important;
     min-height: 0 !important;

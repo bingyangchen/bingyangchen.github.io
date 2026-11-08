@@ -1,0 +1,32 @@
+@use "tokens" as _;
+
+@mixin defaults {
+  @media screen {
+    :focus-visible {
+      outline: _.$focus-ring-width solid var(--focus-color, #{_.$focus-color-neutral});
+      outline-offset: _.$focus-ring-offset;
+    }
+
+    @media (forced-colors: active) {
+      :focus-visible {
+        outline-color: Highlight;
+      }
+    }
+  }
+}
+
+@mixin inset-outline {
+  position: relative;
+  outline-offset: -(_.$focus-ring-width);
+
+  // Positioned descendants can cover a container's inset outline.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    outline: inherit;
+    outline-offset: inherit;
+    pointer-events: none;
+    z-index: 1;
+  }
+}

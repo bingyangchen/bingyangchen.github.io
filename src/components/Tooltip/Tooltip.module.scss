@@ -1,4 +1,4 @@
-@use "../../global_variables" as _;
+@use "../../styles/tokens" as _;
 
 .trigger {
   position: relative;
@@ -14,7 +14,7 @@
     transform: translate(-50%, 100%);
     border-radius: _.$tooltip-radius;
     background-color: _.$black;
-    color: _.$white;
+    color: _.$text-on-fill;
     opacity: _.$tooltip-opacity;
     font: normal #{_.$tooltip-font-size}/ 1.4 _.$body-font-family;
     letter-spacing: normal;

@@ -1,11 +1,11 @@
-@use "../../global_variables" as _;
+@use "../../styles/tokens" as _;
 
 .main {
   display: flex;
   & > .left {
     display: flex;
     flex-direction: column;
-    padding: 0 12px 0 20px;
+    padding: 0 _.$space-3 0 _.$space-5;
     @media (max-width: _.$medium) {
       padding: 0 10px 0 0;
     }
@@ -46,7 +46,7 @@
       position: relative;
       flex-grow: 1;
       margin: 0 auto;
-      border-left: 1px solid _.$light-gray;
+      border-left: 1px solid _.$border-default;
       &::after {
         position: absolute;
         content: "";
@@ -59,14 +59,14 @@
     }
   }
   & > .body {
-    padding-bottom: 20px;
+    padding-bottom: _.$space-5;
     & > .work_duration {
       display: flex;
       align-items: center;
       height: 35px;
       font-size: 0.9 * _.$base-font-size;
       letter-spacing: 0.5px;
-      color: _.$gray;
+      color: _.$text-muted;
       @media (max-width: _.$medium) {
         height: 25px;
         margin-bottom: 3px;
@@ -77,15 +77,15 @@
       align-items: center;
       font-size: 1.3 * _.$base-font-size;
       font-weight: bold;
-      color: _.$black;
-      padding: 4px 0 8px;
+      color: _.$text-strong;
+      padding: _.$space-1 0 _.$space-2;
     }
     & > .company_name {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: _.$space-1;
       width: fit-content;
-      color: _.$gray;
+      color: _.$text-muted;
       font-size: 0.9 * _.$base-font-size;
       & > img.company_logo {
         height: 20px;

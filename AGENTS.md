@@ -16,8 +16,9 @@
 
 ## Styling
 
-- Use `src/_global_variables.scss` for colors, base typography values, shared layout constants, and breakpoints. Add new shared values there rather than hardcoding them in SCSS modules. Use `$small`, `$medium`, `$large`, and `$extra-large` for media queries.
-- Keep component and page styles in co-located `*.module.scss` files. Consume tokens with `@use ".../global_variables" as _;`, adjusting the relative path. Avoid inline TSX styles unless necessary.
+- Follow the [local design system](src/styles/README.md) for token roles, shared Sass patterns, and UI controls. Reuse patterns from `src/styles/` and keep component-specific composition and print geometry local.
+- Keep shared tokens in `src/styles/_tokens.scss`, ordered as foundations, semantic tokens, and component tokens. Keep comparable scales ascending and define dependencies before derived values. Add new shared values there rather than hardcoding them in SCSS modules. Use `$small`, `$medium`, `$large`, and `$extra-large` for media queries.
+- Keep global screen and print entry styles in `src/styles/index.scss` and `src/styles/print.scss`. Keep component and page styles in co-located `*.module.scss` files. Consume tokens with `@use ".../styles/tokens" as _;`, adjusting the relative path. Avoid inline TSX styles unless necessary.
 - Nest module rules under their root class in TSX/DOM order, without unnecessary depth. Keep overrides under their actual parent with short, purposeful selectors.
 
 ## Markdown Formatting

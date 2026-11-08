@@ -1,4 +1,4 @@
-@use "../../../global_variables" as _;
+@use "../../../styles/tokens" as _;
 
 @font-face {
   font-family: "Resume CJK Serif";
@@ -22,8 +22,8 @@ $resume-navy: #234a8c;
   min-height: 1123px;
   flex-shrink: 0;
   box-sizing: border-box;
-  background-color: _.$white;
-  color: _.$black;
+  background-color: _.$surface-page;
+  color: _.$text-strong;
   font-family: _.$resume-font-family;
   font-size: 12px;
   line-height: 1.8;
@@ -64,7 +64,7 @@ $resume-navy: #234a8c;
         align-items: center;
         justify-content: flex-end;
         gap: 16px;
-        color: _.$deep-gray;
+        color: _.$text-body;
         flex: 0 1 auto;
         text-align: right;
 
@@ -83,7 +83,7 @@ $resume-navy: #234a8c;
 
           .contactIcon {
             flex-shrink: 0;
-            color: _.$deep-gray;
+            color: _.$text-body;
             transform: translateY(0.25px);
           }
         }
@@ -99,7 +99,7 @@ $resume-navy: #234a8c;
       text-transform: uppercase;
       color: $resume-navy;
       padding-bottom: 5px;
-      border-bottom: 1px solid _.$light-gray;
+      border-bottom: 1px solid _.$border-default;
     }
 
     .section {
@@ -154,14 +154,14 @@ $resume-navy: #234a8c;
 
               .roleSeparator {
                 margin: 0 0.1em;
-                color: _.$gray;
+                color: _.$text-muted;
                 font-weight: normal;
               }
             }
 
             .roleDates {
               font-weight: normal;
-              color: _.$gray;
+              color: _.$text-muted;
               white-space: nowrap;
               flex-shrink: 0;
             }
@@ -204,7 +204,7 @@ $resume-navy: #234a8c;
 
           .yearRange {
             font-weight: normal;
-            color: _.$gray;
+            color: _.$text-muted;
           }
         }
 
@@ -222,7 +222,7 @@ $resume-navy: #234a8c;
           }
 
           .gpaText {
-            color: _.$gray;
+            color: _.$text-muted;
             font-style: italic;
             white-space: nowrap;
             flex-shrink: 0;
