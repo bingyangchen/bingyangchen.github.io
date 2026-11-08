@@ -67,15 +67,11 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     switchLanguage: "切換成英文",
   },
   footer: {
-    contactMe: "聯繫方式",
-    services: "服務項目",
-    personalBranding: "個人品牌網站開發",
-    corporateBranding: "企業形象網站開發",
-    internalSystems: "企業內部管理系統",
-    otherWebApps: "其他 Web 應用程式開發",
-    programmingInstruction: "程式教學",
-    economicsInstruction: "經濟學教學",
-    socialMedia: "其它平台",
+    title: "聊聊吧。",
+    description: "關於技術、產品與合作，歡迎來信。",
+    email: "寄送 Email",
+    elsewhere: "其他平台",
+    home: "回到首頁",
   },
   workExperiences: {
     "swag-2026": {

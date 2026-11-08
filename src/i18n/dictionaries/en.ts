@@ -69,15 +69,11 @@ export const englishDictionary: TranslationDictionary = {
     switchLanguage: "Switch to Traditional Chinese",
   },
   footer: {
-    contactMe: "Contact Me",
-    services: "Services",
-    personalBranding: "Personal Branding Website Development",
-    corporateBranding: "Corporate Branding Website Development",
-    internalSystems: "Corporate Internal Management Systems",
-    otherWebApps: "Other Web Application Development",
-    programmingInstruction: "Programming Instruction",
-    economicsInstruction: "Economics Instruction",
-    socialMedia: "Social Media",
+    title: "Let’s talk.",
+    description: "About technology, products, or working together.",
+    email: "Send an email",
+    elsewhere: "Elsewhere",
+    home: "Back to home",
   },
   workExperiences: {
     "swag-2026": {

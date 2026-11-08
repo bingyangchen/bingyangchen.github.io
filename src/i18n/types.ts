@@ -44,15 +44,11 @@ export interface TranslationDictionary {
     switchLanguage: string;
   };
   footer: {
-    contactMe: string;
-    services: string;
-    personalBranding: string;
-    corporateBranding: string;
-    internalSystems: string;
-    otherWebApps: string;
-    programmingInstruction: string;
-    economicsInstruction: string;
-    socialMedia: string;
+    title: string;
+    description: string;
+    email: string;
+    elsewhere: string;
+    home: string;
   };
   workExperiences: Record<
     string,

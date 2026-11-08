@@ -1,7 +1,5 @@
 import { vi } from "vitest";
 import { cleanup, fireEvent, render, within } from "@testing-library/react";
-import React from "react";
-import Footer from "../../../components/Footer/Footer";
 import { homeSkillItems } from "../../../data/skills";
 import { workExperienceItems } from "../../../data/workExperience";
 import * as language from "../../../i18n/context";
@@ -10,12 +8,6 @@ import { traditionalChineseDictionary } from "../../../i18n/dictionaries/zhtw";
 import * as printing from "../../../resume/print";
 import Resume from "../Resume/Resume";
 import Home from "./Home";
-
-vi.mock("react-router-dom", () => ({
-  NavLink: ({ children, to }: { children: React.ReactNode; to: string }) => (
-    <a href={to}>{children}</a>
-  ),
-}));
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -104,18 +96,6 @@ test("SITE-R6.2 技能與教育", () => {
   expect(
     within(container).getByRole("link", { name: englishDictionary.about.nccuFintech }),
   ).toHaveAttribute("href", expect.stringContaining("ftrc.nccu.edu.tw"));
-});
-
-test("SITE-R6.3 Footer 內容", () => {
-  vi.setSystemTime(new Date("2030-01-02T00:00:00Z"));
-  const { container } = render(<Footer />);
-  expect(container).toHaveTextContent("bryan.chen.429@gmail.com");
-  expect(container).toHaveTextContent("Copyright © 2030 Bing-Yang Chen");
-  for (const name of ["GitHub", "LinkedIn", "Cake"])
-    expect(within(container).getByRole("link", { name })).toHaveAttribute(
-      "target",
-      "_blank",
-    );
 });
 
 test.each([englishDictionary, traditionalChineseDictionary])(

@@ -36,7 +36,6 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 <!-- prettier-ignore -->
 | 編號 | 優先順序 | 調整主題 | 證據種類 |
 | --- | --- | --- | --- |
-| TD-06 | P2 | 補齊 Footer 的最小操作高度 | 已重現 |
 | TD-07 | P2 | 收緊工作經歷、字典與 fallback 的資料約定 | 程式碼確認 |
 | TD-08 | P2 | 用穩定作品 ID 整合作品資料與素材 | 程式碼確認 |
 | TD-09 | P2 | 集中聯絡資訊及可共用的職涯事實 | 程式碼確認 |
@@ -59,17 +58,9 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 
 ## 設計稿
 
-無大幅版面或資訊架構變更，因此不新增畫面設計稿。TD-06 涉及局部操作修正，須以修改前後的雙語桌面、窄版畫面及鍵盤狀態驗收。Footer 操作高度的驗證要求寫在下方 Spec 變更。
+無。
 
 ## 檢查發現與調整方案
-
-### TD-06：讓 Footer 符合既有操作高度
-
-證據：[`Footer.module.scss`](../../src/components/Footer/Footer.module.scss) 的社群連結只有上下 padding，沒有最小高度。實測 GitHub 為 36 px，LinkedIn 與 Cake 為 34.5 px，Footer Logo 為 35 px；網站 SITE-R12 原本要求互動目標至少 44 px 高。
-
-建議社群連結與 Logo 套用現有控制尺寸 token，維持原有圖示與文字大小，藉由控制範圍達到 44 px。修正 Footer service separators 的排列時，避免以多餘空間改變整體視覺節奏。
-
-完成條件：兩種語言、320 px 至桌面畫面中的所有 Footer anchor 均至少 44 px 高，focus 不被裁切，文字仍可選取或依原用途不可選取。補上涵蓋 Footer 的尺寸驗證，避免現有 Hero、Header 測試的覆蓋範圍被誤認為全站。
 
 ### TD-07：讓工作與翻譯有完整的資料約定
 
@@ -133,9 +124,9 @@ src/
 
 ### TD-12：讓導覽狀態與原生連結一致
 
-證據：[`useSectionNavigation.ts`](../../src/navigation/useSectionNavigation.ts) 的 effect 同時以 `clickedHash`、`pendingDestination`、`restorationDestination`、frame 與 timer 描述導覽階段。Header 又維護 section ID 清單及焦點行為。Footer 的 [`Logo.tsx`](../../src/components/Logo/Logo.tsx) 在每次 click 直接執行 `window.scrollTo`，沒有排除修飾鍵，因此程式碼顯示另開分頁的 click 也會改變原頁捲動。
+證據：[`useSectionNavigation.ts`](../../src/navigation/useSectionNavigation.ts) 的 effect 同時以 `clickedHash`、`pendingDestination`、`restorationDestination`、frame 與 timer 描述導覽階段。Header 又維護 section ID 清單及焦點行為。
 
-建議共用固定 section ID 與對應型別，明確區分自然閱讀、明確 anchor 導覽、歷史位置還原。把歷史資料解析與狀態轉換抽成可測函式，hook 負責事件及 DOM。Footer 回首頁改用與其他入口一致的原生 anchor 或同樣完整的修飾鍵判斷，保持原生瀏覽器操作。
+建議共用固定 section ID 與對應型別，明確區分自然閱讀、明確 anchor 導覽、歷史位置還原。把歷史資料解析與狀態轉換抽成可測函式，hook 負責事件及 DOM。
 
 ```mermaid
 stateDiagram-v2
@@ -150,7 +141,7 @@ stateDiagram-v2
   restoring --> reading: 使用者開始操作
 ```
 
-完成條件：保持 SITE-R2 的 hash、history length、讀取位置與焦點；新增 Footer 修飾鍵 click 不改變原頁位置、非本網站 anchor 不介入，以及卸載後沒有還原 callback 操作 DOM 的驗證。不要用 IntersectionObserver 取代歷史還原，因為可見區塊判斷無法處理這整組需求。
+完成條件：保持 SITE-R2 的 hash、history length、讀取位置與焦點；新增非本網站 anchor 不介入，以及卸載後沒有還原 callback 操作 DOM 的驗證。不要用 IntersectionObserver 取代歷史還原，因為可見區塊判斷無法處理這整組需求。
 
 ### TD-13：採用 Playwright Test 管理瀏覽器測試
 
@@ -220,7 +211,7 @@ stateDiagram-v2
 
 ### TD-23：整理樣式作用範圍及共享 Token
 
-證據：已有 [`styles/README.md`](../../src/styles/README.md)、semantic tokens、section/focus/control mixins，架構方向合理。剩餘問題是 Home 對所有 section 內的 `h2`、`h3` 套樣式，再由 Projects、Blog 覆寫；部分共用間距與圓角仍寫成 10、15、25、30 px 或 100 px，Footer、Button 與 Header 的相同角色沒有完全使用共用規則。
+證據：已有 [`styles/README.md`](../../src/styles/README.md)、semantic tokens、section/focus/control mixins，架構方向合理。剩餘問題是 Home 對所有 section 內的 `h2`、`h3` 套樣式，再由 Projects、Blog 覆寫；部分共用間距與圓角仍寫成 10、15、25、30 px 或 100 px，Button 與 Header 的相同角色沒有完全使用共用規則。
 
 建議將 About 標題等規則放在實際元件根 class，避免父層控制子功能的標題；整理時只把角色相同且多處使用的值移到 token。圓形使用既有 circle token，控制範圍沿用現有 control mixin。履歷印刷幾何、品牌示意構圖、陰影與光學微調仍留在局部。
 
@@ -300,15 +291,6 @@ flowchart TD
 
 此節為待核准的提案。沒有產品行為變化的重構沿用既有 scenario IDs；工具設定與資料完整性由工程驗收檢查，不為內部檔案搬移建立產品規格。
 
-### SITE-R12：補足 Footer 操作高度驗證
-
-沿用 SITE-R12 的版面、最小操作高度及文字選取規則，補上 Footer anchor 符合既有 44 px 最小高度的驗證情境。
-
-<!-- prettier-ignore -->
-| 情境 | 條件、動作與結果 | 驗證方式 |
-| --- | --- | --- |
-| SITE-R12.9 Footer 操作尺寸 | 在雙語及窄版、桌面畫面量測所有 Footer 社群與 Logo 連結，均至少 44 px 高，focus 完整可見且目的地維持。 | browser |
-
 ### SITE-R15：精確清理已知舊版 Registration
 
 網站維持不提供離線 cache 或更新 UI，啟動時只清理屬於本網站已知 scope 與 script URL 的歷史 registration，保留其他網站功能的 registration 及 Cache Storage。
@@ -331,19 +313,18 @@ SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-
 
 ```mermaid
 flowchart TD
-  baseline[保留驗證基準與情境對應] --> fixes[TD-06：Footer 操作高度]
+  baseline[保留驗證基準與情境對應]
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-07 到 TD-10、TD-24：內容與功能分工]
   tooling --> tests[TD-13、TD-22：測試與診斷]
   tooling --> build[TD-15、TD-16、TD-18、TD-19：靜態輸出與資源]
   content --> logic[TD-11、TD-12：Motion 與導覽]
   tests --> logic
-  fixes --> styles[TD-23、TD-27：共用樣式與控制]
-  content --> styles
+  content --> styles[TD-23、TD-27：共用樣式與控制]
   build --> optional[TD-25、TD-26：靜態資料與載入整理]
 ```
 
-Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留兩組 runner，確認對應後刪除舊的測試基礎設施，避免長期維護重複套件。Footer 的操作高度修正可先完成，不必等整個目錄重構。
+Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留兩組 runner，確認對應後刪除舊的測試基礎設施，避免長期維護重複套件。
 
 ### 需要特別保留的規則
 
@@ -360,7 +341,6 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 <!-- prettier-ignore -->
 | 情境 | 驗證方式 |
 | --- | --- |
-| SITE-R12.9 Footer 操作尺寸 | browser，量測所有 Footer anchor 的矩形與 focus。 |
 | SITE-R15.2 既有 Registration 清理 | 使用 unit、browser、manual 驗證符合清理條件與應保留的 registrations，並涵蓋有 waiting worker、沒有 active worker，以及既有 controller 仍控制頁面的情況。 |
 | SITE-R15.3 Registration 查詢失敗 | unit，涵蓋 API 不存在、查詢拒絕及不屬於本站的紀錄。 |
 

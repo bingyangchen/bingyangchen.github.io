@@ -33,10 +33,8 @@ const TOOLTIP_CONTROLS = [
   'header a[href="#home"]',
   "[data-language-switcher]",
   QR,
-  ...["#home", "footer"].flatMap((region) =>
-    ["github.com", "linkedin.com", "cake.me"].map(
-      (domain) => `${region} a[href*="${domain}"]`,
-    ),
+  ...["github.com", "linkedin.com", "cake.me"].map(
+    (domain) => `#home a[href*="${domain}"]`,
   ),
 ];
 let server;
@@ -319,6 +317,173 @@ test("SITE-R2.5 SITE-R2.6 常駐 Header 與 Logo 回頂端", async () => {
     ),
     "",
   );
+});
+
+test("SITE-R2.5 SITE-R6.6 SITE-R19.4 Footer 原生連結及鍵盤操作", async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await openHome();
+  for (const language of ["en", "zh-TW"]) {
+    if (language === "zh-TW") await page.click("[data-language-switcher]");
+    const email = 'footer a[href="mailto:bryan.chen.429@gmail.com"]';
+    const home = 'footer a[href="/#home"]';
+    await page.focus(email);
+    const destinations = [
+      "https://github.com/bingyangchen",
+      "https://www.linkedin.com/in/bing-yang-chen/",
+      "https://www.cake.me/me/BingYangChen",
+      "/#home",
+    ];
+    for (const href of destinations) {
+      await page.keyboard.press("Tab");
+      assert.equal(
+        await page.evaluate(() => document.activeElement.getAttribute("href")),
+        href,
+      );
+      assert.equal(await page.$(TOOLTIP), null);
+      assert.equal(
+        await page.evaluate(
+          () =>
+            document.activeElement.hasAttribute("title") ||
+            document.activeElement.hasAttribute("aria-describedby"),
+        ),
+        false,
+      );
+    }
+    const position = await page.evaluate(() => scrollY);
+
+    // Cancel new-tab creation while still letting any page click handlers run.
+    await page.$eval(home, (anchor) => {
+      for (const modifier of ["metaKey", "ctrlKey", "shiftKey"]) {
+        anchor.addEventListener("click", (event) => event.preventDefault(), {
+          once: true,
+        });
+        anchor.dispatchEvent(
+          new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            [modifier]: true,
+          }),
+        );
+      }
+    });
+    assert.equal(await page.evaluate(() => scrollY), position);
+    await page.click(home);
+    await page.waitForFunction(() => scrollY < 2 && location.hash === "#home");
+  }
+});
+
+test("SITE-R18.4 Footer Email 箭頭尊重減少動態", async () => {
+  await openHome();
+  const email = 'footer a[href^="mailto:"]';
+  const arrow = `${email} svg`;
+  for (const language of ["en", "zh-TW"]) {
+    await page.setViewport({ width: 1440, height: 900 });
+    if (language === "zh-TW") await page.click("[data-language-switcher]");
+    for (const width of [1440, 390]) {
+      await page.setViewport({ width, height: 900 });
+      for (const preference of ["no-preference", "reduce"]) {
+        await page.emulateMediaFeatures([
+          { name: "prefers-reduced-motion", value: preference },
+        ]);
+        await page.hover(email);
+        await page.$eval(arrow, (element) =>
+          Promise.all(element.getAnimations().map((animation) => animation.finished)),
+        );
+        const displacement = await page.$eval(
+          arrow,
+          (element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m41,
+        );
+        assert.ok(preference === "reduce" ? displacement === 0 : displacement > 0);
+        await page.mouse.move(0, 0);
+      }
+    }
+  }
+});
+
+test("SITE-R12.9 Footer 操作尺寸、排列及文字放大", { timeout: 45000 }, async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await openHome();
+  for (const language of ["en", "zh-TW"]) {
+    await page.setViewport({ width: 1440, height: 900 });
+    if (language === "zh-TW") await page.click("[data-language-switcher]");
+    for (const width of [320, 390, 512, 513, 720, 721, 1024, 1440]) {
+      await page.setViewport({ width, height: 900 });
+      const dimensions = await page.$eval("footer", (footer) => {
+        const links = [...footer.querySelectorAll("a")].map((element) =>
+          element.getBoundingClientRect().toJSON(),
+        );
+        const contact = footer.querySelector("h2").getBoundingClientRect();
+        const platforms = footer.querySelector("nav").getBoundingClientRect();
+        const identity = footer
+          .querySelector('a[href="/#home"]')
+          .getBoundingClientRect();
+        const copyright = footer.querySelector("p:last-child").getBoundingClientRect();
+        return {
+          links,
+          contact: contact.toJSON(),
+          platforms: platforms.toJSON(),
+          identity: identity.toJSON(),
+          copyright: copyright.toJSON(),
+          width: footer.clientWidth,
+          contentWidth: footer.scrollWidth,
+        };
+      });
+      assert.equal(dimensions.links.length, 5);
+      assert.ok(
+        dimensions.links.every(
+          (rect) => rect.height >= 44 && rect.left >= 0 && rect.right <= width,
+        ),
+      );
+      assert.equal(dimensions.width, dimensions.contentWidth);
+      assert.ok(
+        width <= 720
+          ? dimensions.platforms.top > dimensions.contact.bottom
+          : dimensions.platforms.left > dimensions.contact.right,
+      );
+      if (width <= 512)
+        assert.ok(dimensions.copyright.top >= dimensions.identity.bottom);
+      await page.keyboard.press("Tab");
+      for (const link of await page.$$("footer a")) {
+        await link.focus();
+        assert.equal(
+          await link.evaluate((element) => {
+            const rect = element.getBoundingClientRect();
+            const style = getComputedStyle(element);
+            const outset =
+              parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
+            return (
+              element.matches(":focus-visible") &&
+              style.outlineWidth === "2px" &&
+              rect.left >= outset &&
+              rect.right + outset <= innerWidth
+            );
+          }),
+          true,
+        );
+      }
+      await page.$eval("html", (element) => {
+        element.style.fontSize = "200%";
+      });
+      assert.equal(
+        await page.$eval(
+          "footer",
+          (footer) =>
+            footer.scrollWidth === footer.clientWidth &&
+            [...footer.querySelectorAll("a")].every(
+              (element) => element.getBoundingClientRect().right <= innerWidth,
+            ),
+        ),
+        true,
+      );
+      await page.$eval("html", (element) => {
+        element.style.removeProperty("font-size");
+      });
+    }
+  }
 });
 
 async function waitForSection(id) {
@@ -1126,7 +1291,7 @@ test("SITE-R12.5 正文可拖選並以原生複製取得文字", { timeout: 4500
         `${DETAIL} [class*="description"]`,
         '#blog [class*="featuredCopy"] p',
         '#blog [class*="reading"] p',
-        'footer [class*="contact_me"] [class*="body"]',
+        'footer a[href^="mailto:"] > span:first-child',
       ]) {
         const expected = await dragText(selector);
         assert.equal(
@@ -1177,8 +1342,7 @@ test(
             '#blog [class*="featuredCopy"] h3',
             '#blog [class*="featuredCopy"] p',
             '#blog [class*="reading"] p',
-            'footer [class*="contact_me"] [class*="body"]',
-            'footer [class*="services"] [class*="item"]',
+            'footer a[href^="mailto:"] > span:first-child',
           ];
           const controlSelectors = [
             "button",
@@ -1189,8 +1353,8 @@ test(
             '#blog [class*="archiveLink"] span',
             '#blog [class*="featuredAction"] span',
             '#blog [class*="readingAction"]',
-            'footer [class*="social_media"] a span',
-            'footer [class*="product_name"]',
+            "footer nav a span",
+            'footer a[href="/#home"] span',
           ];
           function getSelectionStyles(selectors) {
             return selectors.flatMap((selector) => {
@@ -3024,7 +3188,7 @@ test("SITE-R18.1 依區域與控制尺寸共用鍵盤焦點框", async () => {
       }
       assert.equal(reached.header, width === 1440 ? 6 : 7);
       assert.equal(reached.content, 21);
-      assert.equal(reached.footer, 4);
+      assert.equal(reached.footer, 5);
       assert.equal(reached.surfaces, 4);
 
       await page.focus(`${TABS}:first-child`);
@@ -3619,26 +3783,11 @@ test("SITE-R19.3 游標移入提示", async () => {
   }
 });
 
-test("SITE-R19.3 提示避開視窗底部及 QR code dialog", async () => {
+test("SITE-R19.3 提示與 QR code dialog 隔離", async () => {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
   await openHome();
-  const footerLink = 'footer a[href*="github.com"]';
-  await page.$eval(footerLink, (control) => {
-    control.scrollIntoView({ block: "center", behavior: "instant" });
-    window.scrollBy(0, control.getBoundingClientRect().bottom - (innerHeight - 2));
-  });
-  await page.hover(footerLink);
-  const footerTooltip = await getTooltipSelector(footerLink);
-  assert.equal(
-    await page.$eval(footerTooltip, (content) => content.dataset.side),
-    "top",
-  );
-  const footerBounds = await page.$eval(footerTooltip, (content) =>
-    content.getBoundingClientRect().toJSON(),
-  );
-  assert.ok(footerBounds.y >= 0 && footerBounds.bottom <= 900);
   await page.$eval(QR, (control) =>
     control.scrollIntoView({ block: "center", behavior: "instant" }),
   );
