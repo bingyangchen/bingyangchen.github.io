@@ -34,6 +34,7 @@ import {
   IconXLarge,
 } from "../../../icons";
 import { useScrollMotion } from "../../../motion/useScrollMotion";
+import BrandImage from "../../../components/BrandImage/BrandImage";
 
 const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
 
@@ -91,7 +92,7 @@ export default function Home() {
   const job_badge_content = (
     <>
       {primaryWorkExperience.company_logo ? (
-        <img
+        <BrandImage
           src={primaryWorkExperience.company_logo}
           alt=""
           className={styles.role_badge_company_logo}
@@ -304,11 +305,13 @@ export default function Home() {
           </div>
           <h3 data-scroll-motion="heading">{dictionary.about.education}</h3>
           <div className={styles.education_outer}>
-            <img
+            <BrandImage
               className={styles.school_logo}
               data-scroll-motion="portrait"
               src={nccuLogo}
               alt="NCCU,National Chengchi University,國立政治大學,經濟學系,Department of Economics,金融科技學士學程,Financial Technology Program,陳秉洋"
+              width={314}
+              height={103}
             />
             <div className={styles.degree_list} data-scroll-motion="content">
               <a

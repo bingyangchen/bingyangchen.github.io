@@ -17,6 +17,7 @@ import { spawn } from "node:child_process";
 import { createServer } from "node:http";
 import puppeteer from "puppeteer";
 import { startStaticServer } from "../../scripts/serve-build.mjs";
+import { watchPageResources } from "../../scripts/browser-resources.mjs";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const BUILD = resolve(ROOT, "build");
@@ -42,7 +43,7 @@ let server;
 let browser;
 let context;
 let page;
-let pageErrors;
+let pageResources;
 
 before(async () => {
   await stat(join(BUILD, "index.html"));
@@ -66,31 +67,20 @@ after(async () => {
 beforeEach(async () => {
   context = await browser.createBrowserContext();
   page = await context.newPage();
-  pageErrors = [];
-  page.on("pageerror", (error) => pageErrors.push(error.message));
+  pageResources = await watchPageResources(page);
   await page.setViewport({ width: 1440, height: 900 });
   await page.evaluateOnNewDocument(() =>
     Object.defineProperty(navigator, "language", { get: () => "en-US" }),
   );
-  await page.setRequestInterception(true);
-  page.on("request", (request) => {
-    if (
-      new URL(request.url()).origin === server.origin ||
-      request.url().startsWith("data:")
-    )
-      void request.continue();
-    else
-      void request.respond({
-        status: 200,
-        contentType: "image/svg+xml",
-        body: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"/>',
-      });
-  });
 });
 
 afterEach(async () => {
-  await context?.close();
-  assert.deepEqual(pageErrors, [], "uncaught browser errors");
+  try {
+    await pageResources.assertLoaded();
+  } finally {
+    pageResources?.stop();
+    await context?.close();
+  }
 });
 
 async function openHome(hash = "") {
@@ -1858,10 +1848,8 @@ async function runPrerenderFixture(script) {
   try {
     await mkdir(join(directory, "scripts"));
     await mkdir(join(directory, "build"));
-    await copyFile(
-      join(ROOT, "scripts/prerender.mjs"),
-      join(directory, "scripts/prerender.mjs"),
-    );
+    for (const name of ["prerender.mjs", "browser-resources.mjs"])
+      await copyFile(join(ROOT, "scripts", name), join(directory, "scripts", name));
     await symlink(join(ROOT, "node_modules"), join(directory, "node_modules"), "dir");
     await writeFile(
       join(directory, "build/index.html"),
@@ -1935,6 +1923,35 @@ test(
     }
   },
 );
+test("SITE-R14.4 首頁缺圖及非預期外連阻止 prerender", { timeout: 60000 }, async () => {
+  const fixtures = [
+    [
+      'const image = new Image(); image.src = "/missing-home-image.png"; document.body.append(image);',
+      "missing-home-image.png",
+    ],
+    [
+      'const image = new Image(); image.src = "https://unexpected.invalid/logo.png"; document.body.append(image);',
+      "Unexpected external request",
+    ],
+    [
+      'const script = document.createElement("script"); script.src = "https://unexpected.invalid/script.js"; document.body.append(script);',
+      "Unexpected external request",
+    ],
+    [
+      'void fetch("https://unexpected.invalid/data").catch(() => {});',
+      "Unexpected external request",
+    ],
+  ];
+  for (const [script, message] of fixtures) {
+    const result = await runPrerenderFixture(
+      'document.getElementById("root").textContent="Homepage content ".repeat(100);' +
+        script,
+    );
+    assert.notEqual(result.code, 0);
+    assert.ok(result.output.includes(message), result.output);
+  }
+});
+
 test(
   "SITE-R14.4 履歷缺漏、裁切與圖片失敗時停止產生 PDF",
   { timeout: 60000 },

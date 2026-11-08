@@ -2,7 +2,7 @@
 
 先以 `npm run build` 產生最新 production build，再執行 `npm run preview`，使用輸出的 loopback URL。預覽 server 沒有 SPA fallback；`/resume` 不公開，相關本機預覽檢查使用 `npm run dev`。
 
-Browser tests 會以本機回應替換遠端圖片，因此測試結果不代表第三方服務可用。
+Browser tests 與 prerender 拒絕非 loopback 的網路資源，品牌圖片直接使用 repo 素材。外連目的地與外站可用性需分別檢查，自動測試不代表外站可用。
 
 依改動影響選擇驗證範圍，並在執行紀錄分別標示已測與未測的範圍：
 
@@ -12,7 +12,7 @@ Browser tests 會以本機回應替換遠端圖片，因此測試結果不代表
 - 列印包含 OS 列印對話框、PDF 畫面、文字完整性與閱讀順序，以及聯絡與社群連結。
 - Service worker 變更包含歷史 registration、controller 與既有安裝環境的升級行為。
 
-經歷與成果數字的來源查核依 [Resume Skill](../../.agents/skills/resume-writer/SKILL.md) 處理，不能把 repo 內重複出現的敘述當成獨立事實證據。外連的目的地與服務可用性需分別檢查，不能由測試使用本機替代圖片推定外站可用。
+經歷與成果數字的來源查核依 [Resume Skill](../../.agents/skills/resume-writer/SKILL.md) 處理，不能把 repo 內重複出現的敘述當成獨立事實證據。
 
 每次記錄瀏覽器、viewport、語言、紙張設定與 commit，結果寫入 commit 說明與交付回報。未執行或已知失敗的項目不能回報為通過，既有問題依 [Roadmap](../../docs/roadmap.md) 記錄，另行依 SDD 的 `change` 或 `plan` 流程修復。
 
@@ -206,6 +206,23 @@ Browser tests 會以本機回應替換遠端圖片，因此測試結果不代表
 5. 以另一種語言重做以上步驟。
 
 預期結果：Blog 的完整筆記入口以新分頁開啟 `https://blog.byc1999.com/list`。
+
+## SITE-R6.5 本機品牌圖片
+
+原因：需人工核對品牌圖片與工作、教育內容是否一致，以及雙語版面的視覺品質。
+
+步驟：
+
+1. 開啟首頁。
+2. 在 320、390、1440 px 寬度檢查 Hero、工作經歷及教育圖片。
+3. 切換另一種語言。
+4. 重做各寬度的檢查。
+5. 在開發者工具封鎖一張品牌圖片的 request。
+6. 關閉瀏覽器 cache。
+7. 重新載入首頁。
+8. 檢查失敗圖片的空間與旁邊文字。
+
+預期結果：品牌圖片與對應公司或學校一致，比例正確；圖片失敗時保留原空間，沒有失敗圖示，職稱、公司及教育文字仍可閱讀。
 
 ## SITE-R7.8 鍵盤操作作品
 

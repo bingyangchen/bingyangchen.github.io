@@ -5,6 +5,7 @@ import { dirname, extname, join, normalize, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import puppeteer from "puppeteer";
+import { watchPageResources } from "./browser-resources.mjs";
 
 const BUILD_DIR = resolve(fileURLToPath(new URL("../build", import.meta.url)));
 const ROUTES = ["/"];
@@ -76,14 +77,7 @@ function startStaticServer(shell) {
   });
 }
 
-async function generateResumePdf(page, origin) {
-  const failures = [];
-  const onPageError = (error) => failures.push(error.message);
-  const onConsole = (message) => {
-    if (message.type() === "error") failures.push(message.text());
-  };
-  page.on("pageerror", onPageError);
-  page.on("console", onConsole);
+async function generateResumePdf(page, origin, resources) {
   try {
     const response = await page.goto(`${origin}/resume`, { waitUntil: "networkidle0" });
     if (!response?.ok()) throw new Error(`Resume responded ${response?.status()}`);
@@ -124,7 +118,7 @@ async function generateResumePdf(page, origin) {
     const pdf = Buffer.from(
       await page.pdf({ preferCSSPageSize: true, printBackground: true }),
     );
-    if (failures.length) throw new Error(`Resume failed: ${failures.join("; ")}`);
+    await resources.assertLoaded();
 
     // These checks target Chromium's output, not arbitrary uploaded PDF files.
     const content = pdf.toString("latin1");
@@ -166,8 +160,6 @@ async function generateResumePdf(page, origin) {
     );
   } finally {
     await page.emulateMediaType("screen");
-    page.off("pageerror", onPageError);
-    page.off("console", onConsole);
   }
 }
 
@@ -208,47 +200,29 @@ function waitForDomIdle(page, idleMs, timeoutMs) {
   );
 }
 
-async function snapshot(page, origin, route) {
-  const failures = [];
-  const onPageError = (error) => failures.push(`uncaught: ${error.message}`);
-  const onConsole = (message) => {
-    if (message.type() === "error") failures.push(`console: ${message.text()}`);
-  };
-
-  page.on("pageerror", onPageError);
-  page.on("console", onConsole);
-
-  try {
-    const response = await page.goto(`${origin}${route}`, {
-      waitUntil: "networkidle0",
-    });
-    if (!response?.ok()) {
-      throw new Error(`${route} responded ${response?.status()}`);
-    }
-
-    const locale = await page.evaluate(() => navigator.language);
-    if (locale !== PRERENDER_LOCALE) {
-      throw new Error(
-        `Browser locale is "${locale}" but the snapshot must be "${PRERENDER_LOCALE}". ` +
-          `The locale override did not apply, so the wrong language would be indexed.`,
-      );
-    }
-
-    await waitForDomIdle(page, DOM_IDLE_MS, DOM_SETTLE_TIMEOUT_MS);
-
-    // Capturing only #root preserves shell metadata and excludes body-level portals.
-    const rootHtml = await page.$eval("#root", (root) => root.innerHTML);
-    if (!rootHtml.trim()) {
-      throw new Error(`${route} rendered an empty #root`);
-    }
-    if (failures.length > 0) {
-      throw new Error(`${route} logged errors:\n  ${failures.join("\n  ")}`);
-    }
-    return rootHtml;
-  } finally {
-    page.off("pageerror", onPageError);
-    page.off("console", onConsole);
+async function snapshot(page, origin, route, resources) {
+  const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
+  if (!response?.ok()) {
+    throw new Error(`${route} responded ${response?.status()}`);
   }
+
+  const locale = await page.evaluate(() => navigator.language);
+  if (locale !== PRERENDER_LOCALE) {
+    throw new Error(
+      `Browser locale is "${locale}" but the snapshot must be "${PRERENDER_LOCALE}". ` +
+        `The locale override did not apply, so the wrong language would be indexed.`,
+    );
+  }
+
+  await waitForDomIdle(page, DOM_IDLE_MS, DOM_SETTLE_TIMEOUT_MS);
+  await resources.assertLoaded();
+
+  // Capturing only #root preserves shell metadata and excludes body-level portals.
+  const rootHtml = await page.$eval("#root", (root) => root.innerHTML);
+  if (!rootHtml.trim()) {
+    throw new Error(`${route} rendered an empty #root`);
+  }
+  return rootHtml;
 }
 
 function assertSnapshotHasContent(rootHtml, route) {
@@ -282,11 +256,13 @@ async function main() {
   const origin = `http://127.0.0.1:${server.address().port}`;
 
   let browser;
+  let resources;
   try {
     browser = await puppeteer.launch({
       args: ["--no-sandbox", "--disable-dev-shm-usage"],
     });
     const page = await browser.newPage();
+    resources = await watchPageResources(page);
     await page.setViewport({ width: 1440, height: 900 });
     const cdp = await page.createCDPSession();
     await cdp.send("Network.enable");
@@ -302,7 +278,7 @@ async function main() {
 
     for (const route of ROUTES) {
       const startedAt = process.hrtime.bigint();
-      const rootHtml = await snapshot(page, origin, route);
+      const rootHtml = await snapshot(page, origin, route, resources);
 
       const outputPath =
         route === "/" ? shellPath : join(BUILD_DIR, normalize(route), "index.html");
@@ -323,8 +299,9 @@ async function main() {
           `text, ${(elapsedMs / 1000).toFixed(1)}s)`,
       );
     }
-    await generateResumePdf(page, origin);
+    await generateResumePdf(page, origin, resources);
   } finally {
+    resources?.stop();
     await browser?.close();
     server.close();
   }

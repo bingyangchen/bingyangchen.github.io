@@ -1,4 +1,5 @@
 import styles from "./WorkExperience.module.scss";
+import BrandImage from "../BrandImage/BrandImage";
 
 interface WorkExperienceProperties {
   work_duration: string;
@@ -26,10 +27,12 @@ export default function WorkExperience({
         <div className={styles.job_title}>{job_title}</div>
         <div className={styles.company_name}>
           {company_logo && (
-            <img
+            <BrandImage
               className={styles.company_logo}
               src={company_logo}
               alt={company_name}
+              width={20}
+              height={20}
             />
           )}
           {company_name}

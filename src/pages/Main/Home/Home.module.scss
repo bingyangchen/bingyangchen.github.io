@@ -565,6 +565,7 @@
       }
       & > .school_logo {
         width: 260px;
+        height: auto;
         @media (max-width: _.$small) {
           width: 220px;
         }

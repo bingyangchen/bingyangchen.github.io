@@ -45,7 +45,11 @@ export default defineConfig([
     languageOptions: { globals: globals.node },
   },
   {
-    files: ["scripts/prerender.mjs", "tests/browser/site.test.mjs"],
+    files: [
+      "scripts/prerender.mjs",
+      "scripts/browser-resources.mjs",
+      "tests/browser/*.mjs",
+    ],
     languageOptions: { globals: globals.browser },
   },
   {

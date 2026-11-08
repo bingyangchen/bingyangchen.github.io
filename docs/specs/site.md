@@ -146,6 +146,8 @@ flowchart TD
 
 About 顯示工作經歷、技能與教育。工作內容按資料順序，以 id 取得目前語言翻譯，缺少或空翻譯時取資料值；技能列呈現技能名稱與圖示，學歷連結到對應學校頁面。
 
+Hero、工作經歷與教育的品牌圖片隨網站提供，預留圖片尺寸；圖片載入失敗時保留空間並隱藏失敗圖示，旁邊的職稱、公司與教育文字仍可閱讀。
+
 Footer 提供聯絡文字、服務項目、社群與當年度姓名版權資訊。
 
 Blog 提供精選文章與外部完整筆記列表入口，詳細行為見 SITE-R17。
@@ -157,6 +159,7 @@ Blog 提供精選文章與外部完整筆記列表入口，詳細行為見 SITE-
 | SITE-R6.2 技能與教育 | 技能名稱及圖示與技能資料一致，教育連結指向經濟學系與金融科技學程。 | unit、manual |
 | SITE-R6.3 Footer 內容 | Footer 顯示完整 email、服務與三個社群入口，版權年度依執行時間，姓名依目前語言。 | unit、manual |
 | SITE-R6.4 外部部落格 | Blog 的完整筆記入口以新分頁開啟 `https://blog.byc1999.com/list`。 | browser、manual |
+| SITE-R6.5 本機品牌圖片 | 雙語、窄版與桌面的品牌圖片使用本機來源並預留尺寸，正常載入時顯示正確品牌；載入失敗時沒有失敗圖示或版面位移，相關文字仍可閱讀。 | browser、manual |
 
 ### SITE-R7 作品選取與詳情
 
@@ -359,6 +362,8 @@ Reduced-motion 下停用首頁全部非必要動畫及過場，完整顯示問�
 
 Production build 在前端 compile 成功後執行首頁 prerender，使用繁中、台北時區及減少動態設定擷取 `#root` 的內容，保留原 shell head，排除 body portal。HTML 不包含滾動動態的啟用標記或暫存視覺狀態，首頁產生可在 JavaScript 啟動前讀取的文字；需要操作的功能仍依賴 JavaScript。
 
+Prerender 與 PDF 輸出只允許 loopback HTTP 資源及頁面內的 data、blob URL，阻擋並回報非預期外連。資源的 HTTP 錯誤、載入或圖片解碼失敗，以及 console error 或未處理的 JavaScript error，均使 build 失敗。外部網站僅作為訪客主動開啟的目的地。
+
 前端 compile 完成後，接續執行首頁 prerender 並產生履歷 PDF。產生 PDF 時可在內部使用 `/resume` 的 client route，但公開輸出仍只有首頁 HTML 與 PDF，不新增 `/resume/index.html`。共同檢查必須使用當次 compile 的乾淨輸出，不依賴上次殘留的 HTML 或 PDF。
 
 履歷檢查要求只有一份 ResumeSheet、字型與圖片載入成功，以及文字與連結位於紙張範圍內。檢查或輸出檔案失敗時，由現有 CI 流程阻止發布：
@@ -380,7 +385,7 @@ flowchart TD
 | SITE-R14.1 完整 Build | 從乾淨的前端 compile 輸出完成 build，產生首頁靜態內容與當次 ResumeSheet 的 PDF；不能以既有 HTML 或 PDF 代替當次輸出。 | browser |
 | SITE-R14.2 靜態首頁內容 | 讀取 build 的 HTML，或停用 JavaScript 開啟首頁，仍有主要區塊文字；不要求 QR code 或語言切換在無 JavaScript 時可操作。 | browser |
 | SITE-R14.3 擷取範圍 | HTML 保留 shell metadata，root 內有繁中內容及下載連結，root 外沒有 print portal；首頁啟動後沒有隱藏履歷或重複內容。 | browser |
-| SITE-R14.4 失敗回報 | 空 root、JavaScript error、錯誤 HTTP、不足的內容、履歷載入失敗、超出紙張、字型缺漏或替換、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
+| SITE-R14.4 失敗回報 | 空 root、JavaScript 或 console error、錯誤 HTTP、非預期外連、資源載入或圖片解碼失敗、不足的內容、履歷載入失敗、超出紙張、字型缺漏或替換、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
 
 ### SITE-R15 Service Worker 與執行環境
 

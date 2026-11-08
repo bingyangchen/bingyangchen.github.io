@@ -44,10 +44,8 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 | TD-11 | P2 | 分開 motion 計算與 DOM 操作 | 程式碼確認 |
 | TD-12 | P2 | 整理導覽狀態與原生 anchor 行為 | 程式碼確認 |
 | TD-13 | P2 | 採用 Playwright Test 管理瀏覽器測試 | 程式碼確認 |
-| TD-14 | P2 | 收緊網路 mock 與資源失敗檢查 | 程式碼確認 |
 | TD-15 | P2 | 使用 PDF parser 並補足 PDF 內容驗證 | 程式碼確認 |
 | TD-16 | P2 | 共用靜態檔案服務並拆分 prerender 職責 | 程式碼確認 |
-| TD-17 | P2 | 讓品牌圖片與 build 不依賴外站 | 程式碼確認 |
 | TD-18 | P2 | 降低初始與隱藏圖片的下載成本 | 已重現 |
 | TD-19 | P2 | 移除停用的 Workbox 程式並保留精確清理 | 程式碼確認 |
 | TD-20 | P2 | 補足 Node 工具與瀏覽器測試的型別檢查 | 程式碼確認 |
@@ -164,14 +162,6 @@ stateDiagram-v2
 
 [`check-scenarios.mjs`](../../scripts/check-scenarios.mjs) 目前只接受直屬 `tests/browser/*.test.mjs`。採用新的 `.spec.ts` 路徑時，runner、checker、checker fixtures、lint、typecheck、README 與驗證文件必須同時更新，明確處理 Playwright 的 `skip`、`fixme`、`only`，不能只改 npm script。
 
-### TD-14：只替換已知的外部網路資源
-
-證據：browser `beforeEach` 將所有非本機、非 data URL 的 request 回應成成功 SVG。這讓測試不依賴外站，卻也會讓意外新增的外部 JS、fetch 或錯誤網址看起來成功。`pageErrors` 只蒐集 `pageerror`，沒有一般性的 `requestfailed`、本機非 2xx 或 console error 檢查。
-
-建議只允許已知圖片以 fixture 替換，其餘意外 request 直接失敗並顯示 URL 及用途。對本機資源建立失敗收集，只有專門驗證失敗情境的測試可個別允許錯誤；外部原生 anchor 的目的地檢查與外站健康狀態維持分開。
-
-完成條件：故意把本機圖片改成不存在的路徑、插入非預期 fetch 或新增外部 script，相關測試會失敗；正常測試全程可在無外網時完成。這項收緊配合 TD-17 的圖片本機化，避免以更廣的 mock 規則保住通過結果。
-
 ### TD-15：使用 PDF Parser 並補足內容驗證
 
 證據：[`prerender.mjs`](../../scripts/prerender.mjs) 及 browser tests 都將 PDF 轉為 Latin-1 再用 regex 解析頁數、MediaBox、文件語言、字型和 URL。程式有註明只處理 Chromium 輸出，這個限制合理，但 Chromium 改變物件壓縮或 dictionary 輸出方式時，仍可能出現錯誤判斷。Build 目前驗證紙張範圍內的 DOM 文字，不能證明 PDF 的實際文字擷取完整。
@@ -187,14 +177,6 @@ stateDiagram-v2
 建議共用靜態檔案服務，嚴格模式直接回 404，build 模式只對明確允許的 `/`、`/resume` 提供 shell。MIME、路徑與錯誤處理維持一份；預期 ENOENT 可回 404，讀取權限或其他 I/O 錯誤須回報原因。首頁 snapshot、browser 啟動、履歷 PDF 與驗證拆成可各自測試的腳本模組。
 
 完成條件：缺少圖片不回 HTML 200，無效 URL 不使 process 失敗，既有 traversal、symlink、HEAD 測試保留。Browser 啟動或關閉失敗時也確實關閉 server，設定整體執行期限並記錄失敗階段。現有 failure fixtures 只複製單一 `prerender.mjs`，拆檔後必須同步複製需要的模組或透過明確工作目錄注入測試，不能讓 fixture 因找不到 import 而假裝驗證到預期錯誤。
-
-### TD-17：讓品牌圖片與 Build 不依賴外站
-
-證據：工作資料引用 Swag、Gaia、Pinkoi、Sysfeather、學校等外部圖片，production prerender 又使用真正的 browser 載入首頁，等待 network idle 並把 console error 視為失敗。外站圖片服務的變動或暫時錯誤可能阻止與內容無關的網站發布，現有 browser tests 以 SVG 替換並未驗證這條實際依賴。
-
-建議把首頁必需的公司及學校品牌圖片放在 repo，記錄來源與維護位置，使用固定尺寸與備援顯示。建議 production snapshot 不需連到任何第三方服務，外站僅作為訪客主動開啟的目的地。
-
-完成條件：封鎖所有非 loopback request 時，prerender 與 PDF 仍能完成；首頁公司標誌沒有 layout shift 或失敗圖示，文字不依賴圖片才能理解。品牌圖片可見性及對應內容需人工檢查，不能讓 SVG fixture 成為正式素材。
 
 ### TD-18：降低初始圖片下載及解碼成本
 
@@ -352,8 +334,8 @@ flowchart TD
   baseline[保留驗證基準與情境對應] --> fixes[TD-06：Footer 操作高度]
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-07 到 TD-10、TD-24：內容與功能分工]
-  tooling --> tests[TD-13、TD-14、TD-22：測試與診斷]
-  tooling --> build[TD-15 到 TD-19：靜態輸出與資源]
+  tooling --> tests[TD-13、TD-22：測試與診斷]
+  tooling --> build[TD-15、TD-16、TD-18、TD-19：靜態輸出與資源]
   content --> logic[TD-11、TD-12：Motion 與導覽]
   tests --> logic
   fixes --> styles[TD-23、TD-27：共用樣式與控制]
@@ -392,7 +374,7 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 | 工具與環境 | 工具及 browser tests 的型別錯誤會阻止共同檢查；依文件選擇 Node 與 npm 後，乾淨安裝及既有檢查通過。 |
 | 內容與模組 | ID 缺漏在檢查階段失敗，共用事實有單一維護位置，fallback、雙語與履歷共享事實保持一致；沒有循環 import 或功能私有模組對外公開。 |
 | Motion 與導覽 | 純函式驗證與既有 browser 情境通過，桌面及實機快捲、反轉、歷史還原、focus、resize、reduced motion 另有實測紀錄。 |
-| PDF 與 Prerender | 阻擋外網仍能產生 HTML 與 PDF，失敗 fixtures 確實測到預期原因；PDF parser、獨立文字擷取及人工版面檢查分別回報。 |
+| PDF 與 Prerender | 失敗 fixtures 確實測到預期原因；PDF parser、獨立文字擷取及人工版面檢查分別回報。 |
 | 資源及載入 | 記錄同 viewport 的圖片 request 與 bundle gzip 差異，隱藏及未選作品的大圖不提前下載，直接 hash 和無 JavaScript 情境仍可讀。 |
 | 測試與 CI | Runner 和 checker 接受相同檔案與測試宣告，主要跨瀏覽器流程有結果，失敗時有診斷 artifact，失敗輸出及非 main ref 均不發布。 |
 | 文件 | 同一批實作更新 design context、spec、manual checks、README 及 design system 的相關規則，完成並驗證的 Roadmap 項目才移除。 |
