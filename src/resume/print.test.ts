@@ -1,8 +1,9 @@
+import { vi } from "vitest";
 import { openResumePrintDialog } from "./print";
 
 test("SITE-R10.3 預覽字型等待", async () => {
   const descriptor = Object.getOwnPropertyDescriptor(document, "fonts");
-  const print = jest.spyOn(window, "print").mockImplementation(() => {});
+  const print = vi.spyOn(window, "print").mockImplementation(() => {});
   let ready: () => void = () => {};
   const fontReady = new Promise<void>((resolve) => {
     ready = resolve;

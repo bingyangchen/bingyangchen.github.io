@@ -10,7 +10,7 @@
 
 ## Runtime and Deployment
 
-- This is a React and TypeScript frontend built with Create React App and deployed to GitHub Pages through `.github/workflows/deploy.yml`. There is no application server or first-party API in this repository.
+- This is a React and TypeScript frontend built with Vite and deployed to GitHub Pages through `.github/workflows/deploy.yml`. There is no application server or first-party API in this repository.
 - `npm run build` runs prerendering through `postbuild`. When changing routing, inspect `scripts/prerender.mjs` and verify direct navigation and reloads on static hosting; do not assume a server-provided SPA fallback.
 - For service-worker or offline changes, inspect registration in `src/index.tsx` as well as the Workbox files, and verify the behavior against a production build.
 

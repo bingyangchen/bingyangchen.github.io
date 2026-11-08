@@ -11,19 +11,15 @@ depends_on: []
 
 ## 目標
 
-讓網站能持續更新內容、依賴與互動，而不必反覆處理過時的工具鏈、跨檔案同步與脆弱的測試。本計劃記錄全面檢查的證據、建議的模組分工、現成工具的取捨，以及每項調整的完成條件。
-
-檢查基準為 `main` 的 `fab1eb4`，日期為 2026-11-08。開始時工作目錄乾淨。本次只新增計劃及更新 [Roadmap](../roadmap.md)，產品程式碼、依賴與現行 [網站規格](../specs/site.md) 維持原狀，沒有 commit。
+讓網站能持續更新內容、依賴與互動，降低跨檔案同步與測試維護的成本。本計劃列出目前待處理的技術債、證據、調整方案及完成條件。
 
 ## 核准紀錄
 
 尚未核准。
 
-本文件是完整的改善提案。優先順序代表建議處理順序，不代表其中任何項目已獲實作授權。
-
 ## 範圍
 
-檢查涵蓋 `src/` 的 React、TypeScript、Sass、內容資料與雙語字典，`scripts/`、`tests/`、`public/`、字型與圖片、npm 設定、lockfile、GitHub Actions、工程文件與規格對應。共讀取 79 個 TS、TSX、SCSS 檔案，並檢查相關腳本及測試。
+檢查涵蓋 `src/` 的 React、TypeScript、Sass、內容資料與雙語字典，`scripts/`、`tests/`、`public/`、字型與圖片、npm 設定、lockfile、GitHub Actions、工程文件與規格對應。
 
 建議維持 React、靜態 hosting、GitHub Pages、英文單頁 A4 履歷、既有首頁區塊順序與視覺方向。此次提案不增加 application server、CMS、全域狀態管理框架或新的公開頁面，也不重新撰寫職涯成果。
 
@@ -31,32 +27,15 @@ depends_on: []
 
 - 已重現：由 production build、瀏覽器操作或計算取得結果。
 - 程式碼確認：可直接確認目前的結構、重複或失敗處理方式，尚未宣稱使用者已遇到故障。
-- 工具回報：來自 npm 官方 registry 的版本及安全公告，需要依使用方式評估影響。
 - 待調查：現有資料不足以判定，例如舊 sitemap 目的地是否仍由其他 repo 提供。
-
-### 現況驗證
-
-<!-- prettier-ignore -->
-| 檢查 | 本次結果與限制 |
-| --- | --- |
-| `npm run check` | 通過。包含格式、lint、103 個規格情境的連結檢查、21 個 checker tests、37 個 unit tests、production build、prerender、PDF 及 67 個 browser tests。Browser tests 約 228 秒。 |
-| `npx --no-install tsc --noEmit` | 通過。目前只檢查 `src/`，沒有涵蓋 `.mjs` 腳本與瀏覽器測試。 |
-| 指定執行環境 | 完整檢查使用本機 Node 24.21.0、npm 11.19.0。另以已安裝的 Node 22.17.0、乾淨 ESLint cache 與 `CI=true` 驗證 CRA compile 通過；不是完整 Ubuntu CI 重跑。 |
-| npm 安全公告 | 官方 registry 回報 52 個受影響的套件項目：2 critical、23 high、10 moderate、17 low。這是依賴樹的統計，不是 52 個可直接從公開網站利用的漏洞。 |
-| 額外瀏覽器檢查 | 量測 390 × 844 手機首頁的圖片 request、1440 × 900 桌面控制尺寸、Tooltip 的 Escape 行為，以及閱讀狀態的文字配色。外部圖片以本機 SVG 回應替代。 |
-| 未涵蓋 | 本次沒有實測 Safari、Firefox、真實手機、screen reader、OS 列印對話框、正式網站外連可用性或完整 PDF 視覺與文字擷取。現有測試通過不能代替這些結果。 |
-
-最初 CRA compile 出現 `ButtonLink` 的 `jsx-a11y/anchor-has-content` 警告，並在 `CI=true` 時失敗。以兩組 ESLint 設定關閉 cache 重查都沒有警告，清除 cache 後 Node 22 compile 也通過，因此確認是本機舊 cache 的結果，不列為產品缺陷。診斷後已還原原 cache；改用 Vite 後另見 TD-20 的單一 lint 入口。
 
 ### 優先順序
 
-P1 優先處理安全工具鏈及已確認的可讀性、操作問題；P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結構；P3 處理可獨立安排的小型整理與調查。
+P1 優先處理已確認的可讀性、操作問題；P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結構；P3 處理可獨立安排的小型整理與調查。
 
 <!-- prettier-ignore -->
 | 編號 | 優先順序 | 調整主題 | 證據種類 |
 | --- | --- | --- | --- |
-| TD-01 | P1 | 汰換 CRA，處理安全公告與更新阻礙 | 工具回報、程式碼確認 |
-| TD-02 | P1 | 修正被編譯成 `719pxpx` 的 media query | 已重現 |
 | TD-03 | P1 | 修正文字與品牌按鈕的對比 | 已重現 |
 | TD-04 | P1 | 改善 Tooltip 的關閉與游標操作 | 已重現、程式碼確認 |
 | TD-05 | P1 | 允許使用者縮放頁面 | 程式碼確認，涉及設計決策變更 |
@@ -74,8 +53,8 @@ P1 優先處理安全工具鏈及已確認的可讀性、操作問題；P2 處�
 | TD-17 | P2 | 讓品牌圖片與 build 不依賴外站 | 程式碼確認 |
 | TD-18 | P2 | 降低初始與隱藏圖片的下載成本 | 已重現 |
 | TD-19 | P2 | 移除停用的 Workbox 程式並保留精確清理 | 程式碼確認 |
-| TD-20 | P2 | 補齊型別、lint 與工具依賴的分工 | 程式碼確認 |
-| TD-21 | P2 | 統一 Node、npm 與型別的執行環境 | 程式碼確認 |
+| TD-20 | P2 | 補足 Node 工具與瀏覽器測試的型別檢查 | 程式碼確認 |
+| TD-21 | P2 | 補上 Node 與 npm 的版本選擇方式 | 程式碼確認 |
 | TD-22 | P2 | 補足安全更新與失敗診斷的 CI 流程 | 程式碼確認 |
 | TD-23 | P2 | 整理樣式作用範圍與共用 token | 程式碼確認 |
 | TD-24 | P2 | 移除測試對正式資料的修改及不必要 mock | 程式碼確認 |
@@ -88,33 +67,6 @@ P1 優先處理安全工具鏈及已確認的可讀性、操作問題；P2 處�
 無大幅版面或資訊架構變更，因此不新增畫面設計稿。TD-03、TD-04、TD-05、TD-06 涉及局部配色或操作修正，須以修改前後的雙語桌面、窄版畫面及鍵盤狀態驗收。建議配色及縮放政策寫在下方 Spec 變更，核准前不改動現行設計文件。
 
 ## 檢查發現與調整方案
-
-### TD-01：汰換 CRA 並處理依賴安全公告
-
-證據：[`package.json`](../../package.json) 使用 `react-scripts@5.0.1`，lockfile 有 1,499 筆 package records。React 官方已在 [CRA 停用公告](https://react.dev/blog/2025/02/14/sunsetting-create-react-app) 建議既有專案遷移。CRA 的 TypeScript peer range 限於 3 或 4，ESLint 也由 CRA 綁定，單獨更新 TypeScript 或 ESLint 無法解除整體維護限制。
-
-本次 `npm audit --json` 的代表性結果如下。公開網站只有靜態檔案，這些結果主要要求檢查開發 server、build 與測試的使用方式，尚無證據證明公開網站存在相同攻擊面。
-
-<!-- prettier-ignore -->
-| 套件 | npm 回報 | 目前使用情境與處理方向 |
-| --- | --- | --- |
-| `proxy-addr` | critical，[GHSA-jqcg-44mw-7w3h](https://github.com/advisories/GHSA-jqcg-44mw-7w3h) | 經間接依賴安裝；確認引入鏈及開發 server 使用方式，隨工具鏈更新移除受影響版本。 |
-| `shell-quote` | critical，[GHSA-pqg4-j6r4-53mv](https://github.com/advisories/GHSA-pqg4-j6r4-53mv) | 檢查工具是否將不受信任文字交給 shell，更新引入它的依賴。 |
-| `puppeteer` | high，由 `chromium-bidi`、`puppeteer-core` 等間接依賴傳入 | 直接用於 prerender、PDF 及 browser tests；registry 顯示現有 major 內有更新可用，先處理可獨立更新的部分。 |
-| `serialize-javascript`、`postcss`、`nth-check` | high 或由依賴鏈傳入 | 主要涉及壓縮、CSS 與 SVG 處理；隨 CRA 汰換檢查是否真正移除。 |
-| `webpack-dev-server`、`workbox-build` 等 | high 或由依賴鏈傳入 | 分別隨 Vite 遷移及 TD-19 清理，不能只在 package.json 隱藏直接依賴。 |
-
-建議採用 Vite、獨立 TypeScript check、獨立 ESLint 設定與 Vitest，維持靜態網站架構。[Vite 支援 GitHub Pages](https://vite.dev/guide/static-deploy)，不需要為這個網站導入 application server。CRA 遷移必須一併處理 `public/index.html`、`%PUBLIC_URL%`、資源 import、測試環境、build 目錄及 postbuild 的依賴，不能只更換 `dev` 指令。
-
-完成條件：由乾淨 checkout 以指定 Node 執行 `npm ci` 和共同檢查成功，公開輸出仍包含首頁及英文 A4 PDF，`/resume` 在嚴格靜態 hosting 仍回 404；CRA 依賴鏈實際移除。逐項回報剩餘安全公告的引入原因、使用範圍及處置，不能執行 `npm audit fix --force` 接受工具建議的 `react-scripts@0.0.0`，也不能以改成 devDependency 宣稱漏洞已修復。
-
-### TD-02：修正無效的 Media Query
-
-證據：[`Home.module.scss`](../../src/pages/Main/Home/Home.module.scss) 第 368 行寫成 `@media (max-width: #{_.$medium - 1}px)`。`$medium` 自帶 `px`，production CSS 實際產生 `@media(max-width:719pxpx)`，因此瀏覽器不套用問候文字的窄版字級與行高。
-
-建議使用 Sass 的帶單位運算，例如 `_.$medium - 1px`，保留現行小於 720 px 的條件。同步找出其他「插值後再加單位」的情況，並在 browser test 驗證 719 與 720 px 的 computed font size 和 line height。
-
-完成條件：輸出不含這條無效 media query，719 px 使用預期的窄版問候樣式，720 px 使用原有桌面分區；兩種語言均不裁切。既有測試只驗證內容與可達性，因此目前全數通過仍漏掉這個錯誤。
 
 ### TD-03：修正文字與品牌按鈕的對比
 
@@ -136,7 +88,7 @@ P1 優先處理安全工具鏈及已確認的可讀性、操作問題；P2 處�
 
 ### TD-05：解除頁面縮放限制
 
-證據：[`public/index.html`](../../public/index.html) 設定 `maximum-scale=1, user-scalable=0`；[設計方向](../design.md) 也明確要求停用 user scaling。這是既有設計決策，不是誤寫，建議在本計劃核准範圍內修訂政策。
+證據：[`index.html`](../../index.html) 設定 `maximum-scale=1, user-scalable=0`；[設計方向](../design.md) 也明確要求停用 user scaling。這是既有設計決策，不是誤寫，建議在本計劃核准範圍內修訂政策。
 
 建議保留 `width=device-width`、`initial-scale=1`、`viewport-fit=cover`，移除縮放上限與禁用設定，讓需要放大文字的訪客使用瀏覽器原生操作。[W3C 的 viewport 檢查](https://www.w3.org/WAI/standards-guidelines/act/rules/b4f0c3/) 將這個設定與文字放大需求連結；各瀏覽器是否忽略限制，需要分別實測。
 
@@ -168,7 +120,7 @@ P1 優先處理安全工具鏈及已確認的可讀性、操作問題；P2 處�
 
 ### TD-09：集中聯絡資訊與共用事實
 
-證據：email、GitHub、LinkedIn、Cake、網站 URL 分散於 Home、Footer、ResumeSheet、QR code、public metadata。任職公司、職稱、日期也分散在工作資料、兩份字典與 [`ResumeSheet.tsx`](../../src/pages/Main/Resume/ResumeSheet.tsx)。內容差異不一定是錯誤，但更改同一事實需要逐檔搜尋。
+證據：email、GitHub、LinkedIn、Cake、網站 URL 分散於 Home、Footer、ResumeSheet、QR code、HTML metadata。任職公司、職稱、日期也分散在工作資料、兩份字典與 [`ResumeSheet.tsx`](../../src/pages/Main/Resume/ResumeSheet.tsx)。內容差異不一定是錯誤，但更改同一事實需要逐檔搜尋。
 
 建議建立小型 `profile` 資料，維護聯絡資料、社群目的地與網站 URL。職涯共同事實依 ID 共用，首頁長段落與履歷 bullets 保留各自的編輯方式；服務清單與教育敘事不為了共用而改成通用 schema。新增對照檢查，確認兩種語言及履歷的公司、職稱與任職期間一致。
 
@@ -176,7 +128,7 @@ P1 優先處理安全工具鏈及已確認的可讀性、操作問題；P2 處�
 
 ### TD-10：按功能拆分首頁及履歷
 
-證據：Home 有 381 行 TSX 與 701 行 SCSS，同時管理頭像 pointer、QR code dialog、Hero、工作經歷、技能、教育及區塊組合。`components/` 混合只給首頁使用的 Blog、Projects 與一般控制；履歷 TSX 放在 `pages/Main/Resume`，列印 helper 卻在 `src/resume`，全域 `types.ts` 又容納各功能型別。
+證據：Home 同時管理頭像 pointer、QR code dialog、Hero、工作經歷、技能、教育及區塊組合。`components/` 混合只給首頁使用的 Blog、Projects 與一般控制；履歷 TSX 放在 `pages/Main/Resume`，列印 helper 卻在 `src/resume`，全域 `types.ts` 又容納各功能型別。
 
 建議首頁 page 只組合區塊，頭像與 dialog 在首頁功能內擁有各自狀態和樣式，作品與文章的私有元件放在各自功能旁。履歷的內容、預覽、列印 helper 與專用型別放在同一功能內，共用控制維持小而明確的介面。
 
@@ -204,7 +156,7 @@ src/
 
 ### TD-11：分開 Motion 計算與 DOM 操作
 
-證據：[`useScrollMotion.ts`](../../src/motion/useScrollMotion.ts) 有 325 行，單一 layout effect 包含收集元素、讀取 CSS 參數、量測、進度計算、style 寫入、多個 observer 及清理。幾何公式主要靠 browser tests 間接驗證；`MotionKind` 和 `MOTION_KINDS` 重複列舉，參數以任意字串查找，CSS 的錯名可能到 runtime 才失敗。
+證據：[`useScrollMotion.ts`](../../src/motion/useScrollMotion.ts) 的單一 layout effect 包含收集元素、讀取 CSS 參數、量測、進度計算、style 寫入、多個 observer 及清理。幾何公式主要靠 browser tests 間接驗證；`MotionKind` 和 `MOTION_KINDS` 重複列舉，參數以任意字串查找，CSS 的錯名可能到 runtime 才失敗。
 
 建議保留現有按捲動位置更新的設計，抽出無 DOM 的 pose、Hero 與 timeline 計算，再以一個 hook 管理量測及 browser lifecycle。以單一 kind 清單推導型別，明確列出 motion 參數名稱與單位，保留目前先讀後寫、requestAnimationFrame 合併與 reduced-motion cleanup 的優點。
 
@@ -233,7 +185,7 @@ stateDiagram-v2
 
 ### TD-13：採用 Playwright Test 管理瀏覽器測試
 
-證據：[`tests/browser/site.test.mjs`](../../tests/browser/site.test.mjs) 有 3,345 行，67 個 browser tests 包含共用 browser/context/page 變數、request interception、下載事件、CDP、字型、PDF parser、fixture 子程序與視覺幾何。Node test runner 可以執行這些測試，但隔離、等待、診斷及跨瀏覽器支援多由專案自行維護。
+證據：[`tests/browser/site.test.mjs`](../../tests/browser/site.test.mjs) 包含共用 browser/context/page 變數、request interception、下載事件、CDP、字型、PDF parser、fixture 子程序與視覺幾何。Node test runner 可以執行這些測試，但隔離、等待、診斷及跨瀏覽器支援多由專案自行維護。
 
 建議採用 Playwright Test，按導覽、內容與語言、Projects、QR code、motion、accessibility、PDF/build 拆分測試，使用 fixtures、語意 locator、可重試 assertion、trace 與失敗截圖。[官方測試建議](https://playwright.dev/docs/best-practices) 與 [多瀏覽器 projects](https://playwright.dev/docs/test-projects) 可替代目前多項測試基礎設施。
 
@@ -283,35 +235,35 @@ stateDiagram-v2
 
 ### TD-19：移除停用的 Workbox 程式並保留精確清理
 
-證據：[`index.tsx`](../../src/index.tsx) 只執行 unregister，但 [`service-worker.ts`](../../src/service-worker.ts) 仍保留 CRA 範例的 app-shell、runtime cache 及 skipWaiting，並安裝 5 個 Workbox 直接依賴。註冊雖停用，CRA 仍處理這個 build 入口，與實際產品能力不一致。
+證據：[`index.tsx`](../../src/index.tsx) 只執行 unregister，但 [`service-worker.ts`](../../src/service-worker.ts) 仍保留未使用的 app-shell、runtime cache 及 skipWaiting，並安裝 5 個 Workbox 直接依賴。Vite 不會編譯這個 worker，保留的程式與依賴沒有實際用途。
 
 建議移除停用 worker 及直接 Workbox 依賴，保留小型的歷史 registration 清理。現有 helper 等待 `navigator.serviceWorker.ready`；改以 `getRegistrations()` 取得結果後，只處理本網站已知 scope 及 worker script URL，避免同一網域下其他 GitHub Pages 專案的 registration 被刪除。不要全面清空 Cache Storage。
 
 完成條件：新 browser context 不註冊 worker，輸出不包含新 worker；舊版網站的已知 registration 能清理，其他 scope 或 script 保留。拒絕的 Promise 有處理；沒有 active worker 時不無限等待 ready。舊頁面的 controller 可能直到下一次 navigation 才改變，必須保留這項說明及真實升級檢查。
 
-### TD-20：補齊型別與 Lint 的責任
+### TD-20：補足 Node 工具與瀏覽器測試的型別檢查
 
-證據：[`tsconfig.json`](../../tsconfig.json) 只 include `src`；TypeScript `strict` 已啟用，是應保留的基礎，但 `.mjs` 腳本和 browser tests 沒有型別檢查。測試、`@types`、Sass、TypeScript、CRA 與 Workbox 都列在 production dependencies，導致安裝與 npm audit 的 prod 分類難以對照實際網站 runtime。
+證據：[`tsconfig.json`](../../tsconfig.json) 涵蓋 `src/` 與 `vite.config.mts`，但 `.mjs` 腳本和 browser tests 沒有型別檢查，`checkJs` 也未啟用。Puppeteer callback、fixture 回傳與檔案 I/O 的型別錯誤無法由目前的 `typecheck` 發現。
 
-建議共同檢查明確執行 `typecheck`，應用程式與 Node 工具分開 tsconfig，測試依 runner 配置型別。腳本可使用 TypeScript，或先以 `checkJs` 和必要 JSDoc 檢查，選擇能覆蓋 Puppeteer callback、fixture 回傳與檔案 I/O 的方式。[Vite 不做 TypeScript 型別檢查](https://vite.dev/guide/features)，遷移時不能移除 CRA 後順便失去檢查。
+建議為 Node 工具與 browser tests 提供獨立的 tsconfig。腳本可使用 TypeScript，或先以 `checkJs` 和必要 JSDoc 檢查，選擇能覆蓋上述程式的方式。
 
-完成條件：故意在 app 與工具中放入型別錯誤都會阻止共同檢查。Lint 使用單一 repo 設定，測試、工具及型別套件移到 devDependencies，瀏覽器實際需要的套件才保留 dependencies；分類調整不當成安全修復。先保留 `skipLibCheck`，待相容性驗證後再決定是否調整，避免把所有上游型別問題納入本次工作。
+完成條件：故意在工具或 browser tests 中放入型別錯誤會阻止共同檢查，並保留既有應用程式的型別檢查。先保留 `skipLibCheck`，待相容性驗證後再決定是否調整，避免把所有上游型別問題納入本次工作。
 
-### TD-21：統一 Node、npm 與型別環境
+### TD-21：補上 Node 與 npm 的版本選擇方式
 
-證據：[README](../../README.md) 與 workflow 要求 Node 22，本機實際為 Node 24，repo 沒有 engines 或 `.nvmrc`。Puppeteer 25.5.0 要求 Node 至少 22.12.0，`@types/node` 卻仍為 16.18.3；「使用任意 Node 22」與精確的最低版本不同。
+證據：[`package.json`](../../package.json) 已宣告 Node 的相容範圍，[README](../../README.md) 與 CI 使用 Node 22，Node 型別也使用 22.x。不過 repo 沒有 `.nvmrc` 或其他版本選擇檔案，也未指定 npm 版本，全新環境仍需自行選擇實際使用的版本。
 
-建議明確宣告 Node 22 的相容範圍及最低 patch，提供一致的版本選擇入口，Node 型別配合執行環境。npm 版本透過工程文件或 `packageManager` 明確記錄，保留 `npm ci` 與 lockfile 作為安裝依據。
+建議提供一致的 Node 版本選擇入口，npm 版本透過工程文件或 `packageManager` 明確記錄，保留 `npm ci` 與 lockfile 作為安裝依據。
 
-完成條件：全新環境能依文件選到可執行工具的 Node 與 npm，CI 與本機重現同樣的 compile、測試與 PDF 字型檢查。套件版本在實作時向官方 registry 取得相容版本，不把本次 `npm outdated` 快照當作未來固定的最新版本。
+完成條件：全新環境能依文件選到可執行工具的 Node 與 npm，CI 與本機重現同樣的 compile、測試與 PDF 字型檢查。套件版本在實作時向官方 registry 取得相容版本。
 
 ### TD-22：補足依賴安全更新與失敗診斷
 
-證據：[部署 workflow](../../.github/workflows/deploy.yml) 已有最小權限、檢查成功後發布及 main ref 限制，這些應維持。不過目前沒有獨立的依賴安全檢查，瀏覽器失敗時也沒有 trace、screenshot 等 artifact；本次 build 另提示 Browserslist 資料已有 9 個月未更新。
+證據：[部署 workflow](../../.github/workflows/deploy.yml) 已有最小權限、檢查成功後發布及 main ref 限制，這些應維持。不過目前沒有獨立的依賴安全檢查，瀏覽器失敗時也沒有 trace、screenshot 等 artifact。
 
-建議在獨立維護流程檢查安全公告與過時依賴，使用 Dependabot 等既有服務建立可 review 的更新，依 React、工具鏈及瀏覽器工具分組。安全處置保留引入鏈與使用情境，不只追求統計歸零。一般 `npm run check` 維持不依賴即時 registry，避免 registry 故障阻止離線驗證。
+建議在獨立維護流程檢查安全公告與過時依賴，使用 Dependabot 等既有服務建立供審查的更新，依 React、工具鏈及瀏覽器工具分組。安全處置保留引入鏈與使用情境，不只追求統計歸零。一般 `npm run check` 維持不依賴即時 registry，避免 registry 故障阻止離線驗證。
 
-完成條件：CI 失敗時上傳有保存期限的診斷 artifact，失敗輸出仍不部署；main 與其他 ref 的發布條件維持。實作時依官方發布資訊確認既有 workflow 的 Node 與 Actions 版本相容性，更新 browser database 後重新檢查 CSS 輸出與支援環境。依賴維護流程不改變本 repo 直接在 main 工作的規則。
+完成條件：CI 失敗時上傳有保存期限的診斷 artifact，失敗輸出仍不部署；main 與其他 ref 的發布條件維持。實作時依官方發布資訊確認既有 workflow 的 Node 與 Actions 版本相容性，並在 browser database 更新時檢查 CSS 輸出與支援環境。依賴維護流程不改變本 repo 直接在 main 工作的規則。
 
 ### TD-23：整理樣式作用範圍及共享 Token
 
@@ -331,7 +283,7 @@ stateDiagram-v2
 
 ### TD-25：校對 Metadata、Manifest 與 Sitemap
 
-證據：public shell 的 `<noscript>` 宣告必須啟用 JavaScript，實際 prerender 已提供主要內容及 PDF 連結，兩種說法不一致。Manifest 在同一個 WebP icon 上宣告多個尺寸，需核對真實尺寸。Sitemap 列出 8 個其他專案路徑，但這個 repo 不提供這些頁面，可能由其他 GitHub Pages repo 提供，尚不能判定失效。
+證據：根目錄 HTML shell 的 `<noscript>` 宣告必須啟用 JavaScript，實際 prerender 已提供主要內容及 PDF 連結，兩種說法不一致。Manifest 在同一個 WebP icon 上宣告多個尺寸，需核對真實尺寸。Sitemap 列出 8 個其他專案路徑，但這個 repo 不提供這些頁面，可能由其他 GitHub Pages repo 提供，尚不能判定失效。
 
 建議 noscript 只說明互動功能需要 JavaScript；manifest 使用真實 icon 尺寸與必要欄位。先建立 sitemap 目的地的歸屬及 response 紀錄，再移除確認失效的項目。Metadata 的任職與教育事實依 TD-09 維護，不以 SEO 名義堆疊圖片 alt 或關鍵字。
 
@@ -360,7 +312,6 @@ stateDiagram-v2
 <!-- prettier-ignore -->
 | 項目 | 建議 | 原因及決策保存位置 |
 | --- | --- | --- |
-| CRA 工具鏈 | 改用 Vite、獨立 lint/typecheck、Vitest | 解開過時依賴與工具版本限制；保存於 README、package 設定及工程說明。 |
 | Browser runner | 改用 Playwright Test | Fixtures、等待、跨瀏覽器與診斷由現成工具提供；保存於 README、測試設定及驗證文件。 |
 | Tooltip | 使用成熟 primitive，優先 Radix Tooltip | 完整的關閉、hover 與定位行為超出目前 CSS 提示能力；保存於 design system 與 SITE-R19。 |
 | PDF 結構解析 | 改用 PDF library | PDF 物件與壓縮格式交給 parser，網站只保留自身的字型、紙張與內容要求；保存於 build 工程說明。 |
@@ -395,39 +346,23 @@ flowchart TD
 
 ## Spec 變更
 
-此節是核准後才實作的提案，目前不修改現行網站規格。沒有產品行為變化的重構沿用既有 scenario IDs；工具設定與資料完整性由工程驗收檢查，不為內部檔案搬移建立產品規格。
+此節為待核准的提案。沒有產品行為變化的重構沿用既有 scenario IDs；工具設定與資料完整性由工程驗收檢查，不為內部檔案搬移建立產品規格。
 
-### SITE-R12：補足操作高度、問候樣式與縮放
+### SITE-R12：補足操作高度與縮放
 
-沿用 SITE-R12 的版面、最小操作高度及文字選取規則。新增規則：網站允許瀏覽器原生頁面縮放；放大後可透過頁面捲動使用首頁功能。問候的窄版字級及行高條件在小於 720 px 時有效；Footer anchor 也必須符合既有 44 px 最小高度。
+沿用 SITE-R12 的版面、最小操作高度及文字選取規則。新增規則：網站允許瀏覽器原生頁面縮放；放大後可透過頁面捲動使用首頁功能。Footer anchor 也必須符合既有 44 px 最小高度。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R12.7 問候樣式分界 | 在兩種語言分別以 719 與 720 px 開啟首頁，問候的 computed font size 與 line height 符合各自樣式，文字完整且沒有無效 media query。 | browser |
 | SITE-R12.8 頁面放大 | 頁面未禁止原生縮放；200% 放大及真實手機 pinch zoom 後，能讀完文字並操作選單、語言、作品、QR code 與履歷下載，沒有新增只能水平捲動才可讀完的正文。 | browser、manual |
 | SITE-R12.9 Footer 操作尺寸 | 在雙語及窄版、桌面畫面量測所有 Footer 社群與 Logo 連結，均至少 44 px 高，focus 完整可見且目的地維持。 | browser |
 
 設計文件的完整替代文字為：「Keep native browser zoom available. Enlarged content remains readable through page scrolling, and navigation, language selection, project controls, the QR code dialog, and resume download remain operable.」取代目前停用 user scaling 的規則，其他文案政策維持。
 
-### SITE-R14：讓靜態輸出規則適用於新工具鏈
+### SITE-R15：精確清理已知舊版 Registration
 
-以下完整文字取代現行規格中指定 CRA compile 與 postbuild 的兩段規則，其他 snapshot 與失敗檢查規則保持：
-
-Production build 在前端 compile 成功後執行首頁 prerender，使用繁中、台北時區及減少動態設定擷取 `#root` 的內容，保留原 shell head，排除 body portal。HTML 不包含滾動動態的啟用標記或暫存視覺狀態，首頁產生可在 JavaScript 啟動前讀取的文字；需要操作的功能仍依賴 JavaScript。
-
-前端 compile 後的產檔流程同時完成首頁 prerender 與履歷 PDF。產檔可在內部使用 `/resume` 的 client route，但公開輸出仍只有首頁 HTML 與 PDF，不新增 `/resume/index.html`。共同檢查必須使用當次 compile 的乾淨輸出，不依賴上次殘留的 HTML 或 PDF。
-
-沿用原有 SITE-R14.1 編號，替換條件中的 CRA 名稱，並保留其餘 SITE-R14 情境：
-
-<!-- prettier-ignore -->
-| 情境 | 條件、動作與結果 | 驗證方式 |
-| --- | --- | --- |
-| SITE-R14.1 完整 Build | 從乾淨的前端 compile 輸出完成 build 與後續產檔，同時產生首頁靜態內容與當次 ResumeSheet 的 PDF；不能以既有輸出檔案代替當次產檔。 | browser |
-
-### SITE-R15：移除新 Worker 並清理已知舊版 Registration
-
-網站維持不提供離線 cache 或更新 UI。Build 不產生新的 service worker，啟動時只清理屬於本網站已知 scope 與 script URL 的歷史 registration，保留其他網站功能的 registration 及 Cache Storage。
+網站維持不提供離線 cache 或更新 UI，啟動時只清理屬於本網站已知 scope 與 script URL 的歷史 registration，保留其他網站功能的 registration 及 Cache Storage。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
@@ -465,12 +400,12 @@ SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-
 
 ### 建議的工作批次與依賴
 
-以能獨立驗證及回復的工作批次安排實作，不將全站搬檔、工具鏈、測試 runner 與畫面修正合成一次難以判斷的重寫。下圖表達依賴，並非要求逐行執行的 checklist。
+以能獨立驗證及回復的工作批次安排實作，不將全站搬檔、工具設定、測試 runner 與畫面修正合成一次難以判斷的重寫。下圖表達依賴，並非要求逐行執行的 checklist。
 
 ```mermaid
 flowchart TD
-  baseline[保留驗證基準與情境對應] --> fixes[TD-02 到 TD-06：局部缺陷]
-  baseline --> tooling[TD-01、TD-20、TD-21：工具鏈與環境]
+  baseline[保留驗證基準與情境對應] --> fixes[TD-03 到 TD-06：局部缺陷]
+  baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-07 到 TD-10、TD-24：內容與功能分工]
   tooling --> tests[TD-13、TD-14、TD-22：測試與診斷]
   tooling --> build[TD-15 到 TD-19：靜態輸出與資源]
@@ -481,7 +416,7 @@ flowchart TD
   build --> optional[TD-25、TD-26：靜態資料與載入整理]
 ```
 
-工具鏈遷移以原有測試與輸出作為比較基準，Playwright 取代 runner 時再移交完整情境；可以短期同時保留兩組 runner，確認對應後刪除舊的測試基礎設施，避免長期維護重複套件。P1 的小修正可先完成，不能等整個目錄重構才處理。
+Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留兩組 runner，確認對應後刪除舊的測試基礎設施，避免長期維護重複套件。P1 的小修正可先完成，不能等整個目錄重構才處理。
 
 ### 需要特別保留的規則
 
@@ -498,11 +433,9 @@ flowchart TD
 <!-- prettier-ignore -->
 | 情境 | 驗證方式 |
 | --- | --- |
-| SITE-R12.7 問候樣式分界 | browser，量測 719 與 720 px 的 computed styles，涵蓋兩種語言。 |
 | SITE-R12.8 頁面放大 | browser、manual，檢查 viewport 設定與放大版面，另測真實手機 pinch zoom。 |
 | SITE-R12.9 Footer 操作尺寸 | browser，量測所有 Footer anchor 的矩形與 focus。 |
-| SITE-R14.1 完整 Build | browser，以新工具鏈的乾淨 compile 輸出驗證當次首頁及 PDF 產檔，保留原有失敗 fixtures。 |
-| SITE-R15.2 既有 Registration 清理 | unit、browser、manual，涵蓋目標、非目標、waiting、沒有 active worker 及舊 controller。 |
+| SITE-R15.2 既有 Registration 清理 | 使用 unit、browser、manual 驗證符合清理條件與應保留的 registrations，並涵蓋有 waiting worker、沒有 active worker，以及既有 controller 仍控制頁面的情況。 |
 | SITE-R15.3 Registration 查詢失敗 | unit，涵蓋 API 不存在、查詢拒絕及不屬於本站的紀錄。 |
 | SITE-R19.2 Escape 關閉提示 | browser、manual，涵蓋 hover、focus、重新進入與焦點維持。 |
 | SITE-R19.3 游標移入提示 | browser、manual，涵蓋游標移動、靠邊、Footer、QR code dialog 與雙語。 |
@@ -516,17 +449,17 @@ flowchart TD
 <!-- prettier-ignore -->
 | 工作範圍 | 工程驗收 |
 | --- | --- |
-| 工具鏈與安全 | 乾淨安裝、獨立 typecheck/lint、unit tests、情境 checker、build、browser tests 通過；記錄依賴安全差異及剩餘處置。 |
+| 工具與環境 | 工具及 browser tests 的型別錯誤會阻止共同檢查；依文件選擇 Node 與 npm 後，乾淨安裝及既有檢查通過。 |
 | 內容與模組 | ID 缺漏在檢查階段失敗，共用事實有單一維護位置，fallback、雙語與履歷共享事實保持一致；沒有循環 import 或功能私有模組對外公開。 |
 | Motion 與導覽 | 純函式驗證與既有 browser 情境通過，桌面及實機快捲、反轉、歷史還原、focus、resize、reduced motion 另有實測紀錄。 |
-| PDF 與 Prerender | 阻擋外網仍能產檔，失敗 fixtures 確實測到預期原因；PDF parser、獨立文字擷取及人工版面檢查分別回報。 |
+| PDF 與 Prerender | 阻擋外網仍能產生 HTML 與 PDF，失敗 fixtures 確實測到預期原因；PDF parser、獨立文字擷取及人工版面檢查分別回報。 |
 | 資源及載入 | 記錄同 viewport 的圖片 request 與 bundle gzip 差異，隱藏及未選作品的大圖不提前下載，直接 hash 和無 JavaScript 情境仍可讀。 |
 | 測試與 CI | Runner 和 checker 接受相同檔案與測試宣告，主要跨瀏覽器流程有結果，失敗時有診斷 artifact，失敗輸出及非 main ref 均不發布。 |
 | 文件 | 同一批實作更新 design context、spec、manual checks、README 及 design system 的相關規則，完成並驗證的 Roadmap 項目才移除。 |
 
-### 本次文件驗證及審查
+### 文件檢查
 
-交付前執行 Markdown/frontmatter 解析、Prettier、中文 lint 與 `npm run check:scenarios`。另由不帶規劃對話脈絡的 reviewer 檢查證據、範圍一致性及可驗證性，中文稿再依專案採用的寫作規範審查。這些結果不改變本計劃的 draft 狀態。
+交付前執行 Markdown/frontmatter 解析、Prettier、中文 lint 與 `npm run check:scenarios`。另由不帶規劃對話脈絡的 reviewer 檢查工程規範與核准範圍，中文稿再依專案採用的寫作規範審查。
 
 ## 還沒定案的問題
 

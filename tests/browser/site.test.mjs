@@ -1924,34 +1924,38 @@ test(
     }
   },
 );
-test("SITE-R14.4 履歷缺漏、裁切與圖片失敗阻止產檔", { timeout: 60000 }, async () => {
-  const content = "Resume content ".repeat(70);
-  const fixtures = [
-    ["<p>No resume sheet</p>", "Expected one resume sheet"],
-    ["<div data-resume-root>thin</div>", "Resume has insufficient content"],
-    [
-      `<div data-resume-root style="width:794px;height:1123px;position:absolute;left:0;top:0"><p style="position:absolute;top:1200px">${content}</p></div>`,
-      "Resume content overflows A4",
-    ],
-    [
-      `<div data-resume-root>${content}<img src="/missing-image.png"></div>`,
-      "source image cannot be decoded",
-    ],
-  ];
-  for (const [markup, message] of fixtures) {
-    const result = await runPrerenderFixture(`
+test(
+  "SITE-R14.4 履歷缺漏、裁切與圖片失敗時停止產生 PDF",
+  { timeout: 60000 },
+  async () => {
+    const content = "Resume content ".repeat(70);
+    const fixtures = [
+      ["<p>No resume sheet</p>", "Expected one resume sheet"],
+      ["<div data-resume-root>thin</div>", "Resume has insufficient content"],
+      [
+        `<div data-resume-root style="width:794px;height:1123px;position:absolute;left:0;top:0"><p style="position:absolute;top:1200px">${content}</p></div>`,
+        "Resume content overflows A4",
+      ],
+      [
+        `<div data-resume-root>${content}<img src="/missing-image.png"></div>`,
+        "source image cannot be decoded",
+      ],
+    ];
+    for (const [markup, message] of fixtures) {
+      const result = await runPrerenderFixture(`
       if(location.pathname==="/resume") {
         document.getElementById("root").innerHTML=${JSON.stringify(markup)};
       } else {
         document.getElementById("root").textContent="Homepage content ".repeat(100);
       }
     `);
-    assert.notEqual(result.code, 0);
-    assert.ok(result.output.includes(message), result.output);
-  }
-});
+      assert.notEqual(result.code, 0);
+      assert.ok(result.output.includes(message), result.output);
+    }
+  },
+);
 
-test("SITE-R14.4 字型替換時停止履歷產檔", async () => {
+test("SITE-R14.4 字型替換時停止產生履歷 PDF", async () => {
   const markup = `<style>
     @page { size: A4; margin: 0; }
     body { margin: 0; }
@@ -2272,7 +2276,7 @@ test("SITE-R13.6 外連箭頭一致性", async () => {
       await page.waitForSelector(`${tab}[aria-selected="true"]`);
       const links = index === 0 ? [...sharedLinks, ...projectLinks] : projectLinks;
       for (const selector of links) {
-        const arrow = `${selector} svg[class*="IconArrowUpRight_main"]`;
+        const arrow = `${selector} svg[aria-hidden="true"]`;
         const duration = reduced ? "0s" : "0.22s";
         await hoverLink(selector);
         await assertArrowState(arrow, !reduced, duration);
@@ -2291,11 +2295,7 @@ test("SITE-R13.6 外連箭頭一致性", async () => {
   await assertHoverCapability(false);
   for (const selector of [...sharedLinks, ...projectLinks]) {
     await hoverLink(selector);
-    await assertArrowState(
-      `${selector} svg[class*="IconArrowUpRight_main"]`,
-      false,
-      "0.22s",
-    );
+    await assertArrowState(`${selector} svg[aria-hidden="true"]`, false, "0.22s");
   }
 });
 
@@ -2429,7 +2429,7 @@ async function getMotionComposition(selector, childSelectors) {
   );
 }
 
-test("SITE-R12.1 雙語短螢幕、橫向與分界的 Hero 完整可操作", async () => {
+test("SITE-R12.1 SITE-R12.7 雙語短螢幕、橫向與分界的 Hero 完整可操作", async () => {
   await openHome();
   for (const preference of ["no-preference", "reduce"]) {
     await page.emulateMediaFeatures([
@@ -2466,6 +2466,7 @@ test("SITE-R12.1 雙語短螢幕、橫向與分界的 Hero 完整可操作", asy
             const bounds = card.getBoundingClientRect();
             const inner = card.firstElementChild;
             const greeting = card.querySelector('[class*="greeting_card"]');
+            const greetingStyle = getComputedStyle(greeting.firstElementChild);
             return {
               horizontal: document.documentElement.scrollWidth > window.innerWidth,
               clipped:
@@ -2473,6 +2474,8 @@ test("SITE-R12.1 雙語短螢幕、橫向與分界的 Hero 完整可操作", asy
                 card.scrollWidth > card.clientWidth + 1 ||
                 inner.scrollWidth > inner.clientWidth + 1,
               greetingScroll: greeting.scrollHeight > greeting.clientHeight + 1,
+              greetingFontSize: parseFloat(greetingStyle.fontSize),
+              greetingLineHeight: parseFloat(greetingStyle.lineHeight),
               columns: getComputedStyle(inner).gridTemplateColumns.split(" ").length,
               actions: Array.from(card.querySelectorAll("a,button"), (element) => {
                 const rect = element.getBoundingClientRect();
@@ -2492,6 +2495,18 @@ test("SITE-R12.1 雙語短螢幕、橫向與分界的 Hero 完整可操作", asy
         assert.equal(metrics.horizontal, false, label);
         assert.equal(metrics.clipped, false, label);
         assert.equal(metrics.greetingScroll, false, label);
+        if (width === 719 || width === 720) {
+          const expectedFontSize = width === 719 ? 14.72 : 14.4;
+          const expectedLineHeight = width === 719 ? 25.024 : 23.76;
+          assert.ok(
+            Math.abs(metrics.greetingFontSize - expectedFontSize) < 0.01,
+            label,
+          );
+          assert.ok(
+            Math.abs(metrics.greetingLineHeight - expectedLineHeight) < 0.01,
+            label,
+          );
+        }
         assert.equal(metrics.columns, width < 720 ? 1 : 2, label);
         assert.equal(metrics.actions.length, 10, label);
         assert.ok(

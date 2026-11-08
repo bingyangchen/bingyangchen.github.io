@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import * as translation from "../../i18n/context";
 import { englishDictionary } from "../../i18n/dictionaries/en";
@@ -5,18 +6,16 @@ import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";
 import Blog from "./Blog";
 
 beforeEach(() => {
-  jest
-    .spyOn(translation, "useTranslation")
-    .mockReturnValue({
-      language: "en",
-      setLanguage: jest.fn(),
-      dictionary: englishDictionary,
-    });
+  vi.spyOn(translation, "useTranslation").mockReturnValue({
+    language: "en",
+    setLanguage: vi.fn(),
+    dictionary: englishDictionary,
+  });
 });
 
 afterEach(() => {
   cleanup();
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test("SITE-R17.1 精選內容", () => {
@@ -70,13 +69,11 @@ test("SITE-R17.3 雙語與原文", () => {
     .getAllByRole("link")
     .map((link) => link.getAttribute("href"));
   expect(screen.getByText("Primarily in Traditional Chinese.")).toBeInTheDocument();
-  jest
-    .spyOn(translation, "useTranslation")
-    .mockReturnValue({
-      language: "zh-TW",
-      setLanguage: jest.fn(),
-      dictionary: traditionalChineseDictionary,
-    });
+  vi.spyOn(translation, "useTranslation").mockReturnValue({
+    language: "zh-TW",
+    setLanguage: vi.fn(),
+    dictionary: traditionalChineseDictionary,
+  });
   view.rerender(<Blog />);
   expect(
     screen.queryByText("Primarily in Traditional Chinese."),

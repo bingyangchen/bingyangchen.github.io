@@ -1,8 +1,9 @@
+import { vi } from "vitest";
 import { unregister } from "./serviceWorkerRegistration";
 
 test("SITE-R15.2 既有 Registration 清理", async () => {
   const descriptor = Object.getOwnPropertyDescriptor(navigator, "serviceWorker");
-  const remove = jest.fn().mockResolvedValue(true);
+  const remove = vi.fn().mockResolvedValue(true);
   Object.defineProperty(navigator, "serviceWorker", {
     configurable: true,
     value: { ready: Promise.resolve({ unregister: remove }) },

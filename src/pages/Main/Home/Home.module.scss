@@ -365,7 +365,7 @@
         white-space: pre-wrap;
         word-wrap: break-word;
         overflow-wrap: break-word;
-        @media (max-width: #{_.$medium - 1}px) {
+        @media (max-width: _.$medium - 1px) {
           font-size: 0.92 * _.$base-font-size;
           line-height: 1.7;
         }

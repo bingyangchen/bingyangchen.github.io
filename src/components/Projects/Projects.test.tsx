@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import Projects from "./Projects";
 import { homeProjects } from "../../data/projects";
@@ -7,18 +8,16 @@ import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";
 import type { Language } from "../../i18n/types";
 
 beforeEach(() => {
-  jest
-    .spyOn(translation, "useTranslation")
-    .mockReturnValue({
-      language: "en",
-      setLanguage: jest.fn(),
-      dictionary: englishDictionary,
-    });
+  vi.spyOn(translation, "useTranslation").mockReturnValue({
+    language: "en",
+    setLanguage: vi.fn(),
+    dictionary: englishDictionary,
+  });
 });
 
 afterEach(() => {
   cleanup();
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test("SITE-R7.1 初始作品清單", () => {
@@ -49,13 +48,11 @@ test("SITE-R7.5 內容與翻譯", () => {
       englishDictionary.projectsData.Taigu.description,
     ),
   ).toBeInTheDocument();
-  jest
-    .spyOn(translation, "useTranslation")
-    .mockReturnValue({
-      language: "en",
-      setLanguage: jest.fn(),
-      dictionary: { ...englishDictionary, projectsData: {} },
-    });
+  vi.spyOn(translation, "useTranslation").mockReturnValue({
+    language: "en",
+    setLanguage: vi.fn(),
+    dictionary: { ...englishDictionary, projectsData: {} },
+  });
   view.rerender(<Projects />);
   for (const project of homeProjects) {
     fireEvent.click(screen.getByRole("tab", { name: project.title }));
@@ -76,8 +73,8 @@ test.each<Language>(["en", "zh-TW"])(
   (language) => {
     const dictionary =
       language === "en" ? englishDictionary : traditionalChineseDictionary;
-    const context = { language, setLanguage: jest.fn(), dictionary };
-    const useTranslation = jest.spyOn(translation, "useTranslation");
+    const context = { language, setLanguage: vi.fn(), dictionary };
+    const useTranslation = vi.spyOn(translation, "useTranslation");
     useTranslation.mockReturnValue(context);
     const view = render(<Projects />);
     fireEvent.click(screen.getByRole("tab", { name: "Leechai" }));
@@ -133,13 +130,11 @@ test("SITE-R7.6 期間顯示", () => {
     project.maintaining_time_range = [new Date(2024, 0, 1), new Date(2024, 11, 1)];
     view.rerender(<Projects />);
     expect(within(screen.getByRole("tabpanel")).getByText("2024")).toBeInTheDocument();
-    jest
-      .spyOn(translation, "useTranslation")
-      .mockReturnValue({
-        language: "zh-TW",
-        setLanguage: jest.fn(),
-        dictionary: traditionalChineseDictionary,
-      });
+    vi.spyOn(translation, "useTranslation").mockReturnValue({
+      language: "zh-TW",
+      setLanguage: vi.fn(),
+      dictionary: traditionalChineseDictionary,
+    });
     project.maintaining_time_range = [new Date(2021, 0, 1)];
     view.rerender(<Projects />);
     expect(

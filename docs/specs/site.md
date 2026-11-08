@@ -236,7 +236,7 @@ stateDiagram-v2
 
 公開首頁以原生同源 anchor 取得 `/resume.pdf`，提供 `download="Bing-Yang Chen - 陳秉洋.pdf"` 作為檔名建議。所有尺寸與介面語言使用同一份英文檔案，入口沿用既有下載文案，不另外標示檔案格式、語言、紙張與頁數。實際儲存、開啟或分享由瀏覽器及作業系統決定。
 
-PDF 在 build 時以目前的 ResumeSheet 與 print CSS 產生，等待字型及履歷圖片完成載入。產檔使用英文文件語言、A4、背景列印及 CSS 紙張設定。檔案直接由靜態 hosting 提供，首頁不呼叫列印，也不掛載供列印的隱藏履歷。首頁下載連結保留在 prerender HTML 中。
+PDF 在 build 時以目前的 ResumeSheet 與 print CSS 產生，等待字型及履歷圖片完成載入。產生 PDF 時使用英文文件語言、A4、背景列印及 CSS 紙張設定。檔案直接由靜態 hosting 提供，首頁不呼叫列印，也不掛載供列印的隱藏履歷。首頁下載連結保留在 prerender HTML 中。
 
 `/resume` 保留非公開 client route、可見的英文 ResumeSheet 與瀏覽器列印入口，不產生對應的公開 HTML。只有預覽列印使用既有字型等待 helper；沒有 `fonts.ready` 時直接列印。預覽列印期間將文件語言設為英文，結束、取消或卸載時還原介面語言。履歷及英文預覽標示 `lang="en"`，履歷中的中文姓名標示 `lang="zh-TW"`。
 
@@ -247,7 +247,7 @@ PDF 在 build 時以目前的 ResumeSheet 與 print CSS 產生，等待字型及
 | SITE-R10.2 非公開預覽列印 | 在本機預覽操作 Download PDF，等待字型後使用瀏覽器列印目前的共用履歷。 | unit、manual |
 | SITE-R10.3 預覽字型等待 | 預覽列印有 fonts.ready 時等待 promise；缺少該能力時直接列印。 | unit |
 | SITE-R10.4 英文履歷 | 主網站使用英文或繁中時，下載檔案及預覽列印皆為英文履歷，PDF 文件語言為英文；預覽列印結束、取消或卸載後還原介面語言。 | unit、browser、manual |
-| SITE-R10.5 共用履歷來源 | Build 產檔與非公開預覽使用同一個 ResumeSheet；首頁沒有隱藏履歷，進入預覽時只有一份可見履歷，返回首頁後不遺留。 | browser |
+| SITE-R10.5 共用履歷來源 | Build 產生的 PDF 與非公開預覽使用同一個 ResumeSheet；首頁沒有隱藏履歷，進入預覽時只有一份可見履歷，返回首頁後不遺留。 | browser |
 | SITE-R10.6 首頁焦點順序 | 在兩種語言及桌面、窄版首頁使用 Tab、Shift+Tab，PDF 下載連結可聚焦且焦點可見，沒有隱藏履歷連結進入順序；非公開預覽的可見履歷連結仍可聚焦。 | browser、manual |
 | SITE-R10.7 靜態下載 | 停用 JavaScript 或直接請求 PDF URL，嚴格靜態 server 回傳同一份 PDF 及 application/pdf，prerender 首頁仍提供可操作的下載 anchor；不依賴 SPA fallback。 | browser |
 
@@ -257,7 +257,7 @@ PDF 在 build 時以目前的 ResumeSheet 與 print CSS 產生，等待字型及
 
 Production 維持 Ubuntu，在 CI 校驗 repo 內的 Georgia TTF 後直接安裝並註冊字型；TTF、SHA-256 校驗檔與 EULA 保留於 `vendor/corefonts/`，不發布到網站。
 
-等待字型載入不代表指定的系統字型存在，因此產檔後另核對 PDF 的實際字型，避免 Liberation Serif 等替換與中文字缺失。
+等待字型載入不代表指定的系統字型存在，因此產生 PDF 後另核對實際字型，避免 Liberation Serif 等替換與中文字缺失。
 
 職稱與公司以較淡的中點「·」分隔，任職年資放在日期後的括號中。成就使用原生圓點清單與懸掛縮排，正文使用 12 px 字級、1 px 字距、1.8 倍行高、兩端對齊及自動斷字；工作經歷間距為 16 px。聯絡資訊保留定位與信封圖示，使用 11 px 尺寸、5 px 圖文間距及微量垂直校正。
 
@@ -269,7 +269,7 @@ Production 維持 Ubuntu，在 CI 校驗 repo 內的 Georgia TTF 後直接安裝
 | SITE-R11.1 A4 與完整內容 | 檢查 build 的下載檔案與本機預覽列印均為單頁 A4，全部履歷文字可見，沒有裁切或額外空白頁。 | browser、manual |
 | SITE-R11.2 僅輸出履歷 | 下載 PDF 與預覽列印均不出現網站 Header、Footer、語言切換器或重複履歷。 | browser、manual |
 | SITE-R11.3 文字與連結 | 檢查擷取文字涵蓋所有區塊，人工確認可讀性及閱讀順序，並核對 email、GitHub 與個人網站連結。 | manual |
-| SITE-R11.4 共用結果 | 下載 PDF 與預覽列印使用相同 ResumeSheet 及 print CSS，內容、頁數、紙張、字型與連結相同，中文姓名、分隔符號、項目符號與換行完整，沒有因產檔入口不同而漏印。 | browser、manual |
+| SITE-R11.4 共用結果 | 下載 PDF 與預覽列印使用相同 ResumeSheet 及 print CSS，內容、頁數、紙張、字型與連結相同，中文姓名、分隔符號、項目符號與換行完整，沒有因使用不同的輸出方式而漏印。 | browser、manual |
 
 ## 響應式、動態與執行環境
 
@@ -302,6 +302,7 @@ Production 維持 Ubuntu，在 CI 校驗 repo 內的 Georgia TTF 後直接安裝
 | SITE-R12.4 語言與預覽容器 | 窄畫面能在 Header 選單中切換語言；本機履歷紙張可在專用容器捲動，不把紙張縮到不可讀。 | browser、manual |
 | SITE-R12.5 正文選取與複製 | 在兩種語言及桌面、窄版畫面，工作經歷、作品說明、文章正文等文字可選取與複製；Hero email 維持整段選取，Footer email 可選取。 | browser、manual |
 | SITE-R12.6 控制文字不可選取 | 在兩種語言及桌面、窄版畫面，按鈕及其內文、Header 與 Hero 導覽、作品外連與文章閱讀操作文字不可選取，原有滑鼠、鍵盤及觸控操作保持可用。 | browser、manual |
+| SITE-R12.7 問候樣式分界 | 在兩種語言分別以 719 與 720 px 檢查首頁，問候的 computed font size 與 line height 符合各自樣式，文字完整。 | browser |
 
 ### SITE-R13 動態與 Reduced Motion
 
@@ -356,11 +357,11 @@ Reduced-motion 下停用首頁全部非必要動畫及過場，完整顯示問�
 
 ### SITE-R14 靜態輸出與 Prerender
 
-Production build 在 CRA compile 後執行首頁 prerender，使用繁中、台北時區及減少動態設定擷取 `#root` 的內容，保留原 shell head，排除 body portal。HTML 不包含滾動動態的啟用標記或暫存視覺狀態，首頁產生可在 JavaScript 啟動前讀取的文字；需要操作的功能仍依賴 JavaScript。
+Production build 在前端 compile 成功後執行首頁 prerender，使用繁中、台北時區及減少動態設定擷取 `#root` 的內容，保留原 shell head，排除 body portal。HTML 不包含滾動動態的啟用標記或暫存視覺狀態，首頁產生可在 JavaScript 啟動前讀取的文字；需要操作的功能仍依賴 JavaScript。
 
-CRA compile 後的 postbuild 同時完成首頁 prerender 與履歷 PDF 產檔。產檔可在內部使用 `/resume` 的 client route，但公開輸出仍只有首頁 HTML 與 PDF，不新增 `/resume/index.html`。
+前端 compile 完成後，接續執行首頁 prerender 並產生履歷 PDF。產生 PDF 時可在內部使用 `/resume` 的 client route，但公開輸出仍只有首頁 HTML 與 PDF，不新增 `/resume/index.html`。共同檢查必須使用當次 compile 的乾淨輸出，不依賴上次殘留的 HTML 或 PDF。
 
-履歷檢查要求只有一份 ResumeSheet、字型與圖片載入成功，以及文字與連結位於紙張範圍內。產檔錯誤沿用現有 CI 阻止發布：
+履歷檢查要求只有一份 ResumeSheet、字型與圖片載入成功，以及文字與連結位於紙張範圍內。檢查或輸出檔案失敗時，由現有 CI 流程阻止發布：
 
 ```mermaid
 flowchart TD
@@ -368,7 +369,7 @@ flowchart TD
   ready -->|是| generate[產生 PDF]
   ready -->|否| fail[Build 以非零狀態結束，CI 停止發布]
   generate --> valid{有效且為英文單頁 A4？}
-  generate -->|產檔失敗| fail
+  generate -->|產生 PDF 失敗| fail
   valid -->|是| done[完成 Build 輸出]
   valid -->|否| fail
 ```
@@ -376,7 +377,7 @@ flowchart TD
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R14.1 完整 Build | 從乾淨的 CRA 輸出完成 build 與 postbuild，同時產生首頁靜態內容與當次 ResumeSheet 的 PDF；不能以既有輸出檔案代替當次產檔。 | browser |
+| SITE-R14.1 完整 Build | 從乾淨的前端 compile 輸出完成 build，產生首頁靜態內容與當次 ResumeSheet 的 PDF；不能以既有 HTML 或 PDF 代替當次輸出。 | browser |
 | SITE-R14.2 靜態首頁內容 | 讀取 build 的 HTML，或停用 JavaScript 開啟首頁，仍有主要區塊文字；不要求 QR code 或語言切換在無 JavaScript 時可操作。 | browser |
 | SITE-R14.3 擷取範圍 | HTML 保留 shell metadata，root 內有繁中內容及下載連結，root 外沒有 print portal；首頁啟動後沒有隱藏履歷或重複內容。 | browser |
 | SITE-R14.4 失敗回報 | 空 root、JavaScript error、錯誤 HTTP、不足的內容、履歷載入失敗、超出紙張、字型缺漏或替換、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
@@ -393,9 +394,9 @@ flowchart TD
 
 ### SITE-R16 Metadata 與發布
 
-首頁提供 title、description、canonical、社群預覽、圖示與 manifest，robots 指向 sitemap，這些內容由 public 檔案維護。
+首頁提供 title、description、canonical、社群預覽、圖示與 manifest，robots 指向 sitemap；HTML shell 由根目錄的 `index.html` 維護，其餘公開靜態檔案由 `public/` 維護。
 
-由 `main` push 或手動觸發的 workflow 均在 Ubuntu 執行，從 repo 準備 Georgia 後執行共同檢查與產檔；Pages artifact 上傳與部署只允許 `refs/heads/main`。驗證失敗時不發布。
+由 `main` push 或手動觸發的 workflow 均在 Ubuntu 執行，從 repo 準備 Georgia 後執行包含 build 的共同檢查；Pages artifact 上傳與部署只允許 `refs/heads/main`。驗證失敗時不發布。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |

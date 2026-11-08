@@ -340,6 +340,8 @@ export default function Home() {
       </div>
       {isQrModalOpen
         ? createPortal(
+            // Backdrop clicks supplement the close button and native Escape handling.
+            // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
             <dialog
               ref={qrDialogRef}
               className={styles.qr_modal_overlay}

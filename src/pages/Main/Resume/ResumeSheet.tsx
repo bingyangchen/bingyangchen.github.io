@@ -171,8 +171,8 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                     a seamless checkout experience for non-registered users.
                   </li>
                   <li>
-                    Integrated Taiwan's Cultural Points program and ShopBack Hong Kong,
-                    supporting new purchasing channels and driving order growth in
+                    Integrated Taiwan&apos;s Cultural Points program and ShopBack Hong
+                    Kong, supporting new purchasing channels and driving order growth in
                     targeted markets.
                   </li>
                   <li>

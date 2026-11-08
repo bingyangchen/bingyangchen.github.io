@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { cleanup, fireEvent, render, within } from "@testing-library/react";
 import React from "react";
 import Footer from "../../../components/Footer/Footer";
@@ -10,32 +11,26 @@ import * as printing from "../../../resume/print";
 import Resume from "../Resume/Resume";
 import Home from "./Home";
 
-jest.mock(
-  "react-router-dom",
-  () => ({
-    NavLink: ({ children, to }: { children: React.ReactNode; to: string }) => (
-      <a href={to}>{children}</a>
-    ),
-  }),
-  { virtual: true },
-);
+vi.mock("react-router-dom", () => ({
+  NavLink: ({ children, to }: { children: React.ReactNode; to: string }) => (
+    <a href={to}>{children}</a>
+  ),
+}));
 
 beforeEach(() => {
-  jest.useFakeTimers();
-  jest
-    .spyOn(language, "useTranslation")
-    .mockReturnValue({
-      language: "en",
-      setLanguage: jest.fn(),
-      dictionary: englishDictionary,
-    });
-  Element.prototype.scrollIntoView = jest.fn();
+  vi.useFakeTimers();
+  vi.spyOn(language, "useTranslation").mockReturnValue({
+    language: "en",
+    setLanguage: vi.fn(),
+    dictionary: englishDictionary,
+  });
+  Element.prototype.scrollIntoView = vi.fn();
 });
 
 afterEach(() => {
   cleanup();
-  jest.useRealTimers();
-  jest.restoreAllMocks();
+  vi.useRealTimers();
+  vi.restoreAllMocks();
 });
 
 test("SITE-R5.1 個人摘要", () => {
@@ -55,13 +50,11 @@ test("SITE-R13.1 完整問候", () => {
   expect(
     within(view.container).getByText(englishDictionary.home.greeting),
   ).toBeInTheDocument();
-  jest
-    .spyOn(language, "useTranslation")
-    .mockReturnValue({
-      language: "zh-TW",
-      setLanguage: jest.fn(),
-      dictionary: traditionalChineseDictionary,
-    });
+  vi.spyOn(language, "useTranslation").mockReturnValue({
+    language: "zh-TW",
+    setLanguage: vi.fn(),
+    dictionary: traditionalChineseDictionary,
+  });
   view.rerender(<Home />);
   expect(
     within(view.container).getByText(traditionalChineseDictionary.home.greeting),
@@ -71,7 +64,7 @@ test("SITE-R13.1 完整問候", () => {
   ).not.toBeInTheDocument();
   expect(within(view.container).queryByText("|")).not.toBeInTheDocument();
   view.unmount();
-  expect(jest.getTimerCount()).toBe(0);
+  expect(vi.getTimerCount()).toBe(0);
 });
 
 test("SITE-R6.1 工作與翻譯", () => {
@@ -83,13 +76,11 @@ test("SITE-R6.1 工作與翻譯", () => {
     description: "Fallback description",
     work_duration: "Fallback period",
   });
-  jest
-    .spyOn(language, "useTranslation")
-    .mockReturnValue({
-      language: "en",
-      setLanguage: jest.fn(),
-      dictionary: { ...englishDictionary, workExperiences: {} },
-    });
+  vi.spyOn(language, "useTranslation").mockReturnValue({
+    language: "en",
+    setLanguage: vi.fn(),
+    dictionary: { ...englishDictionary, workExperiences: {} },
+  });
   try {
     const { container } = render(<Home />);
     const content = within(container);
@@ -116,7 +107,7 @@ test("SITE-R6.2 技能與教育", () => {
 });
 
 test("SITE-R6.3 Footer 內容", () => {
-  jest.setSystemTime(new Date("2030-01-02T00:00:00Z"));
+  vi.setSystemTime(new Date("2030-01-02T00:00:00Z"));
   const { container } = render(<Footer />);
   expect(container).toHaveTextContent("bryan.chen.429@gmail.com");
   expect(container).toHaveTextContent("Copyright © 2030 Bing-Yang Chen");
@@ -130,14 +121,12 @@ test("SITE-R6.3 Footer 內容", () => {
 test.each([englishDictionary, traditionalChineseDictionary])(
   "SITE-R10.1 首頁下載入口",
   (dictionary) => {
-    jest
-      .spyOn(language, "useTranslation")
-      .mockReturnValue({
-        language: dictionary === englishDictionary ? "en" : "zh-TW",
-        setLanguage: jest.fn(),
-        dictionary,
-      });
-    const print = jest.spyOn(window, "print").mockImplementation(() => {});
+    vi.spyOn(language, "useTranslation").mockReturnValue({
+      language: dictionary === englishDictionary ? "en" : "zh-TW",
+      setLanguage: vi.fn(),
+      dictionary,
+    });
+    const print = vi.spyOn(window, "print").mockImplementation(() => {});
     const { container } = render(<Home />);
     const link = within(container).getByRole("link", {
       name: dictionary.home.downloadResume,
@@ -151,7 +140,7 @@ test.each([englishDictionary, traditionalChineseDictionary])(
 );
 
 test("SITE-R10.2 非公開預覽列印", () => {
-  const print = jest
+  const print = vi
     .spyOn(printing, "openResumePrintDialog")
     .mockImplementation(() => {});
   const { container } = render(<Resume />);

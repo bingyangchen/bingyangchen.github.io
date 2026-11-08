@@ -274,7 +274,7 @@ async function main() {
   const shell = await readFile(shellPath, "utf8");
   if (!shell.includes(ROOT_PLACEHOLDER)) {
     throw new Error(
-      `${shellPath} has no empty ${ROOT_PLACEHOLDER}. Run "react-scripts build" first.`,
+      `${shellPath} has no empty ${ROOT_PLACEHOLDER}. Run "vite build" first.`,
     );
   }
 

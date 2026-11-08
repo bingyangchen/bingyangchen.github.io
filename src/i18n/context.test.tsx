@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { LanguageSwitcher } from "../components/LanguageSwitcher/LanguageSwitcher";
 import { LanguageProvider, useTranslation } from "./context";
@@ -29,7 +30,7 @@ beforeEach(() => localStorage.clear());
 
 afterEach(() => {
   cleanup();
-  jest.restoreAllMocks();
+  vi.restoreAllMocks();
 });
 
 test("SITE-R3.1 儲存英文優先", () => {
@@ -82,7 +83,7 @@ test("SITE-R4.1 雙向切換", () => {
 test.each(["zh-TW", "zh-CN", "en-US", "ja-JP"])(
   "SITE-R3.6 讀取儲存失敗時依瀏覽器語言選擇：%s",
   (browserLanguage) => {
-    jest.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation(() => {
       throw new DOMException("Storage access denied", "SecurityError");
     });
 
@@ -97,7 +98,7 @@ test.each(["zh-TW", "zh-CN", "en-US", "ja-JP"])(
 );
 
 test("SITE-R3.6 SITE-R4.6 localStorage 本身被拒絕時仍可瀏覽與雙向切換", () => {
-  jest.spyOn(window, "localStorage", "get").mockImplementation(() => {
+  vi.spyOn(window, "localStorage", "get").mockImplementation(() => {
     throw new DOMException("Storage access denied", "SecurityError");
   });
 
@@ -119,7 +120,7 @@ test.each(["SecurityError", "QuotaExceededError"])(
   "SITE-R4.6 寫入儲存失敗時仍可雙向切換：%s",
   (errorName) => {
     showLanguage("en-US");
-    jest.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
       throw new DOMException("Cannot save preference", errorName);
     });
 

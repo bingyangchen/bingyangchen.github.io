@@ -4,65 +4,21 @@
   "homepage": "https://byc1999.com",
   "private": true,
   "scripts": {
-    "dev": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
     "postbuild": "npm run prerender",
     "prerender": "node scripts/prerender.mjs",
     "preview": "node scripts/serve-build.mjs",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "lint": "eslint src scripts tests --ext .js,.jsx,.mjs,.ts,.tsx --max-warnings 0",
+    "lint": "eslint src scripts tests *.mjs *.mts --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "check:scenarios": "node scripts/check-scenarios.mjs",
     "test:checker": "node --test tests/check-scenarios.test.mjs",
-    "test:unit": "react-scripts test --watchAll=false --runInBand",
+    "test:unit": "vitest run",
     "test:browser": "node --test tests/browser/*.test.mjs",
-    "check": "npm run format:check && npm run lint && npm run check:scenarios && npm run test:checker && npm run test:unit && npm run build && npm run test:browser",
-    "eject": "react-scripts eject"
-  },
-  "jest": {
-    "testMatch": [
-      "<rootDir>/src/**/*.{test,spec}.{js,jsx,ts,tsx}",
-      "!<rootDir>/src/**/{fixtures,__fixtures__}/**"
-    ]
-  },
-  "eslintConfig": {
-    "root": true,
-    "extends": [
-      "react-app",
-      "prettier"
-    ],
-    "overrides": [
-      {
-        "files": [
-          "src/**/*.{test,spec}.{js,jsx,ts,tsx}",
-          "src/**/__tests__/**/*.{js,jsx,ts,tsx}"
-        ],
-        "extends": [
-          "react-app/jest"
-        ]
-      },
-      {
-        "files": [
-          "scripts/**/*.mjs",
-          "tests/**/*.mjs"
-        ],
-        "env": {
-          "browser": false,
-          "node": true,
-          "jest": false
-        }
-      },
-      {
-        "files": [
-          "scripts/prerender.mjs",
-          "tests/browser/site.test.mjs"
-        ],
-        "env": {
-          "browser": true
-        }
-      }
-    ]
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run check:scenarios && npm run test:checker && npm run test:unit && npm run build && npm run test:browser",
+    "typecheck": "tsc --noEmit"
   },
   "browserslist": {
     "production": [
@@ -77,19 +33,10 @@
     ]
   },
   "dependencies": {
-    "@testing-library/jest-dom": "^5.16.5",
-    "@testing-library/react": "^13.4.0",
-    "@types/jest": "^27.5.2",
-    "@types/node": "^16.18.3",
-    "@types/react": "^18.0.25",
-    "@types/react-dom": "^18.0.8",
     "qrcode.react": "^4.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.18.2",
-    "react-scripts": "5.0.1",
-    "sass": "^1.56.0",
-    "typescript": "^4.8.4",
     "workbox-core": "^6.5.4",
     "workbox-expiration": "^6.5.4",
     "workbox-precaching": "^6.5.4",
@@ -97,9 +44,38 @@
     "workbox-strategies": "^6.5.4"
   },
   "devDependencies": {
-    "eslint": "^8.57.1",
+    "@eslint/js": "^9.39.5",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@types/node": "^22.20.5",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^6.2.1",
+    "autoprefixer": "^10.6.2",
+    "browserslist": "^4.29.5",
+    "browserslist-to-esbuild": "^2.1.1",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.14.0",
+    "jsdom": "^31.0.0",
+    "postcss": "^8.5.32",
     "prettier": "^3.9.10",
-    "puppeteer": "^25.5.0"
+    "puppeteer": "^25.5.0",
+    "sass": "^1.108.1",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.3.6",
+    "vitest": "^5.1.0"
+  },
+  "engines": {
+    "node": "^22.22.2 || ^24.15.0 || >=26.0.0"
+  },
+  "overrides": {
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.5"
+    }
   }
 }
