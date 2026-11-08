@@ -120,6 +120,46 @@ async function assertHoverCapability(expected) {
   );
 }
 
+async function hoverLink(selector) {
+  await page.$eval(selector, (link) =>
+    link.scrollIntoView({ behavior: "instant", block: "center" }),
+  );
+  await settleMotion();
+  await page.hover(selector);
+  await page.waitForFunction(
+    (selector) => document.querySelector(selector).matches(":hover"),
+    { timeout: 5000 },
+    selector,
+  );
+}
+
+async function assertArrowState(
+  selector,
+  horizontalOffset,
+  verticalOffset,
+  transitionDuration,
+) {
+  // An empty animation list can resolve before hover creates its transition.
+  await page.waitForFunction(
+    (selector, horizontalOffset, verticalOffset, transitionDuration) => {
+      const style = getComputedStyle(document.querySelector(selector));
+      const matrix = new DOMMatrixReadOnly(
+        style.transform === "none" ? undefined : style.transform,
+      );
+      return (
+        Math.abs(matrix.m41 - horizontalOffset) < 0.01 &&
+        Math.abs(matrix.m42 - verticalOffset) < 0.01 &&
+        style.transitionDuration === transitionDuration
+      );
+    },
+    { timeout: 5000 },
+    selector,
+    horizontalOffset,
+    verticalOffset,
+    transitionDuration,
+  );
+}
+
 async function enterPreview() {
   await page.evaluate(() => {
     window.history.pushState({}, "", "/resume");
@@ -387,16 +427,11 @@ test("SITE-R18.4 Footer Email 箭頭尊重減少動態", async () => {
         await page.emulateMediaFeatures([
           { name: "prefers-reduced-motion", value: preference },
         ]);
-        await page.hover(email);
-        await page.$eval(arrow, (element) =>
-          Promise.all(element.getAnimations().map((animation) => animation.finished)),
-        );
-        const displacement = await page.$eval(
-          arrow,
-          (element) => new DOMMatrixReadOnly(getComputedStyle(element).transform).m41,
-        );
-        assert.ok(preference === "reduce" ? displacement === 0 : displacement > 0);
+        const duration = preference === "reduce" ? "0s" : "0.22s";
+        await hoverLink(email);
+        await assertArrowState(arrow, preference === "reduce" ? 0 : 2, 0, duration);
         await page.mouse.move(0, 0);
+        await assertArrowState(arrow, 0, 0, duration);
       }
     }
   }
@@ -1909,6 +1944,13 @@ test("SITE-R13.3 完整減少動態與即時切換", async () => {
   ]);
   await openHome();
   async function assertStaticMotion() {
+    // Media emulation can resolve before matchMedia listeners clear motion state.
+    await page.waitForFunction(
+      () =>
+        matchMedia("(prefers-reduced-motion: reduce)").matches &&
+        !document.querySelector("[data-scroll-motion-active]"),
+      { timeout: 5000 },
+    );
     await page.hover('#home [aria-label="GitHub"]');
     assert.equal(
       await page.$eval(
@@ -1955,7 +1997,6 @@ test("SITE-R13.3 完整減少動態與即時切換", async () => {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
-  await settleMotion();
   await assertStaticMotion();
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "no-preference" },
@@ -1965,7 +2006,6 @@ test("SITE-R13.3 完整減少動態與即時切換", async () => {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
-  await settleMotion();
   await assertStaticMotion();
 });
 
@@ -2437,40 +2477,6 @@ test("SITE-R13.6 外連箭頭一致性", async () => {
   ];
   const projectLinks = [`${DETAIL} a[class*="visit"]`, `${DETAIL} a[class*="source"]`];
 
-  async function hoverLink(selector) {
-    await page.$eval(selector, (link) =>
-      link.scrollIntoView({ behavior: "instant", block: "center" }),
-    );
-    await page.hover(selector);
-    assert.equal(
-      await page.$eval(selector, (link) => link.matches(":hover")),
-      true,
-      selector,
-    );
-  }
-
-  async function assertArrowState(selector, moved, duration) {
-    await page.waitForFunction(
-      (selector, moved) => {
-        const transform = getComputedStyle(document.querySelector(selector)).transform;
-        const matrix =
-          transform === "none" ? new DOMMatrix() : new DOMMatrix(transform);
-        return (
-          Math.abs(matrix.m41 - (moved ? 3 : 0)) < 0.01 &&
-          Math.abs(matrix.m42 - (moved ? -3 : 0)) < 0.01
-        );
-      },
-      { timeout: 5000 },
-      selector,
-      moved,
-    );
-    assert.equal(
-      await page.$eval(selector, (arrow) => getComputedStyle(arrow).transitionDuration),
-      duration,
-      selector,
-    );
-  }
-
   for (const reduced of [false, true]) {
     await page.emulateMediaFeatures([
       { name: "prefers-reduced-motion", value: reduced ? "reduce" : "no-preference" },
@@ -2488,9 +2494,9 @@ test("SITE-R13.6 外連箭頭一致性", async () => {
         const arrow = `${selector} svg[aria-hidden="true"]`;
         const duration = reduced ? "0s" : "0.22s";
         await hoverLink(selector);
-        await assertArrowState(arrow, !reduced, duration);
+        await assertArrowState(arrow, reduced ? 0 : 3, reduced ? 0 : -3, duration);
         await page.mouse.move(0, 0);
-        await assertArrowState(arrow, false, duration);
+        await assertArrowState(arrow, 0, 0, duration);
       }
     }
   }
@@ -2504,7 +2510,7 @@ test("SITE-R13.6 外連箭頭一致性", async () => {
   await assertHoverCapability(false);
   for (const selector of [...sharedLinks, ...projectLinks]) {
     await hoverLink(selector);
-    await assertArrowState(`${selector} svg[aria-hidden="true"]`, false, "0.22s");
+    await assertArrowState(`${selector} svg[aria-hidden="true"]`, 0, 0, "0.22s");
   }
 });
 
@@ -2537,10 +2543,16 @@ test("SITE-R17.5 文章焦點、Hover 與減少動態", async () => {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
-  const durations = await page.$$eval('#blog [class*="arrow"]', (arrows) =>
-    arrows.map((arrow) => getComputedStyle(arrow).transitionDuration),
+  await page.waitForFunction(
+    () => {
+      const arrows = [...document.querySelectorAll('#blog [class*="arrow"]')];
+      return (
+        arrows.length > 0 &&
+        arrows.every((arrow) => getComputedStyle(arrow).transitionDuration === "0s")
+      );
+    },
+    { timeout: 5000 },
   );
-  assert.ok(durations.every((duration) => duration === "0s"));
 });
 
 test("SITE-R17.6 精選文章不依賴 JavaScript 或 GitBook 回應", async () => {
