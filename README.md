@@ -24,6 +24,10 @@ Vite reads the root `index.html`, bundles imported assets, and copies `public/` 
 
 Brand images ship with the site. Original source URLs for work-experience logos are recorded beside their imports in [`workExperience.ts`](src/data/workExperience.ts). Prerender and PDF generation block non-loopback network requests, so producing the static site does not require third-party services.
 
+Work-experience metadata lives in `src/data/workExperience.ts`; project metadata lives in `src/data/projects.ts`. Their literal IDs define the required keys in both dictionaries and the project artwork registry, so display-name edits do not change lookup keys. Projects store calendar years directly, since their periods display no month or day. Keep JSX and artwork composition in the Projects component.
+
+English work and project copy is maintained only in `src/i18n/dictionaries/en.ts`, with Traditional Chinese in `zhtw.ts`. The pure resolvers in `src/i18n/content.ts` apply English fallback per field when a translation is missing or blank. Complete production dictionaries remain required by TypeScript, and data-integrity tests reject empty copy and duplicate IDs, so fallback cannot hide incomplete maintained content. Resume bullets remain independently editable.
+
 [Image assets and loading](docs/image-assets.md) documents responsive renditions, embedded project previews, resource budgets, and before/after measurements. After replacing an original image, run `npm run images:generate` with libwebp's `cwebp` and `dwebp` available; generated assets are committed, so normal builds need neither tool.
 
 Preview serves the build over loopback HTTP without an SPA fallback. `/resume` remains a non-public preview with browser printing, available through `npm run dev`.
@@ -52,6 +56,8 @@ Prettier owns formatting; the independent `eslint.config.mjs` configures JavaScr
 React's `jsx-runtime` preset supports the automatic JSX transform; props, JSX text, and accessibility checks remain enabled. The QR dialog has a local exception for backdrop clicks because Escape and the close button already provide keyboard dismissal.
 
 Vitest discovers `src/**/*.{test,spec}.{js,jsx,ts,tsx}` and excludes `fixtures` and `__fixtures__` directories, matching the scenario checker. The existing Node test runner and Puppeteer continue to run browser tests.
+
+Content component tests use the real LanguageProvider through `src/test-utils/render.tsx` and switch languages through the actual control. Test missing translations and alternate periods at the pure-function boundary with independent fixtures; never modify exported production data. Prefer roles, accessible attributes, or destinations for browser interaction selectors; keep CSS selectors for visual geometry local to those checks.
 
 Browser tests use the production assets without substituting remote images. The shared `scripts/browser-resources.mjs` monitor blocks unexpected external requests and rejects HTTP errors, failed requests, undecodable images, console errors, and uncaught JavaScript errors. Failure tests use isolated pages and explicitly verify their expected errors. External link destinations are checked separately from third-party availability.
 

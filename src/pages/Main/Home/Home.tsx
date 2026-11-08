@@ -25,6 +25,8 @@ import BrandImage from "../../../components/BrandImage/BrandImage";
 import { homeSkillItems } from "../../../data/skills";
 import { workExperienceItems } from "../../../data/workExperience";
 import { useTranslation } from "../../../i18n/context";
+import { resolveWorkExperienceCopy } from "../../../i18n/content";
+import { englishDictionary } from "../../../i18n/dictionaries/en";
 import {
   IconBlogText,
   IconChevronDoubleDown,
@@ -87,12 +89,11 @@ export default function Home() {
   }, [isQrModalOpen]);
 
   const primaryWorkExperience = workExperienceItems[0];
-  const primaryWorkTranslation = dictionary.workExperiences[primaryWorkExperience.id];
-  const job_title =
-    primaryWorkTranslation?.job_title || primaryWorkExperience.job_title;
-  const company_name =
-    primaryWorkTranslation?.company_name || primaryWorkExperience.company_name;
-  const job_badge_label = `${job_title} @ ${company_name}`;
+  const primaryWorkCopy = resolveWorkExperienceCopy(
+    englishDictionary.workExperiences[primaryWorkExperience.id],
+    dictionary.workExperiences[primaryWorkExperience.id],
+  );
+  const job_badge_label = `${primaryWorkCopy.job_title} @ ${primaryWorkCopy.company_name}`;
   const job_badge_content = (
     <>
       {primaryWorkExperience.company_logo ? (
@@ -291,17 +292,11 @@ export default function Home() {
           <h3 data-scroll-motion="heading">{dictionary.about.workExperience}</h3>
           <div className={styles.work_experience_outer}>
             {workExperienceItems.map(({ id, ...work }) => {
-              const translation = dictionary.workExperiences[id];
-              return (
-                <WorkExperience
-                  key={id}
-                  {...work}
-                  work_duration={translation?.work_duration || work.work_duration}
-                  job_title={translation?.job_title || work.job_title}
-                  company_name={translation?.company_name || work.company_name}
-                  description={translation?.description || work.description}
-                />
+              const copy = resolveWorkExperienceCopy(
+                englishDictionary.workExperiences[id],
+                dictionary.workExperiences[id],
               );
+              return <WorkExperience key={id} {...work} {...copy} />;
             })}
           </div>
           <h3 data-scroll-motion="heading">{dictionary.about.skills}</h3>

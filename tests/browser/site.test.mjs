@@ -25,8 +25,8 @@ const DETAIL = '#projects [role="tabpanel"]:not([inert])';
 const TABS = '#projects [role="tab"]';
 const PROJECTS_MOTION = '#projects > [data-scroll-motion="content"]';
 const BLOG_MOTION = '#blog > [data-scroll-motion="content"]';
-const QR = '[class*="qr_avatar_fab"]';
-const AVATAR = '#home button[class*="avatar_button"]';
+const QR = '#home button[aria-haspopup="dialog"]';
+const AVATAR = "#home button[aria-pressed]";
 const QR_DIALOG = 'dialog[aria-labelledby="qr-modal-title"]';
 const TOOLTIP = "[data-tooltip-content]";
 const TOOLTIP_CONTROLS = [
@@ -422,7 +422,10 @@ test("SITE-R18.4 Footer Email 箭頭尊重減少動態", async () => {
     await page.setViewport({ width: 1440, height: 900 });
     if (language === "zh-TW") await page.click("[data-language-switcher]");
     for (const width of [1440, 390]) {
-      await page.setViewport({ width, height: 900 });
+      // Linux viewport changes can clear hover capability; restore mouse input.
+      await page.setViewport({ width, height: 900, hasTouch: true });
+      await page.setViewport({ width, height: 900, hasTouch: false });
+      await assertHoverCapability(true);
       for (const preference of ["no-preference", "reduce"]) {
         await page.emulateMediaFeatures([
           { name: "prefers-reduced-motion", value: preference },
@@ -1391,7 +1394,7 @@ test(
             "button span",
             "header nav a",
             '#home [class*="nav_ghost"] span',
-            '#projects [class*="actions"] a',
+            '#projects [role="tabpanel"] a',
             '#blog [class*="archiveLink"] span',
             '#blog [class*="featuredAction"] span',
             '#blog [class*="readingAction"]',
@@ -2389,12 +2392,12 @@ test("SITE-R17.4 各尺寸文章與操作範圍", async () => {
             ["font-size", "font-weight", "line-height", "margin-top"],
           ],
           [
-            '#projects a[class*="github"]',
+            '#projects a[href="https://github.com/bingyangchen"]',
             '#blog a[class*="archiveLink"]',
             ["font-size", "min-height", "gap", "margin-top"],
           ],
           [
-            '#projects a[class*="github"] svg',
+            '#projects a[href="https://github.com/bingyangchen"] svg',
             '#blog a[class*="archiveLink"] svg',
             ["width", "height"],
           ],
@@ -2409,17 +2412,17 @@ test("SITE-R17.4 各尺寸文章與操作範圍", async () => {
             ["font-size", "line-height"],
           ],
           [
-            '#projects [aria-hidden="false"] [class*="actions"] a',
+            '#projects [role="tabpanel"][aria-hidden="false"] a',
             '#blog [class*="featuredAction"]',
             ["font-size", "min-height", "gap"],
           ],
           [
-            '#projects [aria-hidden="false"] [class*="actions"] svg',
+            '#projects [role="tabpanel"][aria-hidden="false"] a svg',
             '#blog [class*="featuredAction"] svg',
             ["width", "height"],
           ],
           [
-            '#projects [aria-hidden="false"] [class*="actions"] svg',
+            '#projects [role="tabpanel"][aria-hidden="false"] a svg',
             '#blog [class*="readingHeading"] svg',
             ["width", "height"],
           ],
@@ -2469,13 +2472,16 @@ test("SITE-R13.6 外連箭頭一致性", async () => {
   await openHome("#projects");
   await assertHoverCapability(true);
   const sharedLinks = [
-    '#projects a[class*="github"]',
+    '#projects a[href="https://github.com/bingyangchen"]',
     '#blog a[class*="archiveLink"]',
     '#blog a[class*="featured"]',
     '#blog a[class*="reading"]:nth-child(1)',
     '#blog a[class*="reading"]:nth-child(2)',
   ];
-  const projectLinks = [`${DETAIL} a[class*="visit"]`, `${DETAIL} a[class*="source"]`];
+  const projectLinks = [
+    `${DETAIL} a:not([href^="https://github.com/"])`,
+    `${DETAIL} a[href^="https://github.com/"]`,
+  ];
 
   for (const reduced of [false, true]) {
     await page.emulateMediaFeatures([
@@ -3263,7 +3269,7 @@ test("SITE-R18.2 深淺背景對比與滿版目的地的實際可見框線", asy
   await page.keyboard.press("Tab");
   for (const [selector, surface] of [
     ["header [data-language-switcher]", ".site-layout"],
-    [`${DETAIL} a[class*="visit"]`, "#projects"],
+    [`${DETAIL} a:not([href^="https://github.com/"])`, "#projects"],
     ['#blog a[class*="featured"]', ".site-layout"],
     ['footer a[href="https://github.com/bingyangchen"]', "footer"],
   ]) {
@@ -3932,8 +3938,8 @@ test("SITE-R20.1 雙語正文、品牌按鈕及 hover 操作圖示的實際對�
         "#home a[download]",
         '#home a[class*="nav_ghost"]',
         TABS,
-        `${DETAIL} a[class*="visit"]`,
-        `${DETAIL} a[class*="source"]`,
+        `${DETAIL} a:not([href^="https://github.com/"])`,
+        `${DETAIL} a[href^="https://github.com/"]`,
       ]) {
         await page.mouse.move(0, 0);
         await assertColorContrast(selector);
@@ -3943,7 +3949,7 @@ test("SITE-R20.1 雙語正文、品牌按鈕及 hover 操作圖示的實際對�
           await assertColorContrast(selector);
         }
       }
-      for (const selector of [QR, '#home a[class*="social_icon_link"]']) {
+      for (const selector of [QR, '#home a[aria-label][target="_blank"]']) {
         await page.mouse.move(0, 0);
         await assertColorContrast(selector, 3);
         const controls = await page.$$(selector);

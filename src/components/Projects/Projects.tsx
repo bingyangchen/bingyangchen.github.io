@@ -1,4 +1,4 @@
-import { KeyboardEvent, ReactNode, useId, useRef, useState } from "react";
+import { KeyboardEvent, ReactElement, useId, useRef, useState } from "react";
 import {
   leechaiAccounts,
   leechaiSettings,
@@ -7,15 +7,16 @@ import {
   taiguOverview,
 } from "./artwork";
 import ProjectImage from "./ProjectImage";
-import { homeProjects } from "../../data/projects";
+import { formatProjectPeriod } from "./period";
+import { homeProjects, type ProjectId } from "../../data/projects";
 import { useTranslation } from "../../i18n/context";
-import type { Language } from "../../i18n/types";
+import { resolveProjectCopy } from "../../i18n/content";
+import { englishDictionary } from "../../i18n/dictionaries/en";
 import { IconArrowUpRight } from "../../icons";
-import type { Project } from "../../types";
 import styles from "./Projects.module.scss";
 
-const projectTitleToArtwork: Record<string, ReactNode> = {
-  Taigu: (
+const projectIdToArtwork: Record<ProjectId, ReactElement> = {
+  taigu: (
     <>
       <ProjectImage className={styles.deviceMain} image={taiguOverview} />
       <ProjectImage
@@ -25,8 +26,8 @@ const projectTitleToArtwork: Record<string, ReactNode> = {
       />
     </>
   ),
-  Noads: <ProjectImage className={styles.extension} image={noadsInterface} />,
-  Leechai: (
+  noads: <ProjectImage className={styles.extension} image={noadsInterface} />,
+  leechai: (
     <>
       <ProjectImage className={styles.leechaiMain} image={leechaiAccounts} />
       <ProjectImage
@@ -37,17 +38,6 @@ const projectTitleToArtwork: Record<string, ReactNode> = {
     </>
   ),
 };
-
-function formatPeriod(project: Project, language: Language, present: string): string {
-  const startYear = project.maintaining_time_range[0].getFullYear();
-  const endYear = project.maintaining_time_range[1]?.getFullYear();
-  if (startYear === endYear) return String(startYear);
-  if (language === "zh-TW")
-    return endYear === undefined
-      ? `${startYear} 年${present}`
-      : `${startYear} 年至 ${endYear} 年`;
-  return `${startYear} to ${endYear ?? present}`;
-}
 
 export default function Projects() {
   const { dictionary, language } = useTranslation();
@@ -95,7 +85,7 @@ export default function Projects() {
       >
         {homeProjects.map((project, index) => (
           <button
-            key={project.title}
+            key={project.id}
             ref={(element) => {
               tabRefs.current[index] = element;
             }}
@@ -110,7 +100,7 @@ export default function Projects() {
             onKeyDown={(event) => handleProjectKeyDown(event, index)}
           >
             <span className={styles.projectIcon} aria-hidden="true">
-              {project.icon}
+              <img src={project.logo} alt="" width={26} height={26} />
             </span>
             <span>{project.title}</span>
           </button>
@@ -118,18 +108,20 @@ export default function Projects() {
       </div>
       <div className={styles.showcaseStack}>
         {homeProjects.map((project, index) => {
-          const translation = dictionary.projectsData[project.title];
+          const copy = resolveProjectCopy(
+            englishDictionary.projectsData[project.id],
+            dictionary.projectsData[project.id],
+          );
           const selected = index === activeIndex;
-          const period = formatPeriod(
+          const period = formatProjectPeriod(
             project,
             language,
             dictionary.projectCommon.present,
           );
-          const artwork = projectTitleToArtwork[project.title];
-          if (!artwork) throw new Error(`Missing artwork for project ${project.title}`);
+          const artwork = projectIdToArtwork[project.id];
           return (
             <div
-              key={project.title}
+              key={project.id}
               id={`${id}-panel-${index}`}
               className={styles.showcase}
               role="tabpanel"
@@ -140,20 +132,16 @@ export default function Projects() {
             >
               <div className={styles.projectIntro}>
                 <h3 className={styles.projectTitle}>{project.title}</h3>
-                <p className={styles.projectPurpose}>
-                  {translation?.purpose || project.purpose}
-                </p>
+                <p className={styles.projectPurpose}>{copy.purpose}</p>
               </div>
               <figure className={styles.productStage}>
                 <div className={styles.productArt}>{selected && artwork}</div>
                 <figcaption className={styles.imageDescription}>
-                  {translation?.image_description || project.image_description}
+                  {copy.image_description}
                 </figcaption>
               </figure>
               <div className={styles.projectContent}>
-                <p className={styles.description}>
-                  {translation?.description || project.description}
-                </p>
+                <p className={styles.description}>{copy.description}</p>
                 <div className={styles.actions}>
                   <a
                     className={styles.visit}
@@ -161,7 +149,7 @@ export default function Projects() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {translation?.visit_label || project.visit_label}
+                    {copy.visit_label}
                     <IconArrowUpRight aria-hidden="true" />
                   </a>
                   <a
@@ -175,7 +163,7 @@ export default function Projects() {
                   </a>
                 </div>
                 <p className={styles.projectMeta}>
-                  <span>{(translation?.tags || project.tags).join(" · ")}</span>
+                  <span>{copy.tags.join(" · ")}</span>
                   <span className={styles.metaSeparator} aria-hidden="true" />
                   <span
                     className={styles.period}

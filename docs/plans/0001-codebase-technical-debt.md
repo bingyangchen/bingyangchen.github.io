@@ -17,6 +17,7 @@ depends_on: []
 
 - 2026-11-08：使用者核准 TD-04，授權完成 Tooltip 的互動與定位改善，並指定不建立 commit。未列於核准紀錄的項目尚未核准。
 - 2026-11-08：使用者核准 TD-18，授權改善圖片尺寸、responsive sources 與載入策略，並指定不建立 commit。
+- 2026-11-09：使用者核准 TD-07、TD-08、TD-24，授權一併完成工作與作品的資料約定、英文 fallback 與測試隔離。
 
 ## 範圍
 
@@ -37,8 +38,6 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 <!-- prettier-ignore -->
 | 編號 | 優先順序 | 調整主題 | 證據種類 |
 | --- | --- | --- | --- |
-| TD-07 | P2 | 收緊工作經歷、字典與 fallback 的資料約定 | 程式碼確認 |
-| TD-08 | P2 | 用穩定作品 ID 整合作品資料與素材 | 程式碼確認 |
 | TD-09 | P2 | 集中聯絡資訊及可共用的職涯事實 | 程式碼確認 |
 | TD-10 | P2 | 按實際功能拆分首頁與履歷 | 程式碼確認 |
 | TD-11 | P2 | 分開 motion 計算與 DOM 操作 | 程式碼確認 |
@@ -51,7 +50,6 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 | TD-21 | P2 | 補上 Node 與 npm 的版本選擇方式 | 程式碼確認 |
 | TD-22 | P2 | 補足安全更新與失敗診斷的 CI 流程 | 程式碼確認 |
 | TD-23 | P2 | 整理樣式作用範圍與共用 token | 程式碼確認 |
-| TD-24 | P2 | 移除測試對正式資料的修改及不必要 mock | 程式碼確認 |
 | TD-25 | P3 | 校對靜態 metadata、manifest 與 sitemap | 程式碼確認、待調查 |
 | TD-26 | P3 | 分開非公開履歷載入並明確記錄啟動方式 | 程式碼確認 |
 | TD-27 | P3 | 簡化圖示及控制元件的介面 | 程式碼確認 |
@@ -62,25 +60,9 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 
 ## 檢查發現與調整方案
 
-### TD-07：讓工作與翻譯有完整的資料約定
-
-證據：[`workExperience.ts`](../../src/data/workExperience.ts) 多個必要欄位填空字串，實際內容全靠字典；[`i18n/types.ts`](../../src/i18n/types.ts) 卻用 `Record<string, ...>`，編譯器無法要求每個工作 ID 都有翻譯。Home 及 WorkExperience 又各自維護資料欄位與 props。缺漏時的 fallback 是規格要求，但目前工作資料本身沒有可用的 fallback。
-
-建議由工作資料推導封閉的 `WorkExperienceId`，字典使用 `Record<WorkExperienceId, WorkExperienceCopy>`。將 ID、品牌圖片與日期等事實和顯示文字分開，英文內容只維護一份。缺少或空翻譯時保留有意義的英文 fallback，由共用的內容組合函式處理；正常維護資料有缺漏時，型別或資料檢查先報錯。
-
-完成條件：新增或移除工作時，兩種語言與首頁摘要的需求能在 check 階段被發現；正常內容不靠空字串填滿型別。既有 SITE-R6.1 的 fallback 結果維持，並加入「第一筆工作缺漏翻譯時仍有職稱及公司」的驗證。本站與履歷敘事可各自編輯，見 TD-09。
-
-### TD-08：用穩定 ID 整合作品內容及素材
-
-證據：[`projects.tsx`](../../src/data/projects.tsx) 把 JSX icon 放進資料，`Project.title` 同時擔任畫面標題、React key、翻譯 key 與 [`Projects.tsx`](../../src/components/Projects/Projects.tsx) 的 artwork lookup key。三份設定以任意字串相連，改名可能只在 runtime 才遇到 `Missing artwork`。作品英文說明也同時出現在資料與英文字典，Taigu、Noads 的文字已不完全相同。
-
-建議使用固定的 `taigu`、`noads`、`leechai` ID，由型別約束 copy 與 artwork registry。純資料檔存 URL、圖片來源、年份和產品名稱，JSX 留在作品功能內。期間目前只顯示年份，因此用 `startYear`、可選的 `endYear` 表達，避免為年份建立帶月份與時區語意的 Date tuple。
-
-完成條件：改產品顯示名稱不必同步更改 lookup key；缺少 copy 或 artwork 在檢查階段失敗。兩種語言的期間、fallback、外連及 tab 順序保持 SITE-R7、SITE-R8 的結果；純函式驗證同年、不同年與維護中期間。
-
 ### TD-09：集中聯絡資訊與共用事實
 
-證據：email、GitHub、LinkedIn、Cake、網站 URL 分散於 Home、Footer、ResumeSheet、QR code、HTML metadata。任職公司、職稱、日期也分散在工作資料、兩份字典與 [`ResumeSheet.tsx`](../../src/pages/Main/Resume/ResumeSheet.tsx)。內容差異不一定是錯誤，但更改同一事實需要逐檔搜尋。
+證據：email、GitHub、LinkedIn、Cake、網站 URL 分散於 Home、Footer、ResumeSheet、QR code、HTML metadata。任職公司、職稱、日期也分散在兩份字典與 [`ResumeSheet.tsx`](../../src/pages/Main/Resume/ResumeSheet.tsx)。內容差異不一定是錯誤，但更改同一事實需要逐檔搜尋。
 
 建議建立小型 `profile` 資料，維護聯絡資料、社群目的地與網站 URL。職涯共同事實依 ID 共用，首頁長段落與履歷 bullets 保留各自的編輯方式；服務清單與教育敘事不為了共用而改成通用 schema。新增對照檢查，確認兩種語言及履歷的公司、職稱與任職期間一致。
 
@@ -88,7 +70,7 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 
 ### TD-10：按功能拆分首頁及履歷
 
-證據：Home 同時管理頭像 pointer、QR code dialog、Hero、工作經歷、技能、教育及區塊組合。`components/` 混合只給首頁使用的 Blog、Projects 與一般控制；履歷 TSX 放在 `pages/Main/Resume`，列印 helper 卻在 `src/resume`，全域 `types.ts` 又容納各功能型別。
+證據：Home 同時管理頭像 pointer、QR code dialog、Hero、工作經歷、技能、教育及區塊組合。`components/` 混合只給首頁使用的 Blog、Projects 與一般控制；履歷 TSX 放在 `pages/Main/Resume`，列印 helper 卻在 `src/resume`。
 
 建議首頁 page 只組合區塊，頭像與 dialog 在首頁功能內擁有各自狀態和樣式，作品與文章的私有元件放在各自功能旁。履歷的內容、預覽、列印 helper 與專用型別放在同一功能內，共用控制維持小而明確的介面。
 
@@ -209,14 +191,6 @@ stateDiagram-v2
 
 完成條件：重排 Home 區塊或獨立 render Projects、Blog 時，字級與留白不受不相關的父層規則影響；相同角色共用 token，不因相同數字強制合併。按 DOM 順序整理 module 巢狀規則，保留既有 breakpoint，檢查兩種語言、focus、forced colors 與 PDF。
 
-### TD-24：讓測試使用獨立資料與較少的 Mock
-
-證據：[`Home.test.tsx`](../../src/pages/Main/Home/Home.test.tsx) 用 `Object.assign` 修改正式工作資料，[`Projects.test.tsx`](../../src/components/Projects/Projects.test.tsx) 修改正式作品 Date tuple，再用 `finally` 還原。Fallback 測試需要拿掉翻譯，但目前只能替換整個 context 及操作全域 module。日期格式這類純邏輯仍透過重畫整個 Projects 驗證。
-
-建議以小型 test fixture factory 建立獨立資料，讓內容組合及期間格式函式接受明確輸入；元件測試用真實 LanguageProvider 或專用 render helper，保留必要的儲存錯誤 mock。部分 browser selector 依賴 CSS Module class 子字串，優先改用 role、名稱及穩定的測試定位點。
-
-完成條件：unit tests 不修改正式匯出的資料，不依賴執行順序；日期與 fallback 的組合在純函式層檢查，元件層驗證使用者可觀察結果。保留既有鍵盤與瀏覽器測試，避免逐行照抄實作來寫測試，也不為單純改名新增測試。
-
 ### TD-25：校對 Metadata、Manifest 與 Sitemap
 
 證據：根目錄 HTML shell 的 `<noscript>` 宣告必須啟用 JavaScript，實際 prerender 已提供主要內容及 PDF 連結，兩種說法不一致。Manifest 在同一個 WebP icon 上宣告多個尺寸，需核對真實尺寸。Sitemap 列出 8 個其他專案路徑，但這個 repo 不提供這些頁面，可能由其他 GitHub Pages repo 提供，尚不能判定失效。
@@ -307,7 +281,7 @@ SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-
 flowchart TD
   baseline[保留驗證基準與情境對應]
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
-  baseline --> content[TD-07 到 TD-10、TD-24：內容與功能分工]
+  baseline --> content[TD-09、TD-10：共用事實與功能分工]
   tooling --> tests[TD-13、TD-22：測試與診斷]
   tooling --> build[TD-15、TD-16、TD-19：靜態輸出與資源]
   content --> logic[TD-11、TD-12：Motion 與導覽]
@@ -344,7 +318,7 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 | 工作範圍 | 工程驗收 |
 | --- | --- |
 | 工具與環境 | 工具及 browser tests 的型別錯誤會阻止共同檢查；依文件選擇 Node 與 npm 後，乾淨安裝及既有檢查通過。 |
-| 內容與模組 | ID 缺漏在檢查階段失敗，共用事實有單一維護位置，fallback、雙語與履歷共享事實保持一致；沒有循環 import 或功能私有模組對外公開。 |
+| 內容與模組 | 共用事實有單一維護位置，雙語與履歷共享事實保持一致；沒有循環 import 或功能私有模組對外公開。 |
 | Motion 與導覽 | 純函式驗證與既有 browser 情境通過，桌面及實機快捲、反轉、歷史還原、focus、resize、reduced motion 另有實測紀錄。 |
 | PDF 與 Prerender | 失敗 fixtures 確實測到預期原因；PDF parser、獨立文字擷取及人工版面檢查分別回報。 |
 | 資源及載入 | 記錄履歷 route 分割前後的 bundle gzip 差異，prerender 仍保留完整靜態內容。 |

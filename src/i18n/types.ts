@@ -1,6 +1,23 @@
 import type { BlogArticleId } from "../data/articles";
+import type { ProjectId } from "../data/projects";
+import type { WorkExperienceId } from "../data/workExperience";
 
 export type Language = "en" | "zh-TW";
+
+export interface WorkExperienceCopy {
+  work_duration: string;
+  job_title: string;
+  company_name: string;
+  description: string;
+}
+
+export interface ProjectCopy {
+  tags: readonly string[];
+  description: string;
+  purpose: string;
+  image_description: string;
+  visit_label: string;
+}
 
 export interface TranslationDictionary {
   name: string;
@@ -50,25 +67,8 @@ export interface TranslationDictionary {
     elsewhere: string;
     home: string;
   };
-  workExperiences: Record<
-    string,
-    {
-      work_duration: string;
-      job_title: string;
-      company_name: string;
-      description: string;
-    }
-  >;
-  projectsData: Record<
-    string,
-    {
-      tags: string[];
-      description: string;
-      purpose: string;
-      image_description: string;
-      visit_label: string;
-    }
-  >;
+  workExperiences: Record<WorkExperienceId, WorkExperienceCopy>;
+  projectsData: Record<ProjectId, ProjectCopy>;
   projectCommon: {
     present: string;
     sourceCode: string;

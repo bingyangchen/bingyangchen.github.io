@@ -1,27 +1,18 @@
-import { vi } from "vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import Projects from "./Projects";
 import { homeProjects } from "../../data/projects";
-import * as translation from "../../i18n/context";
+import { LanguageSwitcher } from "../LanguageSwitcher/LanguageSwitcher";
+import { renderWithLanguage } from "../../test-utils/render";
 import { englishDictionary } from "../../i18n/dictionaries/en";
 import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";
-import type { Language } from "../../i18n/types";
-
-beforeEach(() => {
-  vi.spyOn(translation, "useTranslation").mockReturnValue({
-    language: "en",
-    setLanguage: vi.fn(),
-    dictionary: englishDictionary,
-  });
-});
 
 afterEach(() => {
   cleanup();
-  vi.restoreAllMocks();
+  localStorage.clear();
 });
 
 test("SITE-R7.1 初始作品清單", () => {
-  render(<Projects />);
+  renderWithLanguage(<Projects />);
   const tabs = screen.getAllByRole("tab");
   expect(tabs.map((tab) => tab.textContent)).toEqual(
     homeProjects.map((project) => project.title),
@@ -41,117 +32,68 @@ test("SITE-R7.1 初始作品清單", () => {
   }
 });
 
-test("SITE-R7.5 內容與翻譯", () => {
-  const view = render(<Projects />);
-  expect(
-    within(screen.getByRole("tabpanel")).getByText(
-      englishDictionary.projectsData.Taigu.description,
-    ),
-  ).toBeInTheDocument();
-  vi.spyOn(translation, "useTranslation").mockReturnValue({
-    language: "en",
-    setLanguage: vi.fn(),
-    dictionary: { ...englishDictionary, projectsData: {} },
-  });
-  view.rerender(<Projects />);
+test.each([
+  ["en", englishDictionary],
+  ["zh-TW", traditionalChineseDictionary],
+] as const)("SITE-R7.5 SITE-R7.6 作品內容與期間 %s", (language, dictionary) => {
+  renderWithLanguage(<Projects />, language);
   for (const project of homeProjects) {
     fireEvent.click(screen.getByRole("tab", { name: project.title }));
     const content = within(screen.getByRole("tabpanel"));
-    expect(content.getByText(project.description)).toBeInTheDocument();
-    expect(content.getByText(project.purpose)).toBeInTheDocument();
-    expect(content.getByText(project.image_description)).toBeInTheDocument();
-    expect(content.getByRole("link", { name: project.visit_label })).toHaveAttribute(
+    const copy = dictionary.projectsData[project.id];
+    for (const text of [copy.description, copy.purpose, copy.image_description])
+      expect(content.getByText(text)).toBeInTheDocument();
+    expect(content.getByRole("link", { name: copy.visit_label })).toHaveAttribute(
       "href",
       project.demo_url,
     );
-    expect(content.getByText(project.tags.join(" · "))).toBeInTheDocument();
+    expect(content.getByText(copy.tags.join(" · "))).toBeInTheDocument();
   }
+  fireEvent.click(screen.getByRole("tab", { name: "Noads" }));
+  expect(within(screen.getByRole("tabpanel")).getByText("2024")).toBeInTheDocument();
+  fireEvent.click(screen.getByRole("tab", { name: "Taigu" }));
+  expect(
+    within(screen.getByRole("tabpanel")).getByText(
+      language === "en" ? "2021 to Present" : "2021 年至今",
+    ),
+  ).toBeInTheDocument();
 });
 
-test.each<Language>(["en", "zh-TW"])(
-  "SITE-R7.5 Leechai 描述在 %s 翻譯缺漏時維持個人理財內容",
-  (language) => {
-    const dictionary =
-      language === "en" ? englishDictionary : traditionalChineseDictionary;
-    const context = { language, setLanguage: vi.fn(), dictionary };
-    const useTranslation = vi.spyOn(translation, "useTranslation");
-    useTranslation.mockReturnValue(context);
-    const view = render(<Projects />);
-    fireEvent.click(screen.getByRole("tab", { name: "Leechai" }));
-    const content = within(screen.getByRole("tabpanel"));
-    expect(
-      content.getByText(dictionary.projectsData.Leechai.description),
-    ).toBeInTheDocument();
-
-    const { Leechai, ...otherProjects } = dictionary.projectsData;
-    useTranslation.mockReturnValue({
-      ...context,
-      dictionary: { ...dictionary, projectsData: otherProjects },
-    });
-    view.rerender(<Projects />);
-    expect(
-      content.getByText(englishDictionary.projectsData.Leechai.description),
-    ).toBeInTheDocument();
-
-    useTranslation.mockReturnValue({
-      ...context,
-      dictionary: {
-        ...dictionary,
-        projectsData: { ...otherProjects, Leechai: { ...Leechai, description: "" } },
-      },
-    });
-    view.rerender(<Projects />);
-    expect(
-      content.getByText(englishDictionary.projectsData.Leechai.description),
-    ).toBeInTheDocument();
-    expect(content.getByText(Leechai.purpose)).toBeInTheDocument();
-    expect(content.getByText(Leechai.image_description)).toBeInTheDocument();
-    expect(content.getByText(Leechai.tags.join(" · "))).toBeInTheDocument();
-    expect(content.getByRole("link", { name: Leechai.visit_label })).toHaveAttribute(
-      "href",
-      "https://apps.apple.com/tw/app/leechai-%E7%90%86%E6%9F%B4/id6761012779",
-    );
-  },
-);
-
-test("SITE-R7.6 期間顯示", () => {
-  const project = homeProjects[0];
-  const originalPeriod = project.maintaining_time_range;
-  const view = render(<Projects />);
-  try {
-    expect(
-      within(screen.getByRole("tabpanel")).getByText("2021 to Present"),
-    ).toBeInTheDocument();
-    project.maintaining_time_range = [new Date(2020, 0, 1), new Date(2022, 0, 1)];
-    view.rerender(<Projects />);
-    expect(
-      within(screen.getByRole("tabpanel")).getByText("2020 to 2022"),
-    ).toBeInTheDocument();
-    project.maintaining_time_range = [new Date(2024, 0, 1), new Date(2024, 11, 1)];
-    view.rerender(<Projects />);
-    expect(within(screen.getByRole("tabpanel")).getByText("2024")).toBeInTheDocument();
-    vi.spyOn(translation, "useTranslation").mockReturnValue({
-      language: "zh-TW",
-      setLanguage: vi.fn(),
-      dictionary: traditionalChineseDictionary,
-    });
-    project.maintaining_time_range = [new Date(2021, 0, 1)];
-    view.rerender(<Projects />);
-    expect(
-      within(screen.getByRole("tabpanel")).getByText("2021 年至今"),
-    ).toBeInTheDocument();
-    project.maintaining_time_range = [new Date(2020, 0, 1), new Date(2022, 0, 1)];
-    view.rerender(<Projects />);
-    expect(
-      within(screen.getByRole("tabpanel")).getByText("2020 年至 2022 年"),
-    ).toBeInTheDocument();
-  } finally {
-    project.maintaining_time_range = originalPeriod;
-  }
+test("SITE-R7.5 切換語言保留作品選取、圖片與外連", () => {
+  renderWithLanguage(
+    <>
+      <Projects />
+      <LanguageSwitcher />
+    </>,
+  );
+  fireEvent.click(screen.getByRole("tab", { name: "Leechai" }));
+  const panel = screen.getByRole("tabpanel");
+  const images = [...panel.querySelectorAll("img")].map((image) => image.src);
+  const links = within(panel)
+    .getAllByRole("link")
+    .map((link) => link.getAttribute("href"));
+  fireEvent.click(
+    screen.getByRole("button", { name: englishDictionary.header.switchLanguage }),
+  );
+  expect(screen.getByRole("tab", { name: "Leechai" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  expect(
+    within(panel).getByText(
+      traditionalChineseDictionary.projectsData.leechai.description,
+    ),
+  ).toBeInTheDocument();
+  expect([...panel.querySelectorAll("img")].map((image) => image.src)).toEqual(images);
+  expect(
+    within(panel)
+      .getAllByRole("link")
+      .map((link) => link.getAttribute("href")),
+  ).toEqual(links);
 });
 
 test("分頁以方向鍵循環、Home 與 End 切換並保留焦點", () => {
-  render(<Projects />);
+  renderWithLanguage(<Projects />);
   const tabs = screen.getAllByRole("tab");
   tabs[0].focus();
   fireEvent.keyDown(tabs[0], { key: "ArrowLeft" });
@@ -166,10 +108,10 @@ test("分頁以方向鍵循環、Home 與 End 切換並保留焦點", () => {
 });
 
 test("SITE-R8.1 作品展示", () => {
-  render(<Projects />);
+  renderWithLanguage(<Projects />);
   for (const project of homeProjects) {
     fireEvent.click(screen.getByRole("tab", { name: project.title }));
-    const label = englishDictionary.projectsData[project.title].visit_label;
+    const label = englishDictionary.projectsData[project.id].visit_label;
     expect(
       within(screen.getByRole("tabpanel")).getByRole("link", { name: label }),
     ).toHaveAttribute("href", project.demo_url);
@@ -177,7 +119,7 @@ test("SITE-R8.1 作品展示", () => {
 });
 
 test("SITE-R8.2 作品程式碼", () => {
-  render(<Projects />);
+  renderWithLanguage(<Projects />);
   for (const project of homeProjects) {
     fireEvent.click(screen.getByRole("tab", { name: project.title }));
     expect(
@@ -187,7 +129,7 @@ test("SITE-R8.2 作品程式碼", () => {
 });
 
 test("SITE-R8.3 新分頁隔離", () => {
-  render(<Projects />);
+  renderWithLanguage(<Projects />);
   for (const anchor of screen.getAllByRole("link", { hidden: true })) {
     expect(anchor).toHaveAttribute("target", "_blank");
     expect(anchor.getAttribute("rel")?.split(" ")).toEqual(

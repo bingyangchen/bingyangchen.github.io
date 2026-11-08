@@ -1,12 +1,9 @@
 import styles from "./WorkExperience.module.scss";
 import BrandImage from "../BrandImage/BrandImage";
+import type { WorkExperienceCopy } from "../../i18n/types";
 
-interface WorkExperienceProperties {
-  work_duration: string;
-  job_title: string;
-  company_name: string;
+interface WorkExperienceProperties extends WorkExperienceCopy {
   company_logo?: string;
-  description: string;
 }
 
 export default function WorkExperience({

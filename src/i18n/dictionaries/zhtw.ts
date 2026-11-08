@@ -111,21 +111,21 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     },
   },
   projectsData: {
-    Taigu: {
+    taigu: {
       tags: ["PWA", "投資理財"],
       purpose: "投資績效，一目了然。",
       description: "從交易紀錄、資產配置到績效分析，讓每一筆投資都有清楚的紀錄。",
       image_description: "Taigu 投資總覽與資產配置介面",
       visit_label: "探索 Taigu",
     },
-    Noads: {
+    noads: {
       tags: ["Chrome 外掛", "廣告阻擋"],
       purpose: "讓網頁，留下你想看的內容。",
       description: "用自訂 CSS 選擇器，移除網頁上指定的元素。",
       image_description: "Noads 擴充功能的 CSS 選擇器設定介面",
       visit_label: "前往 Chrome 商店",
     },
-    Leechai: {
+    leechai: {
       tags: ["個人理財", "原生 App"],
       purpose: "日常收支，清楚掌握。",
       description: "記錄日常收支、管理預算，在同一個 App 裡掌握個人財務。",

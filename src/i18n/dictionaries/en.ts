@@ -113,7 +113,7 @@ export const englishDictionary: TranslationDictionary = {
     },
   },
   projectsData: {
-    Taigu: {
+    taigu: {
       tags: ["PWA", "Investment"],
       purpose: "A clearer view of your investments.",
       description:
@@ -121,14 +121,14 @@ export const englishDictionary: TranslationDictionary = {
       image_description: "Taigu investment overview and asset allocation screens",
       visit_label: "Explore Taigu",
     },
-    Noads: {
+    noads: {
       tags: ["Chrome Extension", "Ad Blocker"],
       purpose: "A cleaner web, on your terms.",
       description: "Choose which page elements to remove with custom CSS selectors.",
       image_description: "Noads extension interface for configuring CSS selectors",
       visit_label: "Chrome Web Store",
     },
-    Leechai: {
+    leechai: {
       tags: ["Personal Finance", "App"],
       purpose: "Everyday finances, made clearer.",
       description:

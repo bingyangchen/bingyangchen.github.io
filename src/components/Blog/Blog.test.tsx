@@ -1,25 +1,17 @@
-import { vi } from "vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
-import * as translation from "../../i18n/context";
+import { cleanup, fireEvent, screen, within } from "@testing-library/react";
+import { LanguageSwitcher } from "../LanguageSwitcher/LanguageSwitcher";
+import { renderWithLanguage } from "../../test-utils/render";
 import { englishDictionary } from "../../i18n/dictionaries/en";
 import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";
 import Blog from "./Blog";
 
-beforeEach(() => {
-  vi.spyOn(translation, "useTranslation").mockReturnValue({
-    language: "en",
-    setLanguage: vi.fn(),
-    dictionary: englishDictionary,
-  });
-});
-
 afterEach(() => {
   cleanup();
-  vi.restoreAllMocks();
+  localStorage.clear();
 });
 
 test("SITE-R17.1 精選內容", () => {
-  render(<Blog />);
+  renderWithLanguage(<Blog />);
   expect(
     screen.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent),
   ).toEqual(["重新思考\n專案目錄結構", "Rate Limiter", "Clean Architecture"]);
@@ -37,7 +29,7 @@ test("SITE-R17.1 精選內容", () => {
 });
 
 test("SITE-R17.2 文章外連", () => {
-  render(<Blog />);
+  renderWithLanguage(<Blog />);
   const destinations = [
     ["重新思考\n專案目錄結構", "system-design/chong-xin-si-kao-zhuan-an-mu-lu-jie-gou"],
     ["Rate Limiter", "system-design/rate-limiter"],
@@ -61,7 +53,12 @@ test("SITE-R17.2 文章外連", () => {
 });
 
 test("SITE-R17.3 雙語與原文", () => {
-  const view = render(<Blog />);
+  renderWithLanguage(
+    <>
+      <Blog />
+      <LanguageSwitcher />
+    </>,
+  );
   const originalTitles = screen
     .getAllByRole("heading", { level: 3 })
     .map((heading) => heading.textContent);
@@ -69,12 +66,9 @@ test("SITE-R17.3 雙語與原文", () => {
     .getAllByRole("link")
     .map((link) => link.getAttribute("href"));
   expect(screen.getByText("Primarily in Traditional Chinese.")).toBeInTheDocument();
-  vi.spyOn(translation, "useTranslation").mockReturnValue({
-    language: "zh-TW",
-    setLanguage: vi.fn(),
-    dictionary: traditionalChineseDictionary,
-  });
-  view.rerender(<Blog />);
+  fireEvent.click(
+    screen.getByRole("button", { name: englishDictionary.header.switchLanguage }),
+  );
   expect(
     screen.queryByText("Primarily in Traditional Chinese."),
   ).not.toBeInTheDocument();
