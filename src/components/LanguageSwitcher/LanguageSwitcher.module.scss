@@ -14,15 +14,6 @@
   & > span {
     letter-spacing: normal;
   }
-  & > [data-tooltip-content] {
-    left: auto;
-    right: 0;
-    transform: translateY(100%);
-    @media (max-width: _.$medium) {
-      left: 0;
-      right: auto;
-    }
-  }
   @media (hover: hover) {
     &:hover {
       color: _.$text-primary;

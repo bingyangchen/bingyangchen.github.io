@@ -91,7 +91,11 @@
 </ButtonLink>
 ```
 
-[`RoundButton`](../components/RoundButton/RoundButton.tsx) 用於執行操作的 icon button，`hintText` 同時提供 accessible name 與 tooltip 文字。[`Tooltip`](../components/Tooltip/Tooltip.tsx) 為既有控制加入 hover 與鍵盤 focus 提示，控制本身仍須提供 accessible name。
+[`RoundButton`](../components/RoundButton/RoundButton.tsx) 用於執行操作的 icon button，`hintText` 同時提供 accessible name 與 tooltip 文字。[`Tooltip`](../components/Tooltip/Tooltip.tsx) 封裝 Radix Tooltip，讓 Escape 關閉、跨過間距的 hover 與視窗邊緣定位由同一套互動處理，控制本身仍須提供 accessible name。提示立即顯示，優先放在入口下方，必要時平移或翻轉位置；提示以 portal 放在 body，開啟 QR code dialog 時收起入口提示。
+
+元件另外記錄鍵盤聚焦入口時的開啟狀態；入口仍有焦點時，即使 Radix 因游標離開或捲動而關閉提示，元件仍維持提示顯示。按 Escape、啟用控制、點擊外部或移開焦點時，元件會清除此狀態。
+
+Tooltip 保留 `$tooltip-*` 外觀 token，定位 API 所需的像素值由 CSS Module 的 `:export` 讀取同一份 token。提示文字僅供視覺使用，文字節點設為 `aria-hidden`，讓 Radix 加入的描述不重複控制名稱，原有 description 繼續保留。不要把 `aria-hidden` 改放在被 `aria-describedby` 直接參照的外層，因為被直接參照的隱藏內容仍可能成為描述。修改時須比較 accessibility tree 中開啟前後的 name 與 description。
 
 共用元件與樣式依以下規則套用：
 

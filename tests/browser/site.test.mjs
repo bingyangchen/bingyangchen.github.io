@@ -27,6 +27,17 @@ const BLOG_MOTION = '#blog > [data-scroll-motion="content"]';
 const QR = '[class*="qr_avatar_fab"]';
 const AVATAR = '#home button[class*="avatar_button"]';
 const QR_DIALOG = 'dialog[aria-labelledby="qr-modal-title"]';
+const TOOLTIP = "[data-tooltip-content]";
+const TOOLTIP_CONTROLS = [
+  'header a[href="#home"]',
+  "[data-language-switcher]",
+  QR,
+  ...["#home", "footer"].flatMap((region) =>
+    ["github.com", "linkedin.com", "cake.me"].map(
+      (domain) => `${region} a[href*="${domain}"]`,
+    ),
+  ),
+];
 let server;
 let browser;
 let context;
@@ -3247,21 +3258,49 @@ test("SITE-R18.4 焦點樣式保留輸入方式、選取、dialog 與列印行�
   }
 });
 
+async function getTooltipSelector(controlSelector) {
+  const tooltipId = await page.waitForFunction(
+    (selector) => {
+      const control = document.querySelector(selector);
+      for (const id of control?.getAttribute("aria-describedby")?.split(/\s+/) ?? []) {
+        const content = document.getElementById(id);
+        if (
+          content?.matches("[data-tooltip-content]") &&
+          getComputedStyle(content).visibility === "visible"
+        )
+          return id;
+      }
+      return false;
+    },
+    {},
+    controlSelector,
+  );
+  try {
+    return `[data-tooltip-content][id="${await tooltipId.jsonValue()}"]`;
+  } finally {
+    await tooltipId.dispose();
+  }
+}
+
+async function getControlAccessibility(selector) {
+  const control = await page.$(selector);
+  try {
+    const snapshot = await page.accessibility.snapshot({ root: control });
+    assert.ok(snapshot, `${selector} remains accessible`);
+    return {
+      role: snapshot.role,
+      name: snapshot.name,
+      description: snapshot.description,
+    };
+  } finally {
+    await control.dispose();
+  }
+}
+
 test("SITE-R19.1 共用提示", async () => {
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
-  const controls = [
-    'header a[href="#home"]',
-    "[data-language-switcher]",
-    QR,
-    ...["#home", "footer"].flatMap((region) =>
-      ["github.com", "linkedin.com", "cake.me"].map(
-        (domain) => `${region} a[href*="${domain}"]`,
-      ),
-    ),
-  ];
-
   for (const width of [1440, 1024, 721, 390, 320]) {
     await page.setViewport({ width, height: 900 });
     await page.evaluateOnNewDocument(() =>
@@ -3276,7 +3315,7 @@ test("SITE-R19.1 共用提示", async () => {
       }
       assert.equal(await page.$("[title]"), null, "no native HTML tooltips");
       let sharedAppearance;
-      for (const selector of controls) {
+      for (const selector of TOOLTIP_CONTROLS) {
         if (selector === "[data-language-switcher]" && width <= 720) {
           await page.click('header button[aria-controls="site-navigation"]');
         }
@@ -3286,13 +3325,19 @@ test("SITE-R19.1 共用提示", async () => {
         const destination = await page.$eval(selector, (control) =>
           control.getAttribute("href"),
         );
-        const tooltip = `${selector} > [data-tooltip-content]`;
+        const accessibility = await getControlAccessibility(selector);
         await page.hover(selector);
+        const tooltip = await getTooltipSelector(selector);
         const appearance = await page.$eval(tooltip, (content) => {
           const style = getComputedStyle(content);
           const bounds = content.getBoundingClientRect();
           if (style.display === "none") throw new Error("Tooltip is hidden");
-          if (bounds.left < 0 || bounds.right > window.innerWidth)
+          if (
+            bounds.left < 0 ||
+            bounds.right > window.innerWidth ||
+            bounds.top < 0 ||
+            bounds.bottom > window.innerHeight
+          )
             throw new Error(
               `${content.textContent} extends outside ${window.innerWidth}px viewport: ${bounds.left} to ${bounds.right}`,
             );
@@ -3318,9 +3363,10 @@ test("SITE-R19.1 共用提示", async () => {
         });
         if (!sharedAppearance) sharedAppearance = appearance;
         assert.deepEqual(appearance, sharedAppearance, `${width}px ${selector}`);
-        assert.equal(
-          await page.$eval(tooltip, (content) => content.getAttribute("aria-hidden")),
-          "true",
+        assert.deepEqual(
+          await getControlAccessibility(selector),
+          accessibility,
+          "visual hints preserve the accessible name and description",
         );
         if (selector === "[data-language-switcher]" || selector === QR) {
           assert.equal(
@@ -3328,25 +3374,18 @@ test("SITE-R19.1 共用提示", async () => {
             await page.$eval(tooltip, (content) => content.textContent),
           );
         }
-        await page.mouse.move(width - 1, 899);
+        await page.mouse.move(width - 1, 899, { steps: 12 });
         await page.$eval(selector, (control) => control.focus({ preventScroll: true }));
         await page.keyboard.down("Shift");
         await page.keyboard.press("Tab");
         await page.keyboard.up("Shift");
         await page.keyboard.press("Tab");
-        assert.equal(
-          await page.$eval(tooltip, (content) => getComputedStyle(content).display),
-          "block",
-          "keyboard focus shows the same tooltip",
-        );
+        await getTooltipSelector(selector);
+        assert.deepEqual(await getControlAccessibility(selector), accessibility);
         await page.keyboard.down("Shift");
         await page.keyboard.press("Tab");
         await page.keyboard.up("Shift");
-        assert.equal(
-          await page.$eval(tooltip, (content) => getComputedStyle(content).display),
-          "none",
-          "leaving hover and focus hides the tooltip",
-        );
+        await page.waitForSelector(tooltip, { hidden: true });
         assert.equal(
           await page.$eval(selector, (control) => control.getAttribute("href")),
           destination,
@@ -3357,6 +3396,259 @@ test("SITE-R19.1 共用提示", async () => {
       }
     }
   }
+});
+
+test("SITE-R19.2 Escape 關閉提示", async () => {
+  await page.evaluateOnNewDocument(() =>
+    localStorage.setItem("preferred_language", "en"),
+  );
+  const selector = '#home a[href*="github.com"]';
+  for (const motion of ["no-preference", "reduce"]) {
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: motion },
+    ]);
+    for (const width of [1440, 390]) {
+      await page.setViewport({ width, height: 900 });
+      await openHome();
+      for (const language of ["en", "zh-TW"]) {
+        if (language === "zh-TW")
+          await page.evaluate(() =>
+            document.querySelector("[data-language-switcher]").click(),
+          );
+        await page.hover(selector);
+        const tooltip = await getTooltipSelector(selector);
+        const focusedBeforeHover = await page.evaluateHandle(
+          () => document.activeElement,
+        );
+        await page.keyboard.press("Escape");
+        await page.waitForSelector(tooltip, { hidden: true });
+        assert.equal(
+          await page.evaluate(
+            (before) => document.activeElement === before,
+            focusedBeforeHover,
+          ),
+          true,
+        );
+        await focusedBeforeHover.dispose();
+        const bounds = await page.$eval(selector, (control) =>
+          control.getBoundingClientRect().toJSON(),
+        );
+        await page.mouse.move(
+          bounds.x + bounds.width / 2 + 1,
+          bounds.y + bounds.height / 2,
+        );
+        assert.equal(
+          await page.$(tooltip),
+          null,
+          "moving within a dismissed trigger does not reopen it",
+        );
+        await page.mouse.move(width - 1, 899, { steps: 12 });
+        await page.hover(selector);
+        await getTooltipSelector(selector);
+        await page.mouse.move(width - 1, 899, { steps: 12 });
+        await page.waitForSelector(tooltip, { hidden: true });
+        await page.$eval(selector, (control) => control.focus({ preventScroll: true }));
+        await getTooltipSelector(selector);
+        await page.hover(selector);
+        await page.mouse.move(width - 1, 899, { steps: 12 });
+        await page.evaluate(
+          () =>
+            new Promise((resolveFrame) =>
+              requestAnimationFrame(() => requestAnimationFrame(resolveFrame)),
+            ),
+        );
+        assert.ok(
+          await page.$(tooltip),
+          "keyboard focus keeps the hint open after pointer departure",
+        );
+        await page.keyboard.press("Escape");
+        await page.waitForSelector(tooltip, { hidden: true });
+        assert.equal(
+          await page.$eval(selector, (control) => document.activeElement === control),
+          true,
+        );
+        await page.hover(selector);
+        await getTooltipSelector(selector);
+        await page.mouse.move(width - 1, 899, { steps: 12 });
+        await page.evaluate(
+          () =>
+            new Promise((resolveFrame) =>
+              requestAnimationFrame(() => requestAnimationFrame(resolveFrame)),
+            ),
+        );
+        assert.ok(
+          await page.$(tooltip),
+          "re-entering after Escape restores the focused hint",
+        );
+        await page.keyboard.press("Escape");
+        await page.keyboard.press("Tab");
+        await page.keyboard.down("Shift");
+        await page.keyboard.press("Tab");
+        await page.keyboard.up("Shift");
+        await getTooltipSelector(selector);
+        assert.equal(
+          await page.$eval(selector, (control) => document.activeElement === control),
+          true,
+        );
+        await page.keyboard.press("Escape");
+        await page.$eval(selector, (control) => control.blur());
+      }
+    }
+  }
+});
+
+test("SITE-R2.8 SITE-R19.2 Escape 先關閉提示再關閉窄版選單", async () => {
+  await page.setViewport({ width: 390, height: 844 });
+  await openHome();
+  const menu = 'header button[aria-controls="site-navigation"]';
+  const language = "[data-language-switcher]";
+  for (const languageCode of ["en", "zh-TW"]) {
+    if (languageCode === "zh-TW")
+      await page.evaluate(() =>
+        document.querySelector("[data-language-switcher]").click(),
+      );
+    await page.click(menu);
+    await page.$eval(language, (control) => control.focus());
+    const tooltip = await getTooltipSelector(language);
+    await page.keyboard.press("Escape");
+    await page.waitForSelector(tooltip, { hidden: true });
+    assert.equal(
+      await page.$eval(menu, (control) => control.getAttribute("aria-expanded")),
+      "true",
+    );
+    assert.equal(
+      await page.$eval(language, (control) => document.activeElement === control),
+      true,
+    );
+    await page.keyboard.press("Escape");
+    assert.equal(
+      await page.$eval(menu, (control) => control.getAttribute("aria-expanded")),
+      "false",
+    );
+    assert.equal(
+      await page.$eval(menu, (control) => document.activeElement === control),
+      true,
+    );
+  }
+});
+
+test("SITE-R19.3 游標移入提示", async () => {
+  await page.evaluateOnNewDocument(() =>
+    localStorage.setItem("preferred_language", "en"),
+  );
+  for (const motion of ["no-preference", "reduce"]) {
+    await page.emulateMediaFeatures([
+      { name: "prefers-reduced-motion", value: motion },
+    ]);
+    for (const width of [1440, 320]) {
+      await page.setViewport({ width, height: 900 });
+      await openHome();
+      for (const language of ["en", "zh-TW"]) {
+        if (language === "zh-TW")
+          await page.evaluate(() =>
+            document.querySelector("[data-language-switcher]").click(),
+          );
+        for (const selector of TOOLTIP_CONTROLS) {
+          if (selector === "[data-language-switcher]" && width <= 720)
+            await page.click('header button[aria-controls="site-navigation"]');
+          await page.$eval(selector, (control) =>
+            control.scrollIntoView({ block: "center", behavior: "instant" }),
+          );
+          await page.hover(selector);
+          const tooltip = await getTooltipSelector(selector);
+          const bounds = await page.$eval(tooltip, (content) =>
+            content.getBoundingClientRect().toJSON(),
+          );
+          const focusedBeforeHover = await page.evaluateHandle(
+            () => document.activeElement,
+          );
+          await page.mouse.move(
+            bounds.x + bounds.width / 2,
+            bounds.y + bounds.height / 2,
+            { steps: 12 },
+          );
+          await page.evaluate(
+            () =>
+              new Promise((resolveFrame) =>
+                requestAnimationFrame(() => requestAnimationFrame(resolveFrame)),
+              ),
+          );
+          assert.equal(
+            await page.$eval(tooltip, (content) =>
+              content.contains(
+                document.elementFromPoint(
+                  content.getBoundingClientRect().x + content.clientWidth / 2,
+                  content.getBoundingClientRect().y + content.clientHeight / 2,
+                ),
+              ),
+            ),
+            true,
+          );
+          assert.equal(
+            await page.evaluate(
+              (before) => document.activeElement === before,
+              focusedBeforeHover,
+            ),
+            true,
+          );
+          await focusedBeforeHover.dispose();
+          await page.mouse.move(width - 1, 899, { steps: 12 });
+          await page.waitForSelector(tooltip, { hidden: true });
+          if (selector === "[data-language-switcher]" && width <= 720)
+            await page.click('header button[aria-controls="site-navigation"]');
+        }
+      }
+    }
+  }
+});
+
+test("SITE-R19.3 提示避開視窗底部及 QR code dialog", async () => {
+  await page.emulateMediaFeatures([
+    { name: "prefers-reduced-motion", value: "reduce" },
+  ]);
+  await openHome();
+  const footerLink = 'footer a[href*="github.com"]';
+  await page.$eval(footerLink, (control) => {
+    control.scrollIntoView({ block: "center", behavior: "instant" });
+    window.scrollBy(0, control.getBoundingClientRect().bottom - (innerHeight - 2));
+  });
+  await page.hover(footerLink);
+  const footerTooltip = await getTooltipSelector(footerLink);
+  assert.equal(
+    await page.$eval(footerTooltip, (content) => content.dataset.side),
+    "top",
+  );
+  const footerBounds = await page.$eval(footerTooltip, (content) =>
+    content.getBoundingClientRect().toJSON(),
+  );
+  assert.ok(footerBounds.y >= 0 && footerBounds.bottom <= 900);
+  await page.$eval(QR, (control) =>
+    control.scrollIntoView({ block: "center", behavior: "instant" }),
+  );
+  await page.hover(QR);
+  const qrTooltip = await getTooltipSelector(QR);
+  await page.click(QR);
+  await page.waitForSelector(`${QR_DIALOG}[open]`);
+  await page.waitForSelector(qrTooltip, { hidden: true });
+  await page.hover('header a[href="#home"]');
+  assert.equal(
+    await page.$(TOOLTIP),
+    null,
+    "background hints stay closed behind a modal dialog",
+  );
+  await page.keyboard.press("Escape");
+  await page.waitForSelector(QR_DIALOG, { hidden: true });
+  assert.equal(
+    await page.$eval(QR, (control) => document.activeElement === control),
+    true,
+  );
+  await getTooltipSelector(QR);
+  await page.keyboard.press("Escape");
+  await page.waitForSelector(qrTooltip, { hidden: true });
+  assert.equal(
+    await page.$eval(QR, (control) => document.activeElement === control),
+    true,
+  );
 });
 
 async function assertColorContrast(selector, minimum = 4.5) {

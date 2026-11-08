@@ -1,35 +1,30 @@
+@use "sass:math";
 @use "../../styles/tokens" as _;
 
-.trigger {
-  position: relative;
+:export {
+  gap: math.div(_.$tooltip-gap, 1px);
+  viewportPadding: math.div(_.$tooltip-viewport-padding, 1px);
+}
 
-  & > .content {
-    position: absolute;
-    bottom: -(_.$tooltip-gap);
-    left: 50%;
-    z-index: 1;
+.content {
+  z-index: _.$tooltip-z-index;
+  width: max-content;
+  max-width: var(--radix-tooltip-content-available-width);
+  padding: _.$tooltip-padding;
+  border-radius: _.$tooltip-radius;
+  background-color: _.$black;
+  color: _.$text-on-fill;
+  opacity: _.$tooltip-opacity;
+  font: normal #{_.$tooltip-font-size}/ 1.4 _.$body-font-family;
+  letter-spacing: normal;
+  text-align: center;
+  overflow-wrap: anywhere;
+
+  & > span {
+    letter-spacing: inherit;
+  }
+
+  @media print {
     display: none;
-    width: max-content;
-    padding: _.$tooltip-padding;
-    transform: translate(-50%, 100%);
-    border-radius: _.$tooltip-radius;
-    background-color: _.$black;
-    color: _.$text-on-fill;
-    opacity: _.$tooltip-opacity;
-    font: normal #{_.$tooltip-font-size}/ 1.4 _.$body-font-family;
-    letter-spacing: normal;
-    text-align: center;
-    white-space: nowrap;
-    pointer-events: none;
-  }
-
-  @media (hover: hover) {
-    &:hover > .content {
-      display: block;
-    }
-  }
-
-  &:focus-visible > .content {
-    display: block;
   }
 }

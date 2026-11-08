@@ -21,7 +21,7 @@ export default function Header() {
     if (!isMenuOpen) return;
 
     function closeOnEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
+      if (event.key === "Escape" && !event.defaultPrevented) {
         setIsMenuOpen(false);
         menuButtonRef.current?.focus();
       }

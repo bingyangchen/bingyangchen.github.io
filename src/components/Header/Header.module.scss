@@ -75,10 +75,6 @@
         width: 32px;
         height: 32px;
       }
-      & > [data-tooltip-content] {
-        left: 0;
-        transform: translateY(100%);
-      }
     }
     & > .menu_button {
       display: none;

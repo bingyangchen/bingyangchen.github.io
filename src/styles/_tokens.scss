@@ -92,9 +92,11 @@ $button-radius: 15px;
 
 $tooltip-font-size: 0.8 * $base-font-size;
 $tooltip-gap: 2px;
+$tooltip-viewport-padding: $space-2;
 $tooltip-padding: 3px 10px;
 $tooltip-radius: 3px;
 $tooltip-opacity: 0.7;
+$tooltip-z-index: 21;
 
 $motion-duration-arrow: 220ms;
 

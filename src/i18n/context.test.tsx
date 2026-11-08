@@ -73,7 +73,7 @@ test("SITE-R4.1 雙向切換", () => {
   expect(screen.getByRole("status")).toHaveTextContent("zh-TW:陳秉洋");
   expect(localStorage.getItem("preferred_language")).toBe("zh-TW");
   expect(toggle).not.toHaveAttribute("title");
-  expect(screen.getByText("切換成英文")).toHaveAttribute("aria-hidden", "true");
+  expect(toggle).toHaveAccessibleName("切換成英文");
   fireEvent.click(toggle);
   expect(screen.getByRole("status")).toHaveTextContent("en:Bing-Yang Chen");
   expect(localStorage.getItem("preferred_language")).toBe("en");

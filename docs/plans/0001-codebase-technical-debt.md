@@ -15,7 +15,7 @@ depends_on: []
 
 ## 核准紀錄
 
-尚未核准。
+- 2026-11-08：使用者核准 TD-04，授權完成 Tooltip 的互動與定位改善，並指定不建立 commit。其餘項目尚未核准。
 
 ## 範圍
 
@@ -36,7 +36,6 @@ P1 優先處理已確認的可讀性、操作問題；P2 處理會持續增加�
 <!-- prettier-ignore -->
 | 編號 | 優先順序 | 調整主題 | 證據種類 |
 | --- | --- | --- | --- |
-| TD-04 | P1 | 改善 Tooltip 的關閉與游標操作 | 已重現、程式碼確認 |
 | TD-05 | P1 | 允許使用者縮放頁面 | 程式碼確認，涉及設計決策變更 |
 | TD-06 | P2 | 補齊 Footer 的最小操作高度 | 已重現 |
 | TD-07 | P2 | 收緊工作經歷、字典與 fallback 的資料約定 | 程式碼確認 |
@@ -63,17 +62,9 @@ P1 優先處理已確認的可讀性、操作問題；P2 處理會持續增加�
 
 ## 設計稿
 
-無大幅版面或資訊架構變更，因此不新增畫面設計稿。TD-04、TD-05、TD-06 涉及局部操作修正，須以修改前後的雙語桌面、窄版畫面及鍵盤狀態驗收。建議操作及縮放政策寫在下方 Spec 變更，核准前不改動現行設計文件。
+無大幅版面或資訊架構變更，因此不新增畫面設計稿。TD-05、TD-06 涉及局部操作修正，須以修改前後的雙語桌面、窄版畫面及鍵盤狀態驗收。建議操作及縮放政策寫在下方 Spec 變更，核准前不改動現行設計文件。
 
 ## 檢查發現與調整方案
-
-### TD-04：使用完整的 Tooltip 互動
-
-證據：[`Tooltip.tsx`](../../src/components/Tooltip/Tooltip.tsx) 以 `cloneElement` 修改任意子元素，並把提示插入控制。其 [樣式](../../src/components/Tooltip/Tooltip.module.scss) 只用 `:hover`、`:focus-visible` 控制顯示，內容設定 `pointer-events: none`。實測 GitHub 控制取得焦點後，按 Escape 仍保持顯示；游標移入提示區也沒有維持顯示的機制。
-
-[W3C 1.4.13](https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html) 說明額外內容的關閉、可移入及持續顯示條件。建議採用 [Radix Tooltip](https://www.radix-ui.com/primitives/docs/components/tooltip) 的互動與定位能力，外觀繼續使用本站 token。Tooltip 的 accessible name 必須檢查是否重複，不能因 library 自動加入 `aria-describedby` 而讓同一名稱被重讀。
-
-完成條件：滑鼠可從入口移到提示，Escape 能在保留控制焦點下關閉，離開後再次進入可重新開啟；窄版靠邊、Footer、dialog top layer、語言切換及 reduced motion 均正確。修改只限 Tooltip，不把整個元件庫換成 Radix。
 
 ### TD-05：解除頁面縮放限制
 
@@ -302,7 +293,6 @@ stateDiagram-v2
 | 項目 | 建議 | 原因及決策保存位置 |
 | --- | --- | --- |
 | Browser runner | 改用 Playwright Test | Fixtures、等待、跨瀏覽器與診斷由現成工具提供；保存於 README、測試設定及驗證文件。 |
-| Tooltip | 使用成熟 primitive，優先 Radix Tooltip | 完整的關閉、hover 與定位行為超出目前 CSS 提示能力；保存於 design system 與 SITE-R19。 |
 | PDF 結構解析 | 改用 PDF library | PDF 物件與壓縮格式交給 parser，網站只保留自身的字型、紙張與內容要求；保存於 build 工程說明。 |
 | QR code | 保留 `qrcode.react` 與原生 dialog | 目前已用現成 QR code encoder 與 browser modal，沒有重造這兩項功能。 |
 | 區塊導覽 | 保留原生 anchor，加上小型網站狀態管理 | Hash 與閱讀位置是本站既有需求；不以另一個 scroll library 取代 browser history。保存於 SITE-R2 與 navigation 模組。 |
@@ -359,16 +349,6 @@ flowchart TD
 | SITE-R15.2 既有 Registration 清理 | 取得 registrations 後只 unregister 本網站已知 scope 與 script URL 的紀錄；沒有 active worker 也能完成檢查，不能宣稱立即移除既有 controller 或清空 cache。 | unit、browser、manual |
 | SITE-R15.3 Registration 查詢失敗 | Service worker API 不存在或查詢被拒絕時，首頁仍啟動且沒有未處理的 Promise rejection；其他 scope 與其他 script URL 的 registrations 保留。 | unit |
 
-### SITE-R19：可關閉並可移入的 Tooltip
-
-Tooltip 保留既有深底、白字、圓角、控制下方位置、靠邊對齊、雙語及 accessible name 規則，增加以 Escape 關閉與游標移入的行為。提示內不新增可操作項目。
-
-<!-- prettier-ignore -->
-| 情境 | 條件、動作與結果 | 驗證方式 |
-| --- | --- | --- |
-| SITE-R19.2 Escape 關閉提示 | 入口 hover 或鍵盤 focus 顯示提示後，按 Escape 關閉提示，原控制焦點及操作不變；離開再進入入口可重新顯示。 | browser、manual |
-| SITE-R19.3 游標移入提示 | 游標從入口移到提示文字時，提示維持可讀，移出入口及提示後才隱藏；靠邊與 dialog 狀態沒有遮住必要操作，提示不重複加入控制名稱。 | browser、manual |
-
 ### 其他需求的修訂原則
 
 SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-25 的 noscript 若更新，新增說明「無 JavaScript 仍可閱讀主要內容及取得 PDF；需操作狀態的功能需要 JavaScript」，連結到 SITE-R14.2 的既有情境，不把舊 sitemap 是否存活寫成已確認需求。
@@ -381,7 +361,7 @@ SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-
 
 ```mermaid
 flowchart TD
-  baseline[保留驗證基準與情境對應] --> fixes[TD-04 到 TD-06：局部缺陷]
+  baseline[保留驗證基準與情境對應] --> fixes[TD-05、TD-06：局部缺陷]
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-07 到 TD-10、TD-24：內容與功能分工]
   tooling --> tests[TD-13、TD-14、TD-22：測試與診斷]
@@ -414,8 +394,6 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 | SITE-R12.9 Footer 操作尺寸 | browser，量測所有 Footer anchor 的矩形與 focus。 |
 | SITE-R15.2 既有 Registration 清理 | 使用 unit、browser、manual 驗證符合清理條件與應保留的 registrations，並涵蓋有 waiting worker、沒有 active worker，以及既有 controller 仍控制頁面的情況。 |
 | SITE-R15.3 Registration 查詢失敗 | unit，涵蓋 API 不存在、查詢拒絕及不屬於本站的紀錄。 |
-| SITE-R19.2 Escape 關閉提示 | browser、manual，涵蓋 hover、focus、重新進入與焦點維持。 |
-| SITE-R19.3 游標移入提示 | browser、manual，涵蓋游標移動、靠邊、Footer、QR code dialog 與雙語。 |
 
 ### 工程驗收
 
