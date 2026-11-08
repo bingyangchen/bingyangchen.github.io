@@ -4,16 +4,16 @@ import type { WorkExperienceData } from "../types";
 import swagLogo from "../assets/swag_logo.webp";
 
 // Source: https://www.gaia.net/images/ci/apple-icon-152x152.png
-import gaiaLogo from "../assets/gaia_logo.webp";
+import gaiaLogo from "../assets/responsive/gaia_logo-64.webp";
 
 // Source: https://cdn04.pinkoi.com/pinkoi.site/general/favicon/favicon_192x192.png
-import pinkoiLogo from "../assets/pinkoi_logo.webp";
+import pinkoiLogo from "../assets/responsive/pinkoi_logo-64.webp";
 
 // Source: https://www.sysfeather.com/en-US/logo-sysfeather-v2.png
-import sysfeatherLogo from "../assets/sysfeather_logo.webp";
+import sysfeatherLogo from "../assets/responsive/sysfeather_logo-64.webp";
 
 // Source: https://www.bdsh.ntpc.edu.tw/var/file/0/1000/msys_1000_9064694_48923.png
-import beidaLogo from "../assets/beida_logo.webp";
+import beidaLogo from "../assets/responsive/beida_logo-64.webp";
 
 export const workExperienceItems: WorkExperienceData[] = [
   {

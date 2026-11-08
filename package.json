@@ -9,6 +9,7 @@
     "postbuild": "npm run prerender",
     "prerender": "node scripts/prerender.mjs",
     "preview": "node scripts/serve-build.mjs",
+    "images:generate": "node scripts/generate-images.mjs",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "lint": "eslint src scripts tests *.mjs *.mts --max-warnings 0",

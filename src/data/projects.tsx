@@ -1,12 +1,12 @@
-import leechaiLogo from "../assets/leechai_logo.webp";
-import noadsLogo from "../assets/noads_logo.webp";
-import taiguLogo from "../assets/taigu_logo.webp";
+import leechaiLogo from "../assets/responsive/leechai_logo-78.webp";
+import noadsLogo from "../assets/responsive/noads_logo-78.webp";
+import taiguLogo from "../assets/responsive/taigu_logo-78.webp";
 
 import type { Project } from "../types";
 
 export const homeProjects: Project[] = [
   {
-    icon: <img src={taiguLogo} alt="Taigu" />,
+    icon: <img src={taiguLogo} alt="Taigu" width={26} height={26} />,
     title: "Taigu",
     purpose: "A clearer view of your investments.",
     image_description: "Taigu investment overview and asset allocation screens",
@@ -19,7 +19,7 @@ export const homeProjects: Project[] = [
     demo_url: "https://taigu.tw/welcome",
   },
   {
-    icon: <img src={noadsLogo} alt="Noads" />,
+    icon: <img src={noadsLogo} alt="Noads" width={26} height={26} />,
     title: "Noads",
     purpose: "A cleaner web, on your terms.",
     image_description: "Noads extension interface for configuring CSS selectors",
@@ -33,7 +33,7 @@ export const homeProjects: Project[] = [
       "https://chromewebstore.google.com/detail/noads/mcdfnneilaagajpfcfiofdjibclkflhg",
   },
   {
-    icon: <img src={leechaiLogo} alt="Leechai 理柴" />,
+    icon: <img src={leechaiLogo} alt="Leechai 理柴" width={26} height={26} />,
     title: "Leechai",
     purpose: "Everyday finances, made clearer.",
     image_description: "Leechai account overview and personal settings screens",

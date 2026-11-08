@@ -170,6 +170,8 @@ Projects 以作品分頁控制單一展示區，依資料順序提供 Taigu、No
 
 內容使用目前語言字典及既有資料 fallback，圖片保留真實介面，期間依資料顯示目前語言的進行中文字，同年起迄合併為一個年份。分頁及展示區具可辨識名稱。
 
+作品大圖只隨目前選取的作品載入，各面板的文字與展示框持續保留最大自然高度。圖片提供不同尺寸的 WebP；小於或等於 512 px 時，第二張 App 畫面使用內嵌預覽來源，不下載桌面大圖。切換後立即提供目前作品的小型預覽，完整圖片載入後取代預覽；直接開啟 `#projects`、resize 與無 JavaScript 的初始作品仍有可讀取的靜態圖片來源。
+
 選取狀態依下圖切換：
 
 ```mermaid
@@ -192,6 +194,7 @@ stateDiagram-v2
 | SITE-R7.7 重載後狀態 | 切換作品後 reload，回到第一個作品；作品選取不寫入 URL 或持久儲存。 | browser |
 | SITE-R7.8 鍵盤操作作品 | 以 Tab 進入目前作品分頁，以左右方向鍵循環切換、Home 及 End 選取首尾，以 Enter 或 Space 選取；Tab 可進入展示區及外連，分頁與外連有可辨識焦點提示。 | browser、manual |
 | SITE-R7.9 作品展示層次 | 在兩種語言及三個作品檢查名稱、用途、真實介面與操作的主次，日期及分類維持次要，選取提示不只靠顏色；圖片沒有周邊宣傳背景殘留或介面被意外裁切。 | manual |
+| SITE-R7.10 圖片載入 | 首次載入不請求未選作品的大圖，窄版不下載第二張 App 大圖；切換作品先顯示目前作品的預覽再顯示完整圖片，直接 hash、resize 與無 JavaScript 的初始圖片均可載入，切換保持頁面高度、焦點及捲動位置。 | browser |
 
 ### SITE-R8 外連目的地與操作
 
@@ -366,6 +369,8 @@ Reduced-motion 下停用首頁全部非必要動畫及過場，完整顯示問�
 Production build 在前端 compile 成功後執行首頁 prerender，使用繁中、台北時區及減少動態設定擷取 `#root` 的內容，保留原 shell head，排除 body portal。HTML 不包含滾動動態的啟用標記或暫存視覺狀態，首頁產生可在 JavaScript 啟動前讀取的文字；需要操作的功能仍依賴 JavaScript。
 
 Prerender 與 PDF 輸出只允許 loopback HTTP 資源及頁面內的 data、blob URL，阻擋並回報非預期外連。資源的 HTTP 錯誤、載入或圖片解碼失敗，以及 console error 或未處理的 JavaScript error，均使 build 失敗。外部網站僅作為訪客主動開啟的目的地。
+
+Prerender 在檢查時載入延後的圖片，逐一驗證作品及其 responsive sources，再還原第一個作品。輸出的 HTML 保留原本的延後載入屬性與可見預覽，不保存檢查時的選取或圖片載入完成狀態。
 
 前端 compile 完成後，接續執行首頁 prerender 並產生履歷 PDF。產生 PDF 時可在內部使用 `/resume` 的 client route，但公開輸出仍只有首頁 HTML 與 PDF，不新增 `/resume/index.html`。共同檢查必須使用當次 compile 的乾淨輸出，不依賴上次殘留的 HTML 或 PDF。
 

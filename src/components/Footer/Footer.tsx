@@ -1,4 +1,4 @@
-import logo from "../../assets/logo.webp";
+import logo from "../../assets/responsive/logo-96.webp";
 import { useTranslation } from "../../i18n/context";
 import { IconArrowUpRight } from "../../icons";
 import styles from "./Footer.module.scss";

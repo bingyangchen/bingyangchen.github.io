@@ -19,6 +19,16 @@ before(async () => {
         .end(
           '<html><head><link rel="icon" href="data:,"></head><body>Resource fixture</body></html>',
         );
+    } else if (request.url.startsWith("/pending-image.svg")) {
+      response.writeHead(200, { "Content-Type": "image/svg+xml" });
+      response.write('<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1">');
+      response.once("close", () => response.end());
+    } else if (request.url === "/ready-image.svg") {
+      response
+        .writeHead(200, { "Content-Type": "image/svg+xml" })
+        .end(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1"/></svg>',
+        );
     } else if (request.url === "/html-image.png") {
       response
         .writeHead(200, { "Content-Type": "text/html" })
@@ -95,6 +105,57 @@ test("resource checks reject missing, invalid and failed local resources", async
   }
 });
 
+test(
+  "resource checks accept superseded image cancellations but reject an undecodable current image",
+  { timeout: 15000 },
+  async () => {
+    const context = await browser.createBrowserContext();
+    const page = await context.newPage();
+    const resources = await watchPageResources(page);
+    try {
+      await page.goto(fixtureOrigin, { waitUntil: "networkidle0" });
+      const response = page.waitForResponse((response) =>
+        response.url().includes("/pending-image.svg"),
+      );
+      await page.evaluate(() => {
+        const image = new Image();
+        image.src = "/pending-image.svg";
+        document.body.append(image);
+      });
+      await response;
+      const failed = new Promise((resolveFailed, rejectFailed) => {
+        const timer = setTimeout(
+          () => rejectFailed(new Error("Expected image cancellation")),
+          5000,
+        );
+        page.once("requestfailed", (request) => {
+          clearTimeout(timer);
+          resolveFailed(request.failure().errorText);
+        });
+      });
+      await page.$eval("img", (image) => {
+        image.src = "/ready-image.svg";
+      });
+      assert.equal(await failed, "net::ERR_ABORTED");
+      await resources.assertLoaded();
+
+      const pending = page.waitForResponse((response) =>
+        response.url().includes("/pending-image.svg?required"),
+      );
+      await page.$eval("img", (image) => {
+        image.src = "/pending-image.svg?required";
+      });
+      await pending;
+      const session = await page.createCDPSession();
+      await session.send("Page.stopLoading");
+      await assert.rejects(resources.assertLoaded(), /Image cannot be decoded/);
+    } finally {
+      resources.stop();
+      await context.close();
+    }
+  },
+);
+
 test("resource checks preserve console and JavaScript failures", async () => {
   const context = await browser.createBrowserContext();
   const page = await context.newPage();
@@ -138,6 +199,7 @@ test("SITE-R6.5 local brand images reserve space in both languages and hide fail
           {},
           language,
         );
+        await resources.assertLoaded();
         const images = await page.$$eval("[data-brand-image]", (images) =>
           images.map((image) => ({
             url: image.src,

@@ -15,7 +15,8 @@ depends_on: []
 
 ## 核准紀錄
 
-- 2026-11-08：使用者核准 TD-04，授權完成 Tooltip 的互動與定位改善，並指定不建立 commit。其餘項目尚未核准。
+- 2026-11-08：使用者核准 TD-04，授權完成 Tooltip 的互動與定位改善，並指定不建立 commit。未列於核准紀錄的項目尚未核准。
+- 2026-11-08：使用者核准 TD-18，授權改善圖片尺寸、responsive sources 與載入策略，並指定不建立 commit。
 
 ## 範圍
 
@@ -45,7 +46,6 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 | TD-13 | P2 | 採用 Playwright Test 管理瀏覽器測試 | 程式碼確認 |
 | TD-15 | P2 | 使用 PDF parser 並補足 PDF 內容驗證 | 程式碼確認 |
 | TD-16 | P2 | 共用靜態檔案服務並拆分 prerender 職責 | 程式碼確認 |
-| TD-18 | P2 | 降低初始與隱藏圖片的下載成本 | 已重現 |
 | TD-19 | P2 | 移除停用的 Workbox 程式並保留精確清理 | 程式碼確認 |
 | TD-20 | P2 | 補足 Node 工具與瀏覽器測試的型別檢查 | 程式碼確認 |
 | TD-21 | P2 | 補上 Node 與 npm 的版本選擇方式 | 程式碼確認 |
@@ -168,14 +168,6 @@ stateDiagram-v2
 建議共用靜態檔案服務，嚴格模式直接回 404，build 模式只對明確允許的 `/`、`/resume` 提供 shell。MIME、路徑與錯誤處理維持一份；預期 ENOENT 可回 404，讀取權限或其他 I/O 錯誤須回報原因。首頁 snapshot、browser 啟動、履歷 PDF 與驗證拆成可各自測試的腳本模組。
 
 完成條件：缺少圖片不回 HTML 200，無效 URL 不使 process 失敗，既有 traversal、symlink、HEAD 測試保留。Browser 啟動或關閉失敗時也確實關閉 server，設定整體執行期限並記錄失敗階段。現有 failure fixtures 只複製單一 `prerender.mjs`，拆檔後必須同步複製需要的模組或透過明確工作目錄注入測試，不能讓 fixture 因找不到 import 而假裝驗證到預期錯誤。
-
-### TD-18：降低初始圖片下載及解碼成本
-
-證據：390 × 844 首次開啟且尚未選取其他作品時，本機圖片的 decoded response body 共 2,143,144 bytes，約 2.04 MiB，這是資源 bytes，不是記憶體解碼大小或實測行動網路時間。未選取的 Noads、Leechai 圖片仍會下載，窄版隱藏的第二張圖片也一樣。Leechai settings 為 848.0 KiB、accounts 為 425.2 KiB；背面頭像是 3600 × 3600、276.2 KiB，但顯示尺寸遠小於原圖。
-
-建議產出合適尺寸的 WebP 或其他經實測適用的格式，提供 responsive sources。首屏必要頭像維持可立即顯示，非首屏、未選作品與窄版不用的圖延後載入；需要保留版面高度的 panels 保留文字及幾何，不為省圖直接卸載整個 panel。延後來源的策略須避免 prerender 把暫存 URL 或 JS 專用圖片當成唯一可讀內容。
-
-完成條件：相同 viewport 首次載入不請求未選作品的大圖，窄版不下載不用的第二張圖；直接開啟 `#projects` 與快速切換仍即時顯示正確作品，沒有明顯空白、頁面縮短或圖片位移。記錄優化前後 bytes、圖片尺寸及 Lighthouse/瀏覽器量測，再依結果設定可維護的資源預算。`public/cover.png` 另作社群預覽資源優化，不把其 1.24 MiB 算進一般首頁圖片 request。
 
 ### TD-19：移除停用的 Workbox 程式並保留精確清理
 
@@ -317,7 +309,7 @@ flowchart TD
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-07 到 TD-10、TD-24：內容與功能分工]
   tooling --> tests[TD-13、TD-22：測試與診斷]
-  tooling --> build[TD-15、TD-16、TD-18、TD-19：靜態輸出與資源]
+  tooling --> build[TD-15、TD-16、TD-19：靜態輸出與資源]
   content --> logic[TD-11、TD-12：Motion 與導覽]
   tests --> logic
   content --> styles[TD-23、TD-27：共用樣式與控制]
@@ -355,7 +347,7 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 | 內容與模組 | ID 缺漏在檢查階段失敗，共用事實有單一維護位置，fallback、雙語與履歷共享事實保持一致；沒有循環 import 或功能私有模組對外公開。 |
 | Motion 與導覽 | 純函式驗證與既有 browser 情境通過，桌面及實機快捲、反轉、歷史還原、focus、resize、reduced motion 另有實測紀錄。 |
 | PDF 與 Prerender | 失敗 fixtures 確實測到預期原因；PDF parser、獨立文字擷取及人工版面檢查分別回報。 |
-| 資源及載入 | 記錄同 viewport 的圖片 request 與 bundle gzip 差異，隱藏及未選作品的大圖不提前下載，直接 hash 和無 JavaScript 情境仍可讀。 |
+| 資源及載入 | 記錄履歷 route 分割前後的 bundle gzip 差異，prerender 仍保留完整靜態內容。 |
 | 測試與 CI | Runner 和 checker 接受相同檔案與測試宣告，主要跨瀏覽器流程有結果，失敗時有診斷 artifact，失敗輸出及非 main ref 均不發布。 |
 | 文件 | 同一批實作更新 design context、spec、manual checks、README 及 design system 的相關規則，完成並驗證的 Roadmap 項目才移除。 |
 

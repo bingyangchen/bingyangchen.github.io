@@ -214,11 +214,57 @@ async function snapshot(page, origin, route, resources) {
     );
   }
 
+  // Unselected artwork is absent from the DOM, but every project's assets must pass build checks.
+  const projectTabs = await page.$$('#projects [role="tab"]');
+  for (let index = 0; index < projectTabs.length; index++) {
+    await projectTabs[index].evaluate((tab) => tab.click());
+    await page.waitForFunction(
+      (selected) =>
+        document
+          .querySelectorAll('#projects [role="tab"]')
+          [selected]?.getAttribute("aria-selected") === "true",
+      {},
+      index,
+    );
+    await resources.assertLoaded();
+    await page.$$eval("#projects img[srcset]", async (images) => {
+      // A valid currentSrc does not prove the other DPR renditions can be decoded.
+      const sources = new Set(
+        images.flatMap((image) =>
+          image.srcset.split(",").map((source) => source.trim().split(/\s+/)[0]),
+        ),
+      );
+      for (const source of sources) {
+        const image = new Image();
+        image.src = source;
+        try {
+          await image.decode();
+        } catch {
+          throw new Error(`Image cannot be decoded: ${source} (responsive artwork)`);
+        }
+      }
+    });
+  }
+  if (projectTabs.length) {
+    await projectTabs[0].evaluate((tab) => tab.click());
+    await page.waitForFunction(
+      () =>
+        document
+          .querySelector('#projects [role="tab"]')
+          ?.getAttribute("aria-selected") === "true",
+    );
+  }
+
   await waitForDomIdle(page, DOM_IDLE_MS, DOM_SETTLE_TIMEOUT_MS);
   await resources.assertLoaded();
 
   // Capturing only #root preserves shell metadata and excludes body-level portals.
-  const rootHtml = await page.$eval("#root", (root) => root.innerHTML);
+  const rootHtml = await page.$eval("#root", (root) => {
+    const snapshot = root.cloneNode(true);
+    for (const preview of snapshot.querySelectorAll("[data-artwork-preview]"))
+      preview.removeAttribute("data-loaded");
+    return snapshot.innerHTML;
+  });
   if (!rootHtml.trim()) {
     throw new Error(`${route} rendered an empty #root`);
   }

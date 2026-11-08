@@ -1,9 +1,12 @@
 import { KeyboardEvent, ReactNode, useId, useRef, useState } from "react";
-import leechaiAccounts from "../../assets/leechai-accounts.png";
-import leechaiSettings from "../../assets/leechai-settings.png";
-import noadsInterface from "../../assets/noads-interface.png";
-import taiguAllocation from "../../assets/taigu-allocation.webp";
-import taiguOverview from "../../assets/taigu-overview.webp";
+import {
+  leechaiAccounts,
+  leechaiSettings,
+  noadsInterface,
+  taiguAllocation,
+  taiguOverview,
+} from "./artwork";
+import ProjectImage from "./ProjectImage";
 import { homeProjects } from "../../data/projects";
 import { useTranslation } from "../../i18n/context";
 import type { Language } from "../../i18n/types";
@@ -14,46 +17,22 @@ import styles from "./Projects.module.scss";
 const projectTitleToArtwork: Record<string, ReactNode> = {
   Taigu: (
     <>
-      <img
-        className={`${styles.device} ${styles.deviceMain}`}
-        src={taiguOverview}
-        alt=""
-        width={732}
-        height={1476}
-      />
-      <img
-        className={`${styles.device} ${styles.deviceSecondary}`}
-        src={taiguAllocation}
-        alt=""
-        width={732}
-        height={1476}
+      <ProjectImage className={styles.deviceMain} image={taiguOverview} />
+      <ProjectImage
+        className={styles.deviceSecondary}
+        image={taiguAllocation}
+        secondary
       />
     </>
   ),
-  Noads: (
-    <img
-      className={`${styles.device} ${styles.extension}`}
-      src={noadsInterface}
-      alt=""
-      width={1200}
-      height={2538}
-    />
-  ),
+  Noads: <ProjectImage className={styles.extension} image={noadsInterface} />,
   Leechai: (
     <>
-      <img
-        className={`${styles.device} ${styles.leechaiMain}`}
-        src={leechaiAccounts}
-        alt=""
-        width={885}
-        height={1777}
-      />
-      <img
-        className={`${styles.device} ${styles.leechaiSecondary}`}
-        src={leechaiSettings}
-        alt=""
-        width={885}
-        height={1777}
+      <ProjectImage className={styles.leechaiMain} image={leechaiAccounts} />
+      <ProjectImage
+        className={styles.leechaiSecondary}
+        image={leechaiSettings}
+        secondary
       />
     </>
   ),
@@ -166,7 +145,7 @@ export default function Projects() {
                 </p>
               </div>
               <figure className={styles.productStage}>
-                <div className={styles.productArt}>{artwork}</div>
+                <div className={styles.productArt}>{selected && artwork}</div>
                 <figcaption className={styles.imageDescription}>
                   {translation?.image_description || project.image_description}
                 </figcaption>

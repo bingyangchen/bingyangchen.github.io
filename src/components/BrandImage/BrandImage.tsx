@@ -20,6 +20,8 @@ export default function BrandImage({
   const [failedSource, setFailedSource] = useState<string>();
   return (
     <img
+      loading="lazy"
+      decoding="async"
       {...properties}
       src={src}
       alt={alt}

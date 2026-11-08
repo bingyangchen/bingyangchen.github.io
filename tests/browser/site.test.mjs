@@ -449,20 +449,27 @@ test("SITE-R12.9 Footer 操作尺寸、排列及文字放大", { timeout: 45000 
       await page.keyboard.press("Tab");
       for (const link of await page.$$("footer a")) {
         await link.focus();
-        assert.equal(
-          await link.evaluate((element) => {
-            const rect = element.getBoundingClientRect();
-            const style = getComputedStyle(element);
-            const outset =
-              parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
-            return (
-              element.matches(":focus-visible") &&
-              style.outlineWidth === "2px" &&
-              rect.left >= outset &&
-              rect.right + outset <= innerWidth
-            );
-          }),
-          true,
+        const focus = await link.evaluate((element) => {
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          const outset =
+            parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
+          return {
+            name: element.textContent,
+            visible: element.matches(":focus-visible"),
+            outlineWidth: style.outlineWidth,
+            outset,
+            left: rect.left,
+            right: rect.right,
+            viewportWidth: innerWidth,
+          };
+        });
+        assert.ok(
+          focus.visible &&
+            focus.outlineWidth === "2px" &&
+            focus.left >= focus.outset &&
+            focus.right + focus.outset <= focus.viewportWidth,
+          JSON.stringify({ language, width, focus }),
         );
       }
       await page.$eval("html", (element) => {
@@ -2089,6 +2096,16 @@ test(
 );
 test("SITE-R14.4 首頁缺圖及非預期外連阻止 prerender", { timeout: 60000 }, async () => {
   const fixtures = [
+    [
+      `const root = document.getElementById("root");
+       root.innerHTML += '<section id="projects"><button role="tab" aria-selected="true">First</button><button role="tab" aria-selected="false">Second</button></section>';
+       const tabs = root.querySelectorAll('[role="tab"]');
+       tabs.forEach((tab, index) => tab.onclick = () => {
+         tabs.forEach(other => other.setAttribute("aria-selected", String(other === tab)));
+         if (index === 1) { const image = new Image(); image.loading = "lazy"; image.src = "/missing-unselected-artwork.png"; root.append(image); }
+       });`,
+      "missing-unselected-artwork.png",
+    ],
     [
       'const image = new Image(); image.src = "/missing-home-image.png"; document.body.append(image);',
       "missing-home-image.png",

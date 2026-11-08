@@ -22,10 +22,17 @@ export async function watchPageResources(page) {
         failures.push(`Request interception: ${describeRequest(request)}: ${error}`);
     }
   };
-  const onRequestFailed = (request) =>
+  const onRequestFailed = (request) => {
+    // Picture changes and DOM replacement cancel obsolete images; current images still must decode.
+    if (
+      request.resourceType() === "image" &&
+      request.failure()?.errorText === "net::ERR_ABORTED"
+    )
+      return;
     failures.push(
       `Request failed: ${describeRequest(request)}: ${request.failure()?.errorText}`,
     );
+  };
   const onResponse = (response) => {
     const request = response.request();
     const status = response.status();
@@ -65,11 +72,17 @@ export async function watchPageResources(page) {
       const imageFailures = await page.$$eval("img", async (images) =>
         Promise.all(
           images.map(async (image) => {
+            const loading = image.getAttribute("loading");
             try {
+              // Verification must decode deferred images without changing snapshot markup.
+              image.loading = "eager";
               await image.decode();
               return null;
             } catch {
               return `Image cannot be decoded: ${image.currentSrc || image.src} (image)`;
+            } finally {
+              if (loading === null) image.removeAttribute("loading");
+              else image.setAttribute("loading", loading);
             }
           }),
         ),

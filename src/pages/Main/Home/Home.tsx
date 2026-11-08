@@ -1,6 +1,10 @@
-import avatar_1 from "../../../assets/avatar_1.webp";
-import avatar_2 from "../../../assets/avatar_2.jpg";
 import nccuLogo from "../../../assets/nccu_logo.webp";
+import avatarBackSmall from "../../../assets/responsive/avatar_1-160.webp";
+import avatarBackMedium from "../../../assets/responsive/avatar_1-320.webp";
+import avatarBackLarge from "../../../assets/responsive/avatar_1-480.webp";
+import avatarFrontSmall from "../../../assets/responsive/avatar_2-160.webp";
+import avatarFrontMedium from "../../../assets/responsive/avatar_2-320.webp";
+import avatarFrontLarge from "../../../assets/responsive/avatar_2-480.webp";
 
 import styles from "./Home.module.scss";
 
@@ -17,6 +21,7 @@ import {
   Tooltip,
   WorkExperience,
 } from "../../../components";
+import BrandImage from "../../../components/BrandImage/BrandImage";
 import { homeSkillItems } from "../../../data/skills";
 import { workExperienceItems } from "../../../data/workExperience";
 import { useTranslation } from "../../../i18n/context";
@@ -34,7 +39,6 @@ import {
   IconXLarge,
 } from "../../../icons";
 import { useScrollMotion } from "../../../motion/useScrollMotion";
-import BrandImage from "../../../components/BrandImage/BrandImage";
 
 const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
 
@@ -98,6 +102,7 @@ export default function Home() {
           className={styles.role_badge_company_logo}
           width={18}
           height={18}
+          loading="eager"
         />
       ) : null}
       <span>{job_badge_label}</span>
@@ -151,12 +156,21 @@ export default function Home() {
                   >
                     <img
                       className={`${styles.avatar} ${styles.front}`}
-                      src={avatar_2}
+                      src={avatarFrontSmall}
+                      srcSet={`${avatarFrontSmall} 160w, ${avatarFrontMedium} 320w, ${avatarFrontLarge} 480w`}
+                      sizes="160px"
+                      width={160}
+                      height={160}
+                      fetchPriority="high"
                       alt="陳秉洋 (Bing-Yang Chen)"
                     />
                     <img
                       className={`${styles.avatar} ${styles.back}`}
-                      src={avatar_1}
+                      src={avatarBackSmall}
+                      srcSet={`${avatarBackSmall} 160w, ${avatarBackMedium} 320w, ${avatarBackLarge} 480w`}
+                      sizes="160px"
+                      width={160}
+                      height={160}
                       alt="陳秉洋 (Bing-Yang Chen)"
                     />
                   </button>

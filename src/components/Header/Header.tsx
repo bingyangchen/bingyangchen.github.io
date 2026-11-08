@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-import logo from "../../assets/logo.webp";
+import logo from "../../assets/responsive/logo-96.webp";
 import { LanguageSwitcher } from "../LanguageSwitcher/LanguageSwitcher";
 import Tooltip from "../Tooltip/Tooltip";
 import { useTranslation } from "../../i18n/context";

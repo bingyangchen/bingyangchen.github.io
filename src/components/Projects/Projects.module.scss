@@ -1,5 +1,6 @@
 @use "../../styles/tokens" as _;
 @use "../../styles/section";
+@use "sass:string";
 
 .main {
   @include section.container;
@@ -145,8 +146,25 @@
           position: absolute;
           display: block;
           height: auto;
+          aspect-ratio: 885 / 1777;
           object-fit: contain;
           filter: drop-shadow(0 12px 14px rgba(_.$charcoal, 0.1));
+          img {
+            display: block;
+            width: 100%;
+            height: 100%;
+          }
+          .preview {
+            position: absolute;
+            inset: 0;
+          }
+          .preview[data-loaded] {
+            visibility: hidden;
+          }
+          .fullSize {
+            position: absolute;
+            inset: 0;
+          }
         }
         .deviceMain {
           width: 36%;
@@ -162,6 +180,8 @@
         }
 
         .extension {
+          aspect-ratio: 1200 / 2538;
+          overflow: hidden;
           width: 40%;
           top: 5%;
           left: 30%;
@@ -413,6 +433,10 @@
       }
     }
   }
+}
+
+:export {
+  compactArtworkMedia: string.unquote("(max-width: #{_.$small})");
 }
 
 @keyframes enter {
