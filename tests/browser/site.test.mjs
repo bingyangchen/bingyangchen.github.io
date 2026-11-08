@@ -22,6 +22,8 @@ const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const BUILD = resolve(ROOT, "build");
 const DETAIL = '#projects [role="tabpanel"]:not([inert])';
 const TABS = '#projects [role="tab"]';
+const PROJECTS_MOTION = '#projects > [data-scroll-motion="content"]';
+const BLOG_MOTION = '#blog > [data-scroll-motion="content"]';
 const QR = '[class*="qr_avatar_fab"]';
 const AVATAR = '#home button[class*="avatar_button"]';
 const QR_DIALOG = 'dialog[aria-labelledby="qr-modal-title"]';
@@ -521,6 +523,7 @@ test("SITE-R2.9 Header 對齊、觸控範圍與窄版組成", async () => {
       await page.$eval("[data-language-switcher]", (element) => element.click());
     for (const width of [320, 390, 720, 721, 1024, 1440, 1920, 2560]) {
       await page.setViewport({ width, height: 900 });
+      await moveMotionTarget(PROJECTS_MOTION, 0);
       if (width <= 720)
         await page.click('header button[aria-controls="site-navigation"]');
       const metrics = await page.$eval("header", (header) => {
@@ -1786,10 +1789,7 @@ test("SITE-R13.3 完整減少動態與即時切換", async () => {
     { name: "prefers-reduced-motion", value: "no-preference" },
   ]);
   await page.waitForSelector("[data-scroll-motion-active]");
-  await moveMotionTarget(
-    '#projects [role="tabpanel"]:not([inert]) [data-scroll-motion="stage"]',
-    700,
-  );
+  await moveMotionTarget(PROJECTS_MOTION, 700);
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: "reduce" },
   ]);
@@ -2404,6 +2404,31 @@ async function getMotionState(selector) {
   });
 }
 
+async function getMotionComposition(selector, childSelectors) {
+  return page.$eval(
+    selector,
+    (group, selectors) => {
+      const bounds = group.getBoundingClientRect();
+      const scale = new DOMMatrixReadOnly(getComputedStyle(group).transform).m11;
+      return selectors.flatMap((childSelector) =>
+        [...group.querySelectorAll(childSelector)]
+          .filter((child) => child.getClientRects().length)
+          .map((child) => {
+            const rect = child.getBoundingClientRect();
+            const style = getComputedStyle(child);
+            return {
+              x: (rect.left - bounds.left) / scale,
+              y: (rect.top - bounds.top) / scale,
+              opacity: style.opacity,
+              transform: style.transform,
+            };
+          }),
+      );
+    },
+    childSelectors,
+  );
+}
+
 test("SITE-R12.1 雙語短螢幕、橫向與分界的 Hero 完整可操作", async () => {
   await openHome();
   for (const preference of ["no-preference", "reduce"]) {
@@ -2545,11 +2570,7 @@ test("SITE-R13.2 Hero 往返動態", async () => {
 
 test("SITE-R13.7 各段落三次往返還原與停止", async () => {
   await openHome();
-  const selectors = [
-    '#about [data-scroll-motion="content"]',
-    `${DETAIL} [data-scroll-motion="stage"]`,
-    '#blog [data-scroll-motion="feature"]',
-  ];
+  const selectors = ['#about [data-scroll-motion="content"]'];
   for (const selector of selectors) {
     await moveMotionTarget(selector, 700);
     const entering = await getMotionState(selector);
@@ -2574,15 +2595,87 @@ test("SITE-R13.7 各段落三次往返還原與停止", async () => {
       `${selector} holds when idle`,
     );
   }
-  const reading = '#blog [data-scroll-motion="content"]';
-  await moveMotionTarget(reading, 700);
-  const entering = await getMotionState(reading);
-  assert.ok(entering.opacity < 1);
-  for (let cycle = 0; cycle < 3; cycle++) {
-    await moveMotionTarget(reading, 300);
-    assert.equal((await getMotionState(reading)).opacity, 1);
-    await moveMotionTarget(reading, 700);
-    assert.deepEqual(await getMotionState(reading), entering);
+});
+
+test("SITE-R13.7 SITE-R13.8 專案與文章整組往返並維持相對位置", async () => {
+  const groups = [
+    {
+      selector: PROJECTS_MOTION,
+      children: [
+        '[class*="sectionHeader"]',
+        '[role="tablist"]',
+        '[role="tabpanel"]:not([inert]) [class*="projectIntro"]',
+        '[role="tabpanel"]:not([inert]) figure',
+        '[role="tabpanel"]:not([inert]) img',
+        '[role="tabpanel"]:not([inert]) [class*="projectContent"]',
+      ],
+    },
+    {
+      selector: BLOG_MOTION,
+      children: ['[class*="intro"]', 'a[class*="featured"]', 'a[class*="reading"]'],
+    },
+  ];
+  await openHome();
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewport(viewport);
+
+    // Trailing space makes the last section's full exit reachable in this fixture.
+    await page.$eval("footer", (element) => {
+      element.style.minHeight = "100vh";
+    });
+    for (const language of ["en", "zh-TW"]) {
+      if ((await page.$eval("html", (element) => element.lang)) !== language)
+        await page.$eval("[data-language-switcher]", (element) => element.click());
+      await page.waitForFunction(
+        (expected) => document.documentElement.lang === expected,
+        {},
+        language,
+      );
+      for (const { selector, children } of groups) {
+        const getComposition = () => getMotionComposition(selector, children);
+        await page.$eval(selector, (group) =>
+          Promise.all(
+            group
+              .getAnimations({ subtree: true })
+              .map((animation) => animation.finished),
+          ),
+        );
+        await moveMotionTarget(selector, 250);
+        assert.equal((await getMotionState(selector)).opacity, 1);
+        const composition = await getComposition();
+        assert.ok(composition.length >= children.length);
+        const height = await page.$eval(selector, (element) => element.offsetHeight);
+        await moveMotionTarget(selector, viewport.height * 0.84);
+        const entering = await getMotionState(selector);
+        assert.ok(entering.y > 10 && entering.opacity < 0.95);
+        for (let cycle = 0; cycle < 3; cycle++) {
+          for (const position of [-height + 100, viewport.height * 0.84]) {
+            await moveMotionTarget(selector, position);
+            const state = await getMotionState(selector);
+            assert.ok(state.opacity < 0.95);
+            if (position < 0) assert.ok(state.y < 0);
+            else assert.deepEqual(state, entering);
+            const current = await getComposition();
+            assert.equal(current.length, composition.length);
+            current.forEach((child, index) => {
+              assert.ok(Math.abs(child.x - composition[index].x) < 0.1, selector);
+              assert.ok(Math.abs(child.y - composition[index].y) < 0.1, selector);
+              assert.equal(child.opacity, "1", selector);
+              assert.equal(child.transform, "none", selector);
+            });
+          }
+        }
+        await settleMotion();
+        assert.deepEqual(await getMotionState(selector), entering);
+        await moveMotionTarget(selector, -height / 2);
+        assert.equal((await getMotionState(selector)).opacity, 1);
+        assert.equal((await getMotionState(selector)).y, 0);
+        assert.equal((await getMotionState(selector)).scale, 1);
+      }
+    }
   }
 });
 
@@ -2625,26 +2718,20 @@ test("SITE-R13.8 長段落閱讀區", async () => {
   }
 });
 
-test("SITE-R13.8 聚焦維持進退場與景深", async () => {
+test("SITE-R13.8 聚焦維持整組進退場", async () => {
   const hero = '#home [data-scroll-motion="hero"]';
-  const stage = `${DETAIL} [data-scroll-motion="stage"]`;
-  const feature = '#blog [data-scroll-motion="feature"]';
-  const reading = '#blog [data-scroll-motion="content"]';
   const cases = [
     { anchor: hero, targets: [hero], focus: [`${hero} a`] },
     {
-      anchor: stage,
-      targets: [
-        `${DETAIL} > [data-scroll-motion="content"]:first-child`,
-        stage,
-        `${DETAIL} [data-scroll-motion="device"]`,
-        `${DETAIL} [data-scroll-motion="secondary-device"]`,
-        `${DETAIL} > [data-scroll-motion="content"]:last-child`,
-      ],
-      focus: [DETAIL, `${DETAIL} a`],
+      anchor: PROJECTS_MOTION,
+      targets: [PROJECTS_MOTION],
+      focus: [TABS, DETAIL, `${DETAIL} a`],
     },
-    { anchor: feature, targets: [feature], focus: [feature] },
-    { anchor: reading, targets: [reading], focus: [reading] },
+    {
+      anchor: BLOG_MOTION,
+      targets: [BLOG_MOTION],
+      focus: ['#blog a[class*="featured"]', '#blog a[class*="reading"]'],
+    },
   ];
   for (const viewport of [
     { width: 1440, height: 900 },
@@ -2652,6 +2739,9 @@ test("SITE-R13.8 聚焦維持進退場與景深", async () => {
   ]) {
     await page.setViewport(viewport);
     await openHome();
+    await page.$eval("footer", (element) => {
+      element.style.minHeight = "100vh";
+    });
     for (const { anchor, targets, focus } of cases) {
       const height = await page.$eval(anchor, (element) => element.offsetHeight);
       const positions =
@@ -2660,7 +2750,7 @@ test("SITE-R13.8 聚焦維持進退場與景深", async () => {
       for (const position of positions) {
         await moveMotionTarget(anchor, position);
         const before = await getStates();
-        assert.ok(before[anchor === stage ? 1 : 0].opacity < 1, anchor);
+        assert.ok(before[0].opacity < 1, anchor);
         const scrollTop = await page.evaluate(() => window.scrollY);
         for (const selector of focus) {
           await page.$eval(selector, (element) =>
@@ -2691,8 +2781,8 @@ test("SITE-R13.9 Hash 直達與重載的動態狀態", async () => {
   const selectors = {
     home: '#home [data-scroll-motion="hero"]',
     about: '#about [data-scroll-motion="heading"]',
-    projects: `${DETAIL} [data-scroll-motion="stage"]`,
-    blog: '#blog [data-scroll-motion="feature"]',
+    projects: PROJECTS_MOTION,
+    blog: BLOG_MOTION,
   };
   for (const [section, selector] of Object.entries(selectors)) {
     await page.goto("about:blank");

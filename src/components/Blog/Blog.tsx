@@ -85,8 +85,8 @@ export default function Blog() {
   }
 
   return (
-    <div className={styles.main}>
-      <div className={styles.intro} data-scroll-motion="heading">
+    <div className={styles.main} data-scroll-motion="content">
+      <div className={styles.intro}>
         <div className={styles.introCopy}>
           <h2>{dictionary.blog.title}</h2>
           <p>{dictionary.blog.subtitle}</p>
@@ -110,7 +110,6 @@ export default function Blog() {
         draggable={false}
         onPointerDown={handleArticlePointerDown}
         onClick={handleArticleClick}
-        data-scroll-motion="feature"
         href={featuredArticle.url}
         target="_blank"
         rel="noopener noreferrer"
@@ -145,7 +144,6 @@ export default function Blog() {
               draggable={false}
               onPointerDown={handleArticlePointerDown}
               onClick={handleArticleClick}
-              data-scroll-motion="content"
               key={article.id}
               href={article.url}
               target="_blank"

@@ -1,17 +1,7 @@
 import { RefObject, useLayoutEffect } from "react";
 
 type MotionKind =
-  | "content"
-  | "heading"
-  | "hero"
-  | "atmosphere"
-  | "hint"
-  | "stage"
-  | "feature"
-  | "portrait"
-  | "skill"
-  | "device"
-  | "secondary-device";
+  "content" | "heading" | "hero" | "atmosphere" | "hint" | "portrait" | "skill";
 type MotionTarget = {
   element: HTMLElement;
   anchor: HTMLElement;
@@ -21,19 +11,15 @@ type MotionTarget = {
   height: number;
 };
 type TimelineRow = { element: HTMLElement; top: number; height: number };
-const MOTION_PROPERTIES = ["x", "y", "opacity", "scale", "tilt", "rotate"] as const;
+const MOTION_PROPERTIES = ["y", "opacity", "scale", "tilt"] as const;
 const MOTION_KINDS: readonly MotionKind[] = [
   "content",
   "heading",
   "hero",
   "atmosphere",
   "hint",
-  "stage",
-  "feature",
   "portrait",
   "skill",
-  "device",
-  "secondary-device",
 ];
 
 function clamp(value: number): number {
@@ -181,7 +167,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
             (entranceStart - top) / (entranceStart - entranceEnd),
           );
           const exit = smoothProgress((exitStart - bottom) / (exitStart - exitEnd));
-          let x = 0;
           let y =
             (1 - enter) * distance -
             exit * distance * getParameter("exit-distance-scale");
@@ -193,7 +178,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
             (1 - enter) * getParameter("content-shrink") -
             exit * getParameter("content-exit-shrink");
           let tilt = 0;
-          let rotate = 0;
           if (["hero", "atmosphere", "hint"].includes(target.kind)) {
             const readingDistance = Math.max(0, target.height - height);
             const progress = clamp(
@@ -215,17 +199,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
               y = 0;
               opacity = 1 - smoothProgress(progress / getParameter("hint-exit"));
             }
-          } else if (target.kind === "stage" || target.kind === "feature") {
-            y = (1 - enter) * getParameter("stage-distance") - exit * distance;
-            scale =
-              1 -
-              (1 - enter) * getParameter("stage-shrink") -
-              exit * getParameter("stage-exit-shrink");
-            tilt =
-              target.kind === "stage"
-                ? (1 - enter) * getParameter("stage-tilt") -
-                  exit * getParameter("stage-exit-tilt")
-                : 0;
           } else if (target.kind === "heading") {
             scale =
               1 -
@@ -239,16 +212,8 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
             y =
               (1 - enter) * distance * getParameter("artwork-distance-scale") -
               exit * distance * getParameter("artwork-exit-distance-scale");
-          } else if (target.kind === "device" || target.kind === "secondary-device") {
-            const depth = 0.5 - clamp((height - top) / (height + target.height));
-            const prefix = target.kind;
-            y = depth * getParameter(`${prefix}-distance`) * depthScale;
-            x = depth * getParameter(`${prefix}-spread`) * depthScale;
-            rotate = depth * getParameter(`${prefix}-rotation`) * depthScale;
-            opacity = 1;
-            scale = 1;
           }
-          return { element: target.element, x, y, opacity, scale, tilt, rotate };
+          return { element: target.element, y, opacity, scale, tilt };
         });
       const lines = rows.map((row) => ({
         element: row.element,
@@ -260,12 +225,10 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
 
       for (const pose of poses) {
         const values = {
-          x: `${pose.x.toFixed(3)}px`,
           y: `${pose.y.toFixed(3)}px`,
           opacity: pose.opacity.toFixed(4),
           scale: pose.scale.toFixed(5),
           tilt: `${pose.tilt.toFixed(3)}deg`,
-          rotate: `${pose.rotate.toFixed(3)}deg`,
         };
         for (const property of MOTION_PROPERTIES)
           if (
