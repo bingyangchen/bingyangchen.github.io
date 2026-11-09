@@ -41,7 +41,7 @@ Prerender 逐一驗證作品及每個 `srcset` 版本，再還原第一個作品
 <!-- prettier-ignore -->
 | 檢查 | 上限與涵蓋範圍 |
 | --- | --- |
-| 初始圖片 | [`tests/browser/images.test.mjs`](../tests/browser/images.test.mjs) 檢查 390 到 1440 px、DPR 1 到 3 的指定組合，Resource Timing 的圖片 `decodedBodySize` 合計不得超過 192 KiB。 |
+| 初始圖片 | [`tests/browser/images.spec.ts`](../tests/browser/images.spec.ts) 檢查 390 到 1440 px、DPR 1 到 3 的指定組合，Resource Timing 的圖片 `decodedBodySize` 合計不得超過 192 KiB。 |
 | 單張輸出 | 產生腳本與瀏覽器檢查限制作品大圖及頭像的單張檔案不超過 64 KiB。 |
 | 內嵌成本 | 同一個瀏覽器測試檔限制所有 JS 與 CSS 的 gzip 合計不超過 128 KiB，首頁 HTML 的 gzip 不超過 16 KiB，涵蓋內嵌預覽的成本。 |
 | 延後載入 | 首次載入不能請求未選作品的大圖，窄版不能請求第二張 App 大圖；直接 hash 與無 JavaScript 也要符合。 |

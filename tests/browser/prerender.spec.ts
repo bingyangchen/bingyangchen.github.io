@@ -1,45 +1,47 @@
-import assert from "node:assert/strict";
 import { mkdtemp, writeFile, rm } from "node:fs/promises";
-import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { tmpdir } from "node:os";
 import { spawn } from "node:child_process";
-import { test } from "node:test";
+import assert from "node:assert/strict";
+import { test } from "../helpers/fixtures";
 
-async function runSession(options) {
+async function runSession(options: string) {
   const directory = await mkdtemp(join(tmpdir(), "prerender-lifecycle-"));
   try {
     await writeFile(join(directory, "index.html"), '<div id="root"></div>');
-    const source = `import { prerender } from ${JSON.stringify(new URL("../../scripts/prerender.mjs", import.meta.url).href)};
+    const source = `import { prerender } from ${JSON.stringify(new URL("../../scripts/prerender.mts", import.meta.url).href)};
       try { await prerender({ buildDirectory: process.argv[1], ${options} }); }
       catch (error) { console.error(error); process.exitCode = 1; }`;
-    return await new Promise((resolveResult, rejectResult) => {
-      const child = spawn(
-        process.execPath,
-        ["--input-type=module", "-e", source, directory],
-        { stdio: ["ignore", "pipe", "pipe"] },
-      );
-      let output = "";
-      child.stdout.on("data", (chunk) => {
-        output += chunk;
-      });
-      child.stderr.on("data", (chunk) => {
-        output += chunk;
-      });
-      const timer = setTimeout(() => {
-        child.kill("SIGKILL");
-        rejectResult(
-          new Error(`Prerender leaked resources or exceeded its deadline: ${output}`),
+    return await new Promise<{ code: number | null; output: string }>(
+      (resolveResult, rejectResult) => {
+        const child = spawn(
+          process.execPath,
+          ["--input-type=module", "-e", source, directory],
+          { stdio: ["ignore", "pipe", "pipe"] },
         );
-      }, 5000);
-      child.once("error", (error) => {
-        clearTimeout(timer);
-        rejectResult(error);
-      });
-      child.once("close", (code) => {
-        clearTimeout(timer);
-        resolveResult({ code, output });
-      });
-    });
+        let output = "";
+        child.stdout.on("data", (chunk) => {
+          output += chunk;
+        });
+        child.stderr.on("data", (chunk) => {
+          output += chunk;
+        });
+        const timer = setTimeout(() => {
+          child.kill("SIGKILL");
+          rejectResult(
+            new Error(`Prerender leaked resources or exceeded its deadline: ${output}`),
+          );
+        }, 5000);
+        child.once("error", (error) => {
+          clearTimeout(timer);
+          rejectResult(error);
+        });
+        child.once("close", (code) => {
+          clearTimeout(timer);
+          resolveResult({ code, output });
+        });
+      },
+    );
   } finally {
     await rm(directory, { recursive: true, force: true });
   }

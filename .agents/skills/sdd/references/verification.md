@@ -17,8 +17,8 @@ Use the [spec template](../templates/spec.md). The frontmatter of `docs/specs/si
 Verification levels are `unit`, `browser`, and `manual`. Separate multiple levels with `、`; each declared level needs its own coverage. Put IDs in a literal title of an executable `test` or `it`, separated from other text by spaces. A title may reference several IDs.
 
 - `unit` scans `*.test.*` and `*.spec.*` under `src/`, with extensions limited to `.js`, `.jsx`, `.ts`, and `.tsx`, matching Vitest configuration.
-- `browser` uses only `*.test.mjs` directly under `tests/browser/`, matching the npm script. Use the Node test runner and existing Puppeteer against a fresh production build. Other test formats or nested test directories fail validation.
-- Disabled tests or suites, todos, comments, example strings, and `fixtures` or `__fixtures__` directories do not count as coverage. `.only` fails validation.
+- `browser` uses `**/*.spec.ts` under `tests/browser/`, excluding `fixtures` and `__fixtures__`, matching Playwright Test and the shared discovery rules in `scripts/test-files.mts`. Run against a fresh production build. Chromium runs the complete suite; Firefox and WebKit run the core journeys in `cross-browser.spec.ts`. CDP and PDF generation run only in Chromium; actual Safari, devices, and OS printing remain manual checks.
+- Disabled tests or suites, todos, `fixme`, runtime `test.skip` or `test.fixme` annotations, comments, example strings, and fixture directories do not count as coverage. Conditional runtime disabling is conservatively excluded; an explicit `false` annotation remains executable. `.only` fails validation.
 - Declare tests directly in a file or a `describe` or `suite` callback, not inside helpers, conditionals, or loops. Do not alias test functions or generate IDs dynamically. Parameterized tests may use `test.each`, with literal IDs in the title.
 - Several tests may cover one scenario; requirement and scenario declarations must remain unique in the spec.
 

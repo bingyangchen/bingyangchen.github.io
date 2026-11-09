@@ -1,6 +1,6 @@
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { startStaticServer } from "./static-server.mjs";
+import { startStaticServer } from "./static-server.mts";
 
 export { startStaticServer };
 

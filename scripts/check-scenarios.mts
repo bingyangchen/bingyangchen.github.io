@@ -1,18 +1,22 @@
+import { isBrowserTestFile } from "./test-files.mts";
 import { readdir, readFile } from "node:fs/promises";
-import { resolve, relative, dirname } from "node:path";
+import { resolve, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
+
+type Report = (message: string) => void;
+type Scenario = { name: string; levels: string[] };
 
 const SCENARIO_ID = /\b[A-Z][A-Z0-9]*-R[1-9]\d*\.[1-9]\d*\b/g;
 const TEST_FILE = /\.(?:test|spec)\.[cm]?[jt]sx?$/;
 const LEVELS = new Set(["unit", "browser", "manual"]);
 
-async function getFiles(directory) {
+async function getFiles(directory: string): Promise<string[]> {
   let entries;
   try {
     entries = await readdir(directory, { withFileTypes: true });
   } catch (error) {
-    if (error.code === "ENOENT") return [];
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") return [];
     throw error;
   }
   const files = await Promise.all(
@@ -27,10 +31,10 @@ async function getFiles(directory) {
   return files.flat().sort();
 }
 
-function getMarkdownLines(source, report) {
-  let fence;
+function getMarkdownLines(source: string, report: Report) {
+  let fence: string | undefined;
   let inComment = false;
-  const lines = [];
+  const lines: string[] = [];
   source.split(/\r?\n/).forEach((line) => {
     const marker = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
     if (fence) {
@@ -69,16 +73,16 @@ function getMarkdownLines(source, report) {
   return lines;
 }
 
-function parseSpec(source, report) {
+function parseSpec(source: string, report: Report): Map<string, Scenario> {
   const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
   const prefix = frontmatter?.[1].match(/^prefix: ([A-Z][A-Z0-9]*)$/m)?.[1];
   if (!prefix || frontmatter[1].trim() !== `prefix: ${prefix}`) {
     report("frontmatter must contain only prefix: UPPERCASE_PREFIX");
-    return new Map();
+    return new Map<string, Scenario>();
   }
-  const requirements = new Map();
-  const scenarios = new Map();
-  let currentRequirement;
+  const requirements = new Map<string, number>();
+  const scenarios = new Map<string, Scenario>();
+  let currentRequirement: string | undefined;
   getMarkdownLines(source.slice(frontmatter[0].length), report).forEach((line) => {
     if (/^#{1,3} /.test(line)) currentRequirement = undefined;
     const heading = line.match(/^### (\S+) (.+)$/);
@@ -129,7 +133,7 @@ function parseSpec(source, report) {
   return scenarios;
 }
 
-function getCallParts(expression) {
+function getCallParts(expression: ts.Expression): string[] {
   if (ts.isIdentifier(expression)) return [expression.text];
   if (ts.isPropertyAccessExpression(expression))
     return [...getCallParts(expression.expression), expression.name.text];
@@ -137,11 +141,12 @@ function getCallParts(expression) {
   return [];
 }
 
-function isDisabled(call) {
+function isDisabled(call: ts.CallExpression) {
   const parts = getCallParts(call.expression);
   if (
     parts.includes("skip") ||
     parts.includes("todo") ||
+    parts.includes("fixme") ||
     parts[0] === "xit" ||
     parts[0] === "xtest" ||
     parts[0] === "xdescribe"
@@ -153,18 +158,63 @@ function isDisabled(call) {
       argument.properties.some(
         (property) =>
           ts.isPropertyAssignment(property) &&
-          ["skip", "todo"].includes(property.name.getText().replace(/["']/g, "")) &&
+          ["skip", "todo", "fixme"].includes(
+            property.name.getText().replace(/["']/g, ""),
+          ) &&
           property.initializer.kind !== ts.SyntaxKind.FalseKeyword,
       ),
   );
 }
 
-function getTestIds(source, path, report) {
+function isTestRegistration(call: ts.CallExpression) {
+  const parts = getCallParts(call.expression);
+  const title = call.arguments[0];
+  return (
+    ["test", "it", "describe", "suite", "xit", "xtest", "xdescribe"].includes(
+      parts[0],
+    ) &&
+    !parts.some((part) =>
+      ["step", "beforeEach", "beforeAll", "afterEach", "afterAll"].includes(part),
+    ) &&
+    title !== undefined &&
+    (ts.isStringLiteral(title) || ts.isNoSubstitutionTemplateLiteral(title)) &&
+    call.arguments.some(
+      (argument) => ts.isArrowFunction(argument) || ts.isFunctionExpression(argument),
+    )
+  );
+}
+
+function hasDisableAnnotation(node: ts.Node): boolean {
+  if (ts.isCallExpression(node)) {
+    const parts = getCallParts(node.expression);
+    if (parts[0] === "test" && ["skip", "fixme"].some((part) => parts.includes(part))) {
+      if (
+        !isTestRegistration(node) &&
+        node.arguments[0]?.kind !== ts.SyntaxKind.FalseKeyword
+      )
+        return true;
+    }
+    if (isTestRegistration(node)) return false;
+  }
+  let disabled = false;
+  ts.forEachChild(node, (child) => {
+    disabled ||= hasDisableAnnotation(child);
+  });
+  return disabled;
+}
+
+function getTestIds(source: string, path: string, report: Report) {
   const syntax = ts.createSourceFile(path, source, ts.ScriptTarget.Latest, true);
-  if (syntax.parseDiagnostics.length) report("test file has syntax errors");
-  const ids = [];
-  function visit(node, disabled = false) {
+  if (
+    ts.transpileModule(source, { fileName: path, reportDiagnostics: true }).diagnostics
+      ?.length ??
+    0
+  )
+    report("test file has syntax errors");
+  const ids: string[] = [];
+  function visit(node: ts.Node, disabled = false) {
     if (ts.isSourceFile(node) || ts.isBlock(node)) {
+      disabled ||= node.statements.some(hasDisableAnnotation);
       for (const statement of node.statements) visit(statement, disabled);
       return;
     }
@@ -178,7 +228,18 @@ function getTestIds(source, path, report) {
       if (
         ["test", "it", "describe", "suite", "xit", "xtest", "xdescribe"].includes(root)
       ) {
-        disabled ||= isDisabled(node);
+        const isSuite =
+          ["describe", "suite", "xdescribe"].includes(root) ||
+          parts.includes("describe");
+        const callback = node.arguments.find(
+          (argument) =>
+            ts.isArrowFunction(argument) || ts.isFunctionExpression(argument),
+        );
+        disabled ||=
+          isDisabled(node) ||
+          (callback !== undefined &&
+            (ts.isArrowFunction(callback) || ts.isFunctionExpression(callback)) &&
+            hasDisableAnnotation(callback.body));
         if (parts.includes("only")) report("focused test or suite is not allowed");
         const title = node.arguments[0];
         const hasBody = node.arguments.some(
@@ -187,6 +248,8 @@ function getTestIds(source, path, report) {
         );
         if (
           ["test", "it"].includes(root) &&
+          isTestRegistration(node) &&
+          !isSuite &&
           !disabled &&
           title &&
           hasBody &&
@@ -198,7 +261,7 @@ function getTestIds(source, path, report) {
               report(`invalid scenario ID in test title ${title.text}`);
           }
         }
-        if (["describe", "suite", "xdescribe"].includes(root)) {
+        if (isSuite) {
           for (const argument of node.arguments) {
             if (
               (ts.isArrowFunction(argument) || ts.isFunctionExpression(argument)) &&
@@ -214,18 +277,18 @@ function getTestIds(source, path, report) {
   return ids;
 }
 
-export async function checkScenarios(root) {
-  const errors = [];
-  const report = (path) => (message) =>
+export async function checkScenarios(root: string) {
+  const errors: string[] = [];
+  const report = (path: string) => (message: string) =>
     errors.push(`${relative(root, path)}: ${message}`);
   const specPath = resolve(root, "docs/specs/site.md");
   const scenarios = parseSpec(await readFile(specPath, "utf8"), report(specPath));
-  const coverage = new Map([...scenarios.keys()].map((id) => [id, new Set()]));
-  function addCoverage(id, level, path) {
+  const coverage = new Map([...scenarios.keys()].map((id) => [id, new Set<string>()]));
+  function addCoverage(id: string, level: string, path: string) {
     if (!scenarios.has(id)) report(path)(`unknown scenario ${id}`);
-    else if (!scenarios.get(id).levels.includes(level))
+    else if (!scenarios.get(id)!.levels.includes(level))
       report(path)(`${id} does not declare ${level}`);
-    else coverage.get(id).add(level);
+    else coverage.get(id)!.add(level);
   }
   for (const [level, directory] of [
     ["unit", "src"],
@@ -237,7 +300,7 @@ export async function checkScenarios(root) {
       const supported =
         level === "unit"
           ? /\.(?:test|spec)\.[jt]sx?$/.test(path)
-          : dirname(path) === resolve(root, directory) && path.endsWith(".test.mjs");
+          : isBrowserTestFile(relative(resolve(root, directory), path));
       if (!supported) {
         report(path)(`unsupported ${level} test file; match the configured runner`);
         continue;
@@ -255,7 +318,7 @@ export async function checkScenarios(root) {
     }
     const lines = getMarkdownLines(await readFile(path, "utf8"), report(path));
     const sections = new Set();
-    const starts = [];
+    const starts: number[] = [];
     lines.forEach((line, index) => {
       if (/^#{1,2} /.test(line)) starts.push(index);
     });
@@ -270,7 +333,7 @@ export async function checkScenarios(root) {
       const [, id, name] = heading;
       if (sections.has(id)) report(path)(`duplicate manual section ${id}`);
       sections.add(id);
-      if (scenarios.has(id) && scenarios.get(id).name !== name)
+      if (scenarios.has(id) && scenarios.get(id)!.name !== name)
         report(path)(`manual name differs for ${id}`);
       const body = lines.slice(index + 1, starts[sectionIndex + 1]).join("\n");
       if (
@@ -284,7 +347,7 @@ export async function checkScenarios(root) {
   }
   for (const [id, scenario] of scenarios) {
     for (const level of scenario.levels)
-      if (!coverage.get(id).has(level))
+      if (!coverage.get(id)!.has(level))
         errors.push(`${relative(root, specPath)}: ${id} missing ${level} coverage`);
   }
   return { errors, count: scenarios.size };
@@ -300,7 +363,7 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
       process.exitCode = 1;
     } else console.log(`Scenario links valid: ${result.count} scenarios`);
   } catch (error) {
-    console.error(error.message);
+    console.error(error instanceof Error ? error.message : String(error));
     process.exitCode = 1;
   }
 }

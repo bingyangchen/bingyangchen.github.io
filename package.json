@@ -7,19 +7,19 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "postbuild": "npm run prerender",
-    "prerender": "node scripts/prerender.mjs",
-    "preview": "node scripts/serve-build.mjs",
-    "images:generate": "node scripts/generate-images.mjs",
+    "prerender": "node scripts/prerender.mts",
+    "preview": "node scripts/serve-build.mts",
+    "images:generate": "node scripts/generate-images.mts",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "lint": "eslint src scripts tests *.mjs *.mts --max-warnings 0",
+    "lint": "eslint src scripts tests *.mjs *.mts playwright.config.ts --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
-    "check:scenarios": "node scripts/check-scenarios.mjs",
-    "test:checker": "node --test tests/check-scenarios.test.mjs",
+    "check:scenarios": "node scripts/check-scenarios.mts",
+    "test:checker": "node --test tests/check-scenarios.test.mts",
     "test:unit": "vitest run",
-    "test:browser": "node --test tests/browser/*.test.mjs",
+    "test:browser": "playwright test",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm run check:scenarios && npm run test:checker && npm run test:unit && npm run build && npm run test:browser",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.tools.json && tsc -p tsconfig.browser.json"
   },
   "browserslist": {
     "production": [
@@ -42,8 +42,10 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.65.0",
     "@testing-library/jest-dom": "^7.0.1",
     "@testing-library/react": "^16.3.3",
+    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
     "@types/node": "^22.20.5",
     "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.7",
@@ -76,5 +78,6 @@
     "@typescript-eslint/typescript-estree": {
       "minimatch": "^11.0.5"
     }
-  }
+  },
+  "type": "module"
 }

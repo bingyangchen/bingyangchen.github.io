@@ -1,12 +1,11 @@
 import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
 
-export async function parsePdfMetadata(bytes) {
+export async function parsePdfMetadata(bytes: Uint8Array) {
   const task = getDocument({
     data: Uint8Array.from(bytes),
     fontExtraProperties: true,
     disableFontFace: true,
     useSystemFonts: false,
-    isEvalSupported: false,
     stopAtErrors: true,
   });
   try {
@@ -42,7 +41,7 @@ export async function parsePdfMetadata(bytes) {
     }
     return {
       pages: document.numPages,
-      language: metadata.info.Language,
+      language: "Language" in metadata.info ? metadata.info.Language : undefined,
       mediaBox,
       pageSizes,
       fonts: Array.from(fonts).sort(),

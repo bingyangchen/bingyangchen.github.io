@@ -12,7 +12,7 @@ const artwork = [
   "leechai-accounts.png",
   "leechai-settings.png",
 ];
-const logos = [
+const logos: [string, number][] = [
   ["logo.webp", 96],
   ["taigu_logo.webp", 78],
   ["noads_logo.webp", 78],
@@ -23,7 +23,7 @@ const logos = [
   ["beida_logo.webp", 64],
 ];
 
-function generateWebp(source, width) {
+function generateWebp(source: string, width: number) {
   const destination = new URL(
     `${source.replace(/\.[^.]+$/, "")}-${width}.webp`,
     output,

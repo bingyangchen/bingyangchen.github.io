@@ -1,13 +1,15 @@
-import { MIN_VISIBLE_TEXT_CHARS, PRERENDER_LOCALE } from "./settings.mjs";
+import type { Page } from "puppeteer";
+import type { watchPageResources } from "../browser-resources.mts";
+import { MIN_VISIBLE_TEXT_CHARS, PRERENDER_LOCALE } from "./settings.mts";
 
 const DOM_IDLE_MS = 1_000;
 const DOM_SETTLE_TIMEOUT_MS = 60_000;
 
-function waitForDomIdle(page, idleMs, timeoutMs) {
+function waitForDomIdle(page: Page, idleMs: number, timeoutMs: number) {
   return page.evaluate(
     (idle, timeout) =>
-      new Promise((resolveIdle, rejectIdle) => {
-        let idleTimer;
+      new Promise<void>((resolveIdle, rejectIdle) => {
+        let idleTimer: ReturnType<typeof setTimeout>;
 
         const hardTimer = setTimeout(() => {
           observer.disconnect();
@@ -40,7 +42,12 @@ function waitForDomIdle(page, idleMs, timeoutMs) {
   );
 }
 
-export async function snapshot(page, origin, route, resources) {
+export async function snapshot(
+  page: Page,
+  origin: string,
+  route: string,
+  resources: Awaited<ReturnType<typeof watchPageResources>>,
+) {
   const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
   if (!response?.ok()) {
     throw new Error(`${route} responded ${response?.status()}`);
@@ -57,7 +64,10 @@ export async function snapshot(page, origin, route, resources) {
   // Unselected artwork is absent from the DOM, but every project's assets must pass build checks.
   const projectTabs = await page.$$('#projects [role="tab"]');
   for (let index = 0; index < projectTabs.length; index++) {
-    await projectTabs[index].evaluate((tab) => tab.click());
+    await projectTabs[index].evaluate((tab) => {
+      if (!(tab instanceof HTMLElement)) throw new Error("Project tab is not HTML");
+      tab.click();
+    });
     await page.waitForFunction(
       (selected) =>
         document
@@ -86,7 +96,10 @@ export async function snapshot(page, origin, route, resources) {
     });
   }
   if (projectTabs.length) {
-    await projectTabs[0].evaluate((tab) => tab.click());
+    await projectTabs[0].evaluate((tab) => {
+      if (!(tab instanceof HTMLElement)) throw new Error("Project tab is not HTML");
+      tab.click();
+    });
     await page.waitForFunction(
       () =>
         document
@@ -101,6 +114,8 @@ export async function snapshot(page, origin, route, resources) {
   // Capturing only #root preserves shell metadata and excludes body-level portals.
   const rootHtml = await page.$eval("#root", (root) => {
     const snapshot = root.cloneNode(true);
+    if (!(snapshot instanceof HTMLElement))
+      throw new Error("Snapshot root is not HTML");
     for (const preview of snapshot.querySelectorAll("[data-artwork-preview]"))
       preview.removeAttribute("data-loaded");
     return snapshot.innerHTML;
@@ -111,7 +126,7 @@ export async function snapshot(page, origin, route, resources) {
   return rootHtml;
 }
 
-export function assertSnapshotHasContent(rootHtml, route) {
+export function assertSnapshotHasContent(rootHtml: string, route: string) {
   const visibleText = rootHtml
     .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
     .replace(/<[^>]+>/g, " ")

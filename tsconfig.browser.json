@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.tools.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "erasableSyntaxOnly": false
+  },
+  "include": [
+    "playwright.config.ts",
+    "tests/browser/**/*.ts",
+    "tests/helpers/**/*.ts",
+    "tests/helpers/**/*.mts"
+  ]
+}

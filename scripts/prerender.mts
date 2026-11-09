@@ -1,13 +1,14 @@
+import type { Browser, LaunchOptions } from "puppeteer";
 import { readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer";
-import { watchPageResources } from "./browser-resources.mjs";
-import { startStaticServer } from "./static-server.mjs";
-import { closeBrowser } from "./prerender/browser.mjs";
-import { generateResumePdf } from "./prerender/resume.mjs";
-import { assertSnapshotHasContent, snapshot } from "./prerender/snapshot.mjs";
-import { PRERENDER_LOCALE, PRERENDER_TIMEZONE } from "./prerender/settings.mjs";
+import { watchPageResources } from "./browser-resources.mts";
+import { startStaticServer } from "./static-server.mts";
+import { closeBrowser } from "./prerender/browser.mts";
+import { generateResumePdf } from "./prerender/resume.mts";
+import { assertSnapshotHasContent, snapshot } from "./prerender/snapshot.mts";
+import { PRERENDER_LOCALE, PRERENDER_TIMEZONE } from "./prerender/settings.mts";
 
 const BUILD_DIR = fileURLToPath(new URL("../build", import.meta.url));
 const ROOT_PLACEHOLDER = '<div id="root"></div>';
@@ -19,14 +20,22 @@ export async function prerender({
   timeoutMs = PRERENDER_TIMEOUT_MS,
   cleanupTimeoutMs = CLEANUP_TIMEOUT_MS,
   launchBrowser = (options) => puppeteer.launch(options),
+}: {
+  buildDirectory?: string;
+  timeoutMs?: number;
+  cleanupTimeoutMs?: number;
+  launchBrowser?: (options: LaunchOptions) => Promise<Browser>;
 } = {}) {
   let stage = "reading shell";
-  let browser;
-  let server;
-  let resources;
+  let browser: Browser | undefined;
+  let server: Awaited<ReturnType<typeof startStaticServer>> | undefined;
+  let resources: Awaited<ReturnType<typeof watchPageResources>> | undefined;
   const failures = [];
   const controller = new AbortController();
-  const runStage = async (name, operation) => {
+  const runStage = async <T,>(
+    name: string,
+    operation: () => Promise<T>,
+  ): Promise<T> => {
     controller.signal.throwIfAborted();
     stage = name;
     try {
@@ -34,7 +43,10 @@ export async function prerender({
       controller.signal.throwIfAborted();
       return result;
     } catch (cause) {
-      throw new Error(`Prerender failed during ${name}: ${cause.message}`, { cause });
+      throw new Error(
+        `Prerender failed during ${name}: ${cause instanceof Error ? cause.message : String(cause)}`,
+        { cause },
+      );
     }
   };
   let timer;
@@ -73,13 +85,13 @@ export async function prerender({
       if (controller.signal.aborted) await closeBrowser(browser, cleanupTimeoutMs);
     });
     const page = await runStage("configuring browser", async () => {
-      const page = await browser.newPage();
+      const page = await browser!.newPage();
       resources = await watchPageResources(page);
       await page.setViewport({ width: 1440, height: 900 });
       const cdp = await page.createCDPSession();
       await cdp.send("Network.enable");
       await cdp.send("Network.setUserAgentOverride", {
-        userAgent: await browser.userAgent(),
+        userAgent: await browser!.userAgent(),
         acceptLanguage: PRERENDER_LOCALE,
       });
       await page.emulateTimezone(PRERENDER_TIMEZONE);
@@ -89,11 +101,11 @@ export async function prerender({
       return page;
     });
     const { rootHtml, textLength } = await runStage("capturing homepage", async () => {
-      const rootHtml = await snapshot(page, server.origin, "/", resources);
+      const rootHtml = await snapshot(page, server!.origin, "/", resources!);
       return { rootHtml, textLength: assertSnapshotHasContent(rootHtml, "/") };
     });
     const pdf = await runStage("generating and validating resume PDF", () =>
-      generateResumePdf(page, server.origin, resources),
+      generateResumePdf(page, server!.origin, resources!),
     );
     await runStage("writing static output", async () => {
       await writeFile(

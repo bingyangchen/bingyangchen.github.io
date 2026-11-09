@@ -10,6 +10,7 @@ Use Node.js 22.22.2 or newer in the 22.x line and npm, matching CI. Node.js 24.1
 
 ```sh
 npm ci
+npx playwright install chromium firefox webkit
 npm run dev
 ```
 
@@ -34,9 +35,9 @@ Preview serves the build over loopback HTTP without an SPA fallback. `/resume` r
 
 ### Static Output and PDF Validation
 
-`scripts/static-server.mjs` owns loopback file serving for both preview and prerender, including MIME types, decoded-path and symlink checks, HEAD requests, stream errors, and shutdown. Preview serves actual files only. Prerender explicitly supplies the compile shell for `/` and `/resume`; all other missing paths return 404, including missing assets. Unexpected file I/O failures return 500 and report their cause.
+`scripts/static-server.mts` owns loopback file serving for both preview and prerender, including MIME types, decoded-path and symlink checks, HEAD requests, stream errors, and shutdown. Preview serves actual files only. Prerender explicitly supplies the compile shell for `/` and `/resume`; all other missing paths return 404, including missing assets. Unexpected file I/O failures return 500 and report their cause.
 
-`scripts/prerender.mjs` coordinates browser configuration, homepage capture, resume generation, validation, and output. The modules in `scripts/prerender/` keep those responsibilities separately testable. A 120-second deadline covers the run, errors identify the failing stage, and browser cleanup has a separate five-second limit before terminating the browser process. Server shutdown runs even if browser launch or cleanup fails, and closes active connections. HTML and PDF are written only after both outputs pass validation.
+`scripts/prerender.mts` coordinates browser configuration, homepage capture, resume generation, validation, and output. The modules in `scripts/prerender/` keep those responsibilities separately testable. A 120-second deadline covers the run, errors identify the failing stage, and browser cleanup has a separate five-second limit before terminating the browser process. Server shutdown runs even if browser launch or cleanup fails, and closes active connections. HTML and PDF are written only after both outputs pass validation.
 
 PDF structure is read through [pdf-lib](https://pdf-lib.js.org/docs/api/classes/pdfdocument), including compressed objects, page geometry, document language, embedded font descriptors, and link annotations. [PDF.js](https://github.com/mozilla/pdf.js/tree/master/examples/node) independently extracts the generated text and checks every expected line of resume content, including contact information. Comparison normalizes Unicode ligatures, whitespace, and discretionary line-end hyphens while preserving authored punctuation. DOM bounds remain a separate clipping check; neither extraction nor structural checks establish visual quality or ATS compatibility.
 
@@ -55,21 +56,29 @@ Run `npm run check` for all automated checks, including a fresh production build
 | `npm run format:check` | Check formatting without modifying files. |
 | `npm run lint` | Check source, scripts, and tests with ESLint; warnings fail the check. |
 | `npm run lint:fix` | Apply available ESLint fixes. |
-| `npm run typecheck` | Check application, unit tests, and Vite configuration with TypeScript. |
+| `npm run typecheck` | Check application, Vite configuration, Node tools, and browser tests with separate strict TypeScript projects. |
 | `npm run check:scenarios` | Validate spec and scenario coverage links. |
 | `npm run test:checker` | Test the scenario checker. |
 | `npm run test:unit` | Run Vitest tests in jsdom. |
-| `npm run test:browser` | Run Chromium tests against the production build; run `npm run build` first. |
+| `npm run test:browser` | Run the full Chromium suite and Firefox/WebKit core journeys against a fresh production build; run `npm run build` first. |
 
-Prettier owns formatting; the independent `eslint.config.mjs` configures JavaScript, TypeScript, React, hooks, and accessibility rules, with `eslint-config-prettier` disabling conflicting style rules. ESLint uses the latest compatible 9.x release because the React and accessibility plugins do not yet support ESLint 10. Node scripts and tests have Node globals, unit tests have Vitest globals, and the Puppeteer modules also have browser globals for callbacks executed in the page. Formatting excludes archived plans, agent skills, static artwork, generated files, and the lockfile.
+Prettier owns formatting; the independent `eslint.config.mjs` configures JavaScript, TypeScript, React, hooks, and accessibility rules, with `eslint-config-prettier` disabling conflicting style rules. ESLint uses the latest compatible 9.x release because the React and accessibility plugins do not yet support ESLint 10. Node scripts and tests have Node globals, unit tests have Vitest globals, and browser automation modules also have browser globals for callbacks executed in the page. Formatting excludes archived plans, agent skills, static artwork, generated files, and the lockfile.
 
 React's `jsx-runtime` preset supports the automatic JSX transform; props, JSX text, and accessibility checks remain enabled. The QR dialog has a local exception for backdrop clicks because Escape and the close button already provide keyboard dismissal.
 
-Vitest discovers `src/**/*.{test,spec}.{js,jsx,ts,tsx}` and excludes `fixtures` and `__fixtures__` directories, matching the scenario checker. The existing Node test runner and Puppeteer continue to run browser tests.
+Vitest discovers `src/**/*.{test,spec}.{js,jsx,ts,tsx}` and excludes `fixtures` and `__fixtures__` directories, matching the scenario checker. Playwright Test discovers `tests/browser/**/*.spec.ts`, excluding the same fixture directories. The runner and scenario checker share browser discovery rules in `scripts/test-files.mts`. Tests use literal scenario IDs; suites, `skip`, `fixme`, runtime skip annotations, and examples cannot manufacture coverage, and `only` is rejected. The scenario checker itself remains tested with the Node test runner.
 
 Content component tests use the real LanguageProvider through `src/test-utils/render.tsx` and switch languages through the actual control. Test missing translations and alternate periods at the pure-function boundary with independent fixtures; never modify exported production data. Prefer roles, accessible attributes, or destinations for browser interaction selectors; keep CSS selectors for visual geometry local to those checks.
 
-Browser tests use the production assets without substituting remote images. The shared `scripts/browser-resources.mjs` monitor blocks unexpected external requests and rejects HTTP errors, failed requests, undecodable images, console errors, and uncaught JavaScript errors. Failure tests use isolated pages and explicitly verify their expected errors. External link destinations are checked separately from third-party availability.
+Browser tests use the production assets without substituting remote images. The build uses `scripts/browser-resources.mts` with Puppeteer; browser tests use `tests/helpers/resources.ts` with Playwright. Both monitors block unexpected external requests and reject HTTP errors, failed requests, undecodable images, console errors, and uncaught JavaScript errors. They share `scripts/image-decoding.mts`: decoding follows current responsive candidates and DOM images, rechecks completed candidates after the full batch, and rejects stable decode failures while restoring loading attributes. Failure tests use isolated pages and explicitly verify their expected errors. External link destinations are checked separately from third-party availability.
+
+Playwright owns per-test pages and contexts through `tests/helpers/fixtures.ts`; extra contexts used for resource, DPR, or JavaScript cases are closed by a fixture. Tests are grouped by behavior instead of sharing module-level page state. Chromium runs every original scenario, including CDP, native touch emulation, clipboard, and PDF checks. `cross-browser.spec.ts` runs homepage, language, anchor/history, tabs, dialog, and reduced-motion journeys in Chromium, Firefox, and WebKit. WebKit automation does not replace real Safari or device checks.
+
+Run `npm run test:browser -- --project=chromium` for the full Chromium project, or select `--project=firefox` or `--project=webkit`. `npx playwright test --list` lists the executed tests. Retries are disabled, focused tests fail, and a 15-minute suite deadline leaves time for reporting. Failed tests retain traces, screenshots, and browser error attachments under `test-results/`, with an HTML report under `playwright-report/`; use `npx playwright show-report` to inspect it. CI uploads failure diagnostics for seven days and keeps publishing conditional on successful checks and the main ref.
+
+Node tools are `.mts` modules, executed by the repository's supported Node versions through [native type stripping](https://nodejs.org/docs/latest-v22.x/api/typescript.html). `tsconfig.tools.json` requires erasable syntax and checks tools, checker tests, and JavaScript configuration. `tsconfig.browser.json` separately checks Playwright tests and helpers; the application retains its existing strict configuration. Runtime transformation does not check types, so all three projects run in `npm run typecheck` and gate `npm run check`. Keep `skipLibCheck` while checking maintained code strictly. PDF generation continues to use Puppeteer, separately from the browser test runner.
+
+After same-document changes, wait for the observable result: the full-size responsive image candidate and decoding, the target request's terminal event, or the saved scroll position. An already reached [load state](https://playwright.dev/docs/api/class-page#page-wait-for-load-state) can resolve immediately, so it does not establish completion of later resize or network activity.
 
 Motion checks wait for the rendered hover position and media-query cleanup state. A completed emulation command, a fixed number of animation frames, or an empty animation list does not guarantee that those changes have reached the renderer and event listeners.
 

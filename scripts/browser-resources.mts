@@ -1,9 +1,11 @@
-export async function watchPageResources(page) {
-  const failures = [];
+import { getImageDecodeFailures } from "./image-decoding.mts";
+import type { Page, HTTPRequest, HTTPResponse, ConsoleMessage } from "puppeteer";
+export async function watchPageResources(page: Page) {
+  const failures: string[] = [];
   let stopped = false;
-  const describeRequest = (request) =>
+  const describeRequest = (request: HTTPRequest) =>
     `${request.method()} ${request.url()} (${request.resourceType()})`;
-  const onRequest = async (request) => {
+  const onRequest = async (request: HTTPRequest) => {
     const url = new URL(request.url());
     const allowed =
       url.protocol === "data:" ||
@@ -22,7 +24,7 @@ export async function watchPageResources(page) {
         failures.push(`Request interception: ${describeRequest(request)}: ${error}`);
     }
   };
-  const onRequestFailed = (request) => {
+  const onRequestFailed = (request: HTTPRequest) => {
     // Picture changes and DOM replacement cancel obsolete images; current images still must decode.
     if (
       request.resourceType() === "image" &&
@@ -33,7 +35,7 @@ export async function watchPageResources(page) {
       `Request failed: ${describeRequest(request)}: ${request.failure()?.errorText}`,
     );
   };
-  const onResponse = (response) => {
+  const onResponse = (response: HTTPResponse) => {
     const request = response.request();
     const status = response.status();
     if (status >= 400) failures.push(`HTTP ${status}: ${describeRequest(request)}`);
@@ -48,9 +50,9 @@ export async function watchPageResources(page) {
         `Invalid image response (${contentType}): ${describeRequest(request)}`,
       );
   };
-  const onPageError = (error) =>
-    failures.push(`Uncaught browser error: ${error.message}`);
-  const onConsole = (message) => {
+  const onPageError = (error: unknown) =>
+    failures.push(`Uncaught browser error: ${String(error)}`);
+  const onConsole = (message: ConsoleMessage) => {
     if (message.type() === "error") {
       const location = message.location();
       failures.push(
@@ -69,25 +71,8 @@ export async function watchPageResources(page) {
   return {
     failures,
     async assertLoaded() {
-      const imageFailures = await page.$$eval("img", async (images) =>
-        Promise.all(
-          images.map(async (image) => {
-            const loading = image.getAttribute("loading");
-            try {
-              // Verification must decode deferred images without changing snapshot markup.
-              image.loading = "eager";
-              await image.decode();
-              return null;
-            } catch {
-              return `Image cannot be decoded: ${image.currentSrc || image.src} (image)`;
-            } finally {
-              if (loading === null) image.removeAttribute("loading");
-              else image.setAttribute("loading", loading);
-            }
-          }),
-        ),
-      );
-      const errors = [...failures, ...imageFailures.filter(Boolean)];
+      const imageFailures = await page.evaluate(getImageDecodeFailures);
+      const errors = [...failures, ...imageFailures];
       if (errors.length)
         throw new Error(`Browser resource failures:\n  ${errors.join("\n  ")}`);
     },

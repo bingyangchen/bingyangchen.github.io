@@ -3,7 +3,7 @@ import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
-import { checkScenarios } from "../scripts/check-scenarios.mjs";
+import { checkScenarios } from "../scripts/check-scenarios.mts";
 
 const SPEC = `---
 prefix: SITE
@@ -21,7 +21,7 @@ const MANUAL = `## SITE-R1.1 Saved preference
 預期結果：The saved language appears.
 `;
 
-async function checkFixture(files) {
+async function checkFixture(files: Record<string, string>) {
   const root = await mkdtemp(join(tmpdir(), "scenario-check-"));
   try {
     for (const [path, content] of Object.entries(files)) {
@@ -35,7 +35,7 @@ async function checkFixture(files) {
   }
 }
 
-function fixture(spec = SPEC, unit = UNIT) {
+function fixture(spec = SPEC, unit = UNIT): Record<string, string> {
   return { "docs/specs/site.md": spec, "src/example.test.tsx": unit };
 }
 
@@ -51,9 +51,9 @@ test("accepts executable tests and parameterized tests", async () => {
 
 test("requires every declared verification level", async () => {
   const files = fixture(SPEC.replace("| unit |", "| unit、browser、manual |"));
-  let result = await checkFixture(files);
+  const result = await checkFixture(files);
   assert.equal(result.errors.filter((error) => error.includes("missing")).length, 2);
-  files["tests/browser/site.test.mjs"] = UNIT;
+  files["tests/browser/site.spec.ts"] = UNIT;
   files["tests/manual/site.md"] = MANUAL;
   assert.deepEqual((await checkFixture(files)).errors, []);
 });
@@ -65,7 +65,7 @@ test("allows several tests to cover one scenario", async () => {
 test("rejects tests that reference removed scenarios or wrong levels", async () => {
   const result = await checkFixture({
     ...fixture(),
-    "tests/browser/site.test.mjs": `${UNIT}\ntest("SITE-R8.1 Removed", () => {});`,
+    "tests/browser/site.spec.ts": `${UNIT}\ntest("SITE-R8.1 Removed", () => {});`,
   });
   assert.ok(result.errors.some((error) => error.includes("does not declare browser")));
   assert.ok(
@@ -191,6 +191,7 @@ test("checker rejects files the configured test runners will not execute", async
   for (const path of [
     "tests/browser/extra.spec.mjs",
     "tests/browser/nested/extra.test.mjs",
+    "tests/browser/extra.test.mjs",
     "tests/browser/extra.test.ts",
     "src/extra.test.mjs",
   ]) {
@@ -278,4 +279,96 @@ test("fixture directories are not executable scenario coverage", async () => {
     "src/fixtures/example.test.ts": UNIT,
   });
   assert.ok(result.errors.some((error) => error.includes("missing unit")));
+});
+
+test("Playwright discovery accepts nested specs and ignores fixture directories", async () => {
+  const spec = SPEC.replace("| unit |", "| browser |");
+  assert.deepEqual(
+    (
+      await checkFixture({
+        ...fixture(spec, ""),
+        "tests/browser/navigation/history.spec.ts": UNIT,
+      })
+    ).errors,
+    [],
+  );
+  for (const directory of ["fixtures", "__fixtures__"]) {
+    const result = await checkFixture({
+      ...fixture(spec, ""),
+      [`tests/browser/${directory}/example.spec.ts`]: UNIT,
+    });
+    assert.ok(result.errors.some((error) => error.includes("missing browser")));
+  }
+});
+
+test("Playwright suites and runtime skip or fixme cannot manufacture coverage", async () => {
+  for (const body of [
+    'test.fixme("SITE-R1.1 disabled", () => {});',
+    'test.describe.skip("group", () => { ' + UNIT + " });",
+    'test.describe.fixme("group", () => { ' + UNIT + " });",
+    'test("SITE-R1.1 skipped", () => { test.skip(); });',
+    'test("SITE-R1.1 skipped", () => { test.fixme(true); });',
+    'test("SITE-R1.1 skipped", ({ browserName }) => { test.skip(browserName === "webkit"); });',
+    'test.describe("group", () => { test.skip(); ' + UNIT + " });",
+    "test.beforeEach(() => { test.skip(); }); " + UNIT,
+    'test.describe("SITE-R1.1 suite is not a test", () => {});',
+  ])
+    assert.ok(
+      (await checkFixture(fixture(SPEC, body))).errors.some((error) =>
+        error.includes("missing unit"),
+      ),
+      body,
+    );
+  assert.deepEqual(
+    (
+      await checkFixture(
+        fixture(SPEC, 'test.describe("group", () => { ' + UNIT + " });"),
+      )
+    ).errors,
+    [],
+  );
+  assert.deepEqual(
+    (
+      await checkFixture(
+        fixture(
+          SPEC,
+          'test("SITE-R1.1 active", () => { test.skip(false); test.fixme(false); });',
+        ),
+      )
+    ).errors,
+    [],
+  );
+  assert.ok(
+    (
+      await checkFixture(
+        fixture(SPEC, 'test.describe.only("group", () => { ' + UNIT + " });"),
+      )
+    ).errors.some((error) => error.includes("focused")),
+  );
+});
+
+test("runtime annotations inside steps and asynchronous callbacks cannot manufacture coverage", async () => {
+  for (const body of [
+    'test("SITE-R1.1 skipped", async () => { await test.step("skip", async () => { test.skip(); }); });',
+    'test("SITE-R1.1 skipped", async () => { await test.step("fixme", async () => { test.fixme(); }); });',
+    'test("SITE-R1.1 skipped", async () => { await Promise.resolve().then(() => { test.skip(); }); });',
+    'test.step("SITE-R1.1 step is not a test", async () => {});',
+  ])
+    assert.ok(
+      (await checkFixture(fixture(SPEC, body))).errors.some((error) =>
+        error.includes("missing unit"),
+      ),
+      body,
+    );
+  assert.deepEqual(
+    (
+      await checkFixture(
+        fixture(
+          SPEC,
+          'test("SITE-R1.1 active", async () => { await test.step("active", async () => { test.skip(false); test.fixme(false); }); });',
+        ),
+      )
+    ).errors,
+    [],
+  );
 });

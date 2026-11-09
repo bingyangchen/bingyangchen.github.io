@@ -2,6 +2,8 @@
 
 先以 `npm run build` 產生最新 production build，再執行 `npm run preview`，使用輸出的 loopback URL。預覽 server 沒有 SPA fallback；`/resume` 不公開，相關本機預覽檢查使用 `npm run dev`。
 
+Playwright Test 以 Chromium 執行完整套件，Firefox 與 WebKit 執行首頁、語言、anchor/history、分頁、dialog 與 reduced motion 的主要流程。WebKit 自動化仍需搭配真實 Safari、手機與 OS 列印檢查。
+
 Browser tests 與 prerender 拒絕非 loopback 的網路資源，品牌圖片直接使用 repo 素材。外連目的地與外站可用性需分別檢查，自動測試不代表外站可用。
 
 依改動影響選擇驗證範圍，並在執行紀錄分別標示已測與未測的範圍：

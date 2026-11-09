@@ -1,4 +1,5 @@
-export async function closeBrowser(browser, timeoutMs) {
+import type { Browser } from "puppeteer";
+export async function closeBrowser(browser: Browser | undefined, timeoutMs: number) {
   if (!browser) return;
   let timer;
   try {

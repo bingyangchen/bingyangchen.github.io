@@ -1,12 +1,18 @@
-import { MIN_VISIBLE_TEXT_CHARS } from "./settings.mjs";
-import { assertResumePdfStructure, assertResumePdfText } from "./pdf.mjs";
+import type { Page } from "puppeteer";
+import type { watchPageResources } from "../browser-resources.mts";
+import { MIN_VISIBLE_TEXT_CHARS } from "./settings.mts";
+import { assertResumePdfStructure, assertResumePdfText } from "./pdf.mts";
 
-export async function generateResumePdf(page, origin, resources) {
+export async function generateResumePdf(
+  page: Page,
+  origin: string,
+  resources: Awaited<ReturnType<typeof watchPageResources>>,
+) {
   const response = await page.goto(`${origin}/resume`, { waitUntil: "networkidle0" });
   if (!response?.ok()) throw new Error(`Resume responded ${response?.status()}`);
   await page.emulateMediaType("print");
   const expected = await page.evaluate(async (minimumTextLength) => {
-    const sheets = document.querySelectorAll("[data-resume-root]");
+    const sheets = document.querySelectorAll<HTMLElement>("[data-resume-root]");
     if (sheets.length !== 1) throw new Error("Expected one resume sheet");
     await document.fonts.ready;
     if (Array.from(document.fonts).some((font) => font.status === "error"))
@@ -20,7 +26,7 @@ export async function generateResumePdf(page, origin, resources) {
     const bounds = sheet.getBoundingClientRect();
     const walker = document.createTreeWalker(sheet, NodeFilter.SHOW_TEXT);
     for (let text = walker.nextNode(); text; text = walker.nextNode()) {
-      if (!text.textContent.trim()) continue;
+      if (!text.textContent!.trim()) continue;
       const range = document.createRange();
       range.selectNodeContents(text);
       const rectangles = Array.from(range.getClientRects());
@@ -34,7 +40,7 @@ export async function generateResumePdf(page, origin, resources) {
             rect.bottom > bounds.bottom + 1,
         )
       )
-        throw new Error(`Resume content overflows A4: ${text.textContent.trim()}`);
+        throw new Error(`Resume content overflows A4: ${text.textContent!.trim()}`);
     }
     document.documentElement.lang = "en";
     return {
@@ -42,7 +48,10 @@ export async function generateResumePdf(page, origin, resources) {
         .split(/\n+/)
         .map((line) => line.trim())
         .filter(Boolean),
-      links: Array.from(sheet.querySelectorAll("a[href]"), (link) => link.href),
+      links: Array.from(
+        sheet.querySelectorAll<HTMLAnchorElement>("a[href]"),
+        (link) => link.href,
+      ),
     };
   }, MIN_VISIBLE_TEXT_CHARS);
   const pdf = Buffer.from(

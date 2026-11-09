@@ -1,8 +1,10 @@
+import type { IncomingMessage } from "node:http";
+import type { AddressInfo } from "node:net";
 import { open, realpath } from "node:fs/promises";
 import { createServer } from "node:http";
 import { extname, join, resolve, sep } from "node:path";
 
-const CONTENT_TYPES = {
+const CONTENT_TYPES: Record<string, string> = {
   ".css": "text/css; charset=utf-8",
   ".html": "text/html; charset=utf-8",
   ".ico": "image/x-icon",
@@ -19,12 +21,15 @@ const CONTENT_TYPES = {
   ".woff2": "font/woff2",
 };
 
-export async function startStaticServer(directory, { shell, shellRoutes = [] } = {}) {
+export async function startStaticServer(
+  directory: string,
+  { shell, shellRoutes = [] }: { shell?: string; shellRoutes?: string[] } = {},
+) {
   const root = await realpath(directory);
   if (shellRoutes.length && typeof shell !== "string")
     throw new Error("Shell routes require an HTML shell");
-  const isInsideRoot = (path) => path === root || path.startsWith(root + sep);
-  const reportError = (error, request) =>
+  const isInsideRoot = (path: string) => path === root || path.startsWith(root + sep);
+  const reportError = (error: unknown, request: IncomingMessage) =>
     console.error(
       new Error(`Static request failed: ${request.method} ${request.url}`, {
         cause: error,
@@ -36,7 +41,7 @@ export async function startStaticServer(directory, { shell, shellRoutes = [] } =
       let pathname;
       try {
         pathname = decodeURIComponent(
-          new URL(request.url, "http://localhost").pathname,
+          new URL(request.url ?? "/", "http://localhost").pathname,
         );
         if (pathname.includes("\0")) throw new Error("NUL in URL");
       } catch {
@@ -56,7 +61,7 @@ export async function startStaticServer(directory, { shell, shellRoutes = [] } =
         response.writeHead(200, {
           "Content-Type": CONTENT_TYPES[".html"],
           "Cache-Control": "no-store",
-          "Content-Length": Buffer.byteLength(shell),
+          "Content-Length": Buffer.byteLength(shell!),
         });
         response.end(request.method === "HEAD" ? undefined : shell);
         return;
@@ -94,34 +99,38 @@ export async function startStaticServer(directory, { shell, shellRoutes = [] } =
         file = undefined;
         stream.on("error", (error) => {
           reportError(error, request);
-          response.destroy(error);
+          response.destroy(error instanceof Error ? error : new Error(String(error)));
         });
         response.once("close", () => stream.destroy());
         stream.pipe(response);
       }
     } catch (error) {
-      const missing = ["ENOENT", "ENOTDIR"].includes(error.code);
+      const missing =
+        error instanceof Error &&
+        "code" in error &&
+        ["ENOENT", "ENOTDIR"].includes(String(error.code));
       if (!missing) reportError(error, request);
-      if (response.headersSent) response.destroy(error);
+      if (response.headersSent)
+        response.destroy(error instanceof Error ? error : new Error(String(error)));
       else response.writeHead(missing ? 404 : 500).end();
     } finally {
       try {
         await file?.close();
       } catch (error) {
         reportError(error, request);
-        response.destroy(error);
+        response.destroy(error instanceof Error ? error : new Error(String(error)));
       }
     }
   });
-  await new Promise((resolveListening, rejectListening) => {
+  await new Promise<void>((resolveListening, rejectListening) => {
     server.once("error", rejectListening);
     server.listen(0, "127.0.0.1", resolveListening);
   });
-  let closePromise;
+  let closePromise: Promise<void> | undefined;
   return {
-    origin: `http://127.0.0.1:${server.address().port}`,
+    origin: `http://127.0.0.1:${(server.address() as AddressInfo).port}`,
     close: () =>
-      (closePromise ??= new Promise((resolveClosed, rejectClosed) => {
+      (closePromise ??= new Promise<void>((resolveClosed, rejectClosed) => {
         server.close((error) => (error ? rejectClosed(error) : resolveClosed()));
         server.closeAllConnections();
       })),

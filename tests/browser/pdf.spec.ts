@@ -1,32 +1,36 @@
-import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { before, test } from "node:test";
 import {
-  PDFDict,
   PDFDocument,
   PDFName,
-  PDFString,
-  StandardFonts,
   degrees,
+  StandardFonts,
+  PDFDict,
+  PDFString,
+  type PDFPage,
 } from "pdf-lib";
 import {
   assertResumePdfStructure,
   assertResumePdfText,
-} from "../../scripts/prerender/pdf.mjs";
-import { parsePdfMetadata } from "../helpers/pdf.mjs";
+} from "../../scripts/prerender/pdf.mts";
+import { parsePdfMetadata } from "../helpers/pdf.mts";
+import assert from "node:assert/strict";
+import { test } from "../helpers/fixtures";
 
 const LINKS = [
   "mailto:bryan.chen.429@gmail.com",
   "https://github.com/bingyangchen",
   "https://byc1999.com/",
 ];
-let original;
 
-before(async () => {
+let original: Buffer;
+
+test.beforeAll(async () => {
   original = await readFile(new URL("../../build/resume.pdf", import.meta.url));
 });
 
-async function mutatePdf(mutate) {
+type MutatePdf = (document: PDFDocument, page: PDFPage) => unknown;
+
+async function mutatePdf(mutate: MutatePdf) {
   const document = await PDFDocument.load(original);
   await mutate(document, document.getPage(0));
   return document.save({ useObjectStreams: true });
@@ -61,7 +65,7 @@ test("SITE-R14.4 corrupt, multipage, non-A4, cropped, rotated and non-English PD
     assertResumePdfStructure(original.subarray(0, -10), LINKS),
     /incomplete PDF envelope/,
   );
-  const cases = [
+  const cases: [MutatePdf, RegExp][] = [
     [(document) => document.addPage(), /one English A4 page/],
     [(_, page) => page.setSize(612, 792), /A4/],
     [
@@ -117,7 +121,7 @@ test("SITE-R14.4 missing, changed and out-of-page PDF link annotations are rejec
     /missing link annotation/,
   );
   const changed = await mutatePdf((document, page) => {
-    const annotation = document.context.lookup(page.node.Annots().get(0), PDFDict);
+    const annotation = document.context.lookup(page.node.Annots()!.get(0), PDFDict);
     annotation
       .lookup(PDFName.of("A"), PDFDict)
       .set(PDFName.of("URI"), PDFString.of("https://wrong.invalid/"));
@@ -127,7 +131,7 @@ test("SITE-R14.4 missing, changed and out-of-page PDF link annotations are rejec
     /missing link annotation/,
   );
   const clipped = await mutatePdf((document, page) => {
-    const annotation = document.context.lookup(page.node.Annots().get(0), PDFDict);
+    const annotation = document.context.lookup(page.node.Annots()!.get(0), PDFDict);
     annotation.set(PDFName.of("Rect"), document.context.obj([0, 0, 900, 900]));
   });
   await assert.rejects(assertResumePdfStructure(clipped, LINKS), /outside its page/);
@@ -136,7 +140,7 @@ test("SITE-R14.4 missing, changed and out-of-page PDF link annotations are rejec
 test("SITE-R14.4 missing, substituted and unembedded PDF fonts are rejected", async () => {
   const missing = await mutatePdf((_, page) =>
     page.node
-      .Resources()
+      .Resources()!
       .set(PDFName.of("Font"), PDFDict.withContext(page.doc.context)),
   );
   await assert.rejects(
@@ -144,7 +148,7 @@ test("SITE-R14.4 missing, substituted and unembedded PDF fonts are rejected", as
     /Unexpected resume PDF fonts/,
   );
   const substituted = await mutatePdf((document, page) => {
-    const fonts = page.node.Resources().lookup(PDFName.of("Font"), PDFDict);
+    const fonts = page.node.Resources()!.lookup(PDFName.of("Font"), PDFDict);
     document.context
       .lookup(fonts.values()[0], PDFDict)
       .set(PDFName.of("BaseFont"), PDFName.of("Arial"));
@@ -173,7 +177,7 @@ test("SITE-R14.4 independent extraction rejects a missing section and contact te
     "Computer Science",
     "bryan.chen.429@gmail.com",
   ];
-  const makePdf = async (lines) => {
+  const makePdf = async (lines: string[]) => {
     const document = await PDFDocument.create();
     const font = await document.embedFont(StandardFonts.Helvetica);
     const page = document.addPage();

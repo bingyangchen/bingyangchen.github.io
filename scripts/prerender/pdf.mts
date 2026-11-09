@@ -17,10 +17,14 @@ const RESUME_PDF_FONT_NAMES = [
   "Georgia-Italic",
   "NotoSerifTC-Bold",
 ];
-const getName = (dictionary, key) =>
+const getName = (dictionary: PDFDict, key: string) =>
   dictionary.lookup(PDFName.of(key), PDFName).decodeText();
 
-function collectFontNames(resources, names, visited) {
+function collectFontNames(
+  resources: PDFDict | undefined,
+  names: Set<string>,
+  visited: Set<PDFDict>,
+) {
   if (!resources || visited.has(resources)) return;
   visited.add(resources);
   const fonts = resources.lookupMaybe(PDFName.of("Font"), PDFDict);
@@ -53,7 +57,10 @@ function collectFontNames(resources, names, visited) {
   }
 }
 
-export async function assertResumePdfStructure(bytes, expectedLinks) {
+export async function assertResumePdfStructure(
+  bytes: Uint8Array,
+  expectedLinks: string[],
+) {
   if (
     !Buffer.from(bytes.subarray(0, 8)).toString("ascii").startsWith("%PDF-") ||
     !Buffer.from(bytes.subarray(-1024)).toString("ascii").trimEnd().endsWith("%%EOF")
@@ -80,10 +87,12 @@ export async function assertResumePdfStructure(bytes, expectedLinks) {
     Math.abs(media.width * userUnit - 595.28) > 2 ||
     Math.abs(media.height * userUnit - 841.89) > 2 ||
     page.getRotation().angle !== 0 ||
-    ["x", "y", "width", "height"].some((key) => Math.abs(media[key] - crop[key]) > 0.01)
+    (["x", "y", "width", "height"] as const).some(
+      (key) => Math.abs(media[key] - crop[key]) > 0.01,
+    )
   )
     throw new Error("Invalid resume PDF: expected one uncropped English A4 page");
-  const fonts = new Set();
+  const fonts = new Set<string>();
   collectFontNames(page.node.Resources(), fonts, new Set());
   if (
     fonts.size !== RESUME_PDF_FONT_NAMES.length ||
@@ -102,7 +111,7 @@ export async function assertResumePdfStructure(bytes, expectedLinks) {
     const rectangle = dictionary
       .lookup(PDFName.of("Rect"), PDFArray)
       .asArray()
-      .map((value) => document.context.lookup(value).asNumber());
+      .map((value) => document.context.lookup(value, PDFNumber).asNumber());
     if (
       rectangle.length !== 4 ||
       !rectangle.every(Number.isFinite) ||
@@ -121,19 +130,18 @@ export async function assertResumePdfStructure(bytes, expectedLinks) {
       throw new Error(`Resume PDF is missing link annotation: ${link}`);
 }
 
-function normalizeText(text) {
+function normalizeText(text: string) {
   return text
     .normalize("NFKC")
     .replace(/\u00ad/g, "")
     .replace(/\s+/g, "");
 }
 
-export async function assertResumePdfText(bytes, expectedText) {
+export async function assertResumePdfText(bytes: Uint8Array, expectedText: string[]) {
   if (!expectedText.length) throw new Error("Resume PDF has no expected text");
   const task = getDocument({
     data: Uint8Array.from(bytes),
     useSystemFonts: false,
-    isEvalSupported: false,
     stopAtErrors: true,
     standardFontDataUrl: fileURLToPath(
       new URL("../standard_fonts/", import.meta.resolve("pdfjs-dist/build/pdf.mjs")),

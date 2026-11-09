@@ -8,7 +8,7 @@ import typescript from "typescript-eslint";
 import { defineConfig } from "eslint/config";
 
 export default defineConfig([
-  { ignores: ["build/**", "coverage/**"] },
+  { ignores: ["build/**", "coverage/**", "playwright-report/**", "test-results/**"] },
   javascript.configs.recommended,
   {
     files: ["**/*.{ts,tsx,mts}"],
@@ -29,7 +29,7 @@ export default defineConfig([
       jsxAccessibility.flatConfigs.recommended,
     ],
     languageOptions: { globals: globals.browser },
-    plugins: { "react-hooks": reactHooks },
+    plugins: { "react-hooks": { rules: reactHooks.rules } },
     settings: { react: { version: "detect" } },
     rules: {
       "react-hooks/rules-of-hooks": "error",
@@ -41,15 +41,15 @@ export default defineConfig([
     languageOptions: { globals: globals.vitest },
   },
   {
-    files: ["**/*.mjs", "vite.config.mts"],
+    files: ["**/*.{mjs,mts}", "playwright.config.ts", "tests/**/*.ts"],
     languageOptions: { globals: globals.node },
   },
   {
     files: [
-      "scripts/prerender.mjs",
-      "scripts/prerender/*.mjs",
-      "scripts/browser-resources.mjs",
-      "tests/browser/*.mjs",
+      "scripts/prerender.mts",
+      "scripts/prerender/*.mts",
+      "scripts/browser-resources.mts",
+      "tests/**/*.ts",
     ],
     languageOptions: { globals: globals.browser },
   },

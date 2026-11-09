@@ -21,6 +21,8 @@ depends_on: []
 - 2026-11-09：使用者核准 TD-15、TD-16，授權一併改善 PDF 結構與文字驗證、共用靜態服務及 Prerender 的職責與失敗處理。
 - 2026-11-09：使用者核准 TD-19，授權移除停用的 Workbox 程式與依賴、精確清理歷史 registration，並完成相關規格與驗證。
 
+- 2026-11-09：使用者核准 TD-13、TD-20，授權一併遷移瀏覽器測試至 Playwright Test，補齊 Node 工具與測試型別檢查，並保留既有情境及跨瀏覽器驗證。
+
 ## 範圍
 
 檢查涵蓋 `src/` 的 React、TypeScript、Sass、內容資料與雙語字典，`scripts/`、`tests/`、`public/`、字型與圖片、npm 設定、lockfile、GitHub Actions、工程文件與規格對應。
@@ -44,10 +46,8 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 | TD-10 | P2 | 按實際功能拆分首頁與履歷 | 程式碼確認 |
 | TD-11 | P2 | 分開 motion 計算與 DOM 操作 | 程式碼確認 |
 | TD-12 | P2 | 整理導覽狀態與原生 anchor 行為 | 程式碼確認 |
-| TD-13 | P2 | 採用 Playwright Test 管理瀏覽器測試 | 程式碼確認 |
-| TD-20 | P2 | 補足 Node 工具與瀏覽器測試的型別檢查 | 程式碼確認 |
 | TD-21 | P2 | 補上 Node 與 npm 的版本選擇方式 | 程式碼確認 |
-| TD-22 | P2 | 補足安全更新與失敗診斷的 CI 流程 | 程式碼確認 |
+| TD-22 | P2 | 補足依賴安全更新的維護流程 | 程式碼確認 |
 | TD-23 | P2 | 整理樣式作用範圍與共用 token | 程式碼確認 |
 | TD-25 | P3 | 校對靜態 metadata、manifest 與 sitemap | 程式碼確認、待調查 |
 | TD-26 | P3 | 分開非公開履歷載入並明確記錄啟動方式 | 程式碼確認 |
@@ -124,24 +124,6 @@ stateDiagram-v2
 
 完成條件：保持 SITE-R2 的 hash、history length、讀取位置與焦點；新增非本網站 anchor 不介入，以及卸載後沒有還原 callback 操作 DOM 的驗證。不要用 IntersectionObserver 取代歷史還原，因為可見區塊判斷無法處理這整組需求。
 
-### TD-13：採用 Playwright Test 管理瀏覽器測試
-
-證據：[`tests/browser/site.test.mjs`](../../tests/browser/site.test.mjs) 包含共用 browser/context/page 變數、request interception、下載事件、CDP、字型、PDF parser、fixture 子程序與視覺幾何。Node test runner 可以執行這些測試，但隔離、等待、診斷及跨瀏覽器支援多由專案自行維護。
-
-建議採用 Playwright Test，按導覽、內容與語言、Projects、QR code、motion、accessibility、PDF/build 拆分測試，使用 fixtures、語意 locator、可重試 assertion、trace 與失敗截圖。[官方測試建議](https://playwright.dev/docs/best-practices) 與 [多瀏覽器 projects](https://playwright.dev/docs/test-projects) 可替代目前多項測試基礎設施。
-
-完成條件：原有情境逐項對應，沒有以重試掩蓋穩定失敗。Chromium 維持完整套件；Firefox、WebKit 至少涵蓋首頁、語言、anchor/history、tab、dialog 及 reduced motion。CDP 專用與 PDF 產生只在 Chromium 執行，真實 Safari、手機及 OS 列印仍保留人工驗證。平行執行前移除共享 page 狀態，失敗時可取得 trace、screenshot 與 console。
-
-[`check-scenarios.mjs`](../../scripts/check-scenarios.mjs) 目前只接受直屬 `tests/browser/*.test.mjs`。採用新的 `.spec.ts` 路徑時，runner、checker、checker fixtures、lint、typecheck、README 與驗證文件必須同時更新，明確處理 Playwright 的 `skip`、`fixme`、`only`，不能只改 npm script。
-
-### TD-20：補足 Node 工具與瀏覽器測試的型別檢查
-
-證據：[`tsconfig.json`](../../tsconfig.json) 涵蓋 `src/` 與 `vite.config.mts`，但 `.mjs` 腳本和 browser tests 沒有型別檢查，`checkJs` 也未啟用。Puppeteer callback、fixture 回傳與檔案 I/O 的型別錯誤無法由目前的 `typecheck` 發現。
-
-建議為 Node 工具與 browser tests 提供獨立的 tsconfig。腳本可使用 TypeScript，或先以 `checkJs` 和必要 JSDoc 檢查，選擇能覆蓋上述程式的方式。
-
-完成條件：故意在工具或 browser tests 中放入型別錯誤會阻止共同檢查，並保留既有應用程式的型別檢查。先保留 `skipLibCheck`，待相容性驗證後再決定是否調整，避免把所有上游型別問題納入本次工作。
-
 ### TD-21：補上 Node 與 npm 的版本選擇方式
 
 證據：[`package.json`](../../package.json) 已宣告 Node 的相容範圍，[README](../../README.md) 與 CI 使用 Node 22，Node 型別也使用 22.x。不過 repo 沒有 `.nvmrc` 或其他版本選擇檔案，也未指定 npm 版本，全新環境仍需自行選擇實際使用的版本。
@@ -150,13 +132,13 @@ stateDiagram-v2
 
 完成條件：全新環境能依文件選到可執行工具的 Node 與 npm，CI 與本機重現同樣的 compile、測試與 PDF 字型檢查。套件版本在實作時向官方 registry 取得相容版本。
 
-### TD-22：補足依賴安全更新與失敗診斷
+### TD-22：補足依賴安全更新
 
-證據：[部署 workflow](../../.github/workflows/deploy.yml) 已有最小權限、檢查成功後發布及 main ref 限制，這些應維持。不過目前沒有獨立的依賴安全檢查，瀏覽器失敗時也沒有 trace、screenshot 等 artifact。
+證據：[部署 workflow](../../.github/workflows/deploy.yml) 已有最小權限、檢查成功後發布及 main ref 限制，這些應維持。目前仍缺少獨立的依賴安全檢查。
 
 建議在獨立維護流程檢查安全公告與過時依賴，使用 Dependabot 等既有服務建立供審查的更新，依 React、工具鏈及瀏覽器工具分組。安全處置保留引入鏈與使用情境，不只追求統計歸零。一般 `npm run check` 維持不依賴即時 registry，避免 registry 故障阻止離線驗證。
 
-完成條件：CI 失敗時上傳有保存期限的診斷 artifact，失敗輸出仍不部署；main 與其他 ref 的發布條件維持。實作時依官方發布資訊確認既有 workflow 的 Node 與 Actions 版本相容性，並在 browser database 更新時檢查 CSS 輸出與支援環境。依賴維護流程不改變本 repo 直接在 main 工作的規則。
+完成條件：依賴維護流程能辨識安全公告與過時依賴，提供引入鏈及使用情境供審查。實作時依官方發布資訊確認既有 workflow 的 Node 與 Actions 版本相容性，並在 browser database 更新時檢查 CSS 輸出與支援環境；main 的發布條件及直接在 main 工作的規則維持。
 
 ### TD-23：整理樣式作用範圍及共享 Token
 
@@ -197,7 +179,6 @@ stateDiagram-v2
 <!-- prettier-ignore -->
 | 項目 | 建議 | 原因及決策保存位置 |
 | --- | --- | --- |
-| Browser runner | 改用 Playwright Test | Fixtures、等待、跨瀏覽器與診斷由現成工具提供；保存於 README、測試設定及驗證文件。 |
 | QR code | 保留 `qrcode.react` 與原生 dialog | 目前已用現成 QR code encoder 與 browser modal，沒有重造這兩項功能。 |
 | 區塊導覽 | 保留原生 anchor，加上小型網站狀態管理 | Hash 與閱讀位置是本站既有需求；不以另一個 scroll library 取代 browser history。保存於 SITE-R2 與 navigation 模組。 |
 | Motion | 保留網站公式，分開計算與 DOM | 現有動畫有具體的可逆、整組及長內容規則；先降低耦合，沒有證據支持整套換引擎。保存於 SITE-R13 及 design system。 |
@@ -244,16 +225,13 @@ SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-
 ```mermaid
 flowchart TD
   baseline[保留驗證基準與情境對應]
-  baseline --> tooling[TD-20、TD-21：工具型別與環境]
+  baseline --> tooling[TD-21：工具環境]
   baseline --> content[TD-09、TD-10：共用事實與功能分工]
-  tooling --> tests[TD-13、TD-22：測試與診斷]
+  baseline --> maintenance[TD-22：依賴維護]
   content --> logic[TD-11、TD-12：Motion 與導覽]
-  tests --> logic
   content --> styles[TD-23、TD-27：共用樣式與控制]
   baseline --> optional[TD-25、TD-26：靜態資料與載入整理]
 ```
-
-Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留兩組 runner，確認對應後刪除舊的測試基礎設施，避免長期維護重複套件。
 
 ### 需要特別保留的規則
 
@@ -272,11 +250,11 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 <!-- prettier-ignore -->
 | 工作範圍 | 工程驗收 |
 | --- | --- |
-| 工具與環境 | 工具及 browser tests 的型別錯誤會阻止共同檢查；依文件選擇 Node 與 npm 後，乾淨安裝及既有檢查通過。 |
+| 工具與環境 | 依文件選擇 Node 與 npm 後，乾淨安裝及既有檢查通過。 |
 | 內容與模組 | 共用事實有單一維護位置，雙語與履歷共享事實保持一致；沒有循環 import 或功能私有模組對外公開。 |
 | Motion 與導覽 | 純函式驗證與既有 browser 情境通過，桌面及實機快捲、反轉、歷史還原、focus、resize、reduced motion 另有實測紀錄。 |
 | 資源及載入 | 記錄履歷 route 分割前後的 bundle gzip 差異，prerender 仍保留完整靜態內容。 |
-| 測試與 CI | Runner 和 checker 接受相同檔案與測試宣告，主要跨瀏覽器流程有結果，失敗時有診斷 artifact，失敗輸出及非 main ref 均不發布。 |
+| 依賴維護與 CI | 安全公告與過時依賴有獨立檢查，更新有引入鏈及使用情境供審查，失敗輸出及非 main ref 均不發布。 |
 | 文件 | 同一批實作更新 design context、spec、manual checks、README 及 design system 的相關規則，完成並驗證的 Roadmap 項目才移除。 |
 
 ### 文件檢查
