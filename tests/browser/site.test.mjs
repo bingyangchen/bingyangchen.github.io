@@ -484,6 +484,9 @@ test("SITE-R12.9 Footer 操作尺寸、排列及文字放大", { timeout: 45000 
       );
       if (width <= 512)
         assert.ok(dimensions.copyright.top >= dimensions.identity.bottom);
+
+      // Focus the first link so Tab stays inside the page across viewport checks.
+      await page.focus('footer a[href^="mailto:"]');
       await page.keyboard.press("Tab");
       for (const link of await page.$$("footer a")) {
         await link.focus();
@@ -3226,6 +3229,8 @@ test("SITE-R18.1 依區域與控制尺寸共用鍵盤焦點框", async () => {
       assert.equal(reached.footer, 5);
       assert.equal(reached.surfaces, 4);
 
+      // Tabbing past the final link can move focus out of the document.
+      await page.bringToFront();
       await page.focus(`${TABS}:first-child`);
       for (let index = 0; index < 3; index += 1) {
         await assertFocusRing("rgb(82, 92, 48)");
