@@ -499,7 +499,7 @@ Browser tests 與 prerender 拒絕非 loopback 的網路資源，品牌圖片直
 
 ## SITE-R11.3 文字與連結
 
-原因：需要人工確認視覺、裝置操作或外部目的地，自動測試不能取代完整判斷。
+原因：自動檢查已核對實際 PDF 文字與 link annotations，仍需人工確認閱讀順序、可讀性及 PDF 閱讀器中的連結操作。
 
 步驟：
 

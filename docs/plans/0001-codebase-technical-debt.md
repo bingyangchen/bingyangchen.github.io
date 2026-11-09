@@ -18,6 +18,7 @@ depends_on: []
 - 2026-11-08：使用者核准 TD-04，授權完成 Tooltip 的互動與定位改善，並指定不建立 commit。未列於核准紀錄的項目尚未核准。
 - 2026-11-08：使用者核准 TD-18，授權改善圖片尺寸、responsive sources 與載入策略，並指定不建立 commit。
 - 2026-11-09：使用者核准 TD-07、TD-08、TD-24，授權一併完成工作與作品的資料約定、英文 fallback 與測試隔離。
+- 2026-11-09：使用者核准 TD-15、TD-16，授權一併改善 PDF 結構與文字驗證、共用靜態服務及 Prerender 的職責與失敗處理。
 
 ## 範圍
 
@@ -43,8 +44,6 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 | TD-11 | P2 | 分開 motion 計算與 DOM 操作 | 程式碼確認 |
 | TD-12 | P2 | 整理導覽狀態與原生 anchor 行為 | 程式碼確認 |
 | TD-13 | P2 | 採用 Playwright Test 管理瀏覽器測試 | 程式碼確認 |
-| TD-15 | P2 | 使用 PDF parser 並補足 PDF 內容驗證 | 程式碼確認 |
-| TD-16 | P2 | 共用靜態檔案服務並拆分 prerender 職責 | 程式碼確認 |
 | TD-19 | P2 | 移除停用的 Workbox 程式並保留精確清理 | 程式碼確認 |
 | TD-20 | P2 | 補足 Node 工具與瀏覽器測試的型別檢查 | 程式碼確認 |
 | TD-21 | P2 | 補上 Node 與 npm 的版本選擇方式 | 程式碼確認 |
@@ -135,22 +134,6 @@ stateDiagram-v2
 
 [`check-scenarios.mjs`](../../scripts/check-scenarios.mjs) 目前只接受直屬 `tests/browser/*.test.mjs`。採用新的 `.spec.ts` 路徑時，runner、checker、checker fixtures、lint、typecheck、README 與驗證文件必須同時更新，明確處理 Playwright 的 `skip`、`fixme`、`only`，不能只改 npm script。
 
-### TD-15：使用 PDF Parser 並補足內容驗證
-
-證據：[`prerender.mjs`](../../scripts/prerender.mjs) 及 browser tests 都將 PDF 轉為 Latin-1 再用 regex 解析頁數、MediaBox、文件語言、字型和 URL。程式有註明只處理 Chromium 輸出，這個限制合理，但 Chromium 改變物件壓縮或 dictionary 輸出方式時，仍可能出現錯誤判斷。Build 目前驗證紙張範圍內的 DOM 文字，不能證明 PDF 的實際文字擷取完整。
-
-建議用 [pdf-lib 的文件載入與頁面 API](https://pdf-lib.js.org/docs/api/classes/pdfdocument) 處理文件結構，字型、語言及 annotation 由 parser 的物件 API 讀取。將 PDF 產生、結構驗證與測試工具分開，另以獨立文字擷取工具驗證 PDF 文字，避免 build 與測試共享同一段 parser 而一起判錯。
-
-完成條件：保留單頁 A4、英文、指定字型與 PDF 連結的拒絕條件，新增缺少區段文字、缺少 annotation、損壞 PDF、多頁及錯字型的 fixtures。正常 PDF 比較所有預期段落與聯絡資訊，人工判斷閱讀順序與視覺品質；DOM 文字通過不能代替 PDF 文字通過。字型檔、字重、font subsetting 與授權文件維持既有規則。
-
-### TD-16：共用靜態檔案服務並拆分 Prerender 職責
-
-證據：[`serve-build.mjs`](../../scripts/serve-build.mjs) 與 prerender 各自實作 HTTP server、路徑檢查及 MIME table。預覽版有 realpath、symlink、無效 URL、HEAD 與 stream error 處理；prerender 版沒有相同保護，且以「找不到 asset 就回 shell」處理所有未知路徑。兩個 server 都只開 loopback，此處不宣稱存在公開檔案洩漏。
-
-建議共用靜態檔案服務，嚴格模式直接回 404，build 模式只對明確允許的 `/`、`/resume` 提供 shell。MIME、路徑與錯誤處理維持一份；預期 ENOENT 可回 404，讀取權限或其他 I/O 錯誤須回報原因。首頁 snapshot、browser 啟動、履歷 PDF 與驗證拆成可各自測試的腳本模組。
-
-完成條件：缺少圖片不回 HTML 200，無效 URL 不使 process 失敗，既有 traversal、symlink、HEAD 測試保留。Browser 啟動或關閉失敗時也確實關閉 server，設定整體執行期限並記錄失敗階段。現有 failure fixtures 只複製單一 `prerender.mjs`，拆檔後必須同步複製需要的模組或透過明確工作目錄注入測試，不能讓 fixture 因找不到 import 而假裝驗證到預期錯誤。
-
 ### TD-19：移除停用的 Workbox 程式並保留精確清理
 
 證據：[`index.tsx`](../../src/index.tsx) 只執行 unregister，但 [`service-worker.ts`](../../src/service-worker.ts) 仍保留未使用的 app-shell、runtime cache 及 skipWaiting，並安裝 5 個 Workbox 直接依賴。Vite 不會編譯這個 worker，保留的程式與依賴沒有實際用途。
@@ -223,7 +206,6 @@ stateDiagram-v2
 | 項目 | 建議 | 原因及決策保存位置 |
 | --- | --- | --- |
 | Browser runner | 改用 Playwright Test | Fixtures、等待、跨瀏覽器與診斷由現成工具提供；保存於 README、測試設定及驗證文件。 |
-| PDF 結構解析 | 改用 PDF library | PDF 物件與壓縮格式交給 parser，網站只保留自身的字型、紙張與內容要求；保存於 build 工程說明。 |
 | QR code | 保留 `qrcode.react` 與原生 dialog | 目前已用現成 QR code encoder 與 browser modal，沒有重造這兩項功能。 |
 | 區塊導覽 | 保留原生 anchor，加上小型網站狀態管理 | Hash 與閱讀位置是本站既有需求；不以另一個 scroll library 取代 browser history。保存於 SITE-R2 與 navigation 模組。 |
 | Motion | 保留網站公式，分開計算與 DOM | 現有動畫有具體的可逆、整組及長內容規則；先降低耦合，沒有證據支持整套換引擎。保存於 SITE-R13 及 design system。 |
@@ -283,7 +265,7 @@ flowchart TD
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-09、TD-10：共用事實與功能分工]
   tooling --> tests[TD-13、TD-22：測試與診斷]
-  tooling --> build[TD-15、TD-16、TD-19：靜態輸出與資源]
+  tooling --> build[TD-19：停用的 Workbox 與歷史清理]
   content --> logic[TD-11、TD-12：Motion 與導覽]
   tests --> logic
   content --> styles[TD-23、TD-27：共用樣式與控制]
@@ -320,7 +302,6 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 | 工具與環境 | 工具及 browser tests 的型別錯誤會阻止共同檢查；依文件選擇 Node 與 npm 後，乾淨安裝及既有檢查通過。 |
 | 內容與模組 | 共用事實有單一維護位置，雙語與履歷共享事實保持一致；沒有循環 import 或功能私有模組對外公開。 |
 | Motion 與導覽 | 純函式驗證與既有 browser 情境通過，桌面及實機快捲、反轉、歷史還原、focus、resize、reduced motion 另有實測紀錄。 |
-| PDF 與 Prerender | 失敗 fixtures 確實測到預期原因；PDF parser、獨立文字擷取及人工版面檢查分別回報。 |
 | 資源及載入 | 記錄履歷 route 分割前後的 bundle gzip 差異，prerender 仍保留完整靜態內容。 |
 | 測試與 CI | Runner 和 checker 接受相同檔案與測試宣告，主要跨瀏覽器流程有結果，失敗時有診斷 artifact，失敗輸出及非 main ref 均不發布。 |
 | 文件 | 同一批實作更新 design context、spec、manual checks、README 及 design system 的相關規則，完成並驗證的 Roadmap 項目才移除。 |

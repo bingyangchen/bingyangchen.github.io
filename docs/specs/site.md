@@ -275,7 +275,7 @@ Production 維持 Ubuntu，在 CI 校驗 repo 內的 Georgia TTF 後直接安裝
 | --- | --- | --- |
 | SITE-R11.1 A4 與完整內容 | 檢查 build 的下載檔案與本機預覽列印均為單頁 A4，全部履歷文字可見，沒有裁切或額外空白頁。 | browser、manual |
 | SITE-R11.2 僅輸出履歷 | 下載 PDF 與預覽列印均不出現網站 Header、Footer、語言切換器或重複履歷。 | browser、manual |
-| SITE-R11.3 文字與連結 | 檢查擷取文字涵蓋所有區塊，人工確認可讀性及閱讀順序，並核對 email、GitHub 與個人網站連結。 | manual |
+| SITE-R11.3 文字與連結 | 檢查 PDF 實際擷取文字涵蓋全部履歷段落及聯絡資訊，並核對 email、GitHub 與個人網站的 link annotations；人工確認可讀性及閱讀順序。 | browser、manual |
 | SITE-R11.4 共用結果 | 下載 PDF 與預覽列印使用相同 ResumeSheet 及 print CSS，內容、頁數、紙張、字型與連結相同，中文姓名、分隔符號、項目符號與換行完整，沒有因使用不同的輸出方式而漏印。 | browser、manual |
 
 ## 響應式、動態與執行環境
@@ -381,9 +381,11 @@ flowchart TD
   sheet[檢查履歷載入與紙張範圍] --> ready{通過？}
   ready -->|是| generate[產生 PDF]
   ready -->|否| fail[Build 以非零狀態結束，CI 停止發布]
-  generate --> valid{有效且為英文單頁 A4？}
+  generate --> valid{PDF 為英文單頁 A4，且結構、字型與連結均符合要求？}
   generate -->|產生 PDF 失敗| fail
-  valid -->|是| done[完成 Build 輸出]
+  valid -->|是| text{獨立擷取的 PDF 文字包含全部預期內容？}
+  text -->|是| done[完成首頁與 PDF 輸出]
+  text -->|否| fail
   valid -->|否| fail
 ```
 
@@ -393,7 +395,7 @@ flowchart TD
 | SITE-R14.1 完整 Build | 從乾淨的前端 compile 輸出完成 build，產生首頁靜態內容與當次 ResumeSheet 的 PDF；不能以既有 HTML 或 PDF 代替當次輸出。 | browser |
 | SITE-R14.2 靜態首頁內容 | 讀取 build 的 HTML，或停用 JavaScript 開啟首頁，仍有主要區塊文字；不要求 QR code 或語言切換在無 JavaScript 時可操作。 | browser |
 | SITE-R14.3 擷取範圍 | HTML 保留 shell metadata，root 內有繁中內容及下載連結，root 外沒有 print portal；首頁啟動後沒有隱藏履歷或重複內容。 | browser |
-| SITE-R14.4 失敗回報 | 空 root、JavaScript 或 console error、錯誤 HTTP、非預期外連、資源載入或圖片解碼失敗、不足的內容、履歷載入失敗、超出紙張、字型缺漏或替換、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
+| SITE-R14.4 失敗回報 | 空 root、JavaScript 或 console error、錯誤 HTTP、非預期外連、資源載入或圖片解碼失敗、不足的內容、履歷載入失敗、超出紙張、字型缺漏或替換、PDF 缺字、缺少連結 annotation、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
 
 ### SITE-R15 Service Worker 與執行環境
 

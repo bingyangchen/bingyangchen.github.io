@@ -1,356 +1,147 @@
-import { createReadStream } from "node:fs";
-import { mkdir, readFile, stat, writeFile } from "node:fs/promises";
-import { createServer } from "node:http";
-import { dirname, extname, join, normalize, resolve, sep } from "node:path";
+import { readFile, writeFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-
 import puppeteer from "puppeteer";
 import { watchPageResources } from "./browser-resources.mjs";
+import { startStaticServer } from "./static-server.mjs";
+import { closeBrowser } from "./prerender/browser.mjs";
+import { generateResumePdf } from "./prerender/resume.mjs";
+import { assertSnapshotHasContent, snapshot } from "./prerender/snapshot.mjs";
+import { PRERENDER_LOCALE, PRERENDER_TIMEZONE } from "./prerender/settings.mjs";
 
-const BUILD_DIR = resolve(fileURLToPath(new URL("../build", import.meta.url)));
-const ROUTES = ["/"];
-const PRERENDER_LOCALE = "zh-TW";
-const PRERENDER_TIMEZONE = "Asia/Taipei";
+const BUILD_DIR = fileURLToPath(new URL("../build", import.meta.url));
 const ROOT_PLACEHOLDER = '<div id="root"></div>';
-const DOM_IDLE_MS = 1_000;
-const DOM_SETTLE_TIMEOUT_MS = 60_000;
-const MIN_VISIBLE_TEXT_CHARS = 500;
-const RESUME_PDF_FONT_NAMES = [
-  "Georgia",
-  "Georgia-Bold",
-  "Georgia-Italic",
-  "NotoSerifTC-Bold",
-];
+const PRERENDER_TIMEOUT_MS = 120_000;
+const CLEANUP_TIMEOUT_MS = 5_000;
 
-const MIME_TYPES = {
-  ".css": "text/css; charset=utf-8",
-  ".html": "text/html; charset=utf-8",
-  ".ico": "image/x-icon",
-  ".jpg": "image/jpeg",
-  ".js": "text/javascript; charset=utf-8",
-  ".json": "application/json; charset=utf-8",
-  ".map": "application/json; charset=utf-8",
-  ".pdf": "application/pdf",
-  ".png": "image/png",
-  ".svg": "image/svg+xml",
-  ".txt": "text/plain; charset=utf-8",
-  ".webp": "image/webp",
-  ".woff2": "font/woff2",
-};
-
-async function isFile(path) {
-  try {
-    return (await stat(path)).isFile();
-  } catch {
-    return false;
-  }
-}
-
-function startStaticServer(shell) {
-  const server = createServer(async (request, response) => {
-    const { pathname } = new URL(request.url, "http://localhost");
-    const requested = resolve(join(BUILD_DIR, normalize(decodeURIComponent(pathname))));
-    const isAssetRequest =
-      extname(requested) !== "" &&
-      (requested === BUILD_DIR || requested.startsWith(BUILD_DIR + sep)) &&
-      (await isFile(requested));
-
-    if (!isAssetRequest) {
-      response.writeHead(200, {
-        "Content-Type": "text/html; charset=utf-8",
-        "Cache-Control": "no-store",
-      });
-      response.end(shell);
-      return;
-    }
-
-    response.writeHead(200, {
-      "Content-Type": MIME_TYPES[extname(requested)] ?? "application/octet-stream",
-      "Cache-Control": "no-store",
-    });
-    createReadStream(requested).pipe(response);
-  });
-
-  return new Promise((resolveListening, rejectListening) => {
-    server.once("error", rejectListening);
-    server.listen(0, "127.0.0.1", () => resolveListening(server));
-  });
-}
-
-async function generateResumePdf(page, origin, resources) {
-  try {
-    const response = await page.goto(`${origin}/resume`, { waitUntil: "networkidle0" });
-    if (!response?.ok()) throw new Error(`Resume responded ${response?.status()}`);
-    await page.emulateMediaType("print");
-    await page.evaluate(async (minimumTextLength) => {
-      const sheets = document.querySelectorAll("[data-resume-root]");
-      if (sheets.length !== 1) throw new Error("Expected one resume sheet");
-      await document.fonts.ready;
-      if (Array.from(document.fonts).some((font) => font.status === "error"))
-        throw new Error("Resume font failed to load");
-      const sheet = sheets[0];
-      await Promise.all(
-        Array.from(sheet.querySelectorAll("img"), (image) => image.decode()),
-      );
-      if (sheet.innerText.trim().length < minimumTextLength)
-        throw new Error("Resume has insufficient content");
-      const bounds = sheet.getBoundingClientRect();
-      const walker = document.createTreeWalker(sheet, NodeFilter.SHOW_TEXT);
-      for (let text = walker.nextNode(); text; text = walker.nextNode()) {
-        if (!text.textContent.trim()) continue;
-        const range = document.createRange();
-        range.selectNodeContents(text);
-        const rectangles = Array.from(range.getClientRects());
-        if (
-          rectangles.length === 0 ||
-          rectangles.some(
-            (rect) =>
-              rect.left < bounds.left - 1 ||
-              rect.right > bounds.right + 1 ||
-              rect.top < bounds.top - 1 ||
-              rect.bottom > bounds.bottom + 1,
-          )
-        )
-          throw new Error(`Resume content overflows A4: ${text.textContent.trim()}`);
-      }
-      document.documentElement.lang = "en";
-    }, MIN_VISIBLE_TEXT_CHARS);
-    const pdf = Buffer.from(
-      await page.pdf({ preferCSSPageSize: true, printBackground: true }),
-    );
-    await resources.assertLoaded();
-
-    // These checks target Chromium's output, not arbitrary uploaded PDF files.
-    const content = pdf.toString("latin1");
-    const pages = content.match(/\/Type\s*\/Page\b/g)?.length;
-    const dimensions = content
-      .match(/\/MediaBox\s*\[([^\]]+)\]/)?.[1]
-      .trim()
-      .split(/\s+/)
-      .map(Number);
-    if (
-      !content.startsWith("%PDF-") ||
-      !content.trimEnd().endsWith("%%EOF") ||
-      pages !== 1 ||
-      !dimensions ||
-      dimensions.length !== 4 ||
-      !dimensions.every(Number.isFinite) ||
-      Math.abs(dimensions[2] - 595) > 2 ||
-      Math.abs(dimensions[3] - 842) > 2 ||
-      !/\/Lang\s*\(en\)/.test(content)
-    )
-      throw new Error("Invalid resume PDF: expected one English A4 page");
-    const fontNames = new Set(
-      Array.from(
-        content.matchAll(/\/(?:BaseFont|FontName)\s*\/(?:[A-Z]{6}\+)?([A-Za-z0-9-]+)/g),
-        (match) => match[1],
-      ),
-    );
-    if (
-      fontNames.size !== RESUME_PDF_FONT_NAMES.length ||
-      RESUME_PDF_FONT_NAMES.some((fontName) => !fontNames.has(fontName))
-    )
-      throw new Error(
-        `Unexpected resume PDF fonts: ${Array.from(fontNames).join(", ")}. ` +
-          `Expected Georgia and the bundled Noto Serif TC subset.`,
-      );
-    await writeFile(join(BUILD_DIR, "resume.pdf"), pdf);
-    console.log(
-      `generated resume.pdf (${(pdf.length / 1024).toFixed(1)} kB, one A4 page)`,
-    );
-  } finally {
-    await page.emulateMediaType("screen");
-  }
-}
-
-function waitForDomIdle(page, idleMs, timeoutMs) {
-  return page.evaluate(
-    (idle, timeout) =>
-      new Promise((resolveIdle, rejectIdle) => {
-        let idleTimer;
-
-        const hardTimer = setTimeout(() => {
-          observer.disconnect();
-          clearTimeout(idleTimer);
-          rejectIdle(new Error(`DOM still mutating after ${timeout}ms`));
-        }, timeout);
-
-        const settle = () => {
-          observer.disconnect();
-          clearTimeout(hardTimer);
-          resolveIdle();
-        };
-
-        const restart = () => {
-          clearTimeout(idleTimer);
-          idleTimer = setTimeout(settle, idle);
-        };
-
-        const observer = new MutationObserver(restart);
-        observer.observe(document.documentElement, {
-          attributes: true,
-          characterData: true,
-          childList: true,
-          subtree: true,
-        });
-        restart();
-      }),
-    idleMs,
-    timeoutMs,
-  );
-}
-
-async function snapshot(page, origin, route, resources) {
-  const response = await page.goto(`${origin}${route}`, { waitUntil: "networkidle0" });
-  if (!response?.ok()) {
-    throw new Error(`${route} responded ${response?.status()}`);
-  }
-
-  const locale = await page.evaluate(() => navigator.language);
-  if (locale !== PRERENDER_LOCALE) {
-    throw new Error(
-      `Browser locale is "${locale}" but the snapshot must be "${PRERENDER_LOCALE}". ` +
-        `The locale override did not apply, so the wrong language would be indexed.`,
-    );
-  }
-
-  // Unselected artwork is absent from the DOM, but every project's assets must pass build checks.
-  const projectTabs = await page.$$('#projects [role="tab"]');
-  for (let index = 0; index < projectTabs.length; index++) {
-    await projectTabs[index].evaluate((tab) => tab.click());
-    await page.waitForFunction(
-      (selected) =>
-        document
-          .querySelectorAll('#projects [role="tab"]')
-          [selected]?.getAttribute("aria-selected") === "true",
-      {},
-      index,
-    );
-    await resources.assertLoaded();
-    await page.$$eval("#projects img[srcset]", async (images) => {
-      // A valid currentSrc does not prove the other DPR renditions can be decoded.
-      const sources = new Set(
-        images.flatMap((image) =>
-          image.srcset.split(",").map((source) => source.trim().split(/\s+/)[0]),
-        ),
-      );
-      for (const source of sources) {
-        const image = new Image();
-        image.src = source;
-        try {
-          await image.decode();
-        } catch {
-          throw new Error(`Image cannot be decoded: ${source} (responsive artwork)`);
-        }
-      }
-    });
-  }
-  if (projectTabs.length) {
-    await projectTabs[0].evaluate((tab) => tab.click());
-    await page.waitForFunction(
-      () =>
-        document
-          .querySelector('#projects [role="tab"]')
-          ?.getAttribute("aria-selected") === "true",
-    );
-  }
-
-  await waitForDomIdle(page, DOM_IDLE_MS, DOM_SETTLE_TIMEOUT_MS);
-  await resources.assertLoaded();
-
-  // Capturing only #root preserves shell metadata and excludes body-level portals.
-  const rootHtml = await page.$eval("#root", (root) => {
-    const snapshot = root.cloneNode(true);
-    for (const preview of snapshot.querySelectorAll("[data-artwork-preview]"))
-      preview.removeAttribute("data-loaded");
-    return snapshot.innerHTML;
-  });
-  if (!rootHtml.trim()) {
-    throw new Error(`${route} rendered an empty #root`);
-  }
-  return rootHtml;
-}
-
-function assertSnapshotHasContent(rootHtml, route) {
-  const visibleText = rootHtml
-    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, "")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  if (visibleText.length < MIN_VISIBLE_TEXT_CHARS) {
-    throw new Error(
-      `${route} rendered only ${visibleText.length} characters of visible text, ` +
-        `expected at least ${MIN_VISIBLE_TEXT_CHARS}. The snapshot is what crawlers ` +
-        `read, so a thin one defeats the point of prerendering.\n` +
-        `Got: ${JSON.stringify(visibleText.slice(0, 200))}`,
-    );
-  }
-  return visibleText.length;
-}
-
-async function main() {
-  const shellPath = join(BUILD_DIR, "index.html");
-  const shell = await readFile(shellPath, "utf8");
-  if (!shell.includes(ROOT_PLACEHOLDER)) {
-    throw new Error(
-      `${shellPath} has no empty ${ROOT_PLACEHOLDER}. Run "vite build" first.`,
-    );
-  }
-
-  const server = await startStaticServer(shell);
-  const origin = `http://127.0.0.1:${server.address().port}`;
-
+export async function prerender({
+  buildDirectory = BUILD_DIR,
+  timeoutMs = PRERENDER_TIMEOUT_MS,
+  cleanupTimeoutMs = CLEANUP_TIMEOUT_MS,
+  launchBrowser = (options) => puppeteer.launch(options),
+} = {}) {
+  let stage = "reading shell";
   let browser;
+  let server;
   let resources;
-  try {
-    browser = await puppeteer.launch({
-      args: ["--no-sandbox", "--disable-dev-shm-usage"],
-    });
-    const page = await browser.newPage();
-    resources = await watchPageResources(page);
-    await page.setViewport({ width: 1440, height: 900 });
-    const cdp = await page.createCDPSession();
-    await cdp.send("Network.enable");
-    await cdp.send("Network.setUserAgentOverride", {
-      userAgent: await browser.userAgent(),
-      acceptLanguage: PRERENDER_LOCALE,
-    });
-
-    await page.emulateTimezone(PRERENDER_TIMEZONE);
-    await page.emulateMediaFeatures([
-      { name: "prefers-reduced-motion", value: "reduce" },
-    ]);
-
-    for (const route of ROUTES) {
-      const startedAt = process.hrtime.bigint();
-      const rootHtml = await snapshot(page, origin, route, resources);
-
-      const outputPath =
-        route === "/" ? shellPath : join(BUILD_DIR, normalize(route), "index.html");
-      const html = shell.replace(
-        ROOT_PLACEHOLDER,
-        () => `<div id="root">${rootHtml}</div>`,
-      );
-
-      const textLength = assertSnapshotHasContent(rootHtml, route);
-
-      await mkdir(dirname(outputPath), { recursive: true });
-      await writeFile(outputPath, html, "utf8");
-
-      const elapsedMs = Number(process.hrtime.bigint() - startedAt) / 1e6;
-      console.log(
-        `prerendered ${route} -> ${outputPath.slice(BUILD_DIR.length + 1)} ` +
-          `(${(rootHtml.length / 1024).toFixed(1)} kB markup, ${textLength} chars of ` +
-          `text, ${(elapsedMs / 1000).toFixed(1)}s)`,
-      );
+  const failures = [];
+  const controller = new AbortController();
+  const runStage = async (name, operation) => {
+    controller.signal.throwIfAborted();
+    stage = name;
+    try {
+      const result = await operation();
+      controller.signal.throwIfAborted();
+      return result;
+    } catch (cause) {
+      throw new Error(`Prerender failed during ${name}: ${cause.message}`, { cause });
     }
-    await generateResumePdf(page, origin, resources);
+  };
+  let timer;
+  const deadline = new Promise((_, reject) => {
+    timer = setTimeout(() => {
+      const error = new Error(
+        `Prerender timed out after ${timeoutMs}ms during ${stage}`,
+      );
+      reject(error);
+      controller.abort(error);
+    }, timeoutMs);
+  });
+  const render = async () => {
+    const shellPath = join(buildDirectory, "index.html");
+    const shell = await runStage("reading shell", async () => {
+      const shell = await readFile(shellPath, "utf8");
+      if (!shell.includes(ROOT_PLACEHOLDER))
+        throw new Error(
+          `${shellPath} has no empty ${ROOT_PLACEHOLDER}. Run "vite build" first.`,
+        );
+      return shell;
+    });
+    await runStage("starting static server", async () => {
+      server = await startStaticServer(buildDirectory, {
+        shell,
+        shellRoutes: ["/", "/resume"],
+      });
+      if (controller.signal.aborted) await server.close();
+    });
+    await runStage("launching browser", async () => {
+      browser = await launchBrowser({
+        args: ["--no-sandbox", "--disable-dev-shm-usage"],
+        signal: controller.signal,
+        timeout: timeoutMs,
+      });
+      if (controller.signal.aborted) await closeBrowser(browser, cleanupTimeoutMs);
+    });
+    const page = await runStage("configuring browser", async () => {
+      const page = await browser.newPage();
+      resources = await watchPageResources(page);
+      await page.setViewport({ width: 1440, height: 900 });
+      const cdp = await page.createCDPSession();
+      await cdp.send("Network.enable");
+      await cdp.send("Network.setUserAgentOverride", {
+        userAgent: await browser.userAgent(),
+        acceptLanguage: PRERENDER_LOCALE,
+      });
+      await page.emulateTimezone(PRERENDER_TIMEZONE);
+      await page.emulateMediaFeatures([
+        { name: "prefers-reduced-motion", value: "reduce" },
+      ]);
+      return page;
+    });
+    const { rootHtml, textLength } = await runStage("capturing homepage", async () => {
+      const rootHtml = await snapshot(page, server.origin, "/", resources);
+      return { rootHtml, textLength: assertSnapshotHasContent(rootHtml, "/") };
+    });
+    const pdf = await runStage("generating and validating resume PDF", () =>
+      generateResumePdf(page, server.origin, resources),
+    );
+    await runStage("writing static output", async () => {
+      await writeFile(
+        shellPath,
+        shell.replace(ROOT_PLACEHOLDER, () => `<div id="root">${rootHtml}</div>`),
+        { encoding: "utf8", signal: controller.signal },
+      );
+      await writeFile(join(buildDirectory, "resume.pdf"), pdf, {
+        signal: controller.signal,
+      });
+    });
+    console.log(
+      `prerendered / (${textLength} chars of text); generated resume.pdf (${(pdf.length / 1024).toFixed(1)} kB, one English A4 page)`,
+    );
+  };
+  try {
+    await Promise.race([render(), deadline]);
+  } catch (error) {
+    failures.push(error);
   } finally {
-    resources?.stop();
-    await browser?.close();
-    server.close();
+    clearTimeout(timer);
+    try {
+      resources?.stop();
+    } catch (error) {
+      failures.push(error);
+    }
+    const cleanup = await Promise.allSettled([
+      closeBrowser(browser, cleanupTimeoutMs),
+      server?.close(),
+    ]);
+    for (const result of cleanup)
+      if (result.status === "rejected")
+        failures.push(
+          new Error(`Prerender cleanup failed: ${result.reason.message}`, {
+            cause: result.reason,
+          }),
+        );
   }
+  if (failures.length === 1) throw failures[0];
+  if (failures.length)
+    throw new AggregateError(failures, "Prerender failed and cleanup also failed");
 }
 
-await main();
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  try {
+    await prerender();
+  } catch (error) {
+    console.error(error);
+    process.exitCode = 1;
+  }
+}

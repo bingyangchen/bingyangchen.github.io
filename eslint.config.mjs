@@ -47,6 +47,7 @@ export default defineConfig([
   {
     files: [
       "scripts/prerender.mjs",
+      "scripts/prerender/*.mjs",
       "scripts/browser-resources.mjs",
       "tests/browser/*.mjs",
     ],

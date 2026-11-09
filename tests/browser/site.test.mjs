@@ -1,15 +1,6 @@
 import assert from "node:assert/strict";
 import { before, after, beforeEach, afterEach, test } from "node:test";
-import {
-  readFile,
-  stat,
-  mkdtemp,
-  mkdir,
-  copyFile,
-  writeFile,
-  symlink,
-  rm,
-} from "node:fs/promises";
+import { readFile, stat, mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { resolve, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -18,6 +9,7 @@ import { createServer } from "node:http";
 import puppeteer from "puppeteer";
 import { startStaticServer } from "../../scripts/serve-build.mjs";
 import { watchPageResources } from "../../scripts/browser-resources.mjs";
+import { parsePdfMetadata } from "../helpers/pdf.mjs";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 const BUILD = resolve(ROOT, "build");
@@ -225,31 +217,7 @@ async function getPrintResult() {
     await page.pdf({ preferCSSPageSize: true, printBackground: true }),
   );
   await page.emulateMediaType("screen");
-  return { metrics, ...parsePdfMetadata(pdf) };
-}
-
-function parsePdfMetadata(pdf) {
-  return {
-    fonts: Array.from(
-      new Set(
-        Array.from(
-          pdf
-            .toString("latin1")
-            .matchAll(/\/(?:BaseFont|FontName)\s*\/(?:[A-Z]{6}\+)?([A-Za-z0-9-]+)/g),
-          (match) => match[1],
-        ),
-      ),
-    ).sort(),
-    pages: pdf.toString("latin1").match(/\/Type\s*\/Page\b/g)?.length,
-    mediaBox: pdf.toString("latin1").match(/\/MediaBox\s*\[([^\]]+)\]/)?.[1],
-    language: pdf
-      .toString("latin1")
-      .match(/\/Type\s*\/Catalog\b[\s\S]*?\/Lang\s*\(([^)]+)\)/)?.[1],
-    links: Array.from(
-      pdf.toString("latin1").matchAll(/\/URI\s*\(([^)]+)\)/g),
-      (match) => match[1],
-    ).sort(),
-  };
+  return { metrics, ...(await parsePdfMetadata(pdf)) };
 }
 
 test("SITE-R1.1 SITE-R1.2 SITE-R7.1 公開首頁與初始作品", async () => {
@@ -1793,8 +1761,8 @@ test("SITE-R10.7 停用 JavaScript 與直接請求 PDF", async () => {
   );
 });
 
-test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 下載與預覽共用英文 A4", async () => {
-  const built = parsePdfMetadata(await readFile(join(BUILD, "resume.pdf")));
+test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.3 SITE-R11.4 下載與預覽共用英文 A4", async () => {
+  const built = await parsePdfMetadata(await readFile(join(BUILD, "resume.pdf")));
   assert.equal(built.pages, 1);
   assert.equal(built.language, "en");
   assert.deepEqual(built.fonts, [
@@ -1806,8 +1774,8 @@ test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 下載與預覽共用英文 A4
   const fontLicense = await fetch(server.origin + "/fonts/OFL-NotoSerifTC.txt");
   assert.equal(fontLicense.status, 200);
   assert.ok((await fontLicense.text()).includes("SIL OPEN FONT LICENSE Version 1.1"));
-  const dimensions = built.mediaBox.trim().split(/\s+/).map(Number);
-  assert.ok(Math.abs(dimensions[2] - 595) < 2 && Math.abs(dimensions[3] - 842) < 2);
+  const dimensions = built.pageSizes[0];
+  assert.ok(Math.abs(dimensions[0] - 595) < 2 && Math.abs(dimensions[1] - 842) < 2);
   for (const url of [
     "mailto:bryan.chen.429@gmail.com",
     "https://github.com/bingyangchen",
@@ -1822,7 +1790,8 @@ test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 下載與預覽共用英文 A4
     assert.equal(await page.$eval("html", (element) => element.lang), language);
     assert.equal(preview.pages, built.pages);
     assert.equal(preview.language, built.language);
-    assert.equal(preview.mediaBox, built.mediaBox);
+    assert.deepEqual(preview.mediaBox, built.mediaBox);
+    assert.deepEqual(preview.pageSizes, built.pageSizes);
     assert.deepEqual(preview.links, built.links);
     assert.deepEqual(preview.fonts, built.fonts);
     assert.equal(preview.metrics.count, 1);
@@ -1831,8 +1800,21 @@ test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.4 下載與預覽共用英文 A4
     assert.equal(preview.metrics.header, "none");
     assert.equal(preview.metrics.footer, "none");
     assert.equal(preview.metrics.language, "hidden");
+    const normalize = (text) => text.normalize("NFKC").replace(/[\s\u00ad-]/g, "");
+    for (const block of preview.metrics.text
+      .split(/\n+/)
+      .filter((text) => text.trim())) {
+      assert.ok(
+        normalize(preview.text).includes(normalize(block)),
+        `Preview PDF is missing: ${block}`,
+      );
+      assert.ok(
+        normalize(built.text).includes(normalize(block)),
+        `Built PDF is missing: ${block}`,
+      );
+    }
     for (const section of ["SKILLS", "CAREER SUMMARY", "EDUCATION", "SOCIAL LINKS"])
-      assert.ok(preview.metrics.text.includes(section));
+      assert.ok(built.text.includes(section), section);
     await page.goBack();
     await page.waitForSelector("#home");
   }
@@ -2063,19 +2045,20 @@ test("SITE-R16.1 SITE-R16.2 Metadata、robots 與 sitemap", async () => {
 async function runPrerenderFixture(script) {
   const directory = await mkdtemp(join(tmpdir(), "prerender-failure-"));
   try {
-    await mkdir(join(directory, "scripts"));
     await mkdir(join(directory, "build"));
-    for (const name of ["prerender.mjs", "browser-resources.mjs"])
-      await copyFile(join(ROOT, "scripts", name), join(directory, "scripts", name));
-    await symlink(join(ROOT, "node_modules"), join(directory, "node_modules"), "dir");
     await writeFile(
       join(directory, "build/index.html"),
-      `<html><body><div id="root"></div><script>${script}</script></body></html>`,
+      `<html><head><link rel="icon" href="data:,"></head><body><div id="root"></div><script>${script}</script></body></html>`,
     );
     return await new Promise((resolveResult, rejectResult) => {
       const child = spawn(
         process.execPath,
-        [join(directory, "scripts/prerender.mjs")],
+        [
+          "--input-type=module",
+          "-e",
+          `import { prerender } from ${JSON.stringify(new URL("../../scripts/prerender.mjs", import.meta.url).href)}; await prerender({ buildDirectory: process.argv[1] });`,
+          join(directory, "build"),
+        ],
         { stdio: ["ignore", "pipe", "pipe"] },
       );
       let output = "";
@@ -3976,13 +3959,14 @@ test("SITE-R20.2 履歷預覽及列印的日期與教育資訊對比", async () 
       await assertColorContrast(`[data-resume-root] [class*="${selector}"]`);
   }
   await page.emulateMediaType("screen");
-  const built = parsePdfMetadata(
+  const built = await parsePdfMetadata(
     Buffer.from(await (await fetch(server.origin + "/resume.pdf")).arrayBuffer()),
   );
   const preview = await getPrintResult();
   assert.equal(built.pages, 1);
   assert.equal(preview.pages, built.pages);
-  assert.equal(preview.mediaBox, built.mediaBox);
+  assert.deepEqual(preview.mediaBox, built.mediaBox);
+  assert.deepEqual(preview.pageSizes, built.pageSizes);
   assert.deepEqual(preview.fonts, built.fonts);
   assert.deepEqual(preview.links, built.links);
   assert.equal(preview.language, "en");
