@@ -19,6 +19,7 @@ depends_on: []
 - 2026-11-08：使用者核准 TD-18，授權改善圖片尺寸、responsive sources 與載入策略，並指定不建立 commit。
 - 2026-11-09：使用者核准 TD-07、TD-08、TD-24，授權一併完成工作與作品的資料約定、英文 fallback 與測試隔離。
 - 2026-11-09：使用者核准 TD-15、TD-16，授權一併改善 PDF 結構與文字驗證、共用靜態服務及 Prerender 的職責與失敗處理。
+- 2026-11-09：使用者核准 TD-19，授權移除停用的 Workbox 程式與依賴、精確清理歷史 registration，並完成相關規格與驗證。
 
 ## 範圍
 
@@ -44,7 +45,6 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 | TD-11 | P2 | 分開 motion 計算與 DOM 操作 | 程式碼確認 |
 | TD-12 | P2 | 整理導覽狀態與原生 anchor 行為 | 程式碼確認 |
 | TD-13 | P2 | 採用 Playwright Test 管理瀏覽器測試 | 程式碼確認 |
-| TD-19 | P2 | 移除停用的 Workbox 程式並保留精確清理 | 程式碼確認 |
 | TD-20 | P2 | 補足 Node 工具與瀏覽器測試的型別檢查 | 程式碼確認 |
 | TD-21 | P2 | 補上 Node 與 npm 的版本選擇方式 | 程式碼確認 |
 | TD-22 | P2 | 補足安全更新與失敗診斷的 CI 流程 | 程式碼確認 |
@@ -133,14 +133,6 @@ stateDiagram-v2
 完成條件：原有情境逐項對應，沒有以重試掩蓋穩定失敗。Chromium 維持完整套件；Firefox、WebKit 至少涵蓋首頁、語言、anchor/history、tab、dialog 及 reduced motion。CDP 專用與 PDF 產生只在 Chromium 執行，真實 Safari、手機及 OS 列印仍保留人工驗證。平行執行前移除共享 page 狀態，失敗時可取得 trace、screenshot 與 console。
 
 [`check-scenarios.mjs`](../../scripts/check-scenarios.mjs) 目前只接受直屬 `tests/browser/*.test.mjs`。採用新的 `.spec.ts` 路徑時，runner、checker、checker fixtures、lint、typecheck、README 與驗證文件必須同時更新，明確處理 Playwright 的 `skip`、`fixme`、`only`，不能只改 npm script。
-
-### TD-19：移除停用的 Workbox 程式並保留精確清理
-
-證據：[`index.tsx`](../../src/index.tsx) 只執行 unregister，但 [`service-worker.ts`](../../src/service-worker.ts) 仍保留未使用的 app-shell、runtime cache 及 skipWaiting，並安裝 5 個 Workbox 直接依賴。Vite 不會編譯這個 worker，保留的程式與依賴沒有實際用途。
-
-建議移除停用 worker 及直接 Workbox 依賴，保留小型的歷史 registration 清理。現有 helper 等待 `navigator.serviceWorker.ready`；改以 `getRegistrations()` 取得結果後，只處理本網站已知 scope 及 worker script URL，避免同一網域下其他 GitHub Pages 專案的 registration 被刪除。不要全面清空 Cache Storage。
-
-完成條件：新 browser context 不註冊 worker，輸出不包含新 worker；舊版網站的已知 registration 能清理，其他 scope 或 script 保留。拒絕的 Promise 有處理；沒有 active worker 時不無限等待 ready。舊頁面的 controller 可能直到下一次 navigation 才改變，必須保留這項說明及真實升級檢查。
 
 ### TD-20：補足 Node 工具與瀏覽器測試的型別檢查
 
@@ -239,16 +231,6 @@ flowchart TD
 
 此節為待核准的提案。沒有產品行為變化的重構沿用既有 scenario IDs；工具設定與資料完整性由工程驗收檢查，不為內部檔案搬移建立產品規格。
 
-### SITE-R15：精確清理已知舊版 Registration
-
-網站維持不提供離線 cache 或更新 UI，啟動時只清理屬於本網站已知 scope 與 script URL 的歷史 registration，保留其他網站功能的 registration 及 Cache Storage。
-
-<!-- prettier-ignore -->
-| 情境 | 條件、動作與結果 | 驗證方式 |
-| --- | --- | --- |
-| SITE-R15.2 既有 Registration 清理 | 取得 registrations 後只 unregister 本網站已知 scope 與 script URL 的紀錄；沒有 active worker 也能完成檢查，不能宣稱立即移除既有 controller 或清空 cache。 | unit、browser、manual |
-| SITE-R15.3 Registration 查詢失敗 | Service worker API 不存在或查詢被拒絕時，首頁仍啟動且沒有未處理的 Promise rejection；其他 scope 與其他 script URL 的 registrations 保留。 | unit |
-
 ### 其他需求的修訂原則
 
 SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-25 的 noscript 若更新，新增說明「無 JavaScript 仍可閱讀主要內容及取得 PDF；需操作狀態的功能需要 JavaScript」，連結到 SITE-R14.2 的既有情境，不把舊 sitemap 是否存活寫成已確認需求。
@@ -265,11 +247,10 @@ flowchart TD
   baseline --> tooling[TD-20、TD-21：工具型別與環境]
   baseline --> content[TD-09、TD-10：共用事實與功能分工]
   tooling --> tests[TD-13、TD-22：測試與診斷]
-  tooling --> build[TD-19：停用的 Workbox 與歷史清理]
   content --> logic[TD-11、TD-12：Motion 與導覽]
   tests --> logic
   content --> styles[TD-23、TD-27：共用樣式與控制]
-  build --> optional[TD-25、TD-26：靜態資料與載入整理]
+  baseline --> optional[TD-25、TD-26：靜態資料與載入整理]
 ```
 
 Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留兩組 runner，確認對應後刪除舊的測試基礎設施，避免長期維護重複套件。
@@ -283,14 +264,6 @@ Playwright 取代 runner 時逐項移交既有情境；可以短期同時保留�
 - Native dialog、anchor、文字選取與 reduced motion 已有明確規格，重構時保留對應 browser/manual 情境。
 
 ## 驗證方式
-
-### 新增與修改情境的對應
-
-<!-- prettier-ignore -->
-| 情境 | 驗證方式 |
-| --- | --- |
-| SITE-R15.2 既有 Registration 清理 | 使用 unit、browser、manual 驗證符合清理條件與應保留的 registrations，並涵蓋有 waiting worker、沒有 active worker，以及既有 controller 仍控制頁面的情況。 |
-| SITE-R15.3 Registration 查詢失敗 | unit，涵蓋 API 不存在、查詢拒絕及不屬於本站的紀錄。 |
 
 ### 工程驗收
 

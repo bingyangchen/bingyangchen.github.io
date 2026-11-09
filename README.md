@@ -73,11 +73,19 @@ Browser tests use the production assets without substituting remote images. The 
 
 Motion checks wait for the rendered hover position and media-query cleanup state. A completed emulation command, a fixed number of animation frames, or an empty animation list does not guarantee that those changes have reached the renderer and event listeners.
 
-Vite's JavaScript targets and PostCSS Autoprefixer use the existing production Browserslist policy. CSS uses Vite's default Lightning CSS minifier. The dormant Workbox source remains for TD-19, but Vite neither bundles nor emits a service worker.
+Vite's JavaScript targets and PostCSS Autoprefixer use the existing production Browserslist policy. CSS uses Vite's default Lightning CSS minifier. Vite neither bundles nor emits a service worker.
 
 The `@typescript-eslint/typescript-estree` override selects patched `minimatch` 11 for [GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249). It affects ESLint's project-file matching only. Remove the override once typescript-eslint requires a patched version itself, after checking lint and project matching.
 
 See [manual checks](tests/manual/site.md) for verification methods and coverage requirements, and the [roadmap](docs/roadmap.md) for future requirement goals, known issues, and questions awaiting investigation or product decisions. Record actual execution results in commit bodies and delivery reports.
+
+## Legacy Service Worker Cleanup
+
+The site does not register a service worker or provide offline caching. Registration was enabled in commit `d7afeaf` on January 9, 2023, using CRA's `${PUBLIC_URL}/service-worker.js` without a custom scope, with a root-level homepage. Commit `01ba78c` disabled registration later that day. This establishes the cleanup identity: the current origin's root scope and `/service-worker.js`, rather than every registration on the origin. Old installations on previous domains remain isolated by browser origin.
+
+`src/serviceWorkerRegistration.ts` queries registrations without waiting for an active worker. It unregisters a matching root registration only when at least one active, waiting, or installing worker exists and every present worker has the known script URL. A registration transitioning to a different script is preserved, as are other project scopes, unknown scripts, and registrations with no identifiable worker. Query and unregister failures are reported with their original error and handled without blocking startup or leaving rejected promises unhandled. An already removed registration is harmless.
+
+Cleanup leaves Cache Storage intact and does not force a reload or detach an existing controller. An already controlled page may keep using its old worker until a later navigation or closure. Browser tests seed real active and waiting workers around the production build, check ownership and cache preservation, and verify controller release after reload. The [manual upgrade check](tests/manual/site.md#site-r152-既有-registration-清理) retains verification against an actual historical installation; synthetic fixtures do not establish that an old cached shell can obtain the current release. The [Service Workers specification](https://w3c.github.io/ServiceWorker/#navigator-service-worker-ready) defines why `ready` is unsuitable for enumerating installations without an active worker.
 
 ## Spec-Driven Workflow
 

@@ -53,9 +53,5 @@ export default defineConfig([
     ],
     languageOptions: { globals: globals.browser },
   },
-  {
-    files: ["src/service-worker.ts"],
-    languageOptions: { globals: { ...globals.serviceworker, ...globals.node } },
-  },
   prettier,
 ]);

@@ -685,6 +685,29 @@ Browser tests 與 prerender 拒絕非 loopback 的網路資源，品牌圖片直
 
 預期結果：減少動態時，完整內容直接顯示，時間軸完成，全部非必要動畫與過場停止，anchor 立即定位；偏好即時切換，回到一般模式時依當下位置呈現。
 
+## SITE-R15.2 既有 Registration 清理
+
+原因：自動測試使用隔離的歷史 worker fixture，需要另以真正曾安裝舊版網站的瀏覽器確認 cache、controller 與更新取得方式。
+
+步驟：
+
+1. 使用保留歷史安裝資料的瀏覽器 profile，不要先清除網站資料或 unregister。
+2. 記錄瀏覽器、版本、origin、目前網址與 commit。
+3. 在開發工具記錄各 registration 的 scope、active、waiting、installing script URL、controller 及 Cache Storage。
+4. 檢查舊版網站是否仍由 cache 提供。
+5. 以正常線上 navigation 開啟已發布的新版首頁。
+6. 確認載入的是新版資源；若舊 worker 仍只提供舊 shell，記錄更新取得失敗，不以手動清除後的結果代替升級通過。
+7. 確認同 origin 根 scope 且所有現存 worker 都使用 `/service-worker.js` 的歷史 registration 已移除；只有 waiting 或 installing worker 的紀錄也適用。
+8. 確認其他專案 scope、不同 script URL、混合新舊 script 的 registration 均保留。
+9. 確認原有 Cache Storage 的內容保留。
+10. 確認首頁正常顯示且沒有未處理的 Promise rejection。
+11. 若當前頁面仍有舊 controller，記錄舊 controller 的 script URL。
+12. 重新開啟首頁；若仍有舊 controller，關閉受控制的頁面後重開。
+13. 確認新開啟的頁面已解除舊 controller 的控制。
+14. 若歷史安裝位於先前使用的其他 domain，記錄該 origin 的結果，不能從目前 domain 的清理結果推定其他 origin 已移除。
+
+預期結果：新版啟動後只移除符合已知 scope 與所有 script URL 的歷史 registration，保留其他 registration 及 Cache Storage；首頁持續可用，unregister 成功不代表當前頁面立即解除控制，controller 的實際解除時機有紀錄。無法從舊 cache 取得新版時，升級驗證仍待處理。
+
 ## SITE-R16.3 主分支發布
 
 原因：需要核對 GitHub 事件、ref、權限與發布條件，避免驗收本身觸發未授權的部署。

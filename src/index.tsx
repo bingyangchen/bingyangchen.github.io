@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import { LanguageProvider } from "./i18n/context";
 import MyRouter from "./router";
-import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import { unregisterLegacyServiceWorkers } from "./serviceWorkerRegistration";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
 root.render(
@@ -17,4 +17,4 @@ root.render(
   </LanguageProvider>,
 );
 
-serviceWorkerRegistration.unregister();
+void unregisterLegacyServiceWorkers();

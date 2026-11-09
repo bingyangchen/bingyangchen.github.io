@@ -399,13 +399,22 @@ flowchart TD
 
 ### SITE-R15 Service Worker 與執行環境
 
-網站沒有 first-party API 或 application server。現行入口停用 service worker 註冊，保留的 Workbox 檔與 manifest 不代表已提供離線 cache 或更新 UI。
+網站沒有 first-party API 或 application server，也不註冊或輸出 service worker，不提供離線 cache 或更新 UI。啟動後透過 `getRegistrations()` 清理目前 origin 的已知歷史 registration，不等待 `ready`。
+
+網站只清理同時符合以下條件的歷史 registration，其他 registration 均保留：
+
+- Scope 等於目前 origin 的根目錄。
+- 至少有一個 active、waiting 或 installing worker。
+- 所有現存 worker 的 script URL 都等於同 origin 的 `/service-worker.js`。
+
+清理保留 Cache Storage，不強制 reload，也不等待 controller 解除；既有頁面可能持續受原 worker 控制，直到後續 navigation 或關閉頁面。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R15.1 新瀏覽器環境 | 在新的 browser context 開啟 production build，不建立 service worker registration，也沒有 controller。 | browser |
-| SITE-R15.2 既有 Registration 清理 | 啟動時呼叫現有 unregister helper，針對 ready registration 執行 unregister；不能把這個動作宣告成同步清空 cache 或立即卸除 controller。 | unit |
+| SITE-R15.2 既有 Registration 清理 | 開啟首頁後，只 unregister 符合已知 scope 與所有 script URL 的歷史紀錄，包含只有 waiting 或 installing worker 的情況；保留其他 registration 與 Cache Storage，既有 controller 可持續控制當前頁面。 | unit、browser、manual |
+| SITE-R15.3 Registration 查詢與清理失敗 | Service worker API 不存在時，首頁仍啟動；查詢或 unregister 失敗時，保留失敗診斷且沒有未處理的 Promise rejection；空查詢結果正常完成，已被其他頁面移除的紀錄不視為錯誤。 | unit |
 
 ### SITE-R16 Metadata 與發布
 
