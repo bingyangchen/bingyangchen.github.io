@@ -1,0 +1,107 @@
+@use "../../styles/tokens" as _;
+
+.qr_modal_overlay {
+  --focus-color: #{_.$focus-color-content};
+
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: none;
+  padding: _.$space-6;
+  box-sizing: border-box;
+  color: inherit;
+  background-color: rgba(_.$white, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  animation: qrOverlayFadeIn _.$motion-duration-reveal ease forwards;
+  &::backdrop {
+    background: transparent;
+  }
+  @media (max-width: _.$small) {
+    padding: _.$space-4;
+  }
+  & > .qr_modal_close_button {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    box-sizing: border-box;
+    width: _.$minimum-control-size;
+    height: _.$minimum-control-size;
+    padding: 0;
+    border: none;
+    border-radius: _.$radius-circle;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: _.$text-body;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color _.$motion-duration-feedback ease;
+    @media (max-width: _.$small) {
+      top: 16px;
+      right: 16px;
+    }
+    @media (hover: hover) {
+      &:hover {
+        background-color: rgba(_.$black, 0.05);
+      }
+    }
+  }
+  & > .qr_modal_content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    box-sizing: border-box;
+    animation: qrModalContentEnter _.$motion-duration-dialog _.$motion-easing-emphasized
+      forwards;
+    & > .qr_modal_code_panel {
+      line-height: 0;
+      padding: _.$space-4;
+      border-radius: 14px;
+      box-sizing: border-box;
+    }
+    & > .qr_modal_title {
+      margin-top: _.$space-6;
+      font-family: _.$heading-font-family;
+      font-weight: bold;
+      font-size: 1.25 * _.$base-font-size;
+      color: _.$text-primary;
+      text-align: center;
+    }
+    & > .qr_modal_cta {
+      margin: _.$space-2 0 0;
+      font-family: _.$body-font-family;
+      font-size: 0.95 * _.$base-font-size;
+      color: _.$text-secondary;
+      text-align: center;
+    }
+  }
+}
+
+@keyframes qrOverlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes qrModalContentEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -39,6 +39,26 @@ English work narratives and project copy are maintained only in `src/i18n/dictio
 
 Preview serves the build over loopback HTTP without an SPA fallback. `/resume` remains a non-public preview with browser printing, available through `npm run dev`.
 
+### Feature Ownership
+
+[`Home`](src/pages/Main/Home/Home.tsx) composes the four ordered anchor containers and registers one scroll-motion scope around all their content. Feature entry points provide complete behavior without requiring the page to coordinate private events or style internal headings.
+
+```mermaid
+flowchart TD
+  page[Home page] --> home[home: Hero and About]
+  page --> projects[projects]
+  page --> blog[blog]
+  home --> controls[Shared controls and styles]
+  projects --> controls
+  blog --> controls
+```
+
+[`src/features/home`](src/features/home/index.ts) exports Hero and About. Portrait privately owns its fixed face, pointer tracking, hover suppression, and QR opener. QrCodeDialog owns the portal, native modal, body scroll lock, focus restoration, and cleanup. These implementations stay together because closing a dialog can delay the portrait's hover restoration; the page must not coordinate that interaction. About privately owns Skill and WorkExperience. Hero, About, Portrait, and QrCodeDialog each maintain their own CSS Module.
+
+[`src/features/projects`](src/features/projects/index.ts) owns project selection, artwork composition, responsive images, and period formatting. [`src/features/blog`](src/features/blog/index.ts) owns article presentation and native text-selection handling. Each feature exports only its entry point; private modules and tests remain beside their implementation. `src/components/index.ts` exports shared controls and the site shell without re-exporting feature implementations. Shared facts remain in `data/`, while translations and fallback rules remain in `i18n/`.
+
+Projects and Blog use the shared section patterns and own all their internal typography and spacing. `tests/browser/feature-styles.spec.ts` compares their content styles inside and outside Home in both languages at the supported breakpoints. Native interaction and motion tests continue to exercise the composed production page. The Portrait unit test additionally checks Strict Mode effect replay and disposal without loading About or the other features.
+
 ### Scroll Motion
 
 Keep the site's reversible scroll formulas rather than introducing an animation engine: SITE-R13 defines grouped motion, long-content reading regions, and Hero exit delays that must remain consistent at the same position in either scroll direction.

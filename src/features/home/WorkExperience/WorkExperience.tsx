@@ -1,6 +1,6 @@
 import styles from "./WorkExperience.module.scss";
-import BrandImage from "../BrandImage/BrandImage";
-import type { WorkExperienceCopy } from "../../i18n/types";
+import BrandImage from "../../../components/BrandImage/BrandImage";
+import type { WorkExperienceCopy } from "../../../i18n/types";
 
 interface WorkExperienceProperties extends WorkExperienceCopy {
   company_logo?: string;

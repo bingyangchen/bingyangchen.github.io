@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, screen, within } from "@testing-library/react";
-import { LanguageSwitcher } from "../LanguageSwitcher/LanguageSwitcher";
+import { LanguageSwitcher } from "../../components/LanguageSwitcher/LanguageSwitcher";
 import { renderWithLanguage } from "../../test-utils/render";
 import { englishDictionary } from "../../i18n/dictionaries/en";
 import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";

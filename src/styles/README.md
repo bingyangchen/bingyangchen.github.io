@@ -18,6 +18,12 @@
 
 以底線開頭的檔案是 Sass partial，由其他 SCSS 透過 `@use` 載入。目前的 partial 定義 token 與 mixin，載入本身不會產生全域 CSS。`index.scss` 與 `print.scss` 則是由 `src/index.tsx` 載入的 CSS 入口。
 
+## 功能樣式的作用範圍
+
+[`Home.module.scss`](../pages/Main/Home/Home.module.scss) 只維護整頁 motion scope、區塊高度、交錯背景及 anchor 焦點，不透過 `h2`、`h3` 或其他內容 selector 設定子功能的外觀。[`features/home`](../features/home/index.ts) 的 Hero、About、Portrait 與 QrCodeDialog 各自維護 CSS Module；About 的標題、subtitle、分隔線及內容間距跟隨 About，頭像及 dialog 的狀態外觀跟隨各自的互動實作。
+
+[`Projects`](../features/projects/Projects.module.scss) 與 [`Blog`](../features/blog/Blog.module.scss) 沿用 `section` patterns，內部標題、正文與留白在相同寬度及字型下不依賴 Home 的父層規則。新增功能樣式時，將規則放在負責功能的 root class 內，依 DOM 順序排列；需要共用時，依相同用途擴充既有 pattern，避免重新加入頁面對子功能的內容 selector。
+
 ## Token 的用途
 
 新共用值放在 `_tokens.scss`，依基礎值、語意 token、元件設定的順序分組，並將依賴的值定義在派生值之前。

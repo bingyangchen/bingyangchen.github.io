@@ -1,0 +1,86 @@
+@use "../../styles/tokens" as _;
+
+.avatar_container {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  grid-column: 1;
+  grid-row: 1;
+  @media (min-width: _.$medium) {
+    grid-column: unset;
+    grid-row: unset;
+    flex-shrink: 0;
+  }
+  & > .avatar_button {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    border-radius: _.$radius-circle;
+    background: transparent;
+    cursor: pointer;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+    & > .avatar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: _.$radius-circle;
+      overflow: hidden;
+      object-fit: cover;
+      backface-visibility: hidden;
+      transition: transform _.$motion-duration-reveal;
+      &.back {
+        transform: rotateY(180deg);
+      }
+    }
+    &[aria-pressed="true"] > .avatar {
+      &.front {
+        transform: rotateY(180deg);
+      }
+      &.back {
+        transform: rotateY(0deg);
+      }
+    }
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    &:hover > .avatar_button:not([data-hover-suppressed]) > .avatar {
+      &.front {
+        transform: rotateY(180deg);
+      }
+      &.back {
+        transform: rotateY(0deg);
+      }
+    }
+  }
+  & > .qr_avatar_fab {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    z-index: 4;
+    padding: 6px;
+    color: _.$text-body;
+    background-color: rgba(_.$white, 0.82);
+    border: 1px solid rgba(_.$white, 0.55);
+    box-shadow:
+      0 4px 14px rgba(_.$black, 0.12),
+      0 1px 3px rgba(_.$black, 0.06);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    @media (min-width: _.$medium) {
+      right: 4px;
+      bottom: 4px;
+      padding: 7px;
+    }
+    @media (hover: hover) {
+      &:hover {
+        color: _.$brand-olive-ink;
+        background-color: rgba(_.$white, 0.92);
+      }
+    }
+  }
+}
