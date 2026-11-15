@@ -27,7 +27,7 @@ export default function WorkExperience({
             <BrandImage
               className={styles.company_logo}
               src={company_logo}
-              alt={company_name}
+              alt=""
               width={20}
               height={20}
             />

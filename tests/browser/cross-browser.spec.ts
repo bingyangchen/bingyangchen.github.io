@@ -10,6 +10,24 @@ test("SITE-R1.1 SITE-R1.2 首頁完整內容及共用外框", async ({ page, ser
   await expect(page.locator("[data-resume-root]")).toHaveCount(0);
 });
 
+test("SITE-R6.7 圖片語意與雙語文字", async ({ page, server }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openHome(page, server);
+  for (const language of ["en", "zh-TW"]) {
+    if (language === "zh-TW") await page.locator("[data-language-switcher]").click();
+    await expect(page.locator("html")).toHaveAttribute("lang", language);
+    const about = page.locator("#about");
+    await expect(about.getByRole("img")).toHaveCount(0);
+    for (const skill of ["TypeScript", "JavaScript", "FastAPI", "Cypress", "Meta API"])
+      await expect(about.getByText(skill, { exact: true })).toHaveCount(1);
+    const education = about.getByRole("link");
+    await expect(education).toHaveCount(2);
+    await expect(education.first()).toHaveAccessibleName(
+      /National Chengchi University|國立政治大學/,
+    );
+  }
+});
+
 test("SITE-R4.1 SITE-R4.2 語言切換及重載持久化", async ({ page, server }) => {
   await openHome(page, server);
   await page

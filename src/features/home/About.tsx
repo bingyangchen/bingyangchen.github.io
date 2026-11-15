@@ -56,7 +56,7 @@ export default function About() {
           className={styles.school_logo}
           data-scroll-motion="portrait"
           src={nccuLogo}
-          alt={`${profile.education.abbreviation},${profile.education.school.en},${profile.education.school["zh-TW"]},${profile.education.major["zh-TW"]}系,Department of ${profile.education.major.en},金融科技學士學程,Financial Technology Program,${profile.name["zh-TW"]}`}
+          alt=""
           width={314}
           height={103}
         />

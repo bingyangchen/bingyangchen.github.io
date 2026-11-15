@@ -115,6 +115,14 @@ Tooltip 保留 `$tooltip-*` 外觀 token，定位 API 所需的像素值由 CSS 
 - `controls.unselectable` 只套用在控制與操作文字，正文保持可選取。
 - 局部 hover 位移與 scroll motion 須遵守 reduced motion 設定。
 
+## 圖片與圖示語意
+
+公司 logo、技能圖示及校名圖片已有相鄰文字提供完整資訊，使用空 `alt`；具獨立資訊的圖片由使用處提供相符的替代文字。沿用 [W3C 裝飾圖片指引](https://www.w3.org/WAI/tutorials/images/decorative/) 判斷資訊用途，不以圖片格式決定是否隱藏，也不在共用 `BrandImage` 強制清空 `alt`。
+
+Safari 的實際 accessibility tree 在技能圖片使用空 `alt` 後，仍會列出外部 SVG 內的 `role`、`aria-label` 或 `title`。`Skill` 因此另以 `aria-hidden=true` 隱藏裝飾圖片，保留相鄰技能名稱；SVG 素材保留原有資訊，供其他用途使用。
+
+[`asIcon`](../icons/IconLayout.tsx) 集中 SVG 外框設定，現有使用處均為裝飾用途，因此預設 `aria-hidden=true`，按鈕及連結提供自己的 accessible name。保留明確指定 `aria-hidden` 的能力；需要獨立表達資訊的 SVG 須另行提供 image 語意與名稱，不能只取消隱藏。人物照片的替代文字與 QR code 的內容仍由各自功能維護。
+
 ## 修改後的驗證
 
 修改後執行 `npm run check`，其中包含 production build、瀏覽器互動與履歷 PDF 檢查，並依修改範圍補做以下檢查：

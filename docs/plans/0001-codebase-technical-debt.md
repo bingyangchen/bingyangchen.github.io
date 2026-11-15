@@ -17,12 +17,11 @@ depends_on: []
 
 以下保留既有核准紀錄。本次修訂的待辦範圍仍為草稿，修改計劃不代表核准實作。
 
-- 2026-11-09：使用者核准單獨處理 TD-09，授權集中共用事實並驗證雙語、QR code、靜態輸出與 PDF。
-- 2026-11-15：使用者核准以 `change` 一併處理 TD-10 的首頁功能分工及 TD-23 的首頁樣式歸屬，保留畫面與互動，涵蓋必要的驗證及工程文件。履歷分工、共用控制與 Token 仍分批處理。
+- 2026-11-15：使用者核准以 `change` 獨立處理 TD-27，涵蓋公司、技能、校名圖片及裝飾 SVG 的語意、雙語驗證與工程文件。
 
 ## 範圍
 
-涵蓋 `src/` 的功能分工、導覽、樣式、圖示與靜態資料，以及 Node、npm、依賴維護和相關驗證。維持 React、Vite、GitHub Pages、英文單頁 A4 履歷、雙語、既有區塊順序與視覺方向。此次提案不增加 application server、CMS、全域狀態管理框架或公開頁面，也不改寫職涯成果。
+涵蓋 `src/` 的功能分工、導覽、樣式與靜態資料，以及 Node、npm、依賴維護和相關驗證。維持 React、Vite、GitHub Pages、英文單頁 A4 履歷、雙語、既有區塊順序與視覺方向。此次提案不增加 application server、CMS、全域狀態管理框架或公開頁面，也不改寫職涯成果。
 
 ### 判斷原則
 
@@ -41,7 +40,6 @@ depends_on: []
 | 範圍 | 優先順序 | 安排理由 |
 | --- | --- | --- |
 | TD-12 導覽狀態與事件 | P2，獨立批次 | 降低歷史還原與原生 anchor 互動的推理及驗證成本。 |
-| TD-27 圖示語意與替代文字 | P2，獨立批次 | 已在 accessibility tree 確認重複資訊，修正不依賴模組搬移。 |
 | TD-21 工具版本選擇 | P2，獨立批次 | 讓新環境與 CI 能選用同一組工具。 |
 | TD-22 依賴維護 | P2，獨立批次 | 補上持續發現公告與過時依賴的流程。 |
 | TD-25 靜態資料校對 | P3，獨立批次 | 修正已確認的提示及尺寸錯誤，另調查 sitemap 歸屬。 |
@@ -169,28 +167,9 @@ Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的�
 
 完成條件：首頁初始資源不含 Resume、ResumeSheet 的實作、履歷內容及 CSS Modules，全域 print 規則維持原載入方式。預覽與 build PDF 等待 lazy route 完成；缺少 route chunk 時 build 回報失敗而非擷取 placeholder。首頁完整 prerender、公開範圍與既有列印結果維持，交付報告記錄同條件的 gzip 與實際請求差異。
 
-### TD-27：修正圖示語意與重複替代文字
-
-已重現：production accessibility tree 中，公司及技能圖示的名稱與相鄰文字重複，例如先有 `img "Python"`，再有 `text "Python"`。[校名圖片的 alt](../../src/features/home/About.tsx) 又包含科系、學程及個人姓名，超出實際校徽與校名的資訊；相鄰學歷連結已提供校名及學程。
-
-方案：公司、技能與校名已有相鄰文字，圖片使用空 `alt`；現有控制內的裝飾 SVG 由共用 wrapper 預設隱藏於輔助工具，按鈕及連結保留自己的 accessible name。依 [W3C 的裝飾圖片指引](https://www.w3.org/WAI/tutorials/images/decorative/) 檢查相關 caller，確認沒有獨立承載資訊的圖片被隱藏。
-
-介面審查結論：[RoundButton](../../src/components/RoundButton/RoundButton.tsx) 已繼承原生 button props，只有部分屬性重新宣告為必填，目前沒有 caller 因而無法表達需求。[IconLayout](../../src/icons/IconLayout.tsx) 的 HOC 集中 SVG 外框設定，有減少重複的用途；ResumeSheet 的 forwarded ref 也沒有已確認的錯誤。因此本批保留這些結構，原生 SVG props 全面擴充、移除 HOC 或 ref 均不列為完成條件。
-
-完成條件：兩種語言下，公司、技能、校名資訊在 accessibility tree 不因裝飾圖重複出現，控制的名稱、description、原生語意與鍵盤操作保持。以實際螢幕閱讀器確認閱讀順序及沒有資訊遺失，不能只由 DOM 屬性推論朗讀結果。此批沿用現有 SVG paths 與 Tooltip。
-
 ## Spec 變更
 
 本節是待核准的修訂，實作對應批次時才同步到現行 spec 與驗證文件。責任分工、工具設定與搬檔不新增產品 scenario；未列出的既有需求維持。
-
-### SITE-R6：內容圖片的替代文字
-
-補充規則：公司 logo、技能圖示及校名圖片已有相鄰文字提供完整資訊時，使用空 `alt`，保留文字的名稱與順序。裝飾圖片不加入無關關鍵字或重複輔助工具取得的資訊；具獨立資訊的圖片仍須提供相符的替代文字。
-
-<!-- prettier-ignore -->
-| 情境 | 條件、動作與結果 | 驗證方式 |
-| --- | --- | --- |
-| SITE-R6.7 圖片與相鄰文字 | 在兩種語言下檢查工作、技能與教育的 accessibility tree，並以螢幕閱讀器依序閱讀，公司、技能與校名由文字完整提供，裝飾圖片不重複加入名稱或無關內容，圖片載入失敗後仍保留同一份資訊。 | browser、manual |
 
 ### SITE-R14：無 JavaScript 的提示
 
@@ -219,7 +198,6 @@ Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的�
 | --- | --- |
 | 原生 anchor 搭配明確導覽狀態 | 可見性觀察無法處理歷史閱讀位置，瀏覽器仍負責連結與 history 的原生語意；保存於 SITE-R2 及 README 的 navigation 說明。 |
 | 依用途共用 Sass Token 與 patterns | 讓用途不同的設定可以分別修改；保存於 [design system](../../src/styles/README.md)。 |
-| 保留 SVG wrapper，按現有 caller 修正語意 | Wrapper 集中既有外框設定，已確認的問題在裝飾與資訊的表達；保存於 design system 的圖示及控制說明。 |
 | 依能力缺漏選擇依賴維護工具 | 避免重做既有服務已提供的能力，選型條件見 [TD-22](#td-22補足依賴安全更新)，實際維護入口與理由保存於 README。 |
 | 履歷載入與 hydration 分開設計 | Route 分割的下載收益已可量測，hydration 還需解決 snapshot 與初次 render 的一致性；保存於 README 的啟動及靜態輸出說明。 |
 
@@ -252,9 +230,8 @@ Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的�
 | 履歷分工及載入 | SITE-R1.3、R1.4、R10、R11、R13.11、R14。 |
 | 共用控制與 Token | SITE-R12.6、R18、R19、R20，以及受影響的控制與 PDF 情境。 |
 | 靜態資料 | SITE-R14.2、R16.1、R16.2、R16.5。 |
-| 圖示語意 | SITE-R6.7，以及 SITE-R8、R9.6、R19 的控制名稱、描述與操作。 |
 
-新增或修改的 SITE-R6.7、R14.2、R16.5，驗證方式以本計劃的 Spec 變更為準；其餘沿用現行 spec 已宣告的 unit、browser、manual 對應。Browser 回歸使用當次 production build，SITE-R16.5 另比對開發環境；實機、Safari、OS 列印與螢幕閱讀器的人工結果分開回報。
+新增或修改的 SITE-R14.2、R16.5，驗證方式以本計劃的 Spec 變更為準；其餘沿用現行 spec 已宣告的 unit、browser、manual 對應。Browser 回歸使用當次 production build，SITE-R16.5 另比對開發環境；實機、Safari、OS 列印與螢幕閱讀器的人工結果分開回報。
 
 每批程式實作完成後執行 `npm run check`，並完成適用的 manual checks 及獨立 code review。修復且驗證的範圍才從本計劃與 Roadmap 移除；驗證限制記錄在交付報告，不把未執行的人工檢查寫成通過。
 

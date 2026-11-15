@@ -17,7 +17,7 @@ export function asIcon(Component: React.ComponentType<IconSvgChildProperties>) {
         fill={properties.color || "currentColor"}
         viewBox="0 0 24 24"
         className={properties.className}
-        aria-hidden={properties["aria-hidden"]}
+        aria-hidden={properties["aria-hidden"] ?? true}
       >
         <Component {...properties} />
       </svg>

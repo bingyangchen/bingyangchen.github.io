@@ -13,10 +13,12 @@ export default function Skill({ logo, title, motionOrder }: SkillProperties) {
       data-scroll-motion="skill"
       data-scroll-order={motionOrder}
     >
+      {/* Safari can expose an external SVG's own name despite an empty alt. */}
       <img
         className={styles.logo}
         src={logo}
-        alt={title}
+        alt=""
+        aria-hidden="true"
         width={50}
         height={50}
         loading="lazy"

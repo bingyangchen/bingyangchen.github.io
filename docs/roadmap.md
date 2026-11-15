@@ -8,7 +8,7 @@
 
 # 已確認問題
 
-- 技術債改善：完整檢查及調整提案見 [計劃 0001](plans/0001-codebase-technical-debt.md)。導覽、圖示語意、履歷分工、共用控制與 Token、工具及依賴維護各自安排。相關需求為 SITE-R2、R6、R7、R11、R12、R13、R14、R18、R19，各項證據、批次與驗收放在計劃。
+- 技術債改善：完整檢查及調整提案見 [計劃 0001](plans/0001-codebase-technical-debt.md)。導覽、履歷分工、共用控制與 Token、工具及依賴維護各自安排。相關需求為 SITE-R2、R6、R7、R11、R12、R13、R14、R18、R19，各項證據、批次與驗收放在計劃。
 - 靜態資料不一致：無 JavaScript 時仍有主要內容及 PDF 下載，但 noscript 提示宣稱必須啟用 JavaScript；manifest 的 icon 尺寸宣告也與實際圖片不符。兩項均已實測確認，見 [計劃 0001 的 TD-25](plans/0001-codebase-technical-debt.md#td-25校對-metadatamanifest-與-sitemap)，相關需求為 SITE-R14、R16。
 
 # 待調查
