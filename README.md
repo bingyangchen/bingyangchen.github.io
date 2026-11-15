@@ -6,13 +6,25 @@ A React and TypeScript personal website built with Vite and deployed to GitHub P
 
 ## Development
 
-Use Node.js 22.22.2 or newer in the 22.x line and npm, matching CI. Node.js 24.15.0 or newer in the 24.x line is also supported; see `package.json` for the full engine range required by the test tools. Resume PDF builds require Georgia: macOS supplies it, while Ubuntu CI installs the TTF files in [vendor/corefonts](vendor/corefonts/README.md), without downloading or extracting fonts. Noto Serif TC is bundled for the Chinese name, so no system CJK font is needed. `npm run build` rejects missing or substituted PDF fonts; `npm run dev` remains available without the PDF build fonts.
+Use the exact Node.js version in [`.nvmrc`](.nvmrc) and the npm version in [`package.json`'s `packageManager`](package.json) to reproduce the primary development and CI environment. With [nvm installed and loaded](https://github.com/nvm-sh/nvm#installing-and-updating), run these commands from the repository root:
 
 ```sh
+nvm install
+nvm use
+npm install --global "$(node -p "require('./package.json').packageManager")"
+npm run check:toolchain
 npm ci
 npx playwright install chromium firefox webkit
 npm run dev
 ```
+
+`nvm install` and `nvm use` read `.nvmrc`; the npm installation reads `packageManager` instead of relying on the version bundled with Node. The global npm installation belongs to the selected nvm-managed Node installation. CI reads the same files, explicitly installs npm, and runs the same version check before installing project dependencies. `check:toolchain` fails with the actual and expected version when either differs, and prints both verified versions on success; it needs no project dependencies. Run `nvm use` when opening another shell in this repository.
+
+The primary baseline stays on the existing Node 22.x CI line. The broader `engines.node` range describes supported Node versions, while `.nvmrc` selects the reproducible baseline; `check:toolchain` is an explicit setup check rather than a restriction on the other supported versions in `npm run check`. To change the selected tools, update `.nvmrc` or `packageManager` using compatible stable versions from the [official Node release index](https://nodejs.org/dist/index.json) and [npm registry](https://registry.npmjs.org/npm/latest), then repeat setup, `npm ci`, and `npm run check`.
+
+[npm 12 blocks unapproved dependency install scripts](https://docs.npmjs.com/cli/v12/commands/npm-install-scripts/). `package.json`'s `allowScripts` approves the reviewed lockfile versions of Puppeteer, which downloads Chrome for prerender and PDF generation, and the native watcher setup used by Sass and Vite (`@parcel/watcher` and macOS-only `fsevents`). When updating these dependencies, inspect their install scripts and run `npm install-scripts approve <package>` to update the version-specific approval. Verify `npm ci` with an empty `PUPPETEER_CACHE_DIR` so an existing Chrome download cannot hide a missing installation step.
+
+Resume PDF builds require Georgia: macOS supplies it, while Ubuntu CI installs the TTF files in [vendor/corefonts](vendor/corefonts/README.md), without downloading or extracting fonts. Noto Serif TC is bundled for the Chinese name, so no system CJK font is needed. `npm run build` rejects missing or substituted PDF fonts; `npm run dev` remains available without the PDF build fonts.
 
 To preview the production site locally:
 
@@ -129,6 +141,7 @@ Run `npm run check` for all automated checks, including a fresh production build
 | `npm run format:check` | Check formatting without modifying files. |
 | `npm run lint` | Check source, scripts, and tests with ESLint; warnings fail the check. |
 | `npm run lint:fix` | Apply available ESLint fixes. |
+| `npm run check:toolchain` | Verify the selected Node and npm versions before installing dependencies; needs no project dependencies. |
 | `npm run typecheck` | Check application, Vite configuration, Node tools, and browser tests with separate strict TypeScript projects. |
 | `npm run check:scenarios` | Validate spec and scenario coverage links. |
 | `npm run test:checker` | Test the scenario checker. |

@@ -18,10 +18,11 @@ depends_on: []
 以下保留既有核准紀錄。本次修訂的待辦範圍仍為草稿，修改計劃不代表核准實作。
 
 - 2026-11-15：使用者核准以 `change` 獨立處理 TD-27，涵蓋公司、技能、校名圖片及裝飾 SVG 的語意、雙語驗證與工程文件。
+- 2026-11-15：使用者核准以 `change` 獨立處理 TD-21，涵蓋 Node 與 npm 的版本選擇、本機及 CI 安裝、版本檢查與完整驗證。
 
 ## 範圍
 
-涵蓋 `src/` 的功能分工、導覽、樣式與靜態資料，以及 Node、npm、依賴維護和相關驗證。維持 React、Vite、GitHub Pages、英文單頁 A4 履歷、雙語、既有區塊順序與視覺方向。此次提案不增加 application server、CMS、全域狀態管理框架或公開頁面，也不改寫職涯成果。
+涵蓋 `src/` 的功能分工、導覽、樣式與靜態資料，以及依賴維護和相關驗證。維持 React、Vite、GitHub Pages、英文單頁 A4 履歷、雙語、既有區塊順序與視覺方向。此次提案不增加 application server、CMS、全域狀態管理框架或公開頁面，也不改寫職涯成果。
 
 ### 判斷原則
 
@@ -34,12 +35,11 @@ depends_on: []
 
 ### 優先順序與工作批次
 
-各批次可獨立安排，沒有先完成目錄或工具版本整理的依賴；同一 TD 的不同範圍分批完成時，僅移除已驗證的部分。
+各批次可獨立安排；同一 TD 的不同範圍分批完成時，僅移除已驗證的部分。
 
 <!-- prettier-ignore -->
 | 範圍 | 優先順序 | 安排理由 |
 | --- | --- | --- |
-| TD-21 工具版本選擇 | P2，獨立批次 | 讓新環境與 CI 能選用同一組工具。 |
 | TD-22 依賴維護 | P2，獨立批次 | 補上持續發現公告與過時依賴的流程。 |
 | TD-25 靜態資料校對 | P3，獨立批次 | 修正已確認的提示及尺寸錯誤，另調查 sitemap 歸屬。 |
 | TD-10 履歷功能分工 | P3，獨立批次 | 集中履歷預覽、內容與列印的維護位置。 |
@@ -60,35 +60,31 @@ depends_on: []
 
 完成條件：預覽、內容與列印可從同一功能入口追查，私有模組不由全站共用 barrel 匯出，沒有循環 import，並維持既有的單頁 A4 版面、文字、字型、連結與語言還原行為。
 
-### TD-21：補上 Node 與 npm 的版本選擇方式
-
-程式碼確認：[package.json](../../package.json) 已有 Node 相容範圍，[README](../../README.md) 與 [CI](../../.github/workflows/deploy.yml) 選擇 Node 22，但沒有版本選擇檔案或明確的 npm 版本。這是環境重現的缺漏，尚未確認現有環境因此執行失敗。
-
-方案：以 `.nvmrc` 提供主要開發及 CI 使用的 Node 版本，CI 讀取同一檔案；`package.json` 的 `packageManager` 記錄 npm 版本，README 提供實際安裝與版本確認指令，CI 明確選用並確認同一 npm 版本。Metadata 不代替工具安裝，也不擅自縮減既有 `engines` 的相容範圍。實作時依官方發布資訊選擇相容版本，保留 `npm ci` 與 lockfile。
-
-完成條件：從未設定專案版本的環境可依 README 選到相同 Node 與 npm，乾淨安裝及 `npm run check` 通過；macOS 與 Ubuntu 依既有方式供應 PDF 字型。版本選擇的修改有單一入口，不要求同步手改 README、CI 與版本檔中的同一個版本數字。
-
 ### TD-22：補足依賴安全更新
 
-程式碼確認：部署 workflow 已有最小權限、檢查成功後發布及 main ref 限制，但 repo 尚未記錄完整的依賴維護方式。2026-11-15 的 `npm audit --json` 回報 0 個公告，只代表當次 lockfile 與 registry 的結果，不能據此推論持續監測能力。GitHub repo 與帳號層級的安全設定尚未查核，也不能從 repo 沒有 workflow 推論警示服務未啟用。
+2026-11-15 已完成唯讀能力盤點，來源、查核命令與限制見[依賴維護盤點](0001-codebase-technical-debt/dependency-maintenance-audit.md)。本次只核准盤點與文件更新，下列實作建議仍為草稿。
 
-方案：先確認 Dependency graph、[Dependabot alerts](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configure-dependabot-alerts)、通知與既有版本盤點是否可用，並分別記錄實際設定、npm lockfile 的涵蓋情況、引入鏈及報告入口。警示與[自動安全更新 PR](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configure-security-updates) 可分別設定；本 repo 直接在 main 更新，不妨礙使用唯讀警示。
+實際設定確認：Dependency graph 已涵蓋目前 lockfile 的 488 組不同 npm 套件名稱與版本，並能追查傳遞依賴。Dependabot alerts 已啟用，警示 API 回傳的 192 筆紀錄全為 fixed，另以 open 篩選確認為 0 筆。自動安全更新也已啟用且未暫停，repo 的 auto-merge 未啟用。這些都是當次狀態，不能推論未來沒有安全公告。
 
-依盤點結果選擇工具：
+通知設定確認：維護者訂閱此 repo 的 All Activity；Dependabot 新漏洞通知選用 Email 與 CLI，On GitHub 與 email digest 未啟用。依 GitHub 官方說明，Email 通知涵蓋新發現的 high、critical 漏洞等事件，CLI 提示則在 push 時出現。實際 email 送達與 CLI 提示尚未驗證，low、medium 警示須另由完整警示清單檢視。
+
+程式碼與遠端紀錄確認：目前 workflows、保留的 185 筆執行紀錄、main 的 check runs 及 webhooks 未找到獨立的過時版本報告；repo 也沒有記錄外部報告入口。此結果不涵蓋維護者未連到 repo 的私人或外部工具。
+
+依盤點結果提出下列最小實作範圍：
 
 <!-- prettier-ignore -->
-| 能力 | 選擇條件與方案 |
+| 能力 | 建議方案與理由 |
 | --- | --- |
-| 持續發現安全公告 | 既有警示能涵蓋目前 lockfile 並提供受影響版本、引入鏈與通知時，直接沿用；未啟用但可使用時，優先提出啟用設定。只有確認無法提供所需能力時，才以獨立唯讀 `npm audit` 查詢補足，記錄不能沿用的原因。 |
-| 定期盤點過時版本 | 先確認是否已有不依賴更新 PR 的報告；若沒有，以每週及手動執行 `npm outdated --json` 的唯讀 workflow 作為候選，保留原始結果，不預設自製分類器。 |
-| 判讀使用情境 | 由維護者依引入鏈、package scripts 及實際用途判斷 browser runtime、build 或測試工具的暴露情境，將判讀方式記錄在 README；不把自動分類程式當作必要交付。 |
+| 持續發現安全公告 | 沿用現有 Dependency graph、Dependabot alerts 與通知設定，在 README 記錄入口及每週檢視全部嚴重度警示的方式。既有服務已提供套件辨識、公告及引入鏈，因此不新增重複的定期 `npm audit` workflow。 |
+| 定期盤點過時版本 | 新增每週及手動執行 `npm outdated --json` 的唯讀 workflow，保留原始報告、查詢結果與執行入口。預設盤點直接依賴，傳遞依賴的版本調查按需使用 `--all`，不把自動安全更新紀錄當成所有過時版本的報告。 |
+| 判讀使用情境 | 在 README 記錄維護者如何依引入鏈、package scripts 及實際用途區分 browser runtime、build 或測試工具。警示的 scope 不足以判斷套件是否進入 browser JavaScript，仍須確認實際使用位置。 |
 
-盤點結果與選型理由先補回本計劃，再核准實際需要修改的設定或 workflow；獨立報告不是預設必做項目。更新仍由維護者審查並在 main 處理，部署流程與 `npm run check` 的既有條件保持。
+實作前須核准上述範圍。既有警示與自動安全更新設定維持，更新仍由維護者審查並在 main 處理；新報告獨立於部署流程，不新增套件更新或自動合併。維護方式及選型理由保存於 README。
 
 完成條件：每項能力都有可查證的來源、檢查或通知入口與維護方式，選型僅補足已記錄的缺漏。各種方案依下列方式驗證：
 
-- 沿用既有服務時，檢查實際設定、依賴辨識及報告可讀性。
-- 新增 CLI 查詢時，驗證無公告、公告、過時版本及查詢失敗的結果有明確區別，且保留原始報告。Registry 失敗不得當成沒有公告，過時版本也不等於安全漏洞。
+- 沿用既有服務時，確認設定及依賴辨識仍與本次盤點一致，並核對公告、受影響版本及引入鏈是否可讀；通知實際送達另外記錄驗證結果。
+- 新增版本查詢時，驗證沒有過時版本、有過時版本及查詢失敗的結果有明確區別，且保留原始報告。Registry 失敗不得當成沒有過時版本，過時版本也不等於安全漏洞。
 - 自行解析或轉換輸出時，以 fixtures 驗證處理結果。
 - 新增 workflow 時，實際執行確認，僅有必要的唯讀及報告權限。
 
@@ -210,4 +206,8 @@ Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的�
 
 ## 還沒定案的問題
 
-TD-22 的實際工具選擇須先完成能力盤點，再依該節條件修訂實作範圍。Sitemap 歸屬依 TD-25 的既定調查範圍處理，TD-26 的排期依當時重新量測決定。
+TD-22 已依能力盤點提出最小實作範圍，仍待核准；通知實際送達尚未驗證。
+
+Sitemap 歸屬依 TD-25 的既定調查範圍處理。
+
+TD-26 的排期依當時重新量測決定。

@@ -24,8 +24,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version-file: .nvmrc
           cache: npm
+
+      - name: Select and verify npm
+        run: |
+          npm install --global "$(node -p "require('./package.json').packageManager")"
+          npm run check:toolchain
 
       - name: Cache Puppeteer browsers
         uses: actions/cache@v4

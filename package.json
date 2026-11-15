@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "homepage": "https://byc1999.com",
   "private": true,
+  "packageManager": "npm@12.2.2",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
@@ -14,6 +15,7 @@
     "format:check": "prettier . --check",
     "lint": "eslint src scripts tests *.mjs *.mts playwright.config.ts --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
+    "check:toolchain": "node scripts/check-toolchain.mts",
     "check:scenarios": "node scripts/check-scenarios.mts",
     "test:checker": "node --test tests/check-scenarios.test.mts",
     "test:unit": "vitest run",
@@ -79,5 +81,10 @@
       "minimatch": "^11.0.5"
     }
   },
-  "type": "module"
+  "type": "module",
+  "allowScripts": {
+    "@parcel/watcher@2.6.0": true,
+    "fsevents@2.3.3": true,
+    "puppeteer@25.16.0": true
+  }
 }
