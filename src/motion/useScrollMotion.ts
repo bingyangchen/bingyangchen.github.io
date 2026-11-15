@@ -1,7 +1,12 @@
 import { RefObject, useLayoutEffect } from "react";
+import {
+  calculatePose,
+  calculateTimeline,
+  parseMotionKind,
+  type MotionKind,
+} from "./calculation";
+import { parseMotionParameters, type MotionParameters } from "./parameters";
 
-type MotionKind =
-  "content" | "heading" | "hero" | "atmosphere" | "hint" | "portrait" | "skill";
 type MotionTarget = {
   element: HTMLElement;
   anchor: HTMLElement;
@@ -12,24 +17,6 @@ type MotionTarget = {
 };
 type TimelineRow = { element: HTMLElement; top: number; height: number };
 const MOTION_PROPERTIES = ["y", "opacity", "scale", "tilt"] as const;
-const MOTION_KINDS: readonly MotionKind[] = [
-  "content",
-  "heading",
-  "hero",
-  "atmosphere",
-  "hint",
-  "portrait",
-  "skill",
-];
-
-function clamp(value: number): number {
-  return Math.min(1, Math.max(0, value));
-}
-
-function smoothProgress(value: number): number {
-  const progress = clamp(value);
-  return progress * progress * (3 - 2 * progress);
-}
 
 function getDocumentTop(element: HTMLElement): number {
   let top = 0;
@@ -61,31 +48,22 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
     let needsMeasurement = true;
     let targets: MotionTarget[] = [];
     let rows: TimelineRow[] = [];
-    let config: CSSStyleDeclaration;
+    let parameters: MotionParameters;
     let headerBottom = 0;
-    const parameters = new Map<string, number>();
-
-    function getParameter(name: string): number {
-      const stored = parameters.get(name);
-      if (stored !== undefined) return stored;
-      const value = Number.parseFloat(config.getPropertyValue(`--motion-${name}`));
-      if (!Number.isFinite(value)) throw new Error(`Missing motion parameter: ${name}`);
-      parameters.set(name, value);
-      return value;
-    }
 
     function collect() {
       targets = Array.from(
         scope.querySelectorAll<HTMLElement>("[data-scroll-motion]"),
       ).map((element) => {
-        const kind = element.dataset.scrollMotion;
-        if (!MOTION_KINDS.includes(kind as MotionKind))
-          throw new Error(`Unknown motion kind: ${kind}`);
+        const kind = parseMotionKind(element.dataset.scrollMotion);
+        const order = Number(element.dataset.scrollOrder ?? 0);
+        if (!Number.isInteger(order) || order < 0)
+          throw new Error(`Invalid motion order: ${element.dataset.scrollOrder}`);
         return {
           element,
           anchor: element.closest<HTMLElement>("[data-scroll-anchor]") ?? element,
-          kind: kind as MotionKind,
-          order: Number(element.dataset.scrollOrder ?? 0),
+          kind,
+          order,
           top: 0,
           height: 0,
         };
@@ -106,8 +84,7 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
     }
 
     function measure() {
-      parameters.clear();
-      config = getComputedStyle(scope);
+      parameters = parseMotionParameters(getComputedStyle(scope));
       headerBottom =
         document.querySelector("header")?.getBoundingClientRect().bottom ?? 0;
       for (const target of targets) {
@@ -135,119 +112,53 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
     function render() {
       frame = 0;
       if (disposed || document.hidden) return;
-      if (needsCollection) collect();
-      if (reducedMotion.matches || printMedia.matches) {
-        reset();
-        return;
-      }
-      if (needsMeasurement) measure();
-      const height = window.innerHeight;
-      const scrollTop = window.scrollY;
-      const distance = getParameter("content-distance");
-      const depthScale = getParameter("depth-scale");
-      const entranceStart = height * getParameter("entrance-start");
-      const exitStart = headerBottom + height * getParameter("exit-start");
-      const exitEnd = headerBottom - height * getParameter("exit-end");
-      const poses = targets
-        .filter(({ element }) => !element.closest("[inert]"))
-        .map((target) => {
-          const top = target.top - scrollTop;
-          const bottom = top + target.height;
-          const entranceEnd =
-            height *
-              getParameter(
-                target.height > height * getParameter("long-content-threshold")
-                  ? "long-content-end"
-                  : "entrance-end",
-              ) -
-            (target.kind === "skill"
-              ? target.order * height * getParameter("skill-stagger")
-              : 0);
-          const enter = smoothProgress(
-            (entranceStart - top) / (entranceStart - entranceEnd),
-          );
-          const exit = smoothProgress((exitStart - bottom) / (exitStart - exitEnd));
-          let y =
-            (1 - enter) * distance -
-            exit * distance * getParameter("exit-distance-scale");
-          let opacity =
-            getParameter("minimum-opacity") +
-            (1 - getParameter("minimum-opacity")) * enter * (1 - exit);
-          let scale =
-            1 -
-            (1 - enter) * getParameter("content-shrink") -
-            exit * getParameter("content-exit-shrink");
-          let tilt = 0;
-          if (["hero", "atmosphere", "hint"].includes(target.kind)) {
-            const readingDistance = Math.max(0, target.height - height);
-            const progress = clamp(
-              (-top - readingDistance) /
-                Math.max(1, Math.min(height, target.height) - headerBottom),
-            );
-            y =
-              -progress *
-              getParameter(
-                target.kind === "hero" ? "hero-distance" : "atmosphere-distance",
-              ) *
-              depthScale;
-            opacity =
-              target.kind === "hero" ? 1 - progress * getParameter("hero-fade") : 1;
-            scale =
-              target.kind === "hero" ? 1 - progress * getParameter("hero-shrink") : 1;
-            tilt = target.kind === "hero" ? progress * getParameter("hero-tilt") : 0;
-            if (target.kind === "hint") {
-              y = 0;
-              opacity = 1 - smoothProgress(progress / getParameter("hint-exit"));
-            }
-          } else if (target.kind === "heading") {
-            scale =
-              1 -
-              (1 - enter) * getParameter("heading-shrink") -
-              exit * getParameter("heading-exit-shrink");
-          } else if (target.kind === "portrait" || target.kind === "skill") {
-            scale =
-              1 -
-              (1 - enter) * getParameter("artwork-shrink") -
-              exit * getParameter("artwork-exit-shrink");
-            y =
-              (1 - enter) * distance * getParameter("artwork-distance-scale") -
-              exit * distance * getParameter("artwork-exit-distance-scale");
-          }
-          return { element: target.element, y, opacity, scale, tilt };
-        });
-      const lines = rows.map((row) => ({
-        element: row.element,
-        progress: clamp(
-          (height * getParameter("timeline-reading-line") - (row.top - scrollTop)) /
-            Math.max(1, row.height),
-        ),
-      }));
-
-      for (const pose of poses) {
-        const values = {
-          y: `${pose.y.toFixed(3)}px`,
-          opacity: pose.opacity.toFixed(4),
-          scale: pose.scale.toFixed(5),
-          tilt: `${pose.tilt.toFixed(3)}deg`,
+      try {
+        if (needsCollection) collect();
+        if (reducedMotion.matches || printMedia.matches) {
+          reset();
+          return;
+        }
+        if (needsMeasurement) measure();
+        const viewport = {
+          height: window.innerHeight,
+          scrollTop: window.scrollY,
+          headerBottom,
         };
-        for (const property of MOTION_PROPERTIES)
-          if (
-            pose.element.style.getPropertyValue(`--scroll-${property}`) !==
-            values[property]
-          )
-            pose.element.style.setProperty(`--scroll-${property}`, values[property]);
-      }
-      for (const { element, progress } of lines) {
-        element.style.setProperty("--scroll-line-progress", progress.toFixed(4));
-        element.style.setProperty(
-          "--scroll-dot-scale",
-          (
-            getParameter("timeline-dot-start") +
-            progress * getParameter("timeline-dot-growth")
-          ).toFixed(4),
+        const activeTargets = targets.filter(
+          ({ element }) => !element.closest("[inert]"),
         );
+        const poses = activeTargets.map((target) =>
+          calculatePose(target, viewport, parameters),
+        );
+        const lines = rows.map((row) => calculateTimeline(row, viewport, parameters));
+
+        for (let index = 0; index < poses.length; index++) {
+          const pose = poses[index];
+          const element = activeTargets[index].element;
+          const values = {
+            y: `${pose.y.toFixed(3)}px`,
+            opacity: pose.opacity.toFixed(4),
+            scale: pose.scale.toFixed(5),
+            tilt: `${pose.tilt.toFixed(3)}deg`,
+          };
+          for (const property of MOTION_PROPERTIES)
+            if (
+              element.style.getPropertyValue(`--scroll-${property}`) !==
+              values[property]
+            )
+              element.style.setProperty(`--scroll-${property}`, values[property]);
+        }
+        for (let index = 0; index < lines.length; index++) {
+          const { progress, dotScale } = lines[index];
+          const element = rows[index].element;
+          element.style.setProperty("--scroll-line-progress", progress.toFixed(4));
+          element.style.setProperty("--scroll-dot-scale", dotScale.toFixed(4));
+        }
+        scope.dataset.scrollMotionActive = "";
+      } catch (error) {
+        dispose();
+        throw error;
       }
-      scope.dataset.scrollMotionActive = "";
     }
 
     function schedule() {
@@ -306,8 +217,7 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
     void document.fonts?.ready.then(() => {
       if (!disposed) invalidate();
     });
-    render();
-    return () => {
+    function dispose() {
       disposed = true;
       cancelAnimationFrame(frame);
       resizeObserver.disconnect();
@@ -320,6 +230,8 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
       reducedMotion.removeEventListener("change", updatePreference);
       printMedia.removeEventListener("change", updatePreference);
       reset();
-    };
+    }
+    render();
+    return dispose;
   }, [scopeRef]);
 }

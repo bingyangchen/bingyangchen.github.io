@@ -46,6 +46,10 @@
 
 相同數值只有在用途相同時才共用。圖片定位、裝飾漸層、局部陰影、光學微調，以及履歷列印的尺寸與字級保留在使用處，避免首頁的間距或字級調整改變 PDF 排版。Footer 的聯絡標題使用 Projects、Blog 共用的 `section.title`，保留深底文字色；說明、Email、平台、作者識別與版權使用 UI 字型，履歷保留專用字型。Footer 使用獨立的 `$footer-text-secondary` 與 `$footer-divider-color`，分開次要文字及裝飾分隔線。
 
+Scroll motion 的距離 token 使用 `px`，Hero 傾斜使用 `deg`，進度、比例與縮放使用無單位數值。`perspective` 保留 CSS 長度，由 transform 直接使用；其他參數的名稱與單位由 [`parameters.ts`](../motion/parameters.ts) 驗證。驗證失敗時，`useScrollMotion` 會停止當次更新、清除動態樣式並釋放瀏覽器資源。
+
+調整 `$scroll-motion` 或 compact token 時，一併執行 `src/motion/parameters.test.ts`，確認實際 Sass 輸出與 TypeScript 的參數約定一致。參數只在重新量測時讀取，純計算使用已驗證的數值；所有計算完成後才寫入樣式，避免在寫入期間讀取 computed style。
+
 ```scss
 @use "../../styles/tokens" as _;
 @use "../../styles/section";

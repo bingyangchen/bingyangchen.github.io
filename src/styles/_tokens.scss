@@ -119,7 +119,7 @@ $footer-divider-color: #484843;
 $resume-font-family: Georgia, "Resume CJK Serif", "Times New Roman", serif;
 
 $scroll-motion: (
-  content-distance: 96,
+  content-distance: 96px,
   depth-scale: 1,
   perspective: 1200px,
   entrance-start: 1.04,
@@ -132,11 +132,11 @@ $scroll-motion: (
   content-shrink: 0.035,
   content-exit-shrink: 0.02,
   exit-distance-scale: 0.7,
-  hero-distance: 160,
-  atmosphere-distance: 64,
+  hero-distance: 160px,
+  atmosphere-distance: 64px,
   hero-fade: 0.78,
   hero-shrink: 0.14,
-  hero-tilt: 4,
+  hero-tilt: 4deg,
   hint-exit: 0.25,
   heading-shrink: 0.08,
   heading-exit-shrink: 0.025,
@@ -149,7 +149,7 @@ $scroll-motion: (
   timeline-dot-start: 0.75,
   timeline-dot-growth: 0.35,
 );
-$scroll-motion-compact-distance: 56;
+$scroll-motion-compact-distance: 56px;
 $scroll-motion-compact-depth-scale: 0.6;
 $scroll-timeline-width: 3px;
 $scroll-timeline-ring-width: 2px;

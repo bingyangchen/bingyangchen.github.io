@@ -39,6 +39,19 @@ English work narratives and project copy are maintained only in `src/i18n/dictio
 
 Preview serves the build over loopback HTTP without an SPA fallback. `/resume` remains a non-public preview with browser printing, available through `npm run dev`.
 
+### Scroll Motion
+
+Keep the site's reversible scroll formulas rather than introducing an animation engine: SITE-R13 defines grouped motion, long-content reading regions, and Hero exit delays that must remain consistent at the same position in either scroll direction.
+
+<!-- prettier-ignore -->
+| Module | Responsibility |
+| --- | --- |
+| [`src/motion/calculation.ts`](src/motion/calculation.ts) | Pure pose and timeline calculations from document geometry, viewport position, and numeric parameters; no DOM access or playback state. |
+| [`src/motion/parameters.ts`](src/motion/parameters.ts) | Read and validate the complete CSS parameter set, including units and progress ranges, when measurements are invalidated. |
+| [`src/motion/useScrollMotion.ts`](src/motion/useScrollMotion.ts) | Collect and measure elements, calculate a frame before writing styles, merge events into one requested frame, and release browser resources and temporary styles. |
+
+Parameter tests compile the actual Sass mixin and compare its emitted names with the reader, including compact overrides. Calculation tests verify reading regions, endpoints, long and short content, stagger, and reverse traversal. Hook tests cover invalidation, preferences, print, hidden pages, Strict Mode, disposal, and delayed font readiness. Browser tests retain the production integration checks; idle style-write checks alone do not establish scrolling performance. Compare frame work under the same browser, viewport, input, and content when changing motion; desktop mobile emulation does not replace physical-device checks.
+
 ### Static Output and PDF Validation
 
 `scripts/static-server.mts` owns loopback file serving for both preview and prerender, including MIME types, decoded-path and symlink checks, HEAD requests, stream errors, and shutdown. Preview serves actual files only. Prerender explicitly supplies the compile shell for `/` and `/resume`; all other missing paths return 404, including missing assets. Unexpected file I/O failures return 500 and report their cause.
