@@ -17,8 +17,7 @@ depends_on: []
 
 以下保留既有核准紀錄。本次修訂的待辦範圍仍為草稿，修改計劃不代表核准實作。
 
-- 2026-11-15：使用者核准以 `change` 獨立處理 TD-27，涵蓋公司、技能、校名圖片及裝飾 SVG 的語意、雙語驗證與工程文件。
-- 2026-11-15：使用者核准以 `change` 獨立處理 TD-21，涵蓋 Node 與 npm 的版本選擇、本機及 CI 安裝、版本檢查與完整驗證。
+- 2026-11-15：使用者核准以 `change` 處理 TD-25 的 noscript 提示及 Manifest 圖示宣告，涵蓋提示可讀性、實際圖片及 PDF 下載驗證；Sitemap 歸屬另批處理。
 
 ## 範圍
 
@@ -41,7 +40,7 @@ depends_on: []
 | 範圍 | 優先順序 | 安排理由 |
 | --- | --- | --- |
 | TD-22 依賴維護 | P2，獨立批次 | 補上持續發現公告與過時依賴的流程。 |
-| TD-25 靜態資料校對 | P3，獨立批次 | 修正已確認的提示及尺寸錯誤，另調查 sitemap 歸屬。 |
+| TD-25 Sitemap 歸屬 | P3，獨立批次 | 確認專案路徑的歸屬與可用性，再決定保留或移除。 |
 | TD-10 履歷功能分工 | P3，獨立批次 | 集中履歷預覽、內容與列印的維護位置。 |
 | TD-23 共用控制與 Token | P3，獨立批次 | 依相同用途整理共用值與規則，與首頁樣式分工分開驗收。 |
 | TD-26 履歷載入 | P3，獨立批次 | 已確認可減少首頁下載量，但目前量到的收益較小。 |
@@ -102,17 +101,13 @@ depends_on: []
 - Module 規則依 DOM 順序整理，token 依基礎、語意及元件設定的既有規則排列。
 - 保留兩種語言及既有 breakpoints 的畫面，並通過一般動態、reduced-motion、鍵盤 focus、forced colors 與單頁 A4 PDF 的既有驗證。
 
-### TD-25：校對 Metadata、Manifest 與 Sitemap
-
-已重現：停用 JavaScript 後的 production 首頁仍有主要區塊與 `/resume.pdf` 連結，但 [HTML shell](../../index.html) 的提示宣稱必須啟用 JavaScript。[Manifest 來源](../../src/siteMetadata.ts) 為同一個 WebP 宣告六組尺寸；`sips -g pixelWidth -g pixelHeight public/logo.webp` 取得的實際尺寸為 805×805，與宣告不符。
+### TD-25：確認 Sitemap 歸屬
 
 待調查：sitemap 的 8 個專案路徑不由本 repo 輸出，但可能由其他 GitHub Pages repo 提供，目前沒有外站失效或歸屬的查證結果。
 
-方案：將 noscript 改為「你仍可閱讀主要內容並下載履歷 PDF；語言切換與互動功能需要啟用 JavaScript。」Manifest 保留現有 icon 與啟動行為，將該圖片的 `sizes` 改為真實的 `805x805`；此批不新增安裝功能或 icon 素材。尺寸宣告依 [Manifest 的影像資源規則](https://www.w3.org/TR/appmanifest/#icons-member) 與實際檔案比對。
+方案：每個專案記錄檢查日期、歸屬、HTTP response、最終目的地與實際內容；HTTP 200 若只是 fallback 首頁，不能當成目的地有效。保留或移除理由記錄在 README 的靜態 metadata 說明，再更新由 profile 產生的清單。個人 metadata 仍由共用 profile 維護。
 
-Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的修正。每個專案記錄檢查日期、歸屬、HTTP response、最終目的地與實際內容；HTTP 200 若只是 fallback 首頁，不能當成目的地有效。保留或移除理由記錄在 README 的靜態 metadata 說明，再更新由 profile 產生的清單。個人 metadata 仍由共用 profile 維護。
-
-完成條件：無 JavaScript 的提示與可用內容一致；開發與 production manifest 的尺寸、格式及實際可解碼圖檔一致。Sitemap 範圍完成時，每個 URL 都有可追溯的處置理由，非公開 `/resume` 仍不列入；未查完的目的地保留為待調查，不以本 repo 沒有檔案作為刪除理由。
+完成條件：每個 URL 都有可追溯的處置理由，非公開 `/resume` 仍不列入；未查完的目的地保留為待調查，不以本 repo 沒有檔案作為刪除理由。
 
 ### TD-26：分開履歷載入並記錄啟動方式
 
@@ -133,28 +128,6 @@ Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的�
 啟動方式與量測限制記錄在 README；若要導入 hydration，另行設計 snapshot 與 client 的語言、ID、時間及路徑一致性，遵循 [React 的 hydration 要求](https://react.dev/reference/react-dom/client/hydrateRoot)。
 
 完成條件：首頁初始資源不含 Resume、ResumeSheet 的實作、履歷內容及 CSS Modules，全域 print 規則維持原載入方式。預覽與 build PDF 等待 lazy route 完成；缺少 route chunk 時 build 回報失敗而非擷取 placeholder。首頁完整 prerender、公開範圍與既有列印結果維持，交付報告記錄同條件的 gzip 與實際請求差異。
-
-## Spec 變更
-
-本節是待核准的修訂，實作對應批次時才同步到現行 spec 與驗證文件。責任分工、工具設定與搬檔不新增產品 scenario；未列出的既有需求維持。
-
-### SITE-R14：無 JavaScript 的提示
-
-補充規則：無 JavaScript 時可閱讀主要內容與使用 PDF 下載連結，noscript 提示只說明語言切換與互動功能需要 JavaScript。
-
-<!-- prettier-ignore -->
-| 情境 | 條件、動作與結果 | 驗證方式 |
-| --- | --- | --- |
-| SITE-R14.2 靜態首頁內容 | 讀取 build 的 HTML，或停用 JavaScript 開啟首頁，仍有主要區塊文字及 PDF 下載；noscript 與可用內容一致，QR code 與語言切換仍依賴 JavaScript。 | browser |
-
-### SITE-R16：Manifest 圖示宣告
-
-補充規則：開發及 production 使用同一份 manifest 來源，圖示的格式及尺寸符合實際提供的檔案；非公開履歷預覽不加入 sitemap。
-
-<!-- prettier-ignore -->
-| 情境 | 條件、動作與結果 | 驗證方式 |
-| --- | --- | --- |
-| SITE-R16.5 Manifest 圖示一致 | 分別讀取開發與 production manifest，圖示能成功載入、解碼，格式與宣告一致，每個 sizes 值均符合實際檔案的尺寸。 | browser |
 
 ## 決策
 
@@ -194,9 +167,9 @@ Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的�
 | --- | --- |
 | 履歷分工及載入 | SITE-R1.3、R1.4、R10、R11、R13.11、R14。 |
 | 共用控制與 Token | SITE-R12.6、R18、R19、R20，以及受影響的控制與 PDF 情境。 |
-| 靜態資料 | SITE-R14.2、R16.1、R16.2、R16.5。 |
+| Sitemap | SITE-R16.1、R16.2。 |
 
-新增或修改的 SITE-R14.2、R16.5，驗證方式以本計劃的 Spec 變更為準；其餘沿用現行 spec 已宣告的 unit、browser、manual 對應。Browser 回歸使用當次 production build，SITE-R16.5 另比對開發環境；實機、Safari、OS 列印與螢幕閱讀器的人工結果分開回報。
+各批沿用現行 spec 已宣告的 unit、browser、manual 對應。Browser 回歸使用當次 production build；實機、Safari、OS 列印與螢幕閱讀器的人工結果分開回報。
 
 每批程式實作完成後執行 `npm run check`，並完成適用的 manual checks 及獨立 code review。修復且驗證的範圍才從本計劃與 Roadmap 移除；驗證限制記錄在交付報告，不把未執行的人工檢查寫成通過。
 

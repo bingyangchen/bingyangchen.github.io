@@ -380,7 +380,7 @@ Reduced-motion 下停用首頁全部非必要動畫及過場，完整顯示問�
 
 ### SITE-R14 靜態輸出與 Prerender
 
-Production build 在前端 compile 成功後執行首頁 prerender，使用繁中、台北時區及減少動態設定擷取 `#root` 的內容，保留原 shell head，排除 body portal。HTML 不包含滾動動態的啟用標記或暫存視覺狀態，首頁產生可在 JavaScript 啟動前讀取的文字；需要操作的功能仍依賴 JavaScript。
+Production build 在前端 compile 成功後執行首頁 prerender，使用繁中、台北時區及減少動態設定擷取 `#root` 的內容，保留原 shell head，排除 body portal。HTML 不包含滾動動態的啟用標記或暫存視覺狀態，首頁產生可在 JavaScript 啟動前讀取的文字。無 JavaScript 時仍可閱讀主要內容與下載 PDF，noscript 提示位於固定導覽列下方，說明語言切換與互動功能需要 JavaScript。
 
 Prerender 與 PDF 輸出只允許 loopback HTTP 資源及頁面內的 data、blob URL，阻擋並回報非預期外連。資源的 HTTP 錯誤、載入或圖片解碼失敗，以及 console error 或未處理的 JavaScript error，均使 build 失敗。外部網站僅作為訪客主動開啟的目的地。
 
@@ -407,7 +407,7 @@ flowchart TD
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R14.1 完整 Build | 從乾淨的前端 compile 輸出完成 build，產生首頁靜態內容與當次 ResumeSheet 的 PDF；不能以既有 HTML 或 PDF 代替當次輸出。 | browser |
-| SITE-R14.2 靜態首頁內容 | 讀取 build 的 HTML，或停用 JavaScript 開啟首頁，仍有主要區塊文字；不要求 QR code 或語言切換在無 JavaScript 時可操作。 | browser |
+| SITE-R14.2 靜態首頁內容 | 讀取 build 的 HTML，或停用 JavaScript 開啟首頁，仍有主要區塊文字及 PDF 下載；noscript 提示與可用內容一致，在桌面及窄版均可讀且不被導覽遮住，QR code 與語言切換仍依賴 JavaScript。 | browser |
 | SITE-R14.3 擷取範圍 | HTML 保留 shell metadata，root 內有繁中內容及下載連結，root 外沒有 print portal；首頁啟動後沒有隱藏履歷或重複內容。 | browser |
 | SITE-R14.4 失敗回報 | 空 root、JavaScript 或 console error、錯誤 HTTP、非預期外連、資源載入或圖片解碼失敗、不足的內容、履歷載入失敗、超出紙張、字型缺漏或替換、PDF 缺字、缺少連結 annotation、缺少或無效 PDF 使 postbuild 失敗，不上傳該次失敗輸出。 | browser |
 
@@ -432,7 +432,7 @@ flowchart TD
 
 ### SITE-R16 Metadata 與發布
 
-首頁提供 title、description、canonical、社群預覽、圖示與 manifest，robots 指向 sitemap。HTML shell 由根目錄的 `index.html` 維護，個人 metadata、manifest、robots 與 sitemap 在開發及 build 時讀取同一份 profile，其餘公開靜態檔案由 `public/` 維護。
+首頁提供 title、description、canonical、社群預覽、圖示與 manifest，robots 指向 sitemap。HTML shell 由根目錄的 `index.html` 維護，個人 metadata、manifest、robots 與 sitemap 在開發及 build 時讀取同一份 profile，其餘公開靜態檔案由 `public/` 維護。開發及 production 使用同一份 manifest 來源，圖示宣告的格式與尺寸須符合實際檔案。
 
 由 `main` push 或手動觸發的 workflow 均在 Ubuntu 執行，從 repo 準備 Georgia 後執行包含 build 的共同檢查；Pages artifact 上傳與部署只允許 `refs/heads/main`。驗證失敗時不發布。
 
@@ -443,6 +443,7 @@ flowchart TD
 | SITE-R16.2 Robots 與 Sitemap | 靜態輸出保留 robots 與 sitemap，robots 指向正確的 sitemap 位置；不加入 `/resume`。 | browser |
 | SITE-R16.3 主分支發布 | `main` push 或對 `main` 手動觸發時，共同檢查通過後才以 `build/` 上傳與部署。 | manual |
 | SITE-R16.4 非主分支不得發布 | 對其他 ref 手動觸發時，不上傳 Pages artifact，也不執行 production deploy。 | manual |
+| SITE-R16.5 Manifest 圖示一致 | 分別讀取開發與 production manifest，圖示能成功載入、解碼，格式與宣告一致，每個 sizes 值均符合實際檔案的尺寸。 | browser |
 
 ### SITE-R17 精選文章與閱讀入口
 

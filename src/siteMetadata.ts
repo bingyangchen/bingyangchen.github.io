@@ -8,13 +8,7 @@ export function makeSiteMetadata(person: typeof profile) {
   const manifest = {
     short_name: person.name.en,
     name: person.name.en,
-    icons: [
-      {
-        src: "logo.webp",
-        type: "image/webp",
-        sizes: "512x512 192x192 64x64 32x32 24x24 16x16",
-      },
-    ],
+    icons: [{ src: "logo.webp", type: "image/webp", sizes: "805x805" }],
     start_url: ".",
     display: "standalone",
     orientation: "portrait",

@@ -9,12 +9,11 @@
 # 已確認問題
 
 - 技術債改善：完整檢查及調整提案見 [計劃 0001](plans/0001-codebase-technical-debt.md)。履歷分工、共用控制與 Token、依賴維護各自安排。相關需求為 SITE-R6、R7、R11、R12、R13、R14、R18、R19，各項證據、批次與驗收放在計劃。
-- 靜態資料不一致：無 JavaScript 時仍有主要內容及 PDF 下載，但 noscript 提示宣稱必須啟用 JavaScript；manifest 的 icon 尺寸宣告也與實際圖片不符。兩項均已實測確認，見 [計劃 0001 的 TD-25](plans/0001-codebase-technical-debt.md#td-25校對-metadatamanifest-與-sitemap)，相關需求為 SITE-R14、R16。
 
 # 待調查
 
 - 依賴通知送達：2026-11-15 已查核 Dependency graph、Dependabot alerts、安全更新及帳號通知設定，查核範圍未找到定期過時版本報告，後續實作建議見 [計劃 0001 的 TD-22](plans/0001-codebase-technical-debt.md#td-22補足依賴安全更新)。Email 與 CLI 通知的實際送達仍待驗證，相關需求為 SITE-R16。
-- Sitemap 歸屬：確認其他 GitHub Pages 專案的歸屬、可用性及保留或移除理由，見 [計劃 0001 的 TD-25](plans/0001-codebase-technical-debt.md#td-25校對-metadatamanifest-與-sitemap)。目前沒有外站失效的實測結論，相關需求為 SITE-R16。
+- Sitemap 歸屬：確認其他 GitHub Pages 專案的歸屬、可用性及保留或移除理由，見 [計劃 0001 的 TD-25](plans/0001-codebase-technical-debt.md#td-25確認-sitemap-歸屬)。目前沒有外站失效的實測結論，相關需求為 SITE-R16。
 
 # 待決策
 

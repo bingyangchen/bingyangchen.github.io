@@ -47,6 +47,8 @@ English work narratives and project copy are maintained only in `src/i18n/dictio
 
 [`src/siteMetadata.ts`](src/siteMetadata.ts) produces HTML metadata, manifest, robots, and sitemap from the same serializable profile. The Vite `profile-metadata` plugin resolves the `%PROFILE_*%` placeholders in `index.html`, serves the generated metadata files in development, and emits them into production builds. Keep their routes out of `public/` to avoid competing copies. Sitemap project paths remain explicitly listed pending the ownership investigation in TD-25; generating their origin from the profile does not establish their availability.
 
+Manifest icon `sizes` describes the encoded image dimensions, not the intended display sizes. Update the declaration when replacing `public/logo.webp`; browser checks compare the development and production manifests, inspect the served image format, and decode the icon to verify its dimensions.
+
 [Image assets and loading](docs/image-assets.md) documents responsive renditions, embedded project previews, resource budgets, and before/after measurements. After replacing an original image, run `npm run images:generate` with libwebp's `cwebp` and `dwebp` available; generated assets are committed, so normal builds need neither tool.
 
 Preview serves the build over loopback HTTP without an SPA fallback. `/resume` remains a non-public preview with browser printing, available through `npm run dev`.
@@ -119,6 +121,8 @@ Keep the site's reversible scroll formulas rather than introducing an animation 
 Parameter tests compile the actual Sass mixin and compare its emitted names with the reader, including compact overrides. Calculation tests verify reading regions, endpoints, long and short content, stagger, and reverse traversal. Hook tests cover invalidation, preferences, print, hidden pages, Strict Mode, disposal, and delayed font readiness. Browser tests retain the production integration checks; idle style-write checks alone do not establish scrolling performance. Compare frame work under the same browser, viewport, input, and content when changing motion; desktop mobile emulation does not replace physical-device checks.
 
 ### Static Output and PDF Validation
+
+The noscript notice explains that the prerendered content and PDF remain available while language switching and interactive controls need JavaScript. Its paragraph stays below the fixed Header using the shared height and safe-area inset; styling the paragraph preserves native noscript hiding when scripting is enabled. Browser checks verify the notice's wording and position at narrow and desktop widths and download the actual PDF with scripting disabled.
 
 `scripts/static-server.mts` owns loopback file serving for both preview and prerender, including MIME types, decoded-path and symlink checks, HEAD requests, stream errors, and shutdown. Preview serves actual files only. Prerender explicitly supplies the compile shell for `/` and `/resume`; all other missing paths return 404, including missing assets. Unexpected file I/O failures return 500 and report their cause.
 

@@ -15,6 +15,12 @@ body {
   font-family: _.$body-font-family;
   color: _.$text-body;
   font-size: _.$base-font-size;
+
+  & > noscript > p {
+    margin: calc(_.$header-height + env(safe-area-inset-top, 0px) + _.$space-4)
+      max(_.$compact-content-padding, env(safe-area-inset-right, 0px)) _.$space-4
+      max(_.$compact-content-padding, env(safe-area-inset-left, 0px));
+  }
 }
 
 *,
