@@ -1,4 +1,10 @@
 import { KeyboardEvent, ReactElement, useId, useRef, useState } from "react";
+import { profile } from "../../data/profile";
+import { homeProjects, type ProjectId } from "../../data/projects";
+import { resolveProjectCopy } from "../../i18n/content";
+import { useTranslation } from "../../i18n/context";
+import { englishDictionary } from "../../i18n/dictionaries/en";
+import { IconArrowUpRight } from "../../icons";
 import {
   leechaiAccounts,
   leechaiSettings,
@@ -6,13 +12,8 @@ import {
   taiguAllocation,
   taiguOverview,
 } from "./artwork";
-import ProjectImage from "./ProjectImage";
 import { formatProjectPeriod } from "./period";
-import { homeProjects, type ProjectId } from "../../data/projects";
-import { useTranslation } from "../../i18n/context";
-import { resolveProjectCopy } from "../../i18n/content";
-import { englishDictionary } from "../../i18n/dictionaries/en";
-import { IconArrowUpRight } from "../../icons";
+import ProjectImage from "./ProjectImage";
 import styles from "./Projects.module.scss";
 
 const projectIdToArtwork: Record<ProjectId, ReactElement> = {
@@ -70,7 +71,7 @@ export default function Projects() {
         </div>
         <a
           className={styles.github}
-          href="https://github.com/bingyangchen"
+          href={profile.urls.github}
           target="_blank"
           rel="noopener noreferrer"
         >

@@ -1,14 +1,14 @@
 import logo from "../../assets/responsive/logo-96.webp";
+import { profile } from "../../data/profile";
 import { useTranslation } from "../../i18n/context";
 import { IconArrowUpRight } from "../../icons";
 import styles from "./Footer.module.scss";
 
-const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
-const [emailLocalPart, emailDomain] = CONTACT_EMAIL.split("@");
+const [emailLocalPart, emailDomain] = profile.email.split("@");
 const SOCIAL_LINKS = [
-  { name: "GitHub", href: "https://github.com/bingyangchen" },
-  { name: "LinkedIn", href: "https://www.linkedin.com/in/bing-yang-chen/" },
-  { name: "Cake", href: "https://www.cake.me/me/BingYangChen" },
+  { name: "GitHub", href: profile.urls.github },
+  { name: "LinkedIn", href: profile.urls.linkedin },
+  { name: "Cake", href: profile.urls.cake },
 ];
 
 export default function Footer() {
@@ -24,9 +24,9 @@ export default function Footer() {
             <p>{copy.description}</p>
             <a
               className={styles.email}
-              href={`mailto:${CONTACT_EMAIL}`}
+              href={`mailto:${profile.email}`}
               draggable={false}
-              aria-label={`${copy.email}: ${CONTACT_EMAIL}`}
+              aria-label={`${copy.email}: ${profile.email}`}
             >
               <span>
                 {emailLocalPart}
@@ -62,7 +62,7 @@ export default function Footer() {
             <img src={logo} alt="" width="32" height="32" />
             <span className={styles.signature}>
               <span className={styles.name}>{dictionary.name}</span>
-              <span className={styles.domain}>byc1999.com</span>
+              <span className={styles.domain}>{new URL(profile.urls.site).host}</span>
             </span>
           </a>
           <p>

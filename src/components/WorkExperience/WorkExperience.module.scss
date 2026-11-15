@@ -63,12 +63,12 @@
     & > .work_duration {
       display: flex;
       align-items: center;
-      height: 35px;
+      min-block-size: 35px;
       font-size: 0.9 * _.$base-font-size;
       letter-spacing: 0.5px;
       color: _.$text-muted;
       @media (max-width: _.$medium) {
-        height: 25px;
+        min-block-size: 25px;
         margin-bottom: 3px;
       }
     }

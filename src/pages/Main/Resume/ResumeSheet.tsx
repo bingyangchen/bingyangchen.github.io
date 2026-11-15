@@ -1,7 +1,24 @@
 import styles from "./ResumeSheet.module.scss";
 
 import React from "react";
+import { profile } from "../../../data/profile";
+import { workExperienceIdToFacts, type WorkExperienceId } from "../../../data/career";
+import { formatWorkExperienceFacts } from "../../../i18n/workExperience";
 import { IconEnvelope, IconLocation } from "../../../icons";
+
+function JobHeading({ experienceId }: { experienceId: WorkExperienceId }) {
+  const copy = formatWorkExperienceFacts(workExperienceIdToFacts[experienceId], "en");
+  return (
+    <div className={styles.roleRow}>
+      <span className={styles.roleText}>
+        {copy.job_title}
+        <span className={styles.roleSeparator}> · </span>
+        {copy.company_name}
+      </span>
+      <span className={styles.roleDates}>{copy.work_duration}</span>
+    </div>
+  );
+}
 
 const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
   function ResumeSheet(_props, forwardedReference) {
@@ -35,7 +52,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
         <div className={styles.contentArea}>
           <header className={styles.header}>
             <h1 className={styles.name}>
-              CHEN, BING-YANG (<span lang="zh-TW">陳秉洋</span>)
+              {profile.name.resume} (<span lang="zh-TW">{profile.name["zh-TW"]}</span>)
             </h1>
             <div className={styles.contactRow}>
               <span className={styles.contactItem}>
@@ -52,7 +69,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                   sideLength="11"
                   aria-hidden
                 />
-                <a href="mailto:bryan.chen.429@gmail.com">bryan.chen.429@gmail.com</a>
+                <a href={`mailto:${profile.email}`}>{profile.email}</a>
               </span>
             </div>
           </header>
@@ -90,13 +107,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
             <h2 className={styles.sectionHeading}>Career Summary</h2>
             <div className={styles.experience}>
               <div className={styles.job}>
-                <div className={styles.roleRow}>
-                  <span className={styles.roleText}>
-                    Backend Engineer<span className={styles.roleSeparator}> · </span>
-                    Swag
-                  </span>
-                  <span className={styles.roleDates}>Jan. 2026 – Present</span>
-                </div>
+                <JobHeading experienceId="swag-2026" />
                 <ul className={styles.bulletList}>
                   <li>
                     Built the affiliate backend from scratch with FastAPI,
@@ -122,15 +133,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               </div>
 
               <div className={styles.job}>
-                <div className={styles.roleRow}>
-                  <span className={styles.roleText}>
-                    Senior Backend Engineer
-                    <span className={styles.roleSeparator}> · </span>Gaia
-                  </span>
-                  <span className={styles.roleDates}>
-                    Dec. 2024 – Dec. 2025 (1 yr 1 mo)
-                  </span>
-                </div>
+                <JobHeading experienceId="gaia-2024" />
                 <ul className={styles.bulletList}>
                   <li>
                     Architected the backend of a customer-facing enterprise AI knowledge
@@ -156,15 +159,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               </div>
 
               <div className={styles.job}>
-                <div className={styles.roleRow}>
-                  <span className={styles.roleText}>
-                    Backend Engineer<span className={styles.roleSeparator}> · </span>
-                    Pinkoi
-                  </span>
-                  <span className={styles.roleDates}>
-                    Mar. 2023 – Dec. 2024 (1 yr 10 mos)
-                  </span>
-                </div>
+                <JobHeading experienceId="pinkoi-2023" />
                 <ul className={styles.bulletList}>
                   <li>
                     Designed and implemented guest shopping cart functionality, enabling
@@ -184,15 +179,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               </div>
 
               <div className={styles.job}>
-                <div className={styles.roleRow}>
-                  <span className={styles.roleText}>
-                    Backend Engineer<span className={styles.roleSeparator}> · </span>
-                    Sysfeather
-                  </span>
-                  <span className={styles.roleDates}>
-                    Mar. 2022 – Mar. 2023 (1 yr 1 mo)
-                  </span>
-                </div>
+                <JobHeading experienceId="sysfeather-2022" />
                 <ul className={styles.bulletList}>
                   <li>
                     Built backend services for a multi-tenant e-commerce platform while
@@ -208,11 +195,15 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
             <div className={styles.bottomColumn}>
               <h2 className={styles.sectionHeading}>Education</h2>
               <p className={styles.schoolLine}>
-                National Chengchi University{" "}
-                <span className={styles.yearRange}>(2017–2021)</span>
+                {profile.education.school.en}{" "}
+                <span className={styles.yearRange}>
+                  ({profile.education.startYear}–{profile.education.graduationYear})
+                </span>
               </p>
               <div className={styles.educationDetailRow}>
-                <span className={styles.degreeText}>Bachelor of Economics</span>
+                <span className={styles.degreeText}>
+                  Bachelor of {profile.education.major.en}
+                </span>
                 <span className={styles.gpaText}>GPA: 4.1/4.3</span>
               </div>
             </div>
@@ -220,18 +211,14 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
               <h2 className={styles.sectionHeading}>Social Links</h2>
               <p className={styles.projectLine}>
                 <span className={styles.projectLabel}>GitHub</span>
-                <a
-                  href="https://github.com/bingyangchen"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  github.com/bingyangchen
+                <a href={profile.urls.github} target="_blank" rel="noreferrer">
+                  {profile.urls.github.replace(/^https:\/\//, "")}
                 </a>
               </p>
               <p className={styles.projectLine}>
                 <span className={styles.projectLabel}>Personal Site</span>
-                <a href="https://byc1999.com/" target="_blank" rel="noreferrer">
-                  byc1999.com
+                <a href={profile.urls.site} target="_blank" rel="noreferrer">
+                  {new URL(profile.urls.site).host}
                 </a>
               </p>
             </div>

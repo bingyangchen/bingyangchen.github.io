@@ -1,5 +1,6 @@
 import { MouseEvent, PointerEvent, useId, useRef } from "react";
 import { additionalArticles, featuredArticle } from "../../data/articles";
+import { profile } from "../../data/profile";
 import { useTranslation } from "../../i18n/context";
 import { IconArrowUpRight } from "../../icons";
 import styles from "./Blog.module.scss";
@@ -96,7 +97,7 @@ export default function Blog() {
         </div>
         <a
           className={styles.archiveLink}
-          href="https://blog.byc1999.com/list"
+          href={new URL("list", profile.urls.blog).href}
           target="_blank"
           rel="noopener noreferrer"
         >

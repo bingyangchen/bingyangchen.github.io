@@ -43,6 +43,47 @@ test("SITE-R1.3 非公開履歷與未知路徑不使用 SPA fallback", async ({ 
   assert.equal(await page.$('a[href="/resume"]'), null);
 });
 
+test("工作日期換行後仍完整留在容器內", async ({ page, server }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openHome(page, server);
+  for (const language of ["en", "zh-TW"]) {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    if (language === "zh-TW") await page.locator("[data-language-switcher]").click();
+    for (const width of [320, 390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      const dates = await page
+        .locator('#about [class*="work_duration"]')
+        .evaluateAll(async (elements: HTMLElement[]) => {
+          await document.fonts.ready;
+          return elements.map((element) => {
+            const bounds = element.getBoundingClientRect();
+            const title = element.nextElementSibling!.getBoundingClientRect();
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            const rectangles = Array.from(range.getClientRects());
+            return {
+              text: element.textContent!,
+              contained:
+                rectangles.length > 0 &&
+                rectangles.every(
+                  (rectangle) =>
+                    rectangle.left >= Math.max(0, bounds.left) - 1 &&
+                    rectangle.right <= Math.min(innerWidth, bounds.right) + 1 &&
+                    rectangle.top >= bounds.top - 1 &&
+                    rectangle.bottom <= Math.min(bounds.bottom, title.top) + 1,
+                ),
+            };
+          });
+        });
+      assert.equal(dates.length, 5);
+      assert.ok(
+        dates.every((date) => date.contained),
+        JSON.stringify({ language, width, dates }),
+      );
+    }
+  }
+});
+
 test("SITE-R12.9 Footer 操作尺寸、排列及文字放大", async ({ page, server }) => {
   test.setTimeout(45000);
   await page.emulateMedia({ reducedMotion: "reduce" });

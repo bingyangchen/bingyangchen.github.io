@@ -11,7 +11,7 @@ description: >-
 Follow [the site design context](../../../docs/design.md) for audience, tone, and visual direction. Paths below are relative to the repository root; inspect only sources relevant to the task:
 
 - `src/pages/Main/Resume/ResumeSheet.tsx`: English resume content, maintained separately from the site's dictionaries.
-- Shared facts: `src/data/workExperience.ts`, both `src/i18n/dictionaries/en.ts` and `src/i18n/dictionaries/zhtw.ts`, and `src/pages/Main/Home/Home.tsx`. For skill or project claims, also check `src/data/skills.ts` or `src/data/projects.tsx` and their dictionary entries.
+- Shared facts: `src/data/profile.ts` owns personal names, contact details, destinations, and shared education facts; `src/data/career.ts` owns company names, job titles, and employment periods. `src/i18n/workExperience.ts` formats those periods for each language and for the resume. Homepage narratives remain in `src/i18n/dictionaries/en.ts` and `src/i18n/dictionaries/zhtw.ts`. For skill or project claims, also check `src/data/skills.ts` or `src/data/projects.ts` and their dictionary entries.
 - Layout and printing: `src/pages/Main/Resume/ResumeSheet.module.scss`, `src/styles/print.scss`, and `src/resume/print.ts`.
 
 ## Facts and Editorial Decisions

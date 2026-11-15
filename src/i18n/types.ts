@@ -1,6 +1,6 @@
 import type { BlogArticleId } from "../data/articles";
 import type { ProjectId } from "../data/projects";
-import type { WorkExperienceId } from "../data/workExperience";
+import type { WorkExperienceId } from "../data/career";
 
 export type Language = "en" | "zh-TW";
 

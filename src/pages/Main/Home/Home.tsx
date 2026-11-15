@@ -22,6 +22,7 @@ import {
   WorkExperience,
 } from "../../../components";
 import BrandImage from "../../../components/BrandImage/BrandImage";
+import { profile } from "../../../data/profile";
 import { homeSkillItems } from "../../../data/skills";
 import { workExperienceItems } from "../../../data/workExperience";
 import { useTranslation } from "../../../i18n/context";
@@ -41,12 +42,6 @@ import {
   IconXLarge,
 } from "../../../icons";
 import { useScrollMotion } from "../../../motion/useScrollMotion";
-
-const CONTACT_EMAIL = "bryan.chen.429@gmail.com";
-
-const SITE_URL_FOR_QR = "https://byc1999.com";
-
-const NCCU_ECONOMICS_URL = "https://econo.nccu.edu.tw/";
 
 export default function Home() {
   const motionRef = useRef<HTMLDivElement>(null);
@@ -163,7 +158,7 @@ export default function Home() {
                       width={160}
                       height={160}
                       fetchPriority="high"
-                      alt="陳秉洋 (Bing-Yang Chen)"
+                      alt={`${profile.name["zh-TW"]} (${profile.name.en})`}
                     />
                     <img
                       className={`${styles.avatar} ${styles.back}`}
@@ -172,7 +167,7 @@ export default function Home() {
                       sizes="160px"
                       width={160}
                       height={160}
-                      alt="陳秉洋 (Bing-Yang Chen)"
+                      alt={`${profile.name["zh-TW"]} (${profile.name.en})`}
                     />
                   </button>
                   <RoundButton
@@ -196,7 +191,7 @@ export default function Home() {
                 <div className={styles.role_badge_row}>
                   <div className={styles.role_badge}>{job_badge_content}</div>
                   <a
-                    href={NCCU_ECONOMICS_URL}
+                    href={profile.education.economicsUrl}
                     target="_blank"
                     rel="noreferrer noopener"
                     className={styles.role_badge}
@@ -210,12 +205,12 @@ export default function Home() {
                 <div className={styles.contact_row}>
                   <span className={styles.email_link}>
                     <IconEnvelope sideLength="18" color="currentColor" />
-                    <span>{CONTACT_EMAIL}</span>
+                    <span>{profile.email}</span>
                   </span>
                   <div className={styles.social_icons}>
                     <Tooltip text="GitHub">
                       <a
-                        href="https://github.com/bingyangchen"
+                        href={profile.urls.github}
                         target="_blank"
                         rel="noreferrer noopener"
                         className={styles.social_icon_link}
@@ -226,7 +221,7 @@ export default function Home() {
                     </Tooltip>
                     <Tooltip text="LinkedIn">
                       <a
-                        href="https://www.linkedin.com/in/bing-yang-chen/"
+                        href={profile.urls.linkedin}
                         target="_blank"
                         rel="noreferrer noopener"
                         className={styles.social_icon_link}
@@ -237,7 +232,7 @@ export default function Home() {
                     </Tooltip>
                     <Tooltip text="Cake">
                       <a
-                        href="https://www.cake.me/me/BingYangChen"
+                        href={profile.urls.cake}
                         target="_blank"
                         rel="noreferrer noopener"
                         className={styles.social_icon_link}
@@ -254,7 +249,7 @@ export default function Home() {
                     size="extra-large"
                     className={styles.resume_download}
                     href="/resume.pdf"
-                    download="Bing-Yang Chen - 陳秉洋.pdf"
+                    download={`${profile.name.en} - ${profile.name["zh-TW"]}.pdf`}
                   >
                     {dictionary.home.downloadResume}
                   </ButtonLink>
@@ -318,14 +313,14 @@ export default function Home() {
               className={styles.school_logo}
               data-scroll-motion="portrait"
               src={nccuLogo}
-              alt="NCCU,National Chengchi University,國立政治大學,經濟學系,Department of Economics,金融科技學士學程,Financial Technology Program,陳秉洋"
+              alt={`${profile.education.abbreviation},${profile.education.school.en},${profile.education.school["zh-TW"]},${profile.education.major["zh-TW"]}系,Department of ${profile.education.major.en},金融科技學士學程,Financial Technology Program,${profile.name["zh-TW"]}`}
               width={314}
               height={103}
             />
             <div className={styles.degree_list} data-scroll-motion="content">
               <a
                 className={styles.degree}
-                href="https://econo.nccu.edu.tw/"
+                href={profile.education.economicsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -333,7 +328,7 @@ export default function Home() {
               </a>
               <a
                 className={styles.degree}
-                href="https://www.ftrc.nccu.edu.tw/wordpresseng/?page_id=3053"
+                href={profile.education.fintechUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -376,7 +371,7 @@ export default function Home() {
               </button>
               <div className={styles.qr_modal_content}>
                 <div className={styles.qr_modal_code_panel}>
-                  <QRCodeSVG value={SITE_URL_FOR_QR} size={240} level="M" />
+                  <QRCodeSVG value={profile.urls.site} size={240} level="M" />
                 </div>
                 <div className={styles.qr_modal_title} id="qr-modal-title">
                   {dictionary.name}

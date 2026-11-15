@@ -146,6 +146,8 @@ flowchart TD
 
 About 顯示工作經歷、技能與教育。工作內容按資料順序，以固定 ID 取得目前語言翻譯，缺少或空白翻譯時取對應英文內容；技能列呈現技能名稱與圖示，學歷連結到對應學校頁面。
 
+首頁與履歷共用公司、職稱及任職期間，並使用一致的日期格式。英文月份縮寫加句點，已結束工作的年資包含起訖月份並放在日期後的括號中。首頁長段落與履歷成就清單維持各自編輯；兩種語言、QR code、聯絡入口與 PDF 使用相同的個人事實及目的地。
+
 Hero、工作經歷與教育的品牌圖片隨網站提供，預留圖片尺寸；圖片載入失敗時保留空間並隱藏失敗圖示，旁邊的職稱、公司與教育文字仍可閱讀。
 
 Footer 提供主要聯絡入口、三個專業平台連結、作者識別與當年度姓名版權資訊，不再呈現服務清單。聯絡說明依目前語言顯示，完整 Email 不因語言改變，地址與操作箭頭共用一個原生 `mailto:` anchor。作者姓名與版權姓名依目前語言顯示。
@@ -418,7 +420,7 @@ flowchart TD
 
 ### SITE-R16 Metadata 與發布
 
-首頁提供 title、description、canonical、社群預覽、圖示與 manifest，robots 指向 sitemap；HTML shell 由根目錄的 `index.html` 維護，其餘公開靜態檔案由 `public/` 維護。
+首頁提供 title、description、canonical、社群預覽、圖示與 manifest，robots 指向 sitemap。HTML shell 由根目錄的 `index.html` 維護，個人 metadata、manifest、robots 與 sitemap 在開發及 build 時讀取同一份 profile，其餘公開靜態檔案由 `public/` 維護。
 
 由 `main` push 或手動觸發的 workflow 均在 Ubuntu 執行，從 repo 準備 Georgia 後執行包含 build 的共同檢查；Pages artifact 上傳與部署只允許 `refs/heads/main`。驗證失敗時不發布。
 

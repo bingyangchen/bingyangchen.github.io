@@ -20,8 +20,8 @@ depends_on: []
 - 2026-11-09：使用者核准 TD-07、TD-08、TD-24，授權一併完成工作與作品的資料約定、英文 fallback 與測試隔離。
 - 2026-11-09：使用者核准 TD-15、TD-16，授權一併改善 PDF 結構與文字驗證、共用靜態服務及 Prerender 的職責與失敗處理。
 - 2026-11-09：使用者核准 TD-19，授權移除停用的 Workbox 程式與依賴、精確清理歷史 registration，並完成相關規格與驗證。
-
 - 2026-11-09：使用者核准 TD-13、TD-20，授權一併遷移瀏覽器測試至 Playwright Test，補齊 Node 工具與測試型別檢查，並保留既有情境及跨瀏覽器驗證。
+- 2026-11-09：使用者核准單獨處理 TD-09，授權集中共用事實並驗證雙語、QR code、靜態輸出與 PDF。
 
 ## 範圍
 
@@ -42,7 +42,6 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 <!-- prettier-ignore -->
 | 編號 | 優先順序 | 調整主題 | 證據種類 |
 | --- | --- | --- | --- |
-| TD-09 | P2 | 集中聯絡資訊及可共用的職涯事實 | 程式碼確認 |
 | TD-10 | P2 | 按實際功能拆分首頁與履歷 | 程式碼確認 |
 | TD-11 | P2 | 分開 motion 計算與 DOM 操作 | 程式碼確認 |
 | TD-12 | P2 | 整理導覽狀態與原生 anchor 行為 | 程式碼確認 |
@@ -58,14 +57,6 @@ P2 處理會持續增加修改成本、資料缺漏風險或驗證成本的結�
 無。
 
 ## 檢查發現與調整方案
-
-### TD-09：集中聯絡資訊與共用事實
-
-證據：email、GitHub、LinkedIn、Cake、網站 URL 分散於 Home、Footer、ResumeSheet、QR code、HTML metadata。任職公司、職稱、日期也分散在兩份字典與 [`ResumeSheet.tsx`](../../src/pages/Main/Resume/ResumeSheet.tsx)。內容差異不一定是錯誤，但更改同一事實需要逐檔搜尋。
-
-建議建立小型 `profile` 資料，維護聯絡資料、社群目的地與網站 URL。職涯共同事實依 ID 共用，首頁長段落與履歷 bullets 保留各自的編輯方式；服務清單與教育敘事不為了共用而改成通用 schema。新增對照檢查，確認兩種語言及履歷的公司、職稱與任職期間一致。
-
-完成條件：更新 email 或任職日期有明確的維護位置，相關畫面、QR code 與 PDF 連結同步。Metadata 若須留在靜態 shell，由 build 讀取同一份可轉為 JSON 的資料，不為這件事引入 CMS。此調整不驗證成果數字真偽，也不把 repo 內重複文案當成獨立證據。
 
 ### TD-10：按功能拆分首頁及履歷
 
@@ -152,7 +143,7 @@ stateDiagram-v2
 
 證據：根目錄 HTML shell 的 `<noscript>` 宣告必須啟用 JavaScript，實際 prerender 已提供主要內容及 PDF 連結，兩種說法不一致。Manifest 在同一個 WebP icon 上宣告多個尺寸，需核對真實尺寸。Sitemap 列出 8 個其他專案路徑，但這個 repo 不提供這些頁面，可能由其他 GitHub Pages repo 提供，尚不能判定失效。
 
-建議 noscript 只說明互動功能需要 JavaScript；manifest 使用真實 icon 尺寸與必要欄位。先建立 sitemap 目的地的歸屬及 response 紀錄，再移除確認失效的項目。Metadata 的任職與教育事實依 TD-09 維護，不以 SEO 名義堆疊圖片 alt 或關鍵字。
+建議 noscript 只說明互動功能需要 JavaScript；manifest 使用真實 icon 尺寸與必要欄位。先建立 sitemap 目的地的歸屬及 response 紀錄，再移除確認失效的項目。Metadata 的個人事實由共用 profile 維護，不以 SEO 名義堆疊圖片 alt 或關鍵字。
 
 完成條件：停用 JavaScript 時的提示與可用內容一致，manifest 的 icon 宣告與檔案相符；sitemap 的每個 URL 都有可追溯的保留或移除理由，非公開 `/resume` 維持不列入。這是待調查工作，不能從本 repo 沒有檔案直接推論外部專案不存在。
 
@@ -226,7 +217,7 @@ SITE-R2、R6、R7、R9、R10、R11、R13、R16、R17 的現有結果維持。TD-
 flowchart TD
   baseline[保留驗證基準與情境對應]
   baseline --> tooling[TD-21：工具環境]
-  baseline --> content[TD-09、TD-10：共用事實與功能分工]
+  baseline --> content[TD-10：功能分工]
   baseline --> maintenance[TD-22：依賴維護]
   content --> logic[TD-11、TD-12：Motion 與導覽]
   content --> styles[TD-23、TD-27：共用樣式與控制]
@@ -251,7 +242,7 @@ flowchart TD
 | 工作範圍 | 工程驗收 |
 | --- | --- |
 | 工具與環境 | 依文件選擇 Node 與 npm 後，乾淨安裝及既有檢查通過。 |
-| 內容與模組 | 共用事實有單一維護位置，雙語與履歷共享事實保持一致；沒有循環 import 或功能私有模組對外公開。 |
+| 內容與模組 | 功能依賴方向明確，沒有循環 import 或功能私有模組對外公開。 |
 | Motion 與導覽 | 純函式驗證與既有 browser 情境通過，桌面及實機快捲、反轉、歷史還原、focus、resize、reduced motion 另有實測紀錄。 |
 | 資源及載入 | 記錄履歷 route 分割前後的 bundle gzip 差異，prerender 仍保留完整靜態內容。 |
 | 依賴維護與 CI | 安全公告與過時依賴有獨立檢查，更新有引入鏈及使用情境供審查，失敗輸出及非 main ref 均不發布。 |

@@ -12,6 +12,7 @@ import sysfeatherLogo from "../assets/responsive/sysfeather_logo-64.webp";
 
 // Source: https://www.bdsh.ntpc.edu.tw/var/file/0/1000/msys_1000_9064694_48923.png
 import beidaLogo from "../assets/responsive/beida_logo-64.webp";
+import type { WorkExperienceId } from "./career";
 
 export const workExperienceItems = [
   { id: "swag-2026", company_logo: swagLogo },
@@ -19,6 +20,4 @@ export const workExperienceItems = [
   { id: "pinkoi-2023", company_logo: pinkoiLogo },
   { id: "sysfeather-2022", company_logo: sysfeatherLogo },
   { id: "beida-2020", company_logo: beidaLogo },
-] as const;
-
-export type WorkExperienceId = (typeof workExperienceItems)[number]["id"];
+] as const satisfies readonly { id: WorkExperienceId; company_logo: string }[];
