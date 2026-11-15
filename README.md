@@ -134,6 +134,38 @@ Browser tests inspect PDF metadata, drawing fonts, annotations, and text with PD
 
 The [local design system](src/styles/README.md) documents shared tokens, Sass patterns, and UI controls. Shared tokens, reusable patterns, and global screen and print entry styles live in `src/styles/`; component styles stay in co-located CSS Modules.
 
+## Dependency Maintenance
+
+[Dependency graph](https://github.com/bingyangchen/bingyangchen.github.io/network/dependencies) and [Dependabot alerts](https://github.com/bingyangchen/bingyangchen.github.io/security/dependabot) supply security advisories, affected versions, patched versions, and dependency paths. Keep alerts and automated security updates enabled in [Code security settings](https://github.com/bingyangchen/bingyangchen.github.io/settings/security_analysis). These capabilities already cover advisory discovery, so a duplicate scheduled `npm audit` job is unnecessary. The [capability audit](docs/plans/0001-codebase-technical-debt/dependency-maintenance-audit.md) records the original checks and their limits.
+
+Every week, review the complete open Dependabot alert list across all severities, then review the latest [Dependency report run](https://github.com/bingyangchen/bingyangchen.github.io/actions/workflows/dependencies.yml). An empty version report says nothing about security advisories. The maintainer's notification settings were checked on November 15, 2026: Email and CLI enabled, On GitHub and email digest disabled. [GitHub's notification rules](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/manage-your-dependency-security/configure-dependabot-notifications) limit which events trigger email, and CLI notices appear on push, so check low and medium alerts directly too. Actual email delivery and CLI presentation still require observation; verify account preferences in [Notification settings](https://github.com/settings/notifications) if expected notices do not arrive. For report-job failures, use the Actions notification settings and inspect failed or missing weekly runs rather than treating silence as a successful query. GitHub can delay scheduled runs and disable schedules after 60 days of inactivity in public repositories; re-enable this workflow from its Actions page when needed.
+
+The independent [report workflow](.github/workflows/dependencies.yml) runs each Monday at 01:23 UTC (09:23 Asia/Taipei) and supports **Run workflow** on `main`. It uses the same `.nvmrc` and `packageManager` as development, installs the locked dependency tree with lifecycle scripts disabled, and queries direct dependencies including development tools. It has only `contents: read` repository permission, does not retain checkout credentials, and keeps reports for 30 days. Package upgrades remain separately reviewed changes on `main`; the report does not update dependencies or merge security-update PRs.
+
+Open a run's summary, then download its `dependency-report` artifact:
+
+<!-- prettier-ignore -->
+| File or result | Meaning |
+| --- | --- |
+| `outdated.json` | Original npm output with current, wanted, and latest versions. |
+| `npm-stderr.log` | Original diagnostics and HTTP query log, including failures npm may silently omit from JSON. |
+| `unreported-packages.json` | Raw range-verification results for direct dependencies absent from npm's outdated output. |
+| `result.json` | Query status, npm exit code, timestamp, commit, Node version, selected npm version, and lockfile SHA-256. |
+| `current` | npm completed and reported no outdated direct dependencies. |
+| `outdated` | npm completed and reported newer versions; the workflow succeeds because findings are report data. |
+| `failed` | Query failure or incomplete output; the workflow fails and retains available diagnostics. |
+
+The reporter accepts npm's exit code `1` only with valid, nonempty package rows, and rejects HTTP 403/404 because the selected npm version silently skips those package queries. npm also silently skips ranges with no matching registry version (`ETARGET`), so the reporter verifies unreported direct dependencies with `npm view <package>@<range> version --json --prefer-online` before accepting the result. `npm run test:dependencies` checks these behaviors against a local registry, so rerun it when changing npm. Setup or dependency-install failures fail the job before a report exists; use the failing step's log. A successful report also depends on artifact upload succeeding. Scheduled runs use GitHub's default-branch scheduling rules, documented in [Events that trigger workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
+To produce the same report locally after the normal development setup:
+
+```sh
+npm run check:toolchain
+npm run report:dependencies
+```
+
+Local reports are written to the ignored `dependency-report/` directory. The [`npm outdated` reference](https://docs.npmjs.com/cli/v12/commands/npm-outdated/) explains `wanted` versus `latest`; use `npm outdated --all --json` only when investigating transitive versions. For a security alert, use `npm explain <package>` and the graph to trace introduction, then inspect imports and package scripts: `src/` imports can enter browser JavaScript, while Vite, prerender, PDF, lint, and test dependencies execute in development or CI. A `dependencies` declaration or an alert's runtime scope alone does not establish browser exposure. Check the affected API, version range, and actual execution path before choosing a remediation; build and test dependencies can still affect CI. Review install scripts and existing version-specific approvals during upgrades, then run `npm run check` for compatibility and output regressions, including browser-support database changes.
+
 ## Verification
 
 Run `npm run check` for all automated checks, including a fresh production build. Individual checks are also available:
@@ -149,6 +181,8 @@ Run `npm run check` for all automated checks, including a fresh production build
 | `npm run typecheck` | Check application, Vite configuration, Node tools, and browser tests with separate strict TypeScript projects. |
 | `npm run check:scenarios` | Validate spec and scenario coverage links. |
 | `npm run test:checker` | Test the scenario checker. |
+| `npm run test:dependencies` | Verify dependency-report parsing and real npm behavior against a local registry. |
+| `npm run report:dependencies` | Query the registry and save a read-only direct-dependency report. |
 | `npm run test:unit` | Run Vitest tests in jsdom. |
 | `npm run test:browser` | Run the full Chromium suite and Firefox/WebKit core journeys against a fresh production build; run `npm run build` first. |
 

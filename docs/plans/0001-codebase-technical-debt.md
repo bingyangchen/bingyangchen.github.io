@@ -17,7 +17,7 @@ depends_on: []
 
 以下保留既有核准紀錄。本次修訂的待辦範圍仍為草稿，修改計劃不代表核准實作。
 
-- 2026-11-15：使用者核准以 `change` 處理 TD-25 的 noscript 提示及 Manifest 圖示宣告，涵蓋提示可讀性、實際圖片及 PDF 下載驗證；Sitemap 歸屬另批處理。
+- 2026-11-16：使用者核准以 `change` 處理 TD-22 的維護說明及獨立、唯讀、每週與手動執行的過時版本報告，涵蓋查詢結果區分、原始報告保存與失敗處理。
 
 ## 範圍
 
@@ -39,7 +39,7 @@ depends_on: []
 <!-- prettier-ignore -->
 | 範圍 | 優先順序 | 安排理由 |
 | --- | --- | --- |
-| TD-22 依賴維護 | P2，獨立批次 | 補上持續發現公告與過時依賴的流程。 |
+| TD-22 依賴維護驗證 | P2，獨立批次 | 驗證 GitHub 上的版本報告及既有通知送達。 |
 | TD-25 Sitemap 歸屬 | P3，獨立批次 | 確認專案路徑的歸屬與可用性，再決定保留或移除。 |
 | TD-10 履歷功能分工 | P3，獨立批次 | 集中履歷預覽、內容與列印的維護位置。 |
 | TD-23 共用控制與 Token | P3，獨立批次 | 依相同用途整理共用值與規則，與首頁樣式分工分開驗收。 |
@@ -61,33 +61,11 @@ depends_on: []
 
 ### TD-22：補足依賴安全更新
 
-2026-11-15 已完成唯讀能力盤點，來源、查核命令與限制見[依賴維護盤點](0001-codebase-technical-debt/dependency-maintenance-audit.md)。本次只核准盤點與文件更新，下列實作建議仍為草稿。
+待驗證：在 GitHub 實際執行[版本報告 workflow](../../.github/workflows/dependencies.yml)，核對手動執行入口、摘要、原始報告、執行權限及 artifact 下載。定期執行須另外觀察 schedule 觸發的紀錄。維護入口、結果判讀及選型理由見 [README](../../README.md#dependency-maintenance)。
 
-實際設定確認：Dependency graph 已涵蓋目前 lockfile 的 488 組不同 npm 套件名稱與版本，並能追查傳遞依賴。Dependabot alerts 已啟用，警示 API 回傳的 192 筆紀錄全為 fixed，另以 open 篩選確認為 0 筆。自動安全更新也已啟用且未暫停，repo 的 auto-merge 未啟用。這些都是當次狀態，不能推論未來沒有安全公告。
+待驗證：既有 Dependabot Email 與 CLI 通知的實際送達，設定證據及限制見[依賴維護盤點](0001-codebase-technical-debt/dependency-maintenance-audit.md)。通知偏好與每週檢視所有嚴重度警示的方式見 README。
 
-通知設定確認：維護者訂閱此 repo 的 All Activity；Dependabot 新漏洞通知選用 Email 與 CLI，On GitHub 與 email digest 未啟用。依 GitHub 官方說明，Email 通知涵蓋新發現的 high、critical 漏洞等事件，CLI 提示則在 push 時出現。實際 email 送達與 CLI 提示尚未驗證，low、medium 警示須另由完整警示清單檢視。
-
-程式碼與遠端紀錄確認：目前 workflows、保留的 185 筆執行紀錄、main 的 check runs 及 webhooks 未找到獨立的過時版本報告；repo 也沒有記錄外部報告入口。此結果不涵蓋維護者未連到 repo 的私人或外部工具。
-
-依盤點結果提出下列最小實作範圍：
-
-<!-- prettier-ignore -->
-| 能力 | 建議方案與理由 |
-| --- | --- |
-| 持續發現安全公告 | 沿用現有 Dependency graph、Dependabot alerts 與通知設定，在 README 記錄入口及每週檢視全部嚴重度警示的方式。既有服務已提供套件辨識、公告及引入鏈，因此不新增重複的定期 `npm audit` workflow。 |
-| 定期盤點過時版本 | 新增每週及手動執行 `npm outdated --json` 的唯讀 workflow，保留原始報告、查詢結果與執行入口。預設盤點直接依賴，傳遞依賴的版本調查按需使用 `--all`，不把自動安全更新紀錄當成所有過時版本的報告。 |
-| 判讀使用情境 | 在 README 記錄維護者如何依引入鏈、package scripts 及實際用途區分 browser runtime、build 或測試工具。警示的 scope 不足以判斷套件是否進入 browser JavaScript，仍須確認實際使用位置。 |
-
-實作前須核准上述範圍。既有警示與自動安全更新設定維持，更新仍由維護者審查並在 main 處理；新報告獨立於部署流程，不新增套件更新或自動合併。維護方式及選型理由保存於 README。
-
-完成條件：每項能力都有可查證的來源、檢查或通知入口與維護方式，選型僅補足已記錄的缺漏。各種方案依下列方式驗證：
-
-- 沿用既有服務時，確認設定及依賴辨識仍與本次盤點一致，並核對公告、受影響版本及引入鏈是否可讀；通知實際送達另外記錄驗證結果。
-- 新增版本查詢時，驗證沒有過時版本、有過時版本及查詢失敗的結果有明確區別，且保留原始報告。Registry 失敗不得當成沒有過時版本，過時版本也不等於安全漏洞。
-- 自行解析或轉換輸出時，以 fixtures 驗證處理結果。
-- 新增 workflow 時，實際執行確認，僅有必要的唯讀及報告權限。
-
-版本更新的相容性與 browser database 對 CSS、支援環境的影響由實際更新批次驗證。
+完成條件：維護者可在 GitHub run 讀取查詢結果並下載完整 artifact；workflow 僅使用必要的唯讀及報告權限，並在查詢失敗時明確失敗；維護者分別記錄定期執行與通知送達的實際觀察結果，未觀察的項目保留待驗證。
 
 ### TD-23：整理共用控制與 Token
 
@@ -179,7 +157,7 @@ depends_on: []
 
 ## 還沒定案的問題
 
-TD-22 已依能力盤點提出最小實作範圍，仍待核准；通知實際送達尚未驗證。
+TD-22 的 GitHub 執行及通知送達依該項列出的範圍驗證。
 
 Sitemap 歸屬依 TD-25 的既定調查範圍處理。
 

@@ -1,0 +1,52 @@
+name: Dependency report
+
+on:
+  schedule:
+    - cron: "23 1 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dependency-report
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      NPM_CONFIG_FETCH_RETRIES: 1
+      NPM_CONFIG_FETCH_TIMEOUT: 30000
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Select and verify npm
+        run: |
+          npm install --global "$(node -p "require('./package.json').packageManager")"
+          npm run check:toolchain
+
+      - name: Install dependency tree without lifecycle scripts
+        run: npm ci --ignore-scripts --include=dev --no-audit --no-fund
+
+      - name: Query outdated direct dependencies
+        run: npm run report:dependencies
+
+      - name: Upload dependency report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: dependency-report
+          path: dependency-report/
+          retention-days: 30
+          if-no-files-found: error

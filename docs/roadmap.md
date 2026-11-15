@@ -8,11 +8,11 @@
 
 # 已確認問題
 
-- 技術債改善：完整檢查及調整提案見 [計劃 0001](plans/0001-codebase-technical-debt.md)。履歷分工、共用控制與 Token、依賴維護各自安排。相關需求為 SITE-R6、R7、R11、R12、R13、R14、R18、R19，各項證據、批次與驗收放在計劃。
+- 技術債改善：完整檢查及調整提案見 [計劃 0001](plans/0001-codebase-technical-debt.md)。履歷分工、共用控制與 Token 各自安排。相關需求為 SITE-R6、R7、R11、R12、R13、R14、R18、R19，各項證據、批次與驗收放在計劃。
 
 # 待調查
 
-- 依賴通知送達：2026-11-15 已查核 Dependency graph、Dependabot alerts、安全更新及帳號通知設定，查核範圍未找到定期過時版本報告，後續實作建議見 [計劃 0001 的 TD-22](plans/0001-codebase-technical-debt.md#td-22補足依賴安全更新)。Email 與 CLI 通知的實際送達仍待驗證，相關需求為 SITE-R16。
+- 依賴維護流程驗證：GitHub 版本報告的實際執行、定期觸發，以及既有 Dependabot Email 與 CLI 通知的實際送達仍待驗證，範圍見 [計劃 0001 的 TD-22](plans/0001-codebase-technical-debt.md#td-22補足依賴安全更新)。維護入口與判讀方式見 [README](../README.md#dependency-maintenance)，相關需求為 SITE-R16。
 - Sitemap 歸屬：確認其他 GitHub Pages 專案的歸屬、可用性及保留或移除理由，見 [計劃 0001 的 TD-25](plans/0001-codebase-technical-debt.md#td-25確認-sitemap-歸屬)。目前沒有外站失效的實測結論，相關需求為 SITE-R16。
 
 # 待決策

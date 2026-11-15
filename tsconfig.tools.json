@@ -14,5 +14,5 @@
     "checkJs": true,
     "types": ["node"]
   },
-  "include": ["scripts/**/*.mts", "tests/check-scenarios.test.mts", "*.mjs"]
+  "include": ["scripts/**/*.mts", "tests/*.test.mts", "*.mjs"]
 }

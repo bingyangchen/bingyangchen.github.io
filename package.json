@@ -18,9 +18,11 @@
     "check:toolchain": "node scripts/check-toolchain.mts",
     "check:scenarios": "node scripts/check-scenarios.mts",
     "test:checker": "node --test tests/check-scenarios.test.mts",
+    "test:dependencies": "node --test tests/dependency-report.test.mts",
+    "report:dependencies": "node scripts/report-dependencies.mts",
     "test:unit": "vitest run",
     "test:browser": "playwright test",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run check:scenarios && npm run test:checker && npm run test:unit && npm run build && npm run test:browser",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm run check:scenarios && npm run test:checker && npm run test:dependencies && npm run test:unit && npm run build && npm run test:browser",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.tools.json && tsc -p tsconfig.browser.json"
   },
   "browserslist": {
