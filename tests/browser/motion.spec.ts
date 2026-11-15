@@ -10,7 +10,7 @@ import {
   getMotionState,
   getMotionComposition,
 } from "../helpers/motion";
-import { setViewport, setJavaScriptEnabled } from "../helpers/browser";
+import { setJavaScriptEnabled } from "../helpers/browser";
 import { getPrintResult } from "../helpers/resume";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
@@ -27,6 +27,18 @@ const TABS = '#projects [role="tab"]';
 const PROJECTS_MOTION = '#projects > [data-scroll-motion="content"]';
 
 const BLOG_MOTION = '#blog > [data-scroll-motion="content"]';
+
+const sharedLinks = [
+  '#projects a[href="https://github.com/bingyangchen"]',
+  '#blog a[class*="archiveLink"]',
+  '#blog a[class*="featured"]',
+  '#blog a[class*="reading"]:nth-child(1)',
+  '#blog a[class*="reading"]:nth-child(2)',
+];
+const projectLinks = [
+  `${DETAIL} a:not([href^="https://github.com/"])`,
+  `${DETAIL} a[href^="https://github.com/"]`,
+];
 
 test("SITE-R13.5 導覽減少動態", async ({ page, server }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -164,17 +176,6 @@ test("SITE-R13.3 完整減少動態與即時切換", async ({ page, server }) =>
 test("SITE-R13.6 外連箭頭一致性", async ({ page, server }) => {
   await openHome(page, server, "#projects");
   await assertHoverCapability(page, true);
-  const sharedLinks = [
-    '#projects a[href="https://github.com/bingyangchen"]',
-    '#blog a[class*="archiveLink"]',
-    '#blog a[class*="featured"]',
-    '#blog a[class*="reading"]:nth-child(1)',
-    '#blog a[class*="reading"]:nth-child(2)',
-  ];
-  const projectLinks = [
-    `${DETAIL} a:not([href^="https://github.com/"])`,
-    `${DETAIL} a[href^="https://github.com/"]`,
-  ];
   for (const reduced of [false, true]) {
     await page.emulateMedia({ reducedMotion: reduced ? "reduce" : "no-preference" });
     for (let index = 0; index < 3; index += 1) {
@@ -204,15 +205,25 @@ test("SITE-R13.6 外連箭頭一致性", async ({ page, server }) => {
       }
     }
   }
-  await page.emulateMedia({ reducedMotion: "no-preference" });
-  await setViewport(page, { width: 390, height: 844, isMobile: true, hasTouch: true });
-  await page.goto("about:blank");
-  await openHome(page, server, "#blog");
-  await assertHoverCapability(page, false);
-  for (const selector of [...sharedLinks, ...projectLinks]) {
-    await hoverLink(page, selector);
-    await assertArrowState(page, `${selector} svg[aria-hidden="true"]`, 0, 0, "0.22s");
-  }
+});
+
+test.describe("Touch arrows", () => {
+  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+
+  test("SITE-R13.6 無 Hover 能力時外連箭頭保持原位", async ({ page, server }) => {
+    await openHome(page, server, "#blog");
+    await assertHoverCapability(page, false);
+    for (const selector of [...sharedLinks, ...projectLinks]) {
+      await hoverLink(page, selector);
+      await assertArrowState(
+        page,
+        `${selector} svg[aria-hidden="true"]`,
+        0,
+        0,
+        "0.22s",
+      );
+    }
+  });
 });
 
 test("SITE-R12.1 SITE-R12.7 雙語短螢幕、橫向與分界的 Hero 完整可操作", async ({

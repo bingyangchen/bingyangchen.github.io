@@ -1,5 +1,4 @@
 import { openHome, enterPreview, waitForSection, selectProject } from "../helpers/site";
-import { setViewport } from "../helpers/browser";
 import {
   assertHoverCapability,
   hoverLink,
@@ -26,9 +25,7 @@ test("SITE-R18.4 Footer Email 箭頭尊重減少動態", async ({ page, server }
     await page.setViewportSize({ width: 1440, height: 900 });
     if (language === "zh-TW") await page.locator("[data-language-switcher]").click();
     for (const width of [1440, 390]) {
-      // Linux viewport changes can clear hover capability; restore mouse input.
-      await setViewport(page, { width, height: 900, hasTouch: true });
-      await setViewport(page, { width, height: 900, hasTouch: false });
+      await page.setViewportSize({ width, height: 900 });
       await assertHoverCapability(page, true);
       for (const preference of ["no-preference", "reduce"] as const) {
         await page.emulateMedia({ reducedMotion: preference });

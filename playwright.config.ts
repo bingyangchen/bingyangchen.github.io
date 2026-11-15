@@ -21,17 +21,7 @@ export default defineConfig({
     screenshot: "only-on-failure",
   },
   projects: [
-    {
-      name: "chromium",
-      use: {
-        browserName: "chromium",
-        launchOptions: {
-          args: [
-            "--blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4",
-          ],
-        },
-      },
-    },
+    { name: "chromium", use: { browserName: "chromium" } },
     {
       name: "firefox",
       testMatch: "**/cross-browser.spec.ts",
