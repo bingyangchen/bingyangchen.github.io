@@ -6,6 +6,8 @@ import { LanguageSwitcher } from "../LanguageSwitcher/LanguageSwitcher";
 import Tooltip from "../Tooltip/Tooltip";
 import { useTranslation } from "../../i18n/context";
 import { useSectionNavigation } from "../../navigation/useSectionNavigation";
+import { getActivatedSection } from "../../navigation/links";
+import { SECTION_IDS, type SectionId } from "../../navigation/sections";
 import styles from "./Header.module.scss";
 
 export default function Header() {
@@ -67,24 +69,21 @@ export default function Header() {
     return () => window.removeEventListener("resize", handleViewportChange);
   }, []);
 
-  function getSectionHref(section: string) {
-    return `${pathname === "/" ? "" : "/"}#${section}`;
-  }
+  useEffect(() => {
+    function handleSectionClick(event: MouseEvent) {
+      if (!(event.target instanceof Node) || !headerRef.current?.contains(event.target))
+        return;
+      const section = getActivatedSection(event);
+      if (!section) return;
+      setIsMenuOpen(false);
+      document.getElementById(section)?.focus({ preventScroll: true });
+    }
+    window.addEventListener("click", handleSectionClick);
+    return () => window.removeEventListener("click", handleSectionClick);
+  }, []);
 
-  function handleSectionClick(
-    event: React.MouseEvent<HTMLAnchorElement>,
-    section: string,
-  ) {
-    if (
-      event.button !== 0 ||
-      event.metaKey ||
-      event.ctrlKey ||
-      event.shiftKey ||
-      event.altKey
-    )
-      return;
-    setIsMenuOpen(false);
-    document.getElementById(section)?.focus({ preventScroll: true });
+  function getSectionHref(section: SectionId) {
+    return `${pathname === "/" ? "" : "/"}#${section}`;
   }
 
   return (
@@ -117,7 +116,6 @@ export default function Header() {
             aria-current={
               pathname === "/" && activeSection === "home" ? "location" : undefined
             }
-            onClick={(event) => handleSectionClick(event, "home")}
           >
             <img src={logo} width={32} height={32} alt="" />
           </a>
@@ -145,7 +143,7 @@ export default function Header() {
           data-open={isMenuOpen}
         >
           <ul className={styles.links}>
-            {(["about", "projects", "blog"] as const).map((section) => (
+            {SECTION_IDS.filter((section) => section !== "home").map((section) => (
               <li key={section}>
                 <a
                   href={getSectionHref(section)}
@@ -154,7 +152,6 @@ export default function Header() {
                       ? "location"
                       : undefined
                   }
-                  onClick={(event) => handleSectionClick(event, section)}
                 >
                   {dictionary.header[section]}
                 </a>

@@ -39,7 +39,6 @@ depends_on: []
 <!-- prettier-ignore -->
 | 範圍 | 優先順序 | 安排理由 |
 | --- | --- | --- |
-| TD-12 導覽狀態與事件 | P2，獨立批次 | 降低歷史還原與原生 anchor 互動的推理及驗證成本。 |
 | TD-21 工具版本選擇 | P2，獨立批次 | 讓新環境與 CI 能選用同一組工具。 |
 | TD-22 依賴維護 | P2，獨立批次 | 補上持續發現公告與過時依賴的流程。 |
 | TD-25 靜態資料校對 | P3，獨立批次 | 修正已確認的提示及尺寸錯誤，另調查 sitemap 歸屬。 |
@@ -60,34 +59,6 @@ depends_on: []
 方案：將 Resume 預覽、ResumeSheet、列印 helper 與專用型別放在 `features/resume`，頁面入口負責接到既有 route。私有 helper、素材組合與型別隨功能維護，跨首頁及履歷的事實仍放在 `data/`，翻譯約定仍由 `i18n/` 負責。此批保留既有載入策略，沒有必要搬動 router 或新增 `app/`。
 
 完成條件：預覽、內容與列印可從同一功能入口追查，私有模組不由全站共用 barrel 匯出，沒有循環 import，並維持既有的單頁 A4 版面、文字、字型、連結與語言還原行為。
-
-### TD-12：讓導覽狀態與原生連結一致
-
-程式碼確認：[導覽 hook](../../src/navigation/useSectionNavigation.ts) 以 `clickedHash`、`pendingDestination`、`restorationDestination` 的組合表達目前階段，歷史資料解析、狀態轉換及 DOM 操作都在同一個 effect 內；[Header](../../src/components/Header/Header.tsx) 另有 section 清單與焦點處理。閱讀一個事件的效果時，需要同時追查其他事件如何更新這些值。
-
-既有 Chromium 導覽情境在 2026-11-15 評估時通過，尚未確認導覽故障；重構目標是讓合法狀態、事件順序與清理更容易理解及驗證。
-
-方案：共用固定 section ID 與型別，以明確的狀態表達自然閱讀、明確導覽、歷史還原，以及該狀態需要的目的地。歷史輸入驗證及不依賴 DOM 的轉換集中在可測函式；hook 負責事件、幾何量測、捲動與 browser 資源，Header 保留選單與控制焦點。Frame、timer、observer 是資源，不另當作導覽狀態。
-
-```mermaid
-stateDiagram-v2
-  state "自然閱讀" as reading
-  state "明確導覽" as navigating
-  state "還原閱讀位置" as restoring
-  [*] --> reading: 沒有有效歷史位置或初始 hash
-  [*] --> restoring: 有有效歷史位置或初始 hash
-  reading --> navigating: 一般點選本站區塊連結
-  navigating --> reading: 到達目的地或使用者中斷捲動
-  reading --> restoring: 歷史切換取得還原目的地
-  navigating --> restoring: 歷史切換取得還原目的地
-  restoring --> navigating: 一般點選本站區塊連結
-  restoring --> restoring: 字型或內容幾何改變
-  restoring --> reading: 使用者開始操作
-```
-
-完成條件：合法狀態與轉換可直接辨認，不需靠多個獨立變數推導互斥關係；純函式涵蓋無效 history 資料及事件轉換，hook 測試涵蓋延遲字型就緒、使用者中斷與卸載。原生 anchor 的修飾鍵、新分頁、history length、閱讀位置及焦點維持 SITE-R2。外站、不同 path 或 query、未知 hash、下載及其他 target 的連結不被當成本頁區塊導覽處理；一般操作仍可結束持續的位置還原。Observer、frame、timer 與延遲 callback 在卸載後不再寫入 DOM 或 history。
-
-IntersectionObserver 只能取得區塊的可見性，無法取代歷史還原與明確導覽所需的狀態。
 
 ### TD-21：補上 Node 與 npm 的版本選擇方式
 
@@ -196,7 +167,6 @@ Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的�
 <!-- prettier-ignore -->
 | 決策 | 理由及實作後保存位置 |
 | --- | --- |
-| 原生 anchor 搭配明確導覽狀態 | 可見性觀察無法處理歷史閱讀位置，瀏覽器仍負責連結與 history 的原生語意；保存於 SITE-R2 及 README 的 navigation 說明。 |
 | 依用途共用 Sass Token 與 patterns | 讓用途不同的設定可以分別修改；保存於 [design system](../../src/styles/README.md)。 |
 | 依能力缺漏選擇依賴維護工具 | 避免重做既有服務已提供的能力，選型條件見 [TD-22](#td-22補足依賴安全更新)，實際維護入口與理由保存於 README。 |
 | 履歷載入與 hydration 分開設計 | Route 分割的下載收益已可量測，hydration 還需解決 snapshot 與初次 render 的一致性；保存於 README 的啟動及靜態輸出說明。 |
@@ -226,7 +196,6 @@ Sitemap 調查為同一 TD 的獨立範圍，不阻擋上述已確認問題的�
 <!-- prettier-ignore -->
 | 批次 | 保留的主要情境 |
 | --- | --- |
-| 導覽 | SITE-R2、R12.4、R13.5、R13.9、R18。 |
 | 履歷分工及載入 | SITE-R1.3、R1.4、R10、R11、R13.11、R14。 |
 | 共用控制與 Token | SITE-R12.6、R18、R19、R20，以及受影響的控制與 PDF 情境。 |
 | 靜態資料 | SITE-R14.2、R16.1、R16.2、R16.5。 |

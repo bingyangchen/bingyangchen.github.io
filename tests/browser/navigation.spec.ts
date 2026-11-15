@@ -5,6 +5,63 @@ import { test, expect } from "../helpers/fixtures";
 
 const PROJECTS_MOTION = '#projects > [data-scroll-motion="content"]';
 
+test("SITE-R2.1 修飾鍵開啟原生新分頁，來源頁保留閱讀位置及歷史", async ({
+  page,
+  server,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openHome(page, server, "#about");
+  await waitForSection(page, "about");
+  const source = await page.evaluate(() => ({
+    top: scrollY,
+    hash: location.hash,
+    length: history.length,
+  }));
+  const [popup] = await Promise.all([
+    page.context().waitForEvent("page"),
+    page.locator('header a[href="#projects"]').click({ modifiers: ["ControlOrMeta"] }),
+  ]);
+  try {
+    await waitForSection(popup, "projects");
+    expect(new URL(popup.url()).hash).toBe("#projects");
+    expect(
+      await page.evaluate(() => ({
+        top: scrollY,
+        hash: location.hash,
+        length: history.length,
+      })),
+    ).toEqual(source);
+  } finally {
+    await popup.close();
+  }
+  await page.locator('header a[href="#blog"]').click();
+  await waitForSection(page, "blog");
+});
+
+test("SITE-R2.1 SITE-R2.2 SITE-R2.8 Document 取消 anchor 後保留選單與控制焦點", async ({
+  page,
+  server,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openHome(page, server);
+  const menu = page.locator('header button[aria-controls="site-navigation"]');
+  await menu.click();
+  await page.evaluate(() => {
+    document.addEventListener("click", (event) => event.preventDefault(), {
+      once: true,
+    });
+  });
+  await page.locator('header a[href="#projects"]').click();
+  await expect(menu).toHaveAttribute("aria-expanded", "true");
+  await expect(page.locator('header a[href="#projects"]')).toBeFocused();
+  expect(await page.evaluate(() => location.hash)).toBe("");
+  await page.evaluate(() =>
+    document.getElementById("about")!.scrollIntoView({ behavior: "instant" }),
+  );
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe("#about");
+});
+
 test("SITE-R2.1 SITE-R2.2 導覽與自然捲動", async ({ page, server }) => {
   await openHome(page, server);
   const initialLength = await page.evaluate(() => window.history.length);

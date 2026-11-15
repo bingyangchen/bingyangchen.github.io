@@ -30,6 +30,15 @@ prefix: SITE
 
 首頁導覽使用 `#home`、`#about`、`#projects`、`#blog`。Header 的 Logo 回到首頁，三個內容連結前往 About、Projects、Blog；Footer 保留 Logo 回首頁的入口。明確點選 anchor 保留瀏覽器原生的導覽、修飾鍵、新分頁及歷史行為。自然捲動結束後以 replaceState 更新目前區塊的 hash，避免在明確導覽的過程中改寫目的地。
 
+原生連結依以下規則處理：
+
+- 只有未取消、未使用修飾鍵的主要按鈕點擊，且連結指向相同 origin、path、query 的已知區塊，才進入本頁區塊導覽。
+- 下載及其他 target 的連結由瀏覽器處理。
+- 已取消的點擊保留選單與控制焦點。
+- 重複點選相同 hash 或快速連續導覽後，自然捲動仍能更新目前區塊與閱讀位置。
+
+歷史還原優先採用有效的數值座標，資料無效時改依已知 hash 定位。還原位置在字型及內容尺寸變動後持續校正，直到使用者操作；離開首頁或卸載後，observer、frame、timer 與延遲 callback 不再改寫 DOM 或 history。
+
 Header 從初始畫面起常駐，讓內容入口與語言切換的位置固定。桌面版 Header 與 Projects 共用置中容器及留白，背景與底線滿版；Logo 連結提供回首頁操作，輔助工具可取得目前語言的作者名稱。目前區塊以可見樣式及 aria-current 識別，anchor 落點避開 Header，直接開啟 hash 時也在初始內容尺寸變動後維持落點，直到使用者操作。
 
 Header 使用半透明白色底與背景模糊，讓下方白色及灰色背景自然影響材質，並以淡底線分隔內容。Header 在以下情況使用實色背景：
@@ -51,10 +60,10 @@ Header 使用半透明白色底與背景模糊，讓下方白色及灰色背景�
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
-| SITE-R2.1 首頁區塊連結 | 由 Hero 的 About、Projects、Blog 或 Header 連結導覽，網址 hash 與落點指向所選區塊，內容未被 Header 遮住。 | browser |
-| SITE-R2.2 自然捲動 | 捲動跨越區塊時更新目前區塊提示，結束後同步 hash；history length 不因自然捲動增加。 | browser |
-| SITE-R2.3 返回與前進 | 明確點選區塊連結後使用返回與前進，URL 與閱讀位置依對應歷史紀錄恢復，包含區塊中途的位置；前一次 scroll 結束不會改寫目的地。 | browser、manual |
-| SITE-R2.4 Hash 直接開啟 | 新分頁開啟各首頁 hash 時，目標區塊避開 Header；reload 有紀錄的頁面時保留閱讀位置，目前區塊提示與內容一致。 | browser、manual |
+| SITE-R2.1 首頁區塊連結 | 由 Hero 的 About、Projects、Blog 或 Header 連結導覽，網址 hash 與落點指向所選區塊，內容未被 Header 遮住。 | unit、browser |
+| SITE-R2.2 自然捲動 | 捲動跨越區塊時更新目前區塊提示，結束後同步 hash；history length 不因自然捲動增加。 | unit、browser |
+| SITE-R2.3 返回與前進 | 明確點選區塊連結後使用返回與前進，URL 與閱讀位置依對應歷史紀錄恢復，包含區塊中途的位置；前一次 scroll 結束不會改寫目的地。 | unit、browser、manual |
+| SITE-R2.4 Hash 直接開啟 | 新分頁開啟各首頁 hash 時，目標區塊避開 Header；reload 有紀錄的頁面時保留閱讀位置，目前區塊提示與內容一致。 | unit、browser、manual |
 | SITE-R2.5 Logo 回頂端 | 點 Header 或 Footer 的 Logo，回到首頁頂端。 | browser |
 | SITE-R2.6 常駐 Header | 初始畫面及捲動後均能使用 Header；桌面直接操作內容連結，窄版可開啟選單。 | browser、manual |
 | SITE-R2.7 目前區塊 | 捲動或點選連結後，只有目前區塊帶有 aria-current 與可見提示，語言切換後仍維持。 | browser |

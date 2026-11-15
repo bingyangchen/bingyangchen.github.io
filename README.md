@@ -59,6 +59,40 @@ flowchart TD
 
 Projects and Blog use the shared section patterns and own all their internal typography and spacing. `tests/browser/feature-styles.spec.ts` compares their content styles inside and outside Home in both languages at the supported breakpoints. Native interaction and motion tests continue to exercise the composed production page. The Portrait unit test additionally checks Strict Mode effect replay and disposal without loading About or the other features.
 
+### Section Navigation
+
+[`src/navigation/sections.ts`](src/navigation/sections.ts) owns the ordered section IDs and their type. Header derives its content links from that list. [`state.ts`](src/navigation/state.ts) validates untrusted history data and defines pure navigation transitions; [`links.ts`](src/navigation/links.ts) identifies unmodified same-document section links for both Header focus handling and the navigation hook.
+
+```mermaid
+stateDiagram-v2
+  [*] --> reading: no valid position or hash
+  [*] --> restoring: valid position or hash
+  reading --> navigating: section link
+  restoring --> navigating: section link
+  state navigating {
+    [*] --> activating: different hash
+    [*] --> sameHash: same hash
+    sameHash --> scrolling: native popstate or next frame
+    activating --> activating: native popstate
+    activating --> scrolling: matching hashchange
+  }
+  navigating --> reading: destination reached or user input
+  reading --> restoring: history traversal
+  navigating --> restoring: history traversal
+  state restoring {
+    [*] --> aligning
+    aligning --> tracking: destination reached
+    tracking --> tracking: fonts or geometry change
+  }
+  restoring --> reading: user input
+```
+
+The activation stage prevents a previous scroll's completion from overwriting the destination before the browser commits the native anchor navigation. A same-hash activation can complete on arrival without waiting for location or scroll events, while recognizing an optional native `popstate` as part of that activation. Once restoration reaches its destination, tracking allows reading-position writes while retaining alignment on delayed font or geometry changes until the user interacts. Visibility tracking alone cannot preserve these history and navigation rules.
+
+[`useSectionNavigation.ts`](src/navigation/useSectionNavigation.ts) owns DOM measurements, scrolling, history writes, and browser resources. The hook and Header both observe clicks on `window` after React and document handlers so canceled links preserve the menu and focus, without preventing default navigation or adding history entries. External links, different paths or queries, unknown fragments, downloads, modified clicks, and other targets do not start section navigation. Animation frames, the idle fallback timer, and the resize observer are resources rather than navigation states; cleanup also guards delayed font and observer callbacks after Strict Mode replay, route changes, or unmounting.
+
+Unit tests cover history parsing, event sequences, interrupted restoration, no-distance navigation, and resource disposal. Production browser tests retain native history, focus, and motion checks; the core Chromium, Firefox, and WebKit journeys also exercise rapid clicks and repeated hashes.
+
 ### Scroll Motion
 
 Keep the site's reversible scroll formulas rather than introducing an animation engine: SITE-R13 defines grouped motion, long-content reading regions, and Hero exit delays that must remain consistent at the same position in either scroll direction.

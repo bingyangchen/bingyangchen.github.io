@@ -78,6 +78,27 @@ test("SITE-R2.4 Hash 直達與重載保留閱讀位置", async ({ page, server }
   ).toHaveAttribute("href", "#about");
 });
 
+test("SITE-R2.1 SITE-R2.2 連續點擊與相同 hash 不阻擋後續自然捲動", async ({
+  page,
+  server,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openHome(page, server);
+  await page.evaluate(() => {
+    document.querySelector<HTMLAnchorElement>('header a[href="#projects"]')!.click();
+    document.querySelector<HTMLAnchorElement>('header a[href="#blog"]')!.click();
+  });
+  await waitForSection(page, "blog");
+  await page.locator('header a[href="#blog"]').click();
+  await waitForSection(page, "blog");
+  const historyLength = await page.evaluate(() => history.length);
+  await page.evaluate(() =>
+    document.getElementById("about")!.scrollIntoView({ behavior: "instant" }),
+  );
+  await expect.poll(() => page.evaluate(() => location.hash)).toBe("#about");
+  await expect.poll(() => page.evaluate(() => history.length)).toBe(historyLength);
+});
+
 test("SITE-R7.8 原生分頁鍵盤操作與焦點", async ({ page, server }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openHome(page, server, "#projects");

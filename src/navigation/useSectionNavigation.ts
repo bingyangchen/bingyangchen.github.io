@@ -1,10 +1,16 @@
 import { useEffect, useState } from "react";
+import { getActivatedSection } from "./links";
+import { SECTION_IDS, parseSectionHash, type SectionId } from "./sections";
+import {
+  resolveRestorationState,
+  parseReadingPosition,
+  transitionNavigation,
+  type NavigationEvent,
+  type ScrollDestination,
+} from "./state";
 
-const SECTION_IDS = ["home", "about", "projects", "blog"] as const;
 const SCROLL_IDLE_DELAY_MS = 150;
-type SectionId = (typeof SECTION_IDS)[number];
-type ScrollPosition = { top: number; left: number };
-type ScrollDestination = { section: SectionId } | { position: ScrollPosition };
+const POSITION_TOLERANCE_PX = 2;
 
 export function useSectionNavigation(isHomePage: boolean) {
   const [activeSection, setActiveSection] = useState<SectionId>("home");
@@ -13,33 +19,49 @@ export function useSectionNavigation(isHomePage: boolean) {
     if (!isHomePage) return;
     const previousScrollRestoration = window.history.scrollRestoration;
     window.history.scrollRestoration = "manual";
+    let state = resolveRestorationState(window.history.state, window.location.hash);
+    let disposed = false;
     let animationFrame = 0;
     let restorationFrame = 0;
-    let idleTimer: ReturnType<typeof setTimeout>;
-    let clickedHash: string | undefined;
-    let restorationDestination = getRestorationDestination();
-    let pendingDestination = restorationDestination;
-    if (restorationDestination) document.documentElement.dataset.restoringScroll = "";
+    let idleTimer: ReturnType<typeof setTimeout> | undefined;
+    const resizeObserver = new ResizeObserver(scheduleRestoration);
 
-    function getSectionFromHash() {
-      return SECTION_IDS.find((id) => `#${id}` === window.location.hash);
+    function updateRestorationResources() {
+      if (state.mode === "restoring") {
+        document.documentElement.dataset.restoringScroll = "";
+        resizeObserver.observe(document.body);
+        scheduleRestoration();
+      } else {
+        delete document.documentElement.dataset.restoringScroll;
+        resizeObserver.disconnect();
+        cancelAnimationFrame(restorationFrame);
+        restorationFrame = 0;
+      }
     }
 
-    function getRestorationDestination(): ScrollDestination | undefined {
-      const position: ScrollPosition | undefined =
-        window.history.state?.siteScrollPosition;
-      if (position && Number.isFinite(position.top) && Number.isFinite(position.left)) {
-        return { position };
-      }
-      const section = getSectionFromHash();
-      return section ? { section } : undefined;
+    function handleNavigationEvent(event: NavigationEvent) {
+      const next = transitionNavigation(state, event);
+      if (next === state) return;
+      const previous = state;
+      state = next;
+      if (
+        previous.mode !== state.mode &&
+        (previous.mode === "restoring" || state.mode === "restoring")
+      )
+        updateRestorationResources();
+      else if (
+        previous.mode === "restoring" &&
+        state.mode === "restoring" &&
+        previous.destination !== state.destination
+      )
+        scheduleRestoration();
     }
 
     function getHeaderBottom() {
       return document.querySelector("header")?.getBoundingClientRect().bottom ?? 0;
     }
 
-    function getDestinationTop(destination: ScrollDestination) {
+    function getDestinationPosition(destination: ScrollDestination) {
       const section =
         "section" in destination ? document.getElementById(destination.section) : null;
       const top =
@@ -48,16 +70,37 @@ export function useSectionNavigation(isHomePage: boolean) {
           : section
             ? section.getBoundingClientRect().top + window.scrollY - getHeaderBottom()
             : window.scrollY;
-      return Math.max(
-        0,
-        Math.min(top, document.documentElement.scrollHeight - window.innerHeight),
+      return {
+        top: Math.max(
+          0,
+          Math.min(top, document.documentElement.scrollHeight - window.innerHeight),
+        ),
+        left:
+          "position" in destination
+            ? Math.max(
+                0,
+                Math.min(
+                  destination.position.left,
+                  document.documentElement.scrollWidth - window.innerWidth,
+                ),
+              )
+            : window.scrollX,
+      };
+    }
+
+    function isAtDestination(destination: ScrollDestination) {
+      const position = getDestinationPosition(destination);
+      return (
+        Math.abs(window.scrollY - position.top) <= POSITION_TOLERANCE_PX &&
+        Math.abs(window.scrollX - position.left) <= POSITION_TOLERANCE_PX
       );
     }
 
     function getActiveSection(): SectionId {
       if (
         window.scrollY > 0 &&
-        window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2
+        window.scrollY + window.innerHeight >=
+          document.documentElement.scrollHeight - POSITION_TOLERANCE_PX
       )
         return SECTION_IDS[SECTION_IDS.length - 1];
       const headerBottom = getHeaderBottom();
@@ -70,21 +113,33 @@ export function useSectionNavigation(isHomePage: boolean) {
     }
 
     function updateActiveSection() {
-      animationFrame = 0;
-      if (
-        pendingDestination &&
-        Math.abs(window.scrollY - getDestinationTop(pendingDestination)) <= 2
-      )
-        pendingDestination = undefined;
+      if (disposed) return;
+      const destination =
+        state.mode === "navigating"
+          ? { section: state.section }
+          : state.mode === "restoring"
+            ? state.destination
+            : undefined;
+      if (destination && isAtDestination(destination))
+        handleNavigationEvent({ type: "destination-reached" });
       setActiveSection(getActiveSection());
     }
 
+    function scheduleActiveSection() {
+      if (disposed || animationFrame) return;
+      animationFrame = requestAnimationFrame(() => {
+        animationFrame = 0;
+        if (disposed) return;
+        handleNavigationEvent({ type: "activation-finished" });
+        updateActiveSection();
+      });
+    }
+
     function saveReadingPosition(url: string) {
-      const previous: ScrollPosition | undefined =
-        window.history.state?.siteScrollPosition;
+      const previous = parseReadingPosition(window.history.state);
       if (
         previous?.top === window.scrollY &&
-        previous?.left === window.scrollX &&
+        previous.left === window.scrollX &&
         url === window.location.href
       )
         return;
@@ -99,10 +154,14 @@ export function useSectionNavigation(isHomePage: boolean) {
     }
 
     function syncHashAfterScroll() {
-      if (pendingDestination) {
-        if (Math.abs(window.scrollY - getDestinationTop(pendingDestination)) > 2)
+      if (disposed) return;
+      if (state.mode === "navigating") {
+        if (state.stage !== "scrolling" || !isAtDestination({ section: state.section }))
           return;
-        pendingDestination = undefined;
+        handleNavigationEvent({ type: "destination-reached" });
+      } else if (state.mode === "restoring" && state.stage === "aligning") {
+        if (!isAtDestination(state.destination)) return;
+        handleNavigationEvent({ type: "destination-reached" });
       }
       const section = getActiveSection();
       setActiveSection(section);
@@ -112,83 +171,68 @@ export function useSectionNavigation(isHomePage: boolean) {
     }
 
     function handleScroll() {
-      if (!animationFrame) animationFrame = requestAnimationFrame(updateActiveSection);
+      scheduleActiveSection();
       clearTimeout(idleTimer);
       idleTimer = setTimeout(syncHashAfterScroll, SCROLL_IDLE_DELAY_MS);
     }
 
     function alignRestorationDestination() {
-      if (!restorationDestination) return;
-      if ("position" in restorationDestination) {
-        window.scrollTo({ ...restorationDestination.position, behavior: "auto" });
+      restorationFrame = 0;
+      if (disposed || state.mode !== "restoring") return;
+      const destination = state.destination;
+      if ("position" in destination) {
+        window.scrollTo({ ...getDestinationPosition(destination), behavior: "auto" });
       } else {
         document
-          .getElementById(restorationDestination.section)
+          .getElementById(destination.section)
           ?.scrollIntoView({ behavior: "auto", block: "start" });
       }
       updateActiveSection();
       saveReadingPosition(window.location.href);
     }
 
-    const resizeObserver = new ResizeObserver(alignRestorationDestination);
-    if (restorationDestination) resizeObserver.observe(document.body);
-
-    function releaseRestoration() {
-      restorationDestination = undefined;
-      delete document.documentElement.dataset.restoringScroll;
-      resizeObserver.disconnect();
-      cancelAnimationFrame(restorationFrame);
+    function scheduleRestoration() {
+      if (disposed || state.mode !== "restoring" || restorationFrame) return;
+      restorationFrame = requestAnimationFrame(alignRestorationDestination);
     }
 
     function handleUserIntent() {
-      releaseRestoration();
-      pendingDestination = undefined;
-      clickedHash = undefined;
+      handleNavigationEvent({ type: "user-intent" });
     }
 
     function handleAnchorClick(event: MouseEvent) {
       handleUserIntent();
-      if (
-        event.button !== 0 ||
-        event.metaKey ||
-        event.ctrlKey ||
-        event.shiftKey ||
-        event.altKey
-      )
-        return;
-      const anchor =
-        event.target instanceof Element ? event.target.closest("a[href]") : null;
-      if (!(anchor instanceof HTMLAnchorElement) || anchor.target === "_blank") return;
-      const url = new URL(anchor.href);
-      if (
-        url.origin === window.location.origin &&
-        url.pathname === window.location.pathname &&
-        url.search === window.location.search &&
-        SECTION_IDS.some((id) => `#${id}` === url.hash)
-      ) {
-        saveReadingPosition(window.location.href);
-        if (url.hash !== window.location.hash) clickedHash = url.hash;
-      }
+      const section = getActivatedSection(event);
+      if (!section) return;
+      saveReadingPosition(window.location.href);
+      handleNavigationEvent({
+        type: "activate",
+        section,
+        changesHash: parseSectionHash(window.location.hash) !== section,
+      });
+      scheduleActiveSection();
     }
 
-    function handleLocationChange() {
-      if (clickedHash === window.location.hash) {
-        const section = getSectionFromHash();
-        pendingDestination = section ? { section } : undefined;
-        return;
-      }
-      releaseRestoration();
-      restorationDestination = getRestorationDestination();
-      pendingDestination = restorationDestination;
-      if (!restorationDestination) return;
-      document.documentElement.dataset.restoringScroll = "";
-      resizeObserver.observe(document.body);
-      restorationFrame = requestAnimationFrame(alignRestorationDestination);
+    function handlePopState(event: PopStateEvent) {
+      handleNavigationEvent({
+        type: "popstate",
+        hash: window.location.hash,
+        historyState: event.state,
+      });
+      updateActiveSection();
+      scheduleActiveSection();
     }
 
-    function handleHashChange() {
-      handleLocationChange();
-      clickedHash = undefined;
+    function handleHashChange(event: HashChangeEvent) {
+      // Queued hashchange events can describe a navigation already superseded.
+      if (event.newURL && event.newURL !== window.location.href) return;
+      handleNavigationEvent({
+        type: "hashchange",
+        hash: window.location.hash,
+        historyState: window.history.state,
+      });
+      updateActiveSection();
+      scheduleActiveSection();
     }
 
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -197,26 +241,29 @@ export function useSectionNavigation(isHomePage: boolean) {
     window.addEventListener("wheel", handleUserIntent, { passive: true });
     window.addEventListener("pointerdown", handleUserIntent);
     window.addEventListener("keydown", handleUserIntent);
-    window.addEventListener("popstate", handleLocationChange);
+    window.addEventListener("popstate", handlePopState);
     window.addEventListener("hashchange", handleHashChange);
-    document.addEventListener("click", handleAnchorClick, true);
-    restorationFrame = requestAnimationFrame(alignRestorationDestination);
-    void document.fonts.ready.then(alignRestorationDestination);
+    window.addEventListener("click", handleAnchorClick);
+    updateRestorationResources();
+    void document.fonts.ready.then(scheduleRestoration);
     updateActiveSection();
     return () => {
-      handleUserIntent();
-      window.history.scrollRestoration = previousScrollRestoration;
+      disposed = true;
+      resizeObserver.disconnect();
+      cancelAnimationFrame(restorationFrame);
       cancelAnimationFrame(animationFrame);
       clearTimeout(idleTimer);
+      delete document.documentElement.dataset.restoringScroll;
+      window.history.scrollRestoration = previousScrollRestoration;
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("scrollend", syncHashAfterScroll);
       window.removeEventListener("resize", handleScroll);
       window.removeEventListener("wheel", handleUserIntent);
       window.removeEventListener("pointerdown", handleUserIntent);
       window.removeEventListener("keydown", handleUserIntent);
-      window.removeEventListener("popstate", handleLocationChange);
+      window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("hashchange", handleHashChange);
-      document.removeEventListener("click", handleAnchorClick, true);
+      window.removeEventListener("click", handleAnchorClick);
     };
   }, [isHomePage]);
   return activeSection;
