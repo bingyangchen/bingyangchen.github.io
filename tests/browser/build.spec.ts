@@ -53,7 +53,7 @@ test("SITE-R15.1 新環境不註冊 service worker", async ({ page, server }) =>
   assert.deepEqual(result, { controller: false, registrations: 0 });
 });
 
-test("SITE-R16.1 SITE-R16.2 Metadata、robots 與 sitemap", async ({ page, server }) => {
+test("SITE-R16.1 首頁 Metadata", async ({ page, server }) => {
   await openHome(page, server);
   assert.equal(await page.title(), "Bing-Yang Chen - 陳秉洋");
   assert.equal(
@@ -65,10 +65,6 @@ test("SITE-R16.1 SITE-R16.2 Metadata、robots 與 sitemap", async ({ page, serve
   assert.ok(await page.$('meta[property="og:image"]'));
   assert.ok(await page.$('meta[name="description"]'));
   assert.ok(await page.$('link[rel="manifest"]'));
-  const robots = await (await fetch(server.origin + "/robots.txt")).text();
-  const sitemap = await (await fetch(server.origin + "/sitemap.txt")).text();
-  assert.ok(robots.includes("https://byc1999.com/sitemap.txt"));
-  assert.ok(!sitemap.includes("/resume"));
 });
 
 test("SITE-R14.4 錯誤、空內容與不足內容阻止 prerender", async () => {

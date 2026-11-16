@@ -20,12 +20,10 @@ export function makeSiteMetadata(person: typeof profile) {
     "/",
     "/path-finding-visualizer/",
     "/virus-spread/",
-    "/wiki-prettier/",
     "/market-sim/",
     "/inventory-analyzer/",
     "/snake/",
     "/tic-tac-toe/",
-    "/pick-coins/",
   ];
   return {
     placeholderToValue: {

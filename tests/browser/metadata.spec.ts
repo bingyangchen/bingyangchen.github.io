@@ -37,7 +37,7 @@ test("SITE-R14.2 無 JavaScript 的提示可讀且內容與 PDF 可用", async (
   }
 });
 
-test("SITE-R16.5 開發及 production Manifest 與實際圖示一致", async ({
+test("SITE-R16.2 SITE-R16.5 開發及 production Metadata 與實際圖示一致", async ({
   page,
   server,
 }) => {
@@ -52,6 +52,29 @@ test("SITE-R16.5 開發及 production Manifest 與實際圖示一致", async ({
     assert.ok(address && typeof address === "object");
     const manifests: string[] = [];
     for (const origin of [`http://127.0.0.1:${address.port}`, server.origin]) {
+      const sitemapResponse = await page.request.get(`${origin}/sitemap.txt`);
+      assert.equal(sitemapResponse.status(), 200);
+      assert.match(sitemapResponse.headers()["content-type"], /^text\/plain\b/);
+      assert.equal(
+        await sitemapResponse.text(),
+        [
+          "https://byc1999.com/",
+          "https://byc1999.com/path-finding-visualizer/",
+          "https://byc1999.com/virus-spread/",
+          "https://byc1999.com/market-sim/",
+          "https://byc1999.com/inventory-analyzer/",
+          "https://byc1999.com/snake/",
+          "https://byc1999.com/tic-tac-toe/",
+          "",
+        ].join("\n"),
+      );
+      const robotsResponse = await page.request.get(`${origin}/robots.txt`);
+      assert.equal(robotsResponse.status(), 200);
+      assert.match(robotsResponse.headers()["content-type"], /^text\/plain\b/);
+      assert.equal(
+        await robotsResponse.text(),
+        "User-agent: *\nAllow: /\n\nSitemap: https://byc1999.com/sitemap.txt\n",
+      );
       await page.goto(origin, { waitUntil: "networkidle" });
       const manifestPath = await page
         .locator('link[rel="manifest"]')

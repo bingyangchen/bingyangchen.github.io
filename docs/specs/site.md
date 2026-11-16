@@ -434,13 +434,15 @@ flowchart TD
 
 首頁提供 title、description、canonical、社群預覽、圖示與 manifest，robots 指向 sitemap。HTML shell 由根目錄的 `index.html` 維護，個人 metadata、manifest、robots 與 sitemap 在開發及 build 時讀取同一份 profile，其餘公開靜態檔案由 `public/` 維護。開發及 production 使用同一份 manifest 來源，圖示宣告的格式與尺寸須符合實際檔案。
 
+Sitemap 僅列入首頁及同一帳號維護、已確認公開部署的專案 canonical URL，專案可由其他 repo 提供；sitemap 的網址清單與首頁精選作品清單分開維護。失效、停用、非公開預覽及回傳首頁 fallback 的網址不列入，查核依據與維護方式記錄在 [README](../../README.md#static-metadata-and-sitemap)。
+
 由 `main` push 或手動觸發的 workflow 均在 Ubuntu 執行，從 repo 準備 Georgia 後執行包含 build 的共同檢查；Pages artifact 上傳與部署只允許 `refs/heads/main`。驗證失敗時不發布。
 
 <!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R16.1 首頁 Metadata | Build 後保留 public shell 的首頁 title、canonical、description、OG 與圖示連結，沒有意外改成非公開 route。 | browser |
-| SITE-R16.2 Robots 與 Sitemap | 靜態輸出保留 robots 與 sitemap，robots 指向正確的 sitemap 位置；不加入 `/resume`。 | browser |
+| SITE-R16.2 Robots 與 Sitemap | 開發及 production 的 robots 與 sitemap 均回傳成功的純文字內容，robots 指向正確的 sitemap 位置；sitemap 使用 profile 的 canonical 網站網址，完整列出經查核的公開頁面，不加入失效網址、重複項目或 `/resume`。 | browser |
 | SITE-R16.3 主分支發布 | `main` push 或對 `main` 手動觸發時，共同檢查通過後才以 `build/` 上傳與部署。 | manual |
 | SITE-R16.4 非主分支不得發布 | 對其他 ref 手動觸發時，不上傳 Pages artifact，也不執行 production deploy。 | manual |
 | SITE-R16.5 Manifest 圖示一致 | 分別讀取開發與 production manifest，圖示能成功載入、解碼，格式與宣告一致，每個 sizes 值均符合實際檔案的尺寸。 | browser |

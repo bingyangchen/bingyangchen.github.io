@@ -36,7 +36,6 @@ test("Profile 的姓名、學歷與網站網址同步到靜態 HTML 及公開 me
     "https://example.test/sitemap.txt",
   );
   const sitemap = metadata.files["sitemap.txt"].source.trim().split("\n");
-  expect(sitemap).toHaveLength(9);
   expect(sitemap[0]).toBe(person.urls.site);
   for (const url of sitemap) {
     expect(new URL(url).origin).toBe("https://example.test");

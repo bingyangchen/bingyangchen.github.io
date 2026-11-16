@@ -40,7 +40,6 @@ depends_on: []
 | 範圍 | 優先順序 | 安排理由 |
 | --- | --- | --- |
 | TD-22 依賴維護驗證 | P2，獨立批次 | 觀察版本報告的定期觸發及 CLI 通知送達。 |
-| TD-25 Sitemap 歸屬 | P3，獨立批次 | 確認專案路徑的歸屬與可用性，再決定保留或移除。 |
 | TD-23 共用控制與 Token | P3，獨立批次 | 依相同用途整理共用值與規則，與首頁樣式分工分開驗收。 |
 | TD-26 履歷載入 | P3，獨立批次 | 已確認可減少首頁下載量，但目前量到的收益較小。 |
 
@@ -69,14 +68,6 @@ depends_on: []
 - 每個抽出值均能說明共同用途；只在單一構圖使用的數字不因相同而共用。
 - Module 規則依 DOM 順序整理，token 依基礎、語意及元件設定的既有規則排列。
 - 保留兩種語言及既有 breakpoints 的畫面，並通過一般動態、reduced-motion、鍵盤 focus、forced colors 與單頁 A4 PDF 的既有驗證。
-
-### TD-25：確認 Sitemap 歸屬
-
-待調查：sitemap 的 8 個專案路徑不由本 repo 輸出，但可能由其他 GitHub Pages repo 提供，目前沒有外站失效或歸屬的查證結果。
-
-方案：每個專案記錄檢查日期、歸屬、HTTP response、最終目的地與實際內容；HTTP 200 若只是 fallback 首頁，不能當成目的地有效。保留或移除理由記錄在 README 的靜態 metadata 說明，再更新由 profile 產生的清單。個人 metadata 仍由共用 profile 維護。
-
-完成條件：每個 URL 都有可追溯的處置理由，非公開 `/resume` 仍不列入；未查完的目的地保留為待調查，不以本 repo 沒有檔案作為刪除理由。
 
 ### TD-26：分開履歷載入並記錄啟動方式
 
@@ -136,7 +127,6 @@ depends_on: []
 | --- | --- |
 | 履歷載入 | SITE-R1.3、R1.4、R10、R11、R13.11、R14。 |
 | 共用控制與 Token | SITE-R12.6、R18、R19、R20，以及受影響的控制與 PDF 情境。 |
-| Sitemap | SITE-R16.1、R16.2。 |
 
 各批沿用現行 spec 已宣告的 unit、browser、manual 對應。Browser 回歸使用當次 production build；實機、Safari、OS 列印與螢幕閱讀器的人工結果分開回報。
 
@@ -149,7 +139,5 @@ depends_on: []
 ## 還沒定案的問題
 
 TD-22 的定期觸發及 CLI 通知送達依該項列出的範圍驗證。
-
-Sitemap 歸屬依 TD-25 的既定調查範圍處理。
 
 TD-26 的排期依當時重新量測決定。
