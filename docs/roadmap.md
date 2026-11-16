@@ -12,7 +12,7 @@
 
 # 待調查
 
-- 依賴維護流程驗證：GitHub 版本報告的實際執行、定期觸發，以及既有 Dependabot Email 與 CLI 通知的實際送達仍待驗證，範圍見 [計劃 0001 的 TD-22](plans/0001-codebase-technical-debt.md#td-22補足依賴安全更新)。維護入口與判讀方式見 [README](../README.md#dependency-maintenance)，相關需求為 SITE-R16。
+- 依賴維護流程驗證：GitHub 版本報告由 schedule 定期觸發的實際紀錄，以及既有 Dependabot CLI 通知的實際送達仍待驗證，範圍見 [計劃 0001 的 TD-22](plans/0001-codebase-technical-debt.md#td-22補足依賴安全更新)。維護入口與判讀方式見 [README](../README.md#dependency-maintenance)，相關需求為 SITE-R16。
 - Sitemap 歸屬：確認其他 GitHub Pages 專案的歸屬、可用性及保留或移除理由，見 [計劃 0001 的 TD-25](plans/0001-codebase-technical-debt.md#td-25確認-sitemap-歸屬)。目前沒有外站失效的實測結論，相關需求為 SITE-R16。
 
 # 待決策

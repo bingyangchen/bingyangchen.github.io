@@ -39,7 +39,7 @@ depends_on: []
 <!-- prettier-ignore -->
 | 範圍 | 優先順序 | 安排理由 |
 | --- | --- | --- |
-| TD-22 依賴維護驗證 | P2，獨立批次 | 驗證 GitHub 上的版本報告及既有通知送達。 |
+| TD-22 依賴維護驗證 | P2，獨立批次 | 觀察版本報告的定期觸發及 CLI 通知送達。 |
 | TD-25 Sitemap 歸屬 | P3，獨立批次 | 確認專案路徑的歸屬與可用性，再決定保留或移除。 |
 | TD-10 履歷功能分工 | P3，獨立批次 | 集中履歷預覽、內容與列印的維護位置。 |
 | TD-23 共用控制與 Token | P3，獨立批次 | 依相同用途整理共用值與規則，與首頁樣式分工分開驗收。 |
@@ -61,11 +61,11 @@ depends_on: []
 
 ### TD-22：補足依賴安全更新
 
-待驗證：在 GitHub 實際執行[版本報告 workflow](../../.github/workflows/dependencies.yml)，核對手動執行入口、摘要、原始報告、執行權限及 artifact 下載。定期執行須另外觀察 schedule 觸發的紀錄。維護入口、結果判讀及選型理由見 [README](../../README.md#dependency-maintenance)。
+待驗證：觀察[版本報告 workflow](../../.github/workflows/dependencies.yml) 由 schedule 定期觸發的實際紀錄。維護入口、結果判讀及選型理由見 [README](../../README.md#dependency-maintenance)。
 
-待驗證：既有 Dependabot Email 與 CLI 通知的實際送達，設定證據及限制見[依賴維護盤點](0001-codebase-technical-debt/dependency-maintenance-audit.md)。通知偏好與每週檢視所有嚴重度警示的方式見 README。
+待驗證：既有 Dependabot CLI 通知的實際送達，通知偏好、限制及每週檢視所有嚴重度警示的方式見 README。
 
-完成條件：維護者可在 GitHub run 讀取查詢結果並下載完整 artifact；workflow 僅使用必要的唯讀及報告權限，並在查詢失敗時明確失敗；維護者分別記錄定期執行與通知送達的實際觀察結果，未觀察的項目保留待驗證。
+完成條件：維護者分別記錄定期觸發與 CLI 通知送達的實際觀察結果，未觀察的項目保留待驗證。
 
 ### TD-23：整理共用控制與 Token
 
@@ -157,7 +157,7 @@ depends_on: []
 
 ## 還沒定案的問題
 
-TD-22 的 GitHub 執行及通知送達依該項列出的範圍驗證。
+TD-22 的定期觸發及 CLI 通知送達依該項列出的範圍驗證。
 
 Sitemap 歸屬依 TD-25 的既定調查範圍處理。
 
