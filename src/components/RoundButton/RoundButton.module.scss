@@ -3,12 +3,12 @@
 
 .main {
   position: relative;
-  @include controls.icon-target;
+  @include controls.centered-target;
   box-sizing: border-box;
   border: none;
   background-color: transparent;
   font: inherit;
-  border-radius: 100px;
+  border-radius: _.$radius-circle;
   aspect-ratio: 1;
   padding: 6px;
   margin: 0;
@@ -16,12 +16,12 @@
   transition-duration: _.$motion-duration-feedback;
   cursor: pointer;
   &:active {
-    background-color: _.$transparent-black;
+    background-color: _.$black-translucent;
   }
   @media (hover: hover) {
     &:hover {
       color: _.$text-body;
-      background-color: _.$transparent-black;
+      background-color: _.$black-translucent;
     }
   }
 }

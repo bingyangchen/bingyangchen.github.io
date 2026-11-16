@@ -1,4 +1,5 @@
 @use "../../styles/tokens" as _;
+@use "../../styles/controls";
 
 .qr_modal_overlay {
   --focus-color: #{_.$focus-color-content};
@@ -17,7 +18,7 @@
   padding: _.$space-6;
   box-sizing: border-box;
   color: inherit;
-  background-color: rgba(_.$white, 0.78);
+  background-color: rgba(_.$neutral-0, 0.78);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   animation: qrOverlayFadeIn _.$motion-duration-reveal ease forwards;
@@ -29,28 +30,26 @@
   }
   & > .qr_modal_close_button {
     position: fixed;
-    top: 24px;
-    right: 24px;
+    top: _.$space-6;
+    right: _.$space-6;
+    @include controls.centered-target(flex);
     box-sizing: border-box;
-    width: _.$minimum-control-size;
-    height: _.$minimum-control-size;
+    width: _.$control-size-minimum;
+    height: _.$control-size-minimum;
     padding: 0;
     border: none;
     border-radius: _.$radius-circle;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     color: _.$text-body;
     background-color: transparent;
     cursor: pointer;
     transition: background-color _.$motion-duration-feedback ease;
     @media (max-width: _.$small) {
-      top: 16px;
-      right: 16px;
+      top: _.$space-4;
+      right: _.$space-4;
     }
     @media (hover: hover) {
       &:hover {
-        background-color: rgba(_.$black, 0.05);
+        background-color: rgba(_.$neutral-1000, 0.05);
       }
     }
   }
@@ -60,8 +59,8 @@
     align-items: center;
     max-width: 100%;
     box-sizing: border-box;
-    animation: qrModalContentEnter _.$motion-duration-dialog _.$motion-easing-emphasized
-      forwards;
+    animation: qrModalContentEnter _.$qr-dialog-motion-duration
+      _.$motion-easing-emphasized forwards;
     & > .qr_modal_code_panel {
       line-height: 0;
       padding: _.$space-4;
@@ -70,7 +69,7 @@
     }
     & > .qr_modal_title {
       margin-top: _.$space-6;
-      font-family: _.$heading-font-family;
+      font-family: _.$font-family-heading;
       font-weight: bold;
       font-size: 1.25 * _.$base-font-size;
       color: _.$text-primary;
@@ -78,7 +77,7 @@
     }
     & > .qr_modal_cta {
       margin: _.$space-2 0 0;
-      font-family: _.$body-font-family;
+      font-family: _.$font-family-body;
       font-size: 0.95 * _.$base-font-size;
       color: _.$text-secondary;
       text-align: center;

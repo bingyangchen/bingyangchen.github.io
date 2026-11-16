@@ -5,7 +5,7 @@
   padding-bottom: 50px;
   .title {
     margin: calc(_.$header-height + 30px) 0 _.$space-5;
-    font-family: _.$heading-font-family;
+    font-family: _.$font-family-heading;
     text-align: center;
     font-size: 2.8 * _.$base-font-size;
     @media screen and (max-width: _.$small) {
@@ -20,7 +20,7 @@
     line-height: 2.2 * _.$base-font-size;
     font-size: 1.1 * _.$base-font-size;
     letter-spacing: 0.8px;
-    font-family: _.$heading-font-family;
+    font-family: _.$font-family-heading;
     @media screen and (max-width: _.$small) {
       padding: 0 30px;
       font-size: _.$base-font-size;
@@ -93,7 +93,7 @@
         font-size: _.$base-font-size;
       }
       & > .degree {
-        font-family: _.$body-font-family;
+        font-family: _.$font-family-body;
         line-height: 1.5;
         color: _.$text-body;
         text-decoration: underline;

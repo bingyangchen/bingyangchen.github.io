@@ -18,8 +18,8 @@
   }
 
   @media (max-width: _.$medium) {
-    --motion-content-distance: #{_.$scroll-motion-compact-distance};
-    --motion-depth-scale: #{_.$scroll-motion-compact-depth-scale};
+    --motion-content-distance: #{_.$scroll-motion-content-distance-compact};
+    --motion-depth-scale: #{_.$scroll-motion-depth-scale-compact};
   }
 
   @media screen and (prefers-reduced-motion: no-preference) {

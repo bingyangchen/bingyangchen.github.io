@@ -7,7 +7,7 @@
 
   background: _.$surface-inverse;
   color: _.$text-inverse;
-  font-family: _.$body-font-family;
+  font-family: _.$font-family-body;
 
   * {
     letter-spacing: normal;
@@ -16,7 +16,7 @@
   .container {
     width: min(100%, #{_.$extra-large});
     margin-inline: auto;
-    padding: _.$space-22 _.$desktop-content-padding
+    padding: _.$space-22 _.$content-padding-desktop
       max(#{_.$space-7}, env(safe-area-inset-bottom));
   }
 
@@ -43,7 +43,7 @@
 
       .email {
         display: inline-flex;
-        min-height: _.$comfortable-control-size;
+        min-height: _.$control-size-comfortable;
         max-width: 100%;
         align-items: center;
         gap: _.$space-5;
@@ -68,8 +68,8 @@
           flex: none;
           align-items: center;
           justify-content: center;
-          width: _.$comfortable-control-size;
-          height: _.$comfortable-control-size;
+          width: _.$control-size-comfortable;
+          height: _.$control-size-comfortable;
           border: 1px solid _.$footer-divider-color;
           border-radius: _.$radius-circle;
           transition:
@@ -108,8 +108,8 @@
 
         &:active .emailAction {
           color: _.$surface-inverse;
-          background: _.$brand-olive;
-          border-color: _.$brand-olive;
+          background: _.$brand-accent;
+          border-color: _.$brand-accent;
         }
       }
     }
@@ -154,12 +154,12 @@
         @media (hover: hover) {
           &:hover span {
             text-decoration: underline;
-            text-underline-offset: 5px;
+            text-underline-offset: _.$link-underline-offset;
           }
         }
 
         &:active {
-          color: _.$brand-olive;
+          color: _.$brand-accent;
         }
       }
     }
@@ -176,7 +176,7 @@
     .identity {
       @include controls.unselectable;
       display: inline-flex;
-      min-height: _.$comfortable-control-size;
+      min-height: _.$control-size-comfortable;
       align-items: center;
       gap: _.$space-3;
       border-radius: _.$radius-control;
@@ -220,7 +220,7 @@
 
   @media (max-width: _.$large) {
     .container {
-      padding-inline: _.$tablet-content-padding;
+      padding-inline: _.$content-padding-tablet;
     }
 
     .contactGrid {
@@ -230,7 +230,7 @@
 
   @media (max-width: _.$medium) {
     .container {
-      padding: _.$space-14 _.$compact-content-padding
+      padding: _.$space-14 _.$content-padding-compact
         max(#{_.$space-6}, env(safe-area-inset-bottom));
     }
 
@@ -250,8 +250,8 @@
           gap: _.$space-3;
 
           .emailAction {
-            width: _.$minimum-control-size;
-            height: _.$minimum-control-size;
+            width: _.$control-size-minimum;
+            height: _.$control-size-minimum;
           }
         }
       }
@@ -260,7 +260,7 @@
         padding-top: 0;
 
         a {
-          min-height: _.$comfortable-control-size;
+          min-height: _.$control-size-comfortable;
         }
       }
     }

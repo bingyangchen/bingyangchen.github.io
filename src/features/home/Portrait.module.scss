@@ -62,13 +62,12 @@
     right: 2px;
     bottom: 2px;
     z-index: 4;
-    padding: 6px;
     color: _.$text-body;
-    background-color: rgba(_.$white, 0.82);
-    border: 1px solid rgba(_.$white, 0.55);
+    background-color: rgba(_.$neutral-0, 0.82);
+    border: 1px solid rgba(_.$neutral-0, 0.55);
     box-shadow:
-      0 4px 14px rgba(_.$black, 0.12),
-      0 1px 3px rgba(_.$black, 0.06);
+      0 4px 14px rgba(_.$neutral-1000, 0.12),
+      0 1px 3px rgba(_.$neutral-1000, 0.06);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     @media (min-width: _.$medium) {
@@ -78,8 +77,8 @@
     }
     @media (hover: hover) {
       &:hover {
-        color: _.$brand-olive-ink;
-        background-color: rgba(_.$white, 0.92);
+        color: _.$action-foreground;
+        background-color: rgba(_.$neutral-0, 0.92);
       }
     }
   }

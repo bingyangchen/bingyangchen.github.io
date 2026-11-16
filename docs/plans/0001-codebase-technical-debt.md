@@ -40,7 +40,6 @@ depends_on: []
 | 範圍 | 優先順序 | 安排理由 |
 | --- | --- | --- |
 | TD-22 依賴維護驗證 | P2，獨立批次 | 觀察版本報告的定期觸發及 CLI 通知送達。 |
-| TD-23 共用控制與 Token | P3，獨立批次 | 依相同用途整理共用值與規則，與首頁樣式分工分開驗收。 |
 | TD-26 履歷載入 | P3，獨立批次 | 已確認可減少首頁下載量，但目前量到的收益較小。 |
 
 ## 設計稿
@@ -56,18 +55,6 @@ depends_on: []
 待驗證：既有 Dependabot CLI 通知的實際送達，通知偏好、限制及每週檢視所有嚴重度警示的方式見 README。
 
 完成條件：維護者分別記錄定期觸發與 CLI 通知送達的實際觀察結果，未觀察的項目保留待驗證。
-
-### TD-23：整理共用控制與 Token
-
-程式碼確認：已有 [design system](../../src/styles/README.md)、semantic tokens 及 section、focus、control mixins，應沿用。
-
-方案：先辨認相同用途的重複，再共用既有 token 或 mixin。RoundButton 的圓形使用 circle token；Button、Header 是否共用尺寸或規則依實際角色判斷，不因數值相等就合併。局部構圖、陰影、光學調整與履歷印刷幾何仍由使用處維護。
-
-完成條件：
-
-- 每個抽出值均能說明共同用途；只在單一構圖使用的數字不因相同而共用。
-- Module 規則依 DOM 順序整理，token 依基礎、語意及元件設定的既有規則排列。
-- 保留兩種語言及既有 breakpoints 的畫面，並通過一般動態、reduced-motion、鍵盤 focus、forced colors 與單頁 A4 PDF 的既有驗證。
 
 ### TD-26：分開履歷載入並記錄啟動方式
 
@@ -96,7 +83,6 @@ depends_on: []
 <!-- prettier-ignore -->
 | 決策 | 理由及實作後保存位置 |
 | --- | --- |
-| 依用途共用 Sass Token 與 patterns | 讓用途不同的設定可以分別修改；保存於 [design system](../../src/styles/README.md)。 |
 | 依能力缺漏選擇依賴維護工具 | 避免重做既有服務已提供的能力，選型條件見 [TD-22](#td-22補足依賴安全更新)，實際維護入口與理由保存於 README。 |
 | 履歷載入與 hydration 分開設計 | Route 分割的下載收益已可量測，hydration 還需解決 snapshot 與初次 render 的一致性；保存於 README 的啟動及靜態輸出說明。 |
 
@@ -126,7 +112,6 @@ depends_on: []
 | 批次 | 保留的主要情境 |
 | --- | --- |
 | 履歷載入 | SITE-R1.3、R1.4、R10、R11、R13.11、R14。 |
-| 共用控制與 Token | SITE-R12.6、R18、R19、R20，以及受影響的控制與 PDF 情境。 |
 
 各批沿用現行 spec 已宣告的 unit、browser、manual 對應。Browser 回歸使用當次 production build；實機、Safari、OS 列印與螢幕閱讀器的人工結果分開回報。
 

@@ -1,6 +1,9 @@
 @use "../../../styles/tokens" as _;
 
 .main {
+  $marker-size: 35px;
+  $marker-size-compact: 25px;
+
   display: flex;
   & > .left {
     display: flex;
@@ -11,12 +14,12 @@
     }
     & > .head {
       position: relative;
-      width: 35px;
+      width: $marker-size;
       aspect-ratio: 1;
-      border-radius: 100px;
-      background-color: _.$transparent-black;
+      border-radius: _.$radius-circle;
+      background-color: _.$black-translucent;
       @media (max-width: _.$medium) {
-        width: 25px;
+        width: $marker-size-compact;
       }
       &::before {
         content: "";
@@ -25,8 +28,8 @@
         left: 50%;
         width: 15px;
         aspect-ratio: 1;
-        border-radius: 100px;
-        background-color: _.$brand-olive;
+        border-radius: _.$radius-circle;
+        background-color: _.$brand-accent;
         transform: translate(-50%, -50%) scale(var(--scroll-dot-scale, 1));
         @media (max-width: _.$medium) {
           width: 10px;
@@ -36,7 +39,7 @@
         position: absolute;
         content: "";
         inset: _.$scroll-timeline-ring-outset;
-        border: _.$scroll-timeline-ring-width solid _.$brand-olive;
+        border: _.$scroll-timeline-ring-width solid _.$brand-accent;
         border-radius: inherit;
         opacity: var(--scroll-line-progress, 1);
         transform: scale(var(--scroll-dot-scale, 1));
@@ -52,7 +55,7 @@
         content: "";
         inset: 0 auto 0 -2px;
         width: _.$scroll-timeline-width;
-        background: _.$brand-olive;
+        background: _.$brand-accent;
         transform-origin: top;
         transform: scaleY(var(--scroll-line-progress, 1));
       }
@@ -63,12 +66,12 @@
     & > .work_duration {
       display: flex;
       align-items: center;
-      min-block-size: 35px;
+      min-block-size: $marker-size;
       font-size: 0.9 * _.$base-font-size;
       letter-spacing: 0.5px;
       color: _.$text-muted;
       @media (max-width: _.$medium) {
-        min-block-size: 25px;
+        min-block-size: $marker-size-compact;
         margin-bottom: 3px;
       }
     }

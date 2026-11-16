@@ -1,20 +1,19 @@
 @use "sass:color";
 
 // Foundations: palette, base typography, spacing scale, and breakpoints.
-$white: #fff;
-$noisy-white: #f5f5f5;
-$light-gray: #ddd;
-$gray: #888;
-$medium-gray: #707070;
-$muted-gray: #4a4a4a;
-$deep-gray: #444;
-$charcoal: #222;
-$black: #000;
-$transparent-black: #00000009;
+$neutral-0: #fff;
+$neutral-50: #f5f5f5;
+$neutral-200: #ddd;
+$neutral-500: #707070;
+$neutral-700: #4a4a4a;
+$neutral-750: #444;
+$neutral-900: #222;
+$neutral-1000: #000;
+$black-translucent: #00000009;
 
-$brand-olive: #9fa76e;
-$brand-olive-action: #687b3c;
-$brand-olive-ink: #525c30;
+$olive-400: #9fa76e;
+$olive-700: #687b3c;
+$olive-900: #525c30;
 
 $base-font-size: 1rem;
 $base-letter-spacing: 1px;
@@ -42,22 +41,27 @@ $large: 1024px;
 $extra-large: 1280px;
 
 // Semantic tokens: shared visual roles used across components.
-$text-primary: $charcoal;
-$text-body: $deep-gray;
-$text-secondary: $muted-gray;
-$text-muted: $medium-gray;
-$text-strong: $black;
-$text-inverse: $noisy-white;
-$text-on-fill: $white;
+$text-primary: $neutral-900;
+$text-body: $neutral-750;
+$text-secondary: $neutral-700;
+$text-muted: $neutral-500;
+$text-strong: $neutral-1000;
+$text-inverse: $neutral-50;
+$text-on-fill: $neutral-0;
 
-$surface-page: $white;
-$surface-alternate: $noisy-white;
-$surface-inverse: $charcoal;
-$brand-olive-faint-bg: rgba($brand-olive, 0.12);
-$border-default: $light-gray;
+$brand-accent: $olive-400;
+$action-background: $olive-700;
+$action-foreground: $olive-900;
 
-$body-font-family: Geneva, sans-serif;
-$heading-font-family: Georgia, Times, "Times New Roman", serif;
+$surface-page: $neutral-0;
+$surface-alternate: $neutral-50;
+$surface-inverse: $neutral-900;
+$surface-accent-subtle: rgba($brand-accent, 0.12);
+$border-default: $neutral-200;
+
+$font-family-body: Geneva, sans-serif;
+$font-family-heading: Georgia, Times, "Times New Roman", serif;
+$font-family-resume: Georgia, "Resume CJK Serif", "Times New Roman", serif;
 $font-size-metadata: 0.75rem;
 $font-size-label-small: 0.8125rem;
 $font-size-label: 0.875rem;
@@ -65,11 +69,14 @@ $font-size-body-small: 0.9375rem;
 $line-height-body: 1.8;
 $line-height-reading: 1.9;
 
-$compact-content-padding: $space-6;
-$tablet-content-padding: $space-8;
-$desktop-content-padding: $space-12;
-$minimum-control-size: 44px;
-$comfortable-control-size: 48px;
+$content-padding-compact: $space-6;
+$content-padding-tablet: $space-8;
+$content-padding-desktop: $space-12;
+
+$control-size-minimum: 44px;
+$control-size-comfortable: 48px;
+$control-opacity-pressed: 0.65;
+$link-underline-offset: 5px;
 
 $radius-control: 4px;
 $radius-card: 24px;
@@ -77,46 +84,44 @@ $radius-pill: 999px;
 $radius-circle: 50%;
 
 $motion-duration-feedback: 150ms;
+$motion-duration-arrow: 220ms;
 $motion-duration-reveal: 300ms;
 $motion-easing-emphasized: cubic-bezier(0.22, 1, 0.36, 1);
 
 // Component tokens: controls, site regions, and scroll motion.
-$focus-color-neutral: $charcoal;
-$focus-color-content: $brand-olive-ink;
-$focus-color-on-dark: $brand-olive;
+$focus-color-neutral: $neutral-900;
+$focus-color-content: $action-foreground;
+$focus-color-on-dark: $brand-accent;
 $focus-ring-width: 2px;
-$focus-ring-offset: 3px;
-$focus-ring-surface-offset: 5px;
+$focus-ring-offset-default: 3px;
+$focus-ring-offset-surface: 5px;
 
 $button-radius: 15px;
 
 $tooltip-font-size: 0.8 * $base-font-size;
-$tooltip-gap: 2px;
+$tooltip-trigger-gap: 2px;
 $tooltip-viewport-padding: $space-2;
 $tooltip-padding: 3px 10px;
 $tooltip-radius: 3px;
 $tooltip-opacity: 0.7;
 $tooltip-z-index: 21;
 
-$motion-duration-arrow: 220ms;
-
 $header-height: 56px;
-$motion-duration-navigation: 180ms;
+$header-motion-duration: 180ms;
 
-$hero-card-portrait-width: 420px;
-$hero-card-landscape-width: 900px;
+$hero-card-width-portrait: 420px;
+$hero-card-width-landscape: 900px;
 $hero-page-padding: $space-4;
-$motion-duration-dialog: 380ms;
 
-$project-stage-bg: color.mix($brand-olive, $noisy-white, 9%);
-$motion-duration-project: 260ms;
+$qr-dialog-motion-duration: 380ms;
 
-$blog-feature-bg: #f2f3eb;
+$projects-stage-background: color.mix($brand-accent, $neutral-50, 9%);
+$projects-motion-duration: 260ms;
+
+$blog-featured-background: #f2f3eb;
 
 $footer-text-secondary: #b7b7b1;
 $footer-divider-color: #484843;
-
-$resume-font-family: Georgia, "Resume CJK Serif", "Times New Roman", serif;
 
 $scroll-motion: (
   content-distance: 96px,
@@ -149,8 +154,8 @@ $scroll-motion: (
   timeline-dot-start: 0.75,
   timeline-dot-growth: 0.35,
 );
-$scroll-motion-compact-distance: 56px;
-$scroll-motion-compact-depth-scale: 0.6;
+$scroll-motion-content-distance-compact: 56px;
+$scroll-motion-depth-scale-compact: 0.6;
 $scroll-timeline-width: 3px;
 $scroll-timeline-ring-width: 2px;
 $scroll-timeline-ring-outset: -4px;

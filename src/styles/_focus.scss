@@ -4,7 +4,7 @@
   @media screen {
     :focus-visible {
       outline: _.$focus-ring-width solid var(--focus-color, #{_.$focus-color-neutral});
-      outline-offset: _.$focus-ring-offset;
+      outline-offset: _.$focus-ring-offset-default;
     }
 
     @media (forced-colors: active) {

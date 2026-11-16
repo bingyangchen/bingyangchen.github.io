@@ -22,15 +22,15 @@
     background:
       radial-gradient(
         ellipse 55% 45% at 20% 30%,
-        rgba(_.$brand-olive, 0.09),
+        rgba(_.$brand-accent, 0.09),
         transparent 55%
       ),
       radial-gradient(
         ellipse 50% 40% at 85% 70%,
-        rgba(_.$brand-olive, 0.06),
+        rgba(_.$brand-accent, 0.06),
         transparent 50%
       ),
-      linear-gradient(165deg, _.$noisy-white 0%, #fafaf8 45%, _.$noisy-white 100%);
+      linear-gradient(165deg, _.$neutral-50 0%, #fafaf8 45%, _.$neutral-50 100%);
     background-size:
       120% 120%,
       120% 120%,
@@ -44,20 +44,20 @@
     box-sizing: border-box;
     overflow: hidden;
     border-radius: _.$radius-card;
-    border: 1px solid rgba(_.$white, 0.5);
-    background-color: rgba(_.$white, 0.88);
+    border: 1px solid rgba(_.$neutral-0, 0.5);
+    background-color: rgba(_.$neutral-0, 0.88);
     box-shadow:
-      0 20px 40px rgba(_.$black, 0.06),
-      0 1px 3px rgba(_.$black, 0.03);
+      0 20px 40px rgba(_.$neutral-1000, 0.06),
+      0 1px 3px rgba(_.$neutral-1000, 0.03);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    width: min(100%, _.$hero-card-portrait-width);
+    width: min(100%, _.$hero-card-width-portrait);
     padding: _.$space-7;
     @media (min-width: _.$medium) {
-      width: min(100%, _.$hero-card-landscape-width);
+      width: min(100%, _.$hero-card-width-landscape);
       min-height: min(
         calc((100vw - 2 * _.$hero-page-padding) * 4 / 7),
-        calc(_.$hero-card-landscape-width * 4 / 7)
+        calc(_.$hero-card-width-landscape * 4 / 7)
       );
       padding: 44px _.$space-12;
     }
@@ -117,7 +117,7 @@
       width: 100%;
       max-width: 280px;
       min-height: 2.6em;
-      font-family: _.$body-font-family;
+      font-family: _.$font-family-body;
       font-size: clamp(0.88 * _.$base-font-size, 2vw, 1.05 * _.$base-font-size);
       line-height: 1.65;
       color: _.$text-secondary;
@@ -148,7 +148,7 @@
     text-align: center;
     grid-column: 1;
     grid-row: 2;
-    font-family: _.$heading-font-family;
+    font-family: _.$font-family-heading;
     font-weight: bold;
     font-size: clamp(1.75 * _.$base-font-size, 4vw, 2.65 * _.$base-font-size);
     letter-spacing: 0.02em;
@@ -184,13 +184,13 @@
     align-items: center;
     gap: _.$space-2;
     max-width: 100%;
-    min-height: _.$minimum-control-size;
+    min-height: _.$control-size-minimum;
     padding: 7px _.$space-3;
     border-radius: _.$radius-pill;
-    border: 1px solid rgba(_.$black, 0.06);
-    background-color: _.$brand-olive-faint-bg;
+    border: 1px solid rgba(_.$neutral-1000, 0.06);
+    background-color: _.$surface-accent-subtle;
     box-sizing: border-box;
-    font-family: _.$body-font-family;
+    font-family: _.$font-family-body;
     font-size: _.$font-size-label-small;
     font-weight: 500;
     line-height: 1.35;
@@ -205,8 +205,8 @@
     }
     @media (hover: hover) {
       &:hover {
-        background-color: rgba(_.$brand-olive, 0.2);
-        border-color: rgba(_.$brand-olive, 0.28);
+        background-color: rgba(_.$brand-accent, 0.2);
+        border-color: rgba(_.$brand-accent, 0.28);
       }
     }
   }
@@ -248,7 +248,7 @@
     align-items: center;
     gap: _.$space-2;
     max-width: 100%;
-    font-family: _.$body-font-family;
+    font-family: _.$font-family-body;
     font-size: 0.9 * _.$base-font-size;
     color: _.$text-body;
     word-break: break-all;
@@ -266,14 +266,14 @@
     gap: _.$space-3;
   }
   .social_icon_link {
-    @include controls.icon-target(flex);
+    @include controls.centered-target(flex);
     color: _.$text-body;
     transition:
       color _.$motion-duration-feedback ease,
       transform _.$motion-duration-feedback ease;
     @media (hover: hover) {
       &:hover {
-        color: _.$brand-olive-ink;
+        color: _.$action-foreground;
         @media (prefers-reduced-motion: no-preference) {
           transform: translateY(-2px);
         }
@@ -305,7 +305,7 @@
     font-weight: 600;
     letter-spacing: normal;
     min-width: 0;
-    min-height: _.$minimum-control-size;
+    min-height: _.$control-size-minimum;
     width: 100%;
     @media (min-width: _.$medium) {
       width: auto;
@@ -333,11 +333,11 @@
     gap: _.$space-2;
     padding: 14px 6px;
     min-width: 0;
-    min-height: _.$minimum-control-size;
+    min-height: _.$control-size-minimum;
     border-radius: 14px;
     border: 1px solid _.$border-default;
-    background-color: rgba(_.$white, 0.45);
-    font-family: _.$body-font-family;
+    background-color: rgba(_.$neutral-0, 0.45);
+    font-family: _.$font-family-body;
     font-size: 0.85 * _.$base-font-size;
     color: _.$text-body;
     text-decoration: none;
@@ -354,9 +354,9 @@
     }
     @media (hover: hover) {
       &:hover {
-        border-color: rgba(_.$brand-olive, 0.45);
-        color: _.$brand-olive-ink;
-        background-color: rgba(_.$brand-olive, 0.08);
+        border-color: rgba(_.$brand-accent, 0.45);
+        color: _.$action-foreground;
+        background-color: rgba(_.$brand-accent, 0.08);
       }
     }
   }
@@ -372,7 +372,7 @@
     justify-content: center;
     gap: 10px;
     color: _.$text-muted;
-    font-family: _.$body-font-family;
+    font-family: _.$font-family-body;
     font-size: 0.85 * _.$base-font-size;
     & > .scroll_down_chevron {
       display: inline-flex;

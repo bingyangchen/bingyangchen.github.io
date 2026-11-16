@@ -5,18 +5,18 @@
   width: min(100%, #{_.$extra-large});
   margin-inline: auto;
   box-sizing: border-box;
-  font-family: _.$body-font-family;
+  font-family: _.$font-family-body;
   color: _.$text-primary;
-  padding: calc(_.$header-height + 38px) _.$desktop-content-padding _.$space-28;
+  padding: calc(_.$header-height + 38px) _.$content-padding-desktop _.$space-28;
 
   @media (max-width: _.$large) {
-    padding: calc(_.$header-height + 14px) _.$tablet-content-padding _.$space-22;
+    padding: calc(_.$header-height + 14px) _.$content-padding-tablet _.$space-22;
   }
   @media (max-width: _.$medium) {
-    padding: calc(_.$header-height + 6px) _.$compact-content-padding _.$space-22;
+    padding: calc(_.$header-height + 6px) _.$content-padding-compact _.$space-22;
   }
   @media (max-width: _.$small) {
-    padding: calc(_.$header-height + 22px) _.$compact-content-padding _.$space-24;
+    padding: calc(_.$header-height + 22px) _.$content-padding-compact _.$space-24;
   }
 }
 
@@ -38,7 +38,7 @@
 
 @mixin title {
   margin: 0;
-  font: normal clamp(2.75rem, 4.2vw, 3.5rem)/1.12 _.$heading-font-family;
+  font: normal clamp(2.75rem, 4.2vw, 3.5rem)/1.12 _.$font-family-heading;
   letter-spacing: -0.025em;
   text-align: left;
   color: _.$text-primary;
@@ -69,11 +69,11 @@
   @include controls.unselectable;
   flex: none;
   display: inline-flex;
-  min-height: _.$minimum-control-size;
+  min-height: _.$control-size-minimum;
   align-items: center;
   gap: 10px;
   font-size: _.$font-size-label;
-  text-underline-offset: 5px;
+  text-underline-offset: _.$link-underline-offset;
 
   svg {
     width: 16px;
@@ -107,7 +107,7 @@
 
 @mixin action {
   @include controls.unselectable;
-  min-height: _.$comfortable-control-size;
+  min-height: _.$control-size-comfortable;
   display: inline-flex;
   align-items: center;
   justify-content: center;

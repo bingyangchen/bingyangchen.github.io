@@ -14,7 +14,7 @@
 
   .title {
     margin: 0 0 _.$space-3;
-    font-family: _.$heading-font-family;
+    font-family: _.$font-family-heading;
     font-size: 2.2 * _.$base-font-size;
     font-weight: normal;
     text-align: center;
@@ -53,7 +53,7 @@
     & > div {
       margin-left: auto;
       margin-right: auto;
-      box-shadow: 0 8px 32px _.$transparent-black;
+      box-shadow: 0 8px 32px _.$black-translucent;
     }
   }
 }

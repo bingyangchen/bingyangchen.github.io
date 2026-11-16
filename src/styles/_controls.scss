@@ -5,10 +5,10 @@
   user-select: none;
 }
 
-@mixin icon-target($display: inline-flex) {
+@mixin centered-target($display: inline-flex) {
   display: $display;
   align-items: center;
   justify-content: center;
-  min-width: _.$minimum-control-size;
-  min-height: _.$minimum-control-size;
+  min-width: _.$control-size-minimum;
+  min-height: _.$control-size-minimum;
 }
