@@ -4,12 +4,13 @@
 .main {
   position: relative;
   @include controls.centered-target;
+  width: _.$control-size-minimum;
+  height: _.$control-size-minimum;
   box-sizing: border-box;
   border: none;
   background-color: transparent;
   font: inherit;
   border-radius: _.$radius-circle;
-  aspect-ratio: 1;
   padding: 6px;
   margin: 0;
   color: _.$text-muted;

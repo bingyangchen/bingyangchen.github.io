@@ -8,7 +8,7 @@
 
 # 已確認問題
 
-暫無。
+- 200% 文字放大時，Projects 與 Blog 的部分操作超出窄版畫面。2026-11-16 以 Chromium、390 × 844、英文及一般動態設定，將根元素字級設為 200% 後，量到 Projects 的 GitHub 連結右緣約 404 px、Leechai 分頁約 396 px，Blog 的 Browse all notes 連結約 418 px；Hero 沒有超出畫面。此次沒有修改 Projects 與 Blog，後續需檢查文字放大時的換行及操作排列，相關需求為 SITE-R12。
 
 # 待調查
 

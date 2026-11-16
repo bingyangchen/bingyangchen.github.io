@@ -265,6 +265,7 @@ stateDiagram-v2
 | SITE-R9.5 QR Code 目的地 | 以實機掃描 QR code，辨識為個人網站 URL；姓名與提示對應目前語言。 | manual |
 | SITE-R9.6 QR Code 鍵盤入口 | 以兩種語言分別在桌面與窄版視窗中，用 Tab 到達入口並以 Enter 或 Space 開啟，焦點移至關閉按鈕；按鈕名稱符合目前語言，焦點可見且操作區域至少 44 px 高。 | browser、manual |
 | SITE-R9.7 Dialog 焦點與卸載清理 | 開啟後以 Tab 及 Shift+Tab 操作，背景控制不取得焦點；輔助工具取得 modal 的姓名與提示，背景內容暫停操作。關閉後 Tab 從入口接續，卸載也會解除 modal 並還原原有捲動設定。 | browser、manual |
+| SITE-R9.8 圓形按鈕尺寸 | 在兩種語言、桌面及手機直向與橫向畫面中，QR code 入口與 dialog 關閉按鈕均維持正圓，寬高相等且至少 44 px，並可正常開啟及關閉 dialog。 | browser、manual |
 
 ### SITE-R10 履歷來源與下載入口
 

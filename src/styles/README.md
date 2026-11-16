@@ -62,7 +62,7 @@
 
 同一元件內需要同步修改的幾何值使用局部 Sass 變數。WorkExperience 的圓點尺寸與日期列最小高度共用 `$marker-size`、`$marker-size-compact`，將對齊關係保留在元件內。局部變數放在使用範圍的開頭，先定義基準，再定義變體及派生值。新增共用 token 前先查既有使用處，移除已無引用的 token，改名時同步更新使用處及文件。
 
-圓形按鈕、頭像與工作經歷圓點使用 `$radius-circle`，膠囊使用 `$radius-pill`。Button 的 hover 遮罩繼承按鈕本體的圓角，尺寸由各自的 `size` 規則設定。RoundButton 維護基礎 padding，頭像上的 QR code 入口只保留桌面構圖所需的 padding 調整。QR code dialog 的關閉按鈕沿用 `controls.centered-target`，固定寬高仍由 dialog 維護。
+圓形按鈕、頭像與工作經歷圓點使用 `$radius-circle`，膠囊使用 `$radius-pill`。Button 的 hover 遮罩繼承按鈕本體的圓角，尺寸由各自的 `size` 規則設定。RoundButton 以 `$control-size-minimum` 設定相同寬高，避免 WebKit 在絕對定位時將自動尺寸算成橢圓，並維護基礎 padding；頭像上的 QR code 入口只保留桌面構圖所需的 padding 調整。QR code dialog 的關閉按鈕沿用 `controls.centered-target`，固定寬高仍由 dialog 維護。
 
 `controls.centered-target` 同時供圖示與文字控制使用，維護置中及最小寬高，不設定 padding、外觀或固定尺寸。
 

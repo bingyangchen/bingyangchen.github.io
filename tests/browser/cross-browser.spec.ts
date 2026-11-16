@@ -134,6 +134,64 @@ test("SITE-R9.1 SITE-R9.2 SITE-R9.3 SITE-R9.4 Dialog 鍵盤開關及焦點還原
   await expect(page.locator("body")).not.toHaveCSS("overflow", "hidden");
 });
 
+test("SITE-R9.8 圓形按鈕尺寸", async ({ createContext, browserName, server }) => {
+  const buttonSize = "44px";
+  const circleRadius = "50%";
+  for (const viewport of [
+    { width: 320, height: 568 },
+    { width: 390, height: 844 },
+    { width: 844, height: 390 },
+    { width: 1440, height: 900 },
+  ]) {
+    const hasTouch = viewport.width < 1024;
+    const context = await createContext({
+      viewport,
+      hasTouch,
+      ...(browserName === "firefox" ? {} : { isMobile: hasTouch }),
+      reducedMotion: "reduce",
+    });
+    const page = await context.newPage();
+    await openHome(page, server);
+    for (const language of ["en", "zh-TW"]) {
+      if (language === "zh-TW") {
+        const menuButton = page.locator(
+          'header button[aria-controls="site-navigation"]',
+        );
+        const hasCompactMenu = await menuButton.isVisible();
+        if (hasCompactMenu) await menuButton.click();
+        await page.locator("[data-language-switcher]").click();
+        if (hasCompactMenu) await menuButton.click();
+      }
+      await expect(page.locator("html")).toHaveAttribute("lang", language);
+      const opener = page.locator('#home button[aria-haspopup="dialog"]');
+      await expect(opener).toBeVisible();
+      await expect
+        .poll(() =>
+          opener.evaluate((element) => {
+            const { width, height } = element.getBoundingClientRect();
+            return Math.abs(width - height);
+          }),
+        )
+        .toBeLessThan(1);
+      for (const dimension of ["width", "height"]) {
+        await expect(opener).toHaveCSS(dimension, buttonSize);
+      }
+      await expect(opener).toHaveCSS("border-radius", circleRadius);
+      if (hasTouch) await opener.tap();
+      else await opener.click();
+      const closeButton = page.getByRole("dialog").getByRole("button");
+      await expect(closeButton).toBeVisible();
+      await expect(closeButton).toHaveCSS("width", buttonSize);
+      await expect(closeButton).toHaveCSS("height", buttonSize);
+      await expect(closeButton).toHaveCSS("border-radius", circleRadius);
+      if (hasTouch) await closeButton.tap();
+      else await closeButton.click();
+      await expect(page.getByRole("dialog")).toHaveCount(0);
+    }
+    await context.close();
+  }
+});
+
 test("SITE-R13.3 Reduced Motion 初始與即時切換", async ({ page, server }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await openHome(page, server, "#projects");
