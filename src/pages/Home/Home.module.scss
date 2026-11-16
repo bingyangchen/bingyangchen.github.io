@@ -1,8 +1,8 @@
-@use "../../../styles/tokens" as _;
-@use "../../../styles/focus";
-@use "../../../styles/motion";
+@use "../../styles/tokens" as _;
+@use "../../styles/focus";
+@use "../../styles/motion";
 
-.main {
+.page {
   --focus-color: #{_.$focus-color-content};
 
   @include motion.scope;
@@ -22,7 +22,7 @@
       background-color: _.$surface-alternate;
     }
   }
-  & > .home {
+  & > .hero {
     @media screen {
       &:focus-visible {
         @include focus.inset-outline;

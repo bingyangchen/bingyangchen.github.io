@@ -55,12 +55,15 @@ Preview serves the build over loopback HTTP without an SPA fallback. `/resume` r
 
 ### Feature Ownership
 
-[`Home`](src/pages/Main/Home/Home.tsx) composes the four ordered anchor containers and registers one scroll-motion scope around all their content. Feature entry points provide complete behavior without requiring the page to coordinate private events or style internal headings.
+[`SiteLayout`](src/layouts/SiteLayout/SiteLayout.tsx) owns the shared Header, main landmark, route outlet, and Footer. Layouts live in `src/layouts/`; route pages live in `src/pages/` independently of their layout nesting.
+
+[`Home`](src/pages/Home/Home.tsx) composes the four ordered anchor containers and registers one scroll-motion scope around all their content. Feature entry points provide complete behavior without requiring the page to coordinate private events or style internal headings.
 
 ```mermaid
 flowchart TD
-  router[Route entry] --> page[Home page]
-  router --> resume[resume: preview and printing]
+  router[Route entry] --> layout[SiteLayout: shared shell]
+  layout --> page[Home page]
+  layout --> resume[resume: preview and printing]
   page[Home page] --> home[home: Hero and About]
   page --> projects[projects]
   page --> blog[blog]

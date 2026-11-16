@@ -1,12 +1,12 @@
-import styles from "./Main.module.scss";
+import styles from "./SiteLayout.module.scss";
 
 import { Outlet } from "react-router-dom";
 
 import { Footer, Header } from "../../components";
 
-export default function Main() {
+export default function SiteLayout() {
   return (
-    <div className={`${styles.main} site-layout`}>
+    <div className={`${styles.layout} site-layout`}>
       <Header />
       <main id="main-content" className="main-outlet-slot" tabIndex={-1}>
         <Outlet />

@@ -1,7 +1,7 @@
 @use "../../styles/tokens" as _;
 @use "../../styles/focus";
 
-.main {
+.layout {
   display: flex;
   flex-direction: column;
   width: 100%;

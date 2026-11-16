@@ -1,5 +1,5 @@
 import { cleanup } from "@testing-library/react";
-import { renderWithLanguage } from "../../../test-utils/render";
+import { renderWithLanguage } from "../../test-utils/render";
 import Home from "./Home";
 
 afterEach(() => {

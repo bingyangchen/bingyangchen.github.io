@@ -1,13 +1,13 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import Main from "./pages/Main/Main";
-import Home from "./pages/Main/Home/Home";
+import SiteLayout from "./layouts/SiteLayout/SiteLayout";
+import Home from "./pages/Home/Home";
 import Resume from "./features/resume";
 
 export default function MyRouter() {
   return (
     <Routes>
-      <Route path="" element={<Main />}>
+      <Route path="" element={<SiteLayout />}>
         <Route path="" element={<Home />}></Route>
         <Route path="resume" element={<Resume />}></Route>
       </Route>

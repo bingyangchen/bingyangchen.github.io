@@ -1,8 +1,8 @@
 import { useRef } from "react";
-import { About, Hero } from "../../../features/home";
-import Blog from "../../../features/blog";
-import Projects from "../../../features/projects";
-import { useScrollMotion } from "../../../motion/useScrollMotion";
+import { About, Hero } from "../../features/home";
+import Blog from "../../features/blog";
+import Projects from "../../features/projects";
+import { useScrollMotion } from "../../motion/useScrollMotion";
 import styles from "./Home.module.scss";
 
 export default function Home() {
@@ -10,10 +10,10 @@ export default function Home() {
   useScrollMotion(motionRef);
 
   return (
-    <div className={styles.main} ref={motionRef}>
+    <div className={styles.page} ref={motionRef}>
       <div
         id="home"
-        className={`${styles.home} ${styles.section}`}
+        className={`${styles.hero} ${styles.section}`}
         tabIndex={-1}
         data-scroll-anchor=""
       >

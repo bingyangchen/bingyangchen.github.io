@@ -1,7 +1,7 @@
 import { cleanup, fireEvent, within } from "@testing-library/react";
 import { vi } from "vitest";
 import Footer from "../components/Footer/Footer";
-import Home from "../pages/Main/Home/Home";
+import Home from "../pages/Home/Home";
 import Resume from "../features/resume";
 import { renderWithLanguage } from "../test-utils/render";
 
