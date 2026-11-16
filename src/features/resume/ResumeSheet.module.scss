@@ -198,62 +198,52 @@ $resume-navy: #234a8c;
       .bottomColumn {
         min-width: 0;
 
-        .schoolLine {
-          margin: 0 0 5px;
-          @include resume-emphasis-font;
-
-          .yearRange {
-            font-weight: normal;
-            color: _.$text-muted;
-          }
-        }
-
-        .educationDetailRow {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-between;
+        .educationDetails {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) max-content;
+          gap: 5px 16px;
           align-items: baseline;
-          gap: 8px 16px;
-          margin: 0;
 
-          .degreeText {
-            flex: 1 1 auto;
-            min-width: 0;
+          .schoolName {
+            @include resume-emphasis-font;
+          }
+
+          .educationMetadata {
+            color: _.$text-muted;
+            text-align: end;
+            white-space: nowrap;
           }
 
           .gpaText {
-            color: _.$text-muted;
             font-style: italic;
-            white-space: nowrap;
-            flex-shrink: 0;
           }
         }
 
-        .projectLine {
-          margin: 0 0 5px;
-          display: flex;
-          flex-wrap: wrap;
-          gap: 6px 8px;
+        .socialLinks {
+          margin: 0;
+          display: grid;
+          grid-template-columns: max-content minmax(0, 1fr);
+          gap: 5px 8px;
           align-items: baseline;
 
-          &:last-child {
-            margin-bottom: 0;
+          dt {
+            @include resume-emphasis-font;
           }
 
-          & a {
-            color: $resume-navy;
-            text-decoration: none;
-            word-break: break-all;
-          }
+          dd {
+            margin: 0;
+            min-inline-size: 0;
 
-          & a:hover {
-            text-decoration: underline;
-          }
-        }
+            a {
+              color: $resume-navy;
+              text-decoration: none;
+              overflow-wrap: anywhere;
 
-        .projectLabel {
-          @include resume-emphasis-font;
-          min-width: 5.5rem;
+              &:hover {
+                text-decoration: underline;
+              }
+            }
+          }
         }
       }
     }

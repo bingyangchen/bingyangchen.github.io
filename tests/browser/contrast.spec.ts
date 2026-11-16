@@ -68,7 +68,7 @@ test("SITE-R20.2 履歷預覽及列印的日期與教育資訊對比", async ({ 
   await enterPreview(page);
   for (const media of ["screen", "print"] as const) {
     await page.emulateMedia({ media: media });
-    for (const selector of ["roleDates", "roleSeparator", "yearRange", "gpaText"])
+    for (const selector of ["roleDates", "roleSeparator", "educationMetadata"])
       await assertColorContrast(page, `[data-resume-root] [class*="${selector}"]`);
   }
   await page.emulateMedia({ media: "screen" });

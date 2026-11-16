@@ -194,33 +194,33 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
           <div className={styles.bottomRow}>
             <div className={styles.bottomColumn}>
               <h2 className={styles.sectionHeading}>Education</h2>
-              <p className={styles.schoolLine}>
-                {profile.education.school.en}{" "}
-                <span className={styles.yearRange}>
+              <div className={styles.educationDetails}>
+                <span className={styles.schoolName}>{profile.education.school.en}</span>
+                <span className={styles.educationMetadata}>
                   ({profile.education.startYear}–{profile.education.graduationYear})
                 </span>
-              </p>
-              <div className={styles.educationDetailRow}>
-                <span className={styles.degreeText}>
-                  Bachelor of {profile.education.major.en}
+                <span>Bachelor of {profile.education.major.en}</span>
+                <span className={`${styles.educationMetadata} ${styles.gpaText}`}>
+                  GPA: 4.1/4.3
                 </span>
-                <span className={styles.gpaText}>GPA: 4.1/4.3</span>
               </div>
             </div>
             <div className={styles.bottomColumn}>
               <h2 className={styles.sectionHeading}>Social Links</h2>
-              <p className={styles.projectLine}>
-                <span className={styles.projectLabel}>GitHub</span>
-                <a href={profile.urls.github} target="_blank" rel="noreferrer">
-                  {profile.urls.github.replace(/^https:\/\//, "")}
-                </a>
-              </p>
-              <p className={styles.projectLine}>
-                <span className={styles.projectLabel}>Personal Site</span>
-                <a href={profile.urls.site} target="_blank" rel="noreferrer">
-                  {new URL(profile.urls.site).host}
-                </a>
-              </p>
+              <dl className={styles.socialLinks}>
+                <dt>GitHub</dt>
+                <dd>
+                  <a href={profile.urls.github} target="_blank" rel="noreferrer">
+                    {profile.urls.github.replace(/^https:\/\//, "")}
+                  </a>
+                </dd>
+                <dt>Personal Site</dt>
+                <dd>
+                  <a href={profile.urls.site} target="_blank" rel="noreferrer">
+                    {new URL(profile.urls.site).host}
+                  </a>
+                </dd>
+              </dl>
             </div>
           </div>
         </div>
