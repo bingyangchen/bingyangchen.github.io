@@ -22,9 +22,11 @@ export const profile = {
     shortSchoolNameZhTw: "政治大學",
     abbreviation: "NCCU",
     major: { en: "Economics", "zh-TW": "經濟學" },
+    degree: { en: "B.A. in Economics", "zh-TW": "經濟學學士" },
+    fintechProgram: { en: "Financial Technology Program", "zh-TW": "金融科技專長學程" },
     startYear: 2017,
     graduationYear: 2021,
     economicsUrl: "https://econo.nccu.edu.tw/",
-    fintechUrl: "https://www.ftrc.nccu.edu.tw/wordpresseng/?page_id=3053",
+    fintechUrl: "https://www.ftrc.nccu.edu.tw/fintech/display/1",
   },
 };

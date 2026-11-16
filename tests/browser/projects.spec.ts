@@ -158,9 +158,9 @@ test("SITE-R12.2 學歷跨 breakpoint 時立即套用字級", async ({ page, ser
       await page.evaluate(() =>
         document.querySelector<HTMLElement>("[data-language-switcher]")!.click(),
       );
-    for (const [width, fontSize] of [
-      [513, "18px"],
-      [512, "16px"],
+    for (const [width, fontSize, programFontSize] of [
+      [513, "18px", "16px"],
+      [512, "16px", "15px"],
     ] as const) {
       await page.setViewportSize({ width, height: 844 });
       assert.deepEqual(
@@ -169,8 +169,17 @@ test("SITE-R12.2 學歷跨 breakpoint 時立即套用字級", async ({ page, ser
           .evaluateAll((elements: HTMLElement[]) =>
             elements.map((element) => getComputedStyle(element).fontSize),
           ),
-        [fontSize, fontSize],
+        [fontSize, programFontSize],
         `education font size at ${width} ${language}`,
+      );
+      const educationLinks = await page
+        .locator('#about [class*="degree_list"] > a')
+        .evaluateAll((elements: HTMLElement[]) =>
+          elements.map((element) => element.offsetHeight),
+        );
+      assert.ok(
+        educationLinks.every((height) => height >= 44),
+        `education target height at ${width} ${language}`,
       );
       const skills = await page
         .locator('[data-scroll-motion="skill"]')

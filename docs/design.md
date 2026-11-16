@@ -30,6 +30,7 @@ Use the Header to change languages; close the QR code dialog before switching. R
 Language selection remains available when browser storage is blocked. Keep the visitor's choice for the current page without showing a storage warning; on reload, use a readable saved preference or the browser language.
 
 - Experience and education copy should be direct, professional, and specific about scope and outcomes. Distinguish personal projects from production work.
+- Education groups the school name and earned degree above supplementary program study. Show the school name once, keep the program visually secondary, and use consistent degree names across the homepage and resume. School links lead to the department and current program introduction pages.
 - Projects and Blog may use a warmer, open, curious tone while keeping claims concrete.
 - Preserve shared facts across languages while allowing natural phrasing and different levels of detail. Chinese copy should use natural Traditional Chinese wording consistent with the existing site.
 - Blog selections retain their original article titles. Localize the surrounding summaries and actions. In the English interface, identify the primary writing language before visitors choose an article.

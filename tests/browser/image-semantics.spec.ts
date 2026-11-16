@@ -55,8 +55,9 @@ test("SITE-R6.7 雙語圖片不重複加入資訊並保留文字閱讀順序", a
       [
         "en",
         {
-          economics: "National Chengchi University, Department of Economics",
-          fintech: "National Chengchi University, Financial Technology Program",
+          school: "National Chengchi University",
+          degree: "B.A. in Economics",
+          fintech: "Financial Technology Program",
           open: "Show QR code",
           close: "Close QR code",
           portrait: "Flip portrait",
@@ -65,8 +66,9 @@ test("SITE-R6.7 雙語圖片不重複加入資訊並保留文字閱讀順序", a
       [
         "zh-TW",
         {
-          economics: "國立政治大學 經濟學系",
-          fintech: "國立政治大學 金融科技學士學程",
+          school: "國立政治大學",
+          degree: "經濟學學士",
+          fintech: "金融科技專長學程",
           open: "顯示 QR code",
           close: "關閉 QR code",
           portrait: "翻轉頭像",
@@ -84,7 +86,8 @@ test("SITE-R6.7 雙語圖片不重複加入資訊並保留文字閱讀順序", a
         "Swag",
         "Python",
         "TypeScript",
-        labels.economics,
+        labels.school,
+        labels.degree,
         labels.fintech,
       ];
       assert.deepEqual(
@@ -96,7 +99,10 @@ test("SITE-R6.7 雙語圖片不重複加入資訊並保留文字閱讀順序", a
         expectedNames,
       );
       await expect(
-        page.getByRole("link", { name: labels.economics, exact: true }),
+        page.getByRole("link", {
+          name: `${labels.school} ${labels.degree}`,
+          exact: true,
+        }),
       ).toHaveAttribute("href", "https://econo.nccu.edu.tw/");
       assert.deepEqual(
         await getControlAccessibility(page, '#home button[aria-haspopup="dialog"]'),

@@ -78,7 +78,7 @@
       gap: _.$space-6;
     }
     & > .school_logo {
-      width: 260px;
+      width: min(260px, 30%);
       height: auto;
       @media (max-width: _.$small) {
         width: 220px;
@@ -87,21 +87,41 @@
     & > .degree_list {
       display: flex;
       flex-direction: column;
-      gap: _.$space-5;
+      gap: _.$space-3;
       font-size: 1.125 * _.$base-font-size;
       @media (max-width: _.$small) {
         font-size: _.$base-font-size;
       }
-      & > .degree {
+      & > .degree,
+      & > .program {
         font-family: _.$font-family-body;
         line-height: 1.5;
         color: _.$text-body;
         text-decoration: underline;
+        text-underline-offset: _.$link-underline-offset;
         transition: color _.$motion-duration-feedback;
         @media (hover: hover) {
           &:hover {
-            color: _.$text-primary;
+            color: _.$action-foreground;
           }
+        }
+      }
+      & > .degree {
+        display: flex;
+        flex-direction: column;
+        gap: _.$space-2;
+        .school_name {
+          font-weight: 600;
+        }
+      }
+      & > .program {
+        display: flex;
+        align-items: center;
+        min-height: _.$control-size-minimum;
+        color: _.$text-muted;
+        font-size: _.$base-font-size;
+        @media (max-width: _.$small) {
+          font-size: _.$font-size-body-small;
         }
       }
     }

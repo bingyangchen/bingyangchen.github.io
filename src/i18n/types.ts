@@ -35,8 +35,8 @@ export interface TranslationDictionary {
     workExperience: string;
     skills: string;
     education: string;
-    nccuEconomics: string;
-    nccuFintech: string;
+    degree: string;
+    fintechProgram: string;
   };
   projects: { title: string; subtitle: string; visitGithub: string };
   blog: {

@@ -3,6 +3,7 @@ import { renderWithLanguage } from "../../test-utils/render";
 import { englishDictionary } from "../../i18n/dictionaries/en";
 import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";
 import { homeSkillItems } from "../../data/skills";
+import { profile } from "../../data/profile";
 import { workExperienceItems } from "../../data/workExperience";
 import About from "./About";
 
@@ -40,10 +41,12 @@ test("SITE-R6.2 技能與教育", () => {
     expect(within(container).getAllByText(skill.title)).toHaveLength(1);
   expect(
     within(container).getByRole("link", {
-      name: englishDictionary.about.nccuEconomics,
+      name: `${profile.education.school.en} ${englishDictionary.about.degree}`,
     }),
   ).toHaveAttribute("href", "https://econo.nccu.edu.tw/");
   expect(
-    within(container).getByRole("link", { name: englishDictionary.about.nccuFintech }),
-  ).toHaveAttribute("href", expect.stringContaining("ftrc.nccu.edu.tw"));
+    within(container).getByRole("link", {
+      name: englishDictionary.about.fintechProgram,
+    }),
+  ).toHaveAttribute("href", "https://www.ftrc.nccu.edu.tw/fintech/display/1");
 });

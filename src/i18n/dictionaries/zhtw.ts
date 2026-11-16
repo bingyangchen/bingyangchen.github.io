@@ -8,7 +8,7 @@ export const traditionalChineseDictionary: TranslationDictionary = {
   home: {
     greeting:
       "以前是個靠寫 code 維生的打工仔，現在是個使喚 AI 幫我寫 code 的打工仔。平常喜歡研究魔法史，還有一點經濟學！",
-    role: `${profile.education.shortSchoolNameZhTw} ${profile.education.major["zh-TW"]}系`,
+    role: `${profile.education.shortSchoolNameZhTw} ${profile.education.degree["zh-TW"]}`,
     flipAvatar: "翻轉頭像",
     downloadResume: "下載履歷",
     scrollDown: "下滑了解更多",
@@ -21,8 +21,8 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     workExperience: "工作經歷",
     skills: "專業技能",
     education: "學歷",
-    nccuEconomics: `${profile.education.school["zh-TW"]} ${profile.education.major["zh-TW"]}系`,
-    nccuFintech: `${profile.education.school["zh-TW"]} 金融科技學士學程`,
+    degree: profile.education.degree["zh-TW"],
+    fintechProgram: profile.education.fintechProgram["zh-TW"],
   },
   projects: {
     title: "專案",

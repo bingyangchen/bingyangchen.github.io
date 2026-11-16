@@ -199,7 +199,7 @@ const ResumeSheet = React.forwardRef<HTMLDivElement, {}>(
                 <span className={styles.educationMetadata}>
                   ({profile.education.startYear}–{profile.education.graduationYear})
                 </span>
-                <span>Bachelor of {profile.education.major.en}</span>
+                <span>{profile.education.degree.en}</span>
                 <span className={`${styles.educationMetadata} ${styles.gpaText}`}>
                   GPA: 4.1/4.3
                 </span>

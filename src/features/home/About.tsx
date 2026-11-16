@@ -11,7 +11,7 @@ import WorkExperience from "./WorkExperience/WorkExperience";
 import styles from "./About.module.scss";
 
 export default function About() {
-  const { dictionary } = useTranslation();
+  const { dictionary, language } = useTranslation();
   return (
     <div className={styles.main}>
       <h2 className={styles.title} data-scroll-motion="heading">
@@ -67,15 +67,18 @@ export default function About() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            {dictionary.about.nccuEconomics}
+            <span className={styles.school_name}>
+              {profile.education.school[language]}
+            </span>{" "}
+            <span>{dictionary.about.degree}</span>
           </a>
           <a
-            className={styles.degree}
+            className={styles.program}
             href={profile.education.fintechUrl}
             target="_blank"
             rel="noopener noreferrer"
           >
-            {dictionary.about.nccuFintech}
+            {dictionary.about.fintechProgram}
           </a>
         </div>
       </div>

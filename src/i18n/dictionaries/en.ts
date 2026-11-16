@@ -8,7 +8,7 @@ export const englishDictionary: TranslationDictionary = {
   home: {
     greeting:
       "Software engineer focused on web apps that stay maintainable after launch.",
-    role: `B.A. ${profile.education.major.en}, ${profile.education.abbreviation}`,
+    role: `${profile.education.degree.en}, ${profile.education.abbreviation}`,
     flipAvatar: "Flip portrait",
     downloadResume: "Download Resume",
     scrollDown: "Scroll down",
@@ -21,8 +21,8 @@ export const englishDictionary: TranslationDictionary = {
     workExperience: "Work Experience",
     skills: "Skills",
     education: "Education",
-    nccuEconomics: `${profile.education.school.en}, Department of ${profile.education.major.en}`,
-    nccuFintech: `${profile.education.school.en}, Financial Technology Program`,
+    degree: profile.education.degree.en,
+    fintechProgram: profile.education.fintechProgram.en,
   },
   projects: {
     title: "Projects",
