@@ -8,11 +8,11 @@
 
 # 已確認問題
 
-- 履歷載入：調整提案、下載量證據與驗收見 [計劃 0001 的 TD-26](plans/0001-codebase-technical-debt.md#td-26分開履歷載入並記錄啟動方式)。
+暫無。
 
 # 待調查
 
-- 依賴維護流程驗證：GitHub 版本報告由 schedule 定期觸發的實際紀錄，以及既有 Dependabot CLI 通知的實際送達仍待驗證，範圍見 [計劃 0001 的 TD-22](plans/0001-codebase-technical-debt.md#td-22補足依賴安全更新)。維護入口與判讀方式見 [README](../README.md#dependency-maintenance)，相關需求為 SITE-R16。
+- 依賴維護流程驗證：GitHub 版本報告由 schedule 定期觸發的實際紀錄、該次報告內容與來源 commit，以及既有 Dependabot CLI 通知的實際送達仍待驗證。查核方式與證據要求見 [README](../README.md#verify-scheduled-execution-and-notification-delivery)，相關需求為 SITE-R16。
 
 # 待決策
 

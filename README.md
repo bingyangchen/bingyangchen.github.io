@@ -187,6 +187,34 @@ Open a run's summary, then download its `dependency-report` artifact:
 
 The reporter accepts npm's exit code `1` only with valid, nonempty package rows, and rejects HTTP 403/404 because the selected npm version silently skips those package queries. npm also silently skips ranges with no matching registry version (`ETARGET`), so the reporter verifies unreported direct dependencies with `npm view <package>@<range> version --json --prefer-online` before accepting the result. `npm run test:dependencies` checks these behaviors against a local registry, so rerun it when changing npm. Setup or dependency-install failures fail the job before a report exists; use the failing step's log. A successful report also depends on artifact upload succeeding. Scheduled runs use GitHub's default-branch scheduling rules, documented in [Events that trigger workflows](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
 
+### Verify Scheduled Execution and Notification Delivery
+
+Use authenticated GitHub CLI access to this repository. These queries only read state; an authorization or network error leaves the check unresolved.
+
+Check the workflow state and its latest scheduled run separately:
+
+```sh
+gh api repos/bingyangchen/bingyangchen.github.io/actions/workflows/dependencies.yml \
+  --jq '{id, path, state}'
+gh api 'repos/bingyangchen/bingyangchen.github.io/actions/workflows/dependencies.yml/runs?event=schedule&per_page=1' \
+  --jq '{total_count, runs: [.workflow_runs[] | {id, event, status, conclusion, created_at, head_branch, head_sha, html_url}]}'
+```
+
+An `active` workflow confirms enablement. A completed, successful run whose `event` is `schedule` confirms scheduled execution for that occurrence. Compare `created_at` with the expected Monday at 01:23 UTC; an older successful run does not account for a missing later occurrence. A successful `workflow_dispatch` run verifies the report job but leaves scheduled execution unverified. If an expected occurrence has no run, check the workflow on the current default branch, its enabled state, and GitHub's delay and inactivity rules before changing the cron expression. Failure notifications require an actual failed run, so the weekly review must also check for missing runs.
+
+For a completed, successful scheduled run, download its `dependency-report` artifact from its Actions page. Check that `result.json` identifies the run's `head_sha`, the lockfile SHA-256 at that commit, and the selected tools. Confirm that its status and package count agree with `outdated.json`, and that every direct dependency at that commit appears either in `outdated.json` or in a successful `unreported-packages.json` range query. Keep the run URL, event, timestamp, commit, conclusion, artifact ID, and report result in the delivery report before the artifact expires. A missing or expired artifact leaves report-content verification unresolved even if the run succeeded.
+
+Check all open security alerts independently of the version report, without a severity filter:
+
+```sh
+gh api --paginate 'repos/bingyangchen/bingyangchen.github.io/dependabot/alerts?state=open&per_page=100' \
+  --jq '[.[] | {number, severity: .security_advisory.severity, package: .dependency.package.name, html_url}]'
+```
+
+The query prints one array per page; `[]` means that page has no open alerts. In Notification settings, inspect **Dependabot alerts: New vulnerabilities** for **CLI**, and **Actions** for failed-workflow delivery. Enabled preferences establish configuration, while delivery requires an observed notification. When an independently authorized normal push produces a vulnerability warning, retain its timestamp, repository, and redacted warning text as CLI delivery evidence. With no open alerts or no observed warning, leave CLI delivery unverified; do not introduce a vulnerable dependency or push solely to manufacture evidence. Record actual results in the delivery report and remove only verified work from the roadmap.
+
+### Produce a Local Report
+
 To produce the same report locally after the normal development setup:
 
 ```sh
