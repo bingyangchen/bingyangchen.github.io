@@ -1,7 +1,7 @@
 import styles from "./Resume.module.scss";
 
-import { Button } from "../../../components";
-import { openResumePrintDialog } from "../../../resume/print";
+import { Button } from "../../components";
+import { openResumePrintDialog } from "./print";
 import ResumeSheet from "./ResumeSheet";
 
 export default function Resume() {

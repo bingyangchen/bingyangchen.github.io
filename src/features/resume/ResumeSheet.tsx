@@ -1,10 +1,10 @@
 import styles from "./ResumeSheet.module.scss";
 
 import React from "react";
-import { profile } from "../../../data/profile";
-import { workExperienceIdToFacts, type WorkExperienceId } from "../../../data/career";
-import { formatWorkExperienceFacts } from "../../../i18n/workExperience";
-import { IconEnvelope, IconLocation } from "../../../icons";
+import { profile } from "../../data/profile";
+import { workExperienceIdToFacts, type WorkExperienceId } from "../../data/career";
+import { formatWorkExperienceFacts } from "../../i18n/workExperience";
+import { IconEnvelope, IconLocation } from "../../icons";
 
 function JobHeading({ experienceId }: { experienceId: WorkExperienceId }) {
   const copy = formatWorkExperienceFacts(workExperienceIdToFacts[experienceId], "en");

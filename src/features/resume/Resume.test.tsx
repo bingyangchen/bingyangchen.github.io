@@ -1,7 +1,7 @@
 import { vi } from "vitest";
 import { cleanup, fireEvent, within } from "@testing-library/react";
-import { renderWithLanguage } from "../../../test-utils/render";
-import * as printing from "../../../resume/print";
+import { renderWithLanguage } from "../../test-utils/render";
+import * as printing from "./print";
 import Resume from "./Resume";
 
 afterEach(() => {

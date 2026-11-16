@@ -59,17 +59,22 @@ Preview serves the build over loopback HTTP without an SPA fallback. `/resume` r
 
 ```mermaid
 flowchart TD
+  router[Route entry] --> page[Home page]
+  router --> resume[resume: preview and printing]
   page[Home page] --> home[home: Hero and About]
   page --> projects[projects]
   page --> blog[blog]
   home --> controls[Shared controls and styles]
   projects --> controls
   blog --> controls
+  resume --> controls
 ```
 
 [`src/features/home`](src/features/home/index.ts) exports Hero and About. Portrait privately owns its fixed face, pointer tracking, hover suppression, and QR opener. QrCodeDialog owns the portal, native modal, body scroll lock, focus restoration, and cleanup. These implementations stay together because closing a dialog can delay the portrait's hover restoration; the page must not coordinate that interaction. About privately owns Skill and WorkExperience. Hero, About, Portrait, and QrCodeDialog each maintain their own CSS Module.
 
 [`src/features/projects`](src/features/projects/index.ts) owns project selection, artwork composition, responsive images, and period formatting. [`src/features/blog`](src/features/blog/index.ts) owns article presentation and native text-selection handling. Each feature exports only its entry point; private modules and tests remain beside their implementation. `src/components/index.ts` exports shared controls and the site shell without re-exporting feature implementations. Shared facts remain in `data/`, while translations and fallback rules remain in `i18n/`.
+
+[`src/features/resume`](src/features/resume/index.ts) owns the English preview, ResumeSheet, preview print helper, and their styles and tests. The router connects its single entry point directly to the existing non-public `/resume` route; ResumeSheet and printing stay private to the feature. Keep this eager import separate from any future route-loading changes. Shared profile and career facts remain in `data/`, date formatting remains in `i18n/`, and `src/index.tsx` still loads the global `src/styles/print.scss`; resume-specific geometry and fonts stay beside ResumeSheet.
 
 Projects and Blog use the shared section patterns and own all their internal typography and spacing. `tests/browser/feature-styles.spec.ts` compares their content styles inside and outside Home in both languages at the supported breakpoints. Native interaction and motion tests continue to exercise the composed production page. The Portrait unit test additionally checks Strict Mode effect replay and disposal without loading About or the other features.
 

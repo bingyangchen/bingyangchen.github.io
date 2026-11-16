@@ -2,7 +2,7 @@ import { cleanup, fireEvent, within } from "@testing-library/react";
 import { vi } from "vitest";
 import Footer from "../components/Footer/Footer";
 import Home from "../pages/Main/Home/Home";
-import ResumeSheet from "../pages/Main/Resume/ResumeSheet";
+import Resume from "../features/resume";
 import { renderWithLanguage } from "../test-utils/render";
 
 vi.mock("./profile", async (importOriginal) => {
@@ -74,7 +74,7 @@ test.each(["en", "zh-TW"] as const)(
       <>
         <Home />
         <Footer />
-        <ResumeSheet />
+        <Resume />
       </>,
       language,
     );

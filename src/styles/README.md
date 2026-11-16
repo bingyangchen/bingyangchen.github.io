@@ -14,7 +14,7 @@
 | [`_motion.scss`](_motion.scss) | 定義 reduced motion 的全域處理，以及 scroll motion 的參數與 transform 套用方式。 |
 | [`index.scss`](index.scss) | 套用全域基礎樣式，並各套用一次 focus 與 reduced motion 預設值。 |
 | 元件旁的 `*.module.scss` | 定義元件外觀、狀態與 responsive layout，並使用共用 token 和 patterns。 |
-| [`print.scss`](print.scss) 與 [`ResumeSheet.module.scss`](../pages/Main/Resume/ResumeSheet.module.scss) | 維護 A4 列印尺寸、履歷字型、頁面範圍與專用排版。 |
+| [`print.scss`](print.scss) 與 [`ResumeSheet.module.scss`](../features/resume/ResumeSheet.module.scss) | 維護 A4 列印尺寸、履歷字型、頁面範圍與專用排版。 |
 
 以底線開頭的檔案是 Sass partial，由其他 SCSS 透過 `@use` 載入。目前的 partial 定義 token 與 mixin，載入本身不會產生全域 CSS。`index.scss` 與 `print.scss` 則是由 `src/index.tsx` 載入的 CSS 入口。
 

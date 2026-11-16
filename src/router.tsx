@@ -1,11 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-// layer one
 import Main from "./pages/Main/Main";
-
-// layer two
 import Home from "./pages/Main/Home/Home";
-import Resume from "./pages/Main/Resume/Resume";
+import Resume from "./features/resume";
 
 export default function MyRouter() {
   return (

@@ -34,14 +34,14 @@ try {
       enforce: 'pre',
       transform(source, id) {
         if (!id.endsWith('/src/router.tsx')) return;
-        const importStatement = 'import Resume from "./pages/Main/Resume/Resume";';
+        const importStatement = 'import Resume from "./features/resume";';
         const routeElement = 'element={<Resume />}';
         if (source.split(importStatement).length !== 2 || source.split(routeElement).length !== 2) {
           throw new Error('Router changed; update the measurement transform before comparing');
         }
         transformed = true;
         return source
-          .replace(importStatement, 'import { lazy, Suspense } from "react";\nconst Resume = lazy(() => import("./pages/Main/Resume/Resume"));')
+          .replace(importStatement, 'import { lazy, Suspense } from "react";\nconst Resume = lazy(() => import("./features/resume"));')
           .replace(routeElement, 'element={<Suspense fallback={null}><Resume /></Suspense>}');
       },
     }],

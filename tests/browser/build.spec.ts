@@ -25,7 +25,7 @@ test("SITE-R14.1 SITE-R14.2 SITE-R14.3 完整 build、靜態文字與擷取範�
   assert.ok((await stat(join(BUILD, "index.html"))).mtimeMs >= newestSource.mtimeMs);
   assert.ok(
     (await stat(join(BUILD, "resume.pdf"))).mtimeMs >=
-      (await stat(join(ROOT, "src/pages/Main/Resume/ResumeSheet.tsx"))).mtimeMs,
+      (await stat(join(ROOT, "src/features/resume/ResumeSheet.tsx"))).mtimeMs,
   );
   await setJavaScriptEnabled(page, false);
   await page.goto(server.origin, { waitUntil: "networkidle" });
