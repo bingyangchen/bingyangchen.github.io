@@ -129,7 +129,7 @@ export default function Projects() {
               aria-labelledby={`${id}-tab-${index}`}
               aria-hidden={!selected}
               tabIndex={selected ? 0 : -1}
-              {...{ inert: selected ? undefined : "" }}
+              inert={!selected}
             >
               <div className={styles.projectIntro}>
                 <h3 className={styles.projectTitle}>{project.title}</h3>

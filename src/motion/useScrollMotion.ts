@@ -31,7 +31,7 @@ function getDocumentTop(element: HTMLElement): number {
   return top;
 }
 
-export function useScrollMotion(scopeRef: RefObject<HTMLElement>): void {
+export function useScrollMotion(scopeRef: RefObject<HTMLElement | null>): void {
   useLayoutEffect(() => {
     if (
       !scopeRef.current ||

@@ -96,7 +96,11 @@ test("內嵌預覽的 JS、CSS 與 HTML 成本維持資源預算", async () => {
   const sizes = await Promise.all(
     files.map(async (name) => gzipSync(await readFile(join(assets, name))).length),
   );
-  assert.ok(sizes.reduce((sum, size) => sum + size, 0) <= 128 * 1024);
+  const totalGzipBytes = sizes.reduce((sum, size) => sum + size, 0);
+  assert.ok(
+    totalGzipBytes <= 150 * 1024,
+    `JS/CSS gzip totals ${totalGzipBytes} bytes (150 KiB limit)`,
+  );
   assert.ok(
     gzipSync(await readFile(join(buildDirectory, "index.html"))).length <= 16 * 1024,
   );

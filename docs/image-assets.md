@@ -43,7 +43,7 @@ Prerender 逐一驗證作品及每個 `srcset` 版本，再還原第一個作品
 | --- | --- |
 | 初始圖片 | [`tests/browser/images.spec.ts`](../tests/browser/images.spec.ts) 檢查 390 到 1440 px、DPR 1 到 3 的指定組合，Resource Timing 的圖片 `decodedBodySize` 合計不得超過 192 KiB。 |
 | 單張輸出 | 產生腳本與瀏覽器檢查限制作品大圖及頭像的單張檔案不超過 64 KiB。 |
-| 內嵌成本 | 同一個瀏覽器測試檔限制所有 JS 與 CSS 的 gzip 合計不超過 128 KiB，首頁 HTML 的 gzip 不超過 16 KiB，涵蓋內嵌預覽的成本。 |
+| 內嵌成本 | 同一個瀏覽器測試檔限制所有 JS 與 CSS 的 gzip 合計不超過 150 KiB，首頁 HTML 的 gzip 不超過 16 KiB，涵蓋內嵌預覽的成本。 |
 | 延後載入 | 首次載入不能請求未選作品的大圖，窄版不能請求第二張 App 大圖；直接 hash 與無 JavaScript 也要符合。 |
 
 這些 bytes 是壓縮圖片檔案的 response body 大小，不是圖片在記憶體中的解碼大小。內嵌預覽計入 JS 與 HTML，不能因沒有獨立 request 而忽略其成本。調整構圖、加入新作品或更新圖片時，需重新量測並說明預算調整原因。
@@ -67,3 +67,9 @@ Prerender 逐一驗證作品及每個 `srcset` 版本，再還原第一個作品
 JS 與 CSS 的 gzip 合計由 117,918 bytes 增為 123,958 bytes，首頁 HTML 的 gzip 由 10,871 bytes 增為 13,144 bytes，這些差異包含預覽及載入處理。
 
 另以相同的 390 × 844、DPR 2、冷 cache、150 ms latency、每秒下載 200 KiB 與 4 倍 CPU throttling，各執行三次。Chromium 版本為 156.0.8078.47，LCP 的中位數由 2,228 ms 改為 1,348 ms，六次的 CLS 均為 0。這些量測屬於桌面 Chromium 模擬，不代表真實手機或行動網路。
+
+2026-11-16，比較原始 commit `7790082dfc2cffa6f9820e21483e1cc318ecefc4` 的 React 18.2.0 與升級後的 React 19.3.1，兩者皆使用 Node 22.23.5、npm 12.2.2 執行 `npm ci` 與 `npm run build`。JS 與 CSS 的 gzip 合計由 125,078 bytes 增為 147,573 bytes，增加 22,495 bytes（約 18.0%）；CSS 均為 10,979 bytes，首頁 HTML 的 gzip 由 13,079 bytes 變為 13,076 bytes。
+
+保留支援標準 `fetchPriority` 與 boolean `inert` 的 React 19，將 JS 與 CSS 預算由 128 KiB 調整為 150 KiB。增加的 22 KiB 是將這次實測差異向上取整，剩餘空間由 5,994 bytes 變為 6,027 bytes；圖片及 HTML 預算維持原值。
+
+另以相同 Chromium、390 × 844、DPR 2、冷 cache、150 ms latency、每秒下載 200 KiB、4 倍 CPU throttling 及 reduced-motion 設定，交錯量測兩個版本各三次。React 18 的 LCP 為 1,420、1,352、1,348 ms，React 19 為 1,364、1,352、1,332 ms，中位數皆為 1,352 ms，六次 CLS 均為 0。這些桌面模擬結果未顯示 LCP 退步，不代表實機或其他網路條件下的效能。

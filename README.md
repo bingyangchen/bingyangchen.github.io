@@ -4,6 +4,8 @@
 
 A React and TypeScript personal website built with Vite and deployed to GitHub Pages. Visit the live site at [byc1999.com](https://byc1999.com/).
 
+React and React DOM use the same React 19 release, with 19.x type packages. React 19 recognizes the portrait's `fetchPriority` prop and the project panels' boolean `inert` prop directly; keep these standard JSX props when updating dependencies. Follow the [React 19 upgrade guide](https://react.dev/blog/2024/04/25/react-19-upgrade-guide) for runtime and type compatibility.
+
 ## Development
 
 Use the exact Node.js version in [`.nvmrc`](.nvmrc) and the npm version in [`package.json`'s `packageManager`](package.json) to reproduce the primary development and CI environment. With [nvm installed and loaded](https://github.com/nvm-sh/nvm#installing-and-updating), run these commands from the repository root:
@@ -253,6 +255,8 @@ Vitest discovers `src/**/*.{test,spec}.{js,jsx,ts,tsx}` and excludes `fixtures` 
 Content component tests use the real LanguageProvider through `src/test-utils/render.tsx` and switch languages through the actual control. Test missing translations and alternate periods at the pure-function boundary with independent fixtures; never modify exported production data. Prefer roles, accessible attributes, or destinations for browser interaction selectors; keep CSS selectors for visual geometry local to those checks.
 
 Browser tests use the production assets without substituting remote images. The build uses `scripts/browser-resources.mts` with Puppeteer; browser tests use `tests/helpers/resources.ts` with Playwright. Both monitors block unexpected external requests and reject HTTP errors, failed requests, undecodable images, console errors, and uncaught JavaScript errors. They share `scripts/image-decoding.mts`: decoding follows current responsive candidates and DOM images, rechecks completed candidates after the full batch, and rejects stable decode failures while restoring loading attributes. Failure tests use isolated pages and explicitly verify their expected errors. External link destinations are checked separately from third-party availability.
+
+`tests/browser/development.spec.ts` additionally starts Vite in development mode with JavaScript enabled and rejects console warnings or errors while loading the homepage, using its controls, and opening the resume preview. Production React omits development diagnostics, so production-only checks cannot catch unsupported React props.
 
 Playwright owns per-test pages and contexts through `tests/helpers/fixtures.ts`; extra contexts used for resource, DPR, or JavaScript cases are closed by a fixture. Tests are grouped by behavior instead of sharing module-level page state. Chromium runs every original scenario, including CDP, native touch emulation, clipboard, and PDF checks. `cross-browser.spec.ts` runs homepage, language, anchor/history, tabs, dialog, and reduced-motion journeys in Chromium, Firefox, and WebKit. WebKit automation does not replace real Safari or device checks.
 
