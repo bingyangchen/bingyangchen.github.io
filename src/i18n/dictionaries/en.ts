@@ -1,13 +1,13 @@
-import { profile } from "../../data/profile";
 import { workExperienceIdToFacts } from "../../data/career";
-import { formatWorkExperienceFacts } from "../workExperience";
+import { profile } from "../../data/profile";
 import type { TranslationDictionary } from "../types";
+import { formatWorkExperienceFacts } from "../workExperience";
 
 export const englishDictionary: TranslationDictionary = {
   name: profile.name["en"],
   home: {
     greeting:
-      "Software engineer focused on web apps that stay maintainable after launch.",
+      "I write code for a living. AI does some of the typing. Off the clock, I’m into the history of magic, with a little economics on the side.",
     role: `${profile.education.degree.en}, ${profile.education.abbreviation}`,
     flipAvatar: "Flip portrait",
     downloadResume: "Download Resume",

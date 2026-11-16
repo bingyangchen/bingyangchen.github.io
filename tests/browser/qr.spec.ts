@@ -213,7 +213,7 @@ test("SITE-R9.7 Dialog 焦點與卸載清理", async ({ page, server }) => {
   await page.keyboard.press("Tab");
   assert.ok(
     await page.evaluate(() =>
-      (document.activeElement as HTMLAnchorElement).href.includes("econo.nccu.edu.tw"),
+      (document.activeElement as HTMLAnchorElement).hasAttribute("download"),
     ),
   );
   await page.evaluate(() => {

@@ -96,7 +96,7 @@ test("SITE-R18.1 依區域與控制尺寸共用鍵盤焦點框", async ({ page, 
         if (target.menu) await page.keyboard.press("Enter");
       }
       assert.equal(reached.header, width === 1440 ? 6 : 7);
-      assert.equal(reached.content, 21);
+      assert.equal(reached.content, width === 1440 ? 20 : 19);
       assert.equal(reached.footer, 5);
       assert.equal(reached.surfaces, 4);
       // Tabbing past the final link can move focus out of the document.

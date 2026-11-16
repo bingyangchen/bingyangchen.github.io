@@ -148,12 +148,18 @@ test("SITE-R7.10 初始圖片資源預算與 512 px 前後的載入", async ({
       const portraits = await page
         .locator("#home button img")
         .evaluateAll((images: HTMLImageElement[]) =>
-          images.map((image) => image.currentSrc),
+          images.map((image) => ({
+            source: image.currentSrc,
+            width: image.getBoundingClientRect().width,
+          })),
         );
       assert.equal(portraits.length, 2);
       assert.ok(
-        portraits.every((source) => source.includes(`-${160 * deviceScaleFactor}-`)),
-        portraits.join("\n"),
+        portraits.every(({ source, width }) => {
+          const sourceWidth = Number(source.match(/-(160|320|480)-/)?.[1]);
+          return sourceWidth >= Math.min(width * deviceScaleFactor, 480);
+        }),
+        JSON.stringify(portraits),
       );
       await page
         .locator("#projects")

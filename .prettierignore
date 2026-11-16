@@ -1,6 +1,7 @@
 .agents/
 .claude/
 .codex/
+.impeccable/
 build/
 coverage/
 docs/plans/archive/

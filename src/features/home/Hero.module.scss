@@ -4,378 +4,239 @@
 .main {
   position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  padding: calc(_.$header-height + env(safe-area-inset-top, 0px) + _.$space-7)
-    _.$hero-page-padding _.$space-18;
-  box-sizing: border-box;
+  min-height: 100svh;
+  padding: calc(_.$header-height + env(safe-area-inset-top, 0px) + _.$space-12)
+    _.$space-6 _.$space-22;
   overflow: hidden;
   isolation: isolate;
+  background: _.$surface-alternate;
 
   & > .home_atmosphere {
     position: absolute;
-    inset: -20%;
-    z-index: 0;
+    inset: 0;
+    z-index: -1;
     pointer-events: none;
-    background:
-      radial-gradient(
-        ellipse 55% 45% at 20% 30%,
-        rgba(_.$brand-accent, 0.09),
-        transparent 55%
-      ),
-      radial-gradient(
-        ellipse 50% 40% at 85% 70%,
-        rgba(_.$brand-accent, 0.06),
-        transparent 50%
-      ),
-      linear-gradient(165deg, _.$neutral-50 0%, #fafaf8 45%, _.$neutral-50 100%);
-    background-size:
-      120% 120%,
-      120% 120%,
-      100% 100%;
+    background: radial-gradient(
+      ellipse at 24% 32%,
+      rgba(_.$brand-accent, 0.07),
+      transparent 60%
+    );
   }
-  & > .business_card {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    overflow: hidden;
-    border-radius: _.$radius-card;
-    border: 1px solid rgba(_.$neutral-0, 0.5);
-    background-color: rgba(_.$neutral-0, 0.88);
-    box-shadow:
-      0 20px 40px rgba(_.$neutral-1000, 0.06),
-      0 1px 3px rgba(_.$neutral-1000, 0.03);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    width: min(100%, _.$hero-card-width-portrait);
-    padding: _.$space-7;
-    @media (min-width: _.$medium) {
-      width: min(100%, _.$hero-card-width-landscape);
-      min-height: min(
-        calc((100vw - 2 * _.$hero-page-padding) * 4 / 7),
-        calc(_.$hero-card-width-landscape * 4 / 7)
-      );
-      padding: 44px _.$space-12;
-    }
-  }
-  .business_card_inner {
+  & > .hero_content {
     display: grid;
-    width: 100%;
-    flex: 1;
-    justify-items: center;
-    row-gap: 22px;
-    column-gap: 52px;
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-rows: auto auto auto auto auto auto;
-    @media (min-width: _.$medium) {
-      grid-template-columns: minmax(0, 38%) minmax(0, 1fr);
-      grid-template-rows: minmax(min-content, 1fr);
-      align-items: stretch;
-      justify-items: stretch;
+    grid-template-columns: _.$hero-portrait-size-large minmax(0, 1fr);
+    gap: _.$space-12 _.$space-18;
+    align-items: center;
+    width: min(100%, _.$hero-content-width);
+    padding: _.$space-8 0;
+
+    & > .portrait {
+      align-self: start;
+      width: max-content;
+      margin-top: _.$space-2;
     }
-  }
-  .sheet_left,
-  .sheet_right {
-    display: contents;
-    @media (min-width: _.$medium) {
+    & > .introduction {
+      min-width: 0;
+
+      .name {
+        margin: 0;
+        font-family: _.$font-family-heading;
+        font-size: 3.25rem;
+        line-height: 1.12;
+        letter-spacing: 0.01em;
+        color: _.$text-primary;
+        text-wrap: balance;
+        overflow-wrap: anywhere;
+      }
+      .role {
+        display: flex;
+        align-items: center;
+        gap: _.$space-2;
+        margin-top: _.$space-3;
+        font-size: _.$font-size-label;
+        line-height: 1.6;
+        color: _.$text-secondary;
+
+        img {
+          flex-shrink: 0;
+        }
+        span {
+          letter-spacing: normal;
+        }
+      }
+      .greeting {
+        margin: _.$space-7 0 0;
+        color: _.$text-body;
+        font-size: 1.1875rem;
+        line-height: 1.85;
+        letter-spacing: 0.025em;
+        white-space: pre-line;
+        overflow-wrap: break-word;
+      }
+      .actions {
+        @include controls.unselectable;
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: _.$space-4 _.$space-7;
+        margin-top: _.$space-8;
+
+        .resume_download {
+          min-width: 0;
+          max-width: 100%;
+          min-height: _.$control-size-comfortable;
+          padding: _.$space-3 _.$space-6;
+          font-size: _.$base-font-size;
+          font-weight: 600;
+          letter-spacing: normal;
+          white-space: nowrap;
+        }
+        .project_link {
+          @include controls.centered-target(inline-flex);
+          color: _.$action-foreground;
+          font-size: _.$font-size-body-small;
+          letter-spacing: normal;
+          text-decoration: underline;
+          text-decoration-color: rgba(_.$action-foreground, 0.4);
+          text-underline-offset: _.$link-underline-offset;
+
+          @media (hover: hover) {
+            &:hover {
+              text-decoration-color: currentColor;
+            }
+          }
+        }
+      }
+      .education_link {
+        display: inline-flex;
+        align-items: center;
+        gap: _.$space-2;
+        min-height: _.$control-size-minimum;
+        max-width: 100%;
+        margin-top: _.$space-5;
+        color: _.$text-muted;
+        font-size: _.$font-size-label;
+
+        svg {
+          flex-shrink: 0;
+        }
+        span {
+          letter-spacing: normal;
+        }
+        @media (hover: hover) {
+          &:hover {
+            color: _.$action-foreground;
+            text-decoration: underline;
+            text-underline-offset: _.$link-underline-offset;
+          }
+        }
+      }
+    }
+    & > .contact_row {
+      grid-column: 1 / -1;
       display: flex;
-      flex-direction: column;
-    }
-  }
-  .sheet_left {
-    @media (min-width: _.$medium) {
-      grid-column: 1;
-      grid-row: 1;
       align-items: center;
-      gap: _.$space-4;
-    }
-  }
-  .greeting_card {
-    width: 100%;
-    max-width: 280px;
-    margin: 0 auto;
-    padding: 0;
-    box-sizing: border-box;
-    text-align: center;
-    grid-column: 1;
-    grid-row: 4;
-
-    @media (min-width: _.$medium) {
-      grid-column: unset;
-      grid-row: unset;
-      margin: 0;
-      flex: 1 1 0;
-      max-width: 280px;
-    }
-    & > .greeting {
-      margin: 0 auto;
-      padding: 0;
-      width: 100%;
-      max-width: 280px;
-      min-height: 2.6em;
-      font-family: _.$font-family-body;
-      font-size: clamp(0.88 * _.$base-font-size, 2vw, 1.05 * _.$base-font-size);
-      line-height: 1.65;
-      color: _.$text-secondary;
-      text-align: center;
-      white-space: pre-wrap;
-      word-wrap: break-word;
-      overflow-wrap: break-word;
-      @media (max-width: _.$medium - 1px) {
-        font-size: 0.92 * _.$base-font-size;
-        line-height: 1.7;
-      }
-    }
-  }
-  .sheet_right {
-    @media (min-width: _.$medium) {
-      grid-column: 2;
-      grid-row: 1;
-      align-items: flex-start;
-      gap: 26px;
-      padding-top: _.$space-1;
-      width: 100%;
-    }
-  }
-  .name {
-    margin: 0;
-    flex-shrink: 0;
-    width: 100%;
-    text-align: center;
-    grid-column: 1;
-    grid-row: 2;
-    font-family: _.$font-family-heading;
-    font-weight: bold;
-    font-size: clamp(1.75 * _.$base-font-size, 4vw, 2.65 * _.$base-font-size);
-    letter-spacing: 0.02em;
-    color: _.$text-primary;
-    @media (min-width: _.$medium) {
-      grid-column: unset;
-      grid-row: unset;
-      text-align: left;
-    }
-  }
-  .role_badge_row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: _.$space-2;
-    width: 100%;
-    flex-shrink: 0;
-    grid-column: 1;
-    grid-row: 3;
-    @media (min-width: _.$medium) {
-      grid-column: unset;
-      grid-row: unset;
-      flex-direction: row;
       flex-wrap: wrap;
-      align-items: center;
-      justify-content: flex-start;
-      gap: _.$space-4;
-    }
-  }
-  .role_badge {
-    display: inline-flex;
-    flex-direction: row;
-    align-items: center;
-    gap: _.$space-2;
-    max-width: 100%;
-    min-height: _.$control-size-minimum;
-    padding: 7px _.$space-3;
-    border-radius: _.$radius-pill;
-    border: 1px solid rgba(_.$neutral-1000, 0.06);
-    background-color: _.$surface-accent-subtle;
-    box-sizing: border-box;
-    font-family: _.$font-family-body;
-    font-size: _.$font-size-label-small;
-    font-weight: 500;
-    line-height: 1.35;
-    color: _.$text-body;
-    text-decoration: none;
-    transition:
-      background-color _.$motion-duration-feedback ease,
-      border-color _.$motion-duration-feedback ease;
-    @media (min-width: _.$medium) {
-      padding: _.$space-2 14px;
-      font-size: _.$font-size-label;
-    }
-    @media (hover: hover) {
-      &:hover {
-        background-color: rgba(_.$brand-accent, 0.2);
-        border-color: rgba(_.$brand-accent, 0.28);
-      }
-    }
-  }
-  .role_badge_company_logo {
-    flex-shrink: 0;
-    width: 16px;
-    height: 16px;
-    object-fit: contain;
-    @media (min-width: _.$medium) {
-      width: 18px;
-      height: 18px;
-    }
-  }
-  .role_badge_label {
-    display: inline;
-  }
-  .contact_row {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 18px _.$space-6;
-    width: 100%;
-    flex-shrink: 0;
-    grid-column: 1;
-    grid-row: 5;
-    @media (min-width: _.$medium) {
-      grid-column: unset;
-      grid-row: unset;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      gap: _.$space-5 _.$space-7;
-    }
-  }
-  .email_link {
-    display: inline-flex;
-    align-items: center;
-    gap: _.$space-2;
-    max-width: 100%;
-    font-family: _.$font-family-body;
-    font-size: 0.9 * _.$base-font-size;
-    color: _.$text-body;
-    word-break: break-all;
+      justify-content: space-between;
+      gap: _.$space-2;
+      padding-top: _.$space-4;
+      border-top: 1px solid _.$border-default;
 
-    & span {
-      cursor: text;
-      -webkit-user-select: all;
-      user-select: all;
-    }
-  }
-  .social_icons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: _.$space-3;
-  }
-  .social_icon_link {
-    @include controls.centered-target(flex);
-    color: _.$text-body;
-    transition:
-      color _.$motion-duration-feedback ease,
-      transform _.$motion-duration-feedback ease;
-    @media (hover: hover) {
-      &:hover {
-        color: _.$action-foreground;
-        @media (prefers-reduced-motion: no-preference) {
-          transform: translateY(-2px);
+      .email_link {
+        display: inline-flex;
+        align-items: center;
+        gap: _.$space-2;
+        min-width: 0;
+        max-width: 100%;
+        min-height: _.$control-size-minimum;
+        font-size: _.$font-size-label;
+        color: _.$text-secondary;
+
+        svg {
+          flex-shrink: 0;
+        }
+        span {
+          letter-spacing: normal;
+          overflow-wrap: anywhere;
+          user-select: all;
+          -webkit-user-select: all;
+        }
+      }
+      .social_icons {
+        display: flex;
+        align-items: center;
+        gap: _.$space-1;
+
+        .social_icon_link {
+          @include controls.centered-target(inline-flex);
+          color: _.$text-secondary;
+          @media (hover: hover) {
+            &:hover {
+              color: _.$action-foreground;
+            }
+          }
         }
       }
     }
   }
-  .cta_toolbar {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: _.$space-5;
-    width: 100%;
-    margin-top: 2px;
-    flex-shrink: 0;
-    grid-column: 1;
-    grid-row: 6;
-    @media (min-width: _.$medium) {
-      grid-column: unset;
-      grid-row: unset;
-      flex-direction: row;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 18px 22px;
-    }
-  }
-  .resume_download {
+  & > .scroll_down_hint {
+    @include controls.centered-target(inline-flex);
     @include controls.unselectable;
-    font-size: _.$base-font-size;
-    font-weight: 600;
-    letter-spacing: normal;
-    min-width: 0;
-    min-height: _.$control-size-minimum;
-    width: 100%;
-    @media (min-width: _.$medium) {
-      width: auto;
-    }
-  }
-  .nav_links {
-    @include controls.unselectable;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: _.$space-3;
-    width: 100%;
-    @media (min-width: _.$medium) {
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
-      width: auto;
-      gap: _.$space-3;
-    }
-  }
-  .nav_ghost {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    position: absolute;
+    bottom: _.$space-5;
+    left: 50%;
+    translate: -50% 0;
     gap: _.$space-2;
-    padding: 14px 6px;
-    min-width: 0;
-    min-height: _.$control-size-minimum;
-    border-radius: 14px;
-    border: 1px solid _.$border-default;
-    background-color: rgba(_.$neutral-0, 0.45);
-    font-family: _.$font-family-body;
-    font-size: 0.85 * _.$base-font-size;
-    color: _.$text-body;
-    text-decoration: none;
-    transition:
-      border-color _.$motion-duration-feedback ease,
-      background-color _.$motion-duration-feedback ease,
-      color _.$motion-duration-feedback ease;
-    @media (min-width: _.$medium) {
-      flex-direction: row;
-      padding: 10px 18px;
-      border-radius: _.$radius-pill;
-      gap: 10px;
-      font-size: 0.95 * _.$base-font-size;
-    }
-    @media (hover: hover) {
-      &:hover {
-        border-color: rgba(_.$brand-accent, 0.45);
-        color: _.$action-foreground;
-        background-color: rgba(_.$brand-accent, 0.08);
+    color: _.$text-muted;
+    font-size: _.$font-size-label-small;
+    letter-spacing: normal;
+    white-space: nowrap;
+  }
+
+  @media (max-width: _.$large - 1px) {
+    & > .hero_content {
+      grid-template-columns: _.$hero-portrait-size-medium minmax(0, 1fr);
+      column-gap: _.$space-10;
+      & > .introduction .name {
+        font-size: 2.5rem;
       }
     }
   }
-  & > .scroll_down_hint {
-    @include controls.unselectable;
-    position: absolute;
-    bottom: 24px;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    color: _.$text-muted;
-    font-family: _.$font-family-body;
-    font-size: 0.85 * _.$base-font-size;
-    & > .scroll_down_chevron {
-      display: inline-flex;
+  @media (max-width: _.$medium - 1px) {
+    align-items: flex-start;
+    min-height: 0;
+    padding: calc(_.$header-height + env(safe-area-inset-top, 0px) + _.$space-7)
+      _.$hero-page-padding _.$space-6;
+
+    & > .hero_content {
+      grid-template-columns: minmax(0, 1fr);
+      gap: _.$space-6;
+      padding: _.$space-2 _.$space-2 0;
+
+      & > .portrait {
+        margin-top: 0;
+      }
+      & > .introduction {
+        .greeting {
+          margin-top: _.$space-6;
+          font-size: 1.0625rem;
+        }
+        .actions {
+          margin-top: _.$space-6;
+          gap: _.$space-2 _.$space-5;
+        }
+        .education_link {
+          margin-top: _.$space-4;
+        }
+      }
+      & > .contact_row {
+        padding-top: _.$space-3;
+      }
+    }
+    & > .scroll_down_hint {
+      display: none;
     }
   }
 }

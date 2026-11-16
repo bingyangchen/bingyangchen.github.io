@@ -105,7 +105,7 @@ test("SITE-R10.6 首頁下載焦點與預覽連結", async ({ page, server }) =>
       await page.reload({ waitUntil: "networkidle" });
       await page.waitForSelector("#home a[download]");
       await page
-        .locator('#home a[aria-label="Cake"]')
+        .locator('#home button[aria-haspopup="dialog"]')
         .evaluate((element: HTMLAnchorElement) => element.focus());
       await page.keyboard.press("Tab");
       assert.equal(
@@ -127,9 +127,9 @@ test("SITE-R10.6 首頁下載焦點與預覽連結", async ({ page, server }) =>
       await page.keyboard.up("Shift");
       assert.equal(
         await page.evaluate(() =>
-          (document.activeElement as HTMLElement).getAttribute("aria-label"),
+          (document.activeElement as HTMLElement).getAttribute("aria-haspopup"),
         ),
-        "Cake",
+        "dialog",
       );
       assert.equal(await page.$(".resume-print-area"), null);
       await enterPreview(page);

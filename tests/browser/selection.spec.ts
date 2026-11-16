@@ -89,7 +89,7 @@ async function assertSelectionStyles(
         "button",
         "button span",
         "header nav a",
-        '#home [class*="nav_ghost"] span',
+        '#home a[href="#projects"]',
         '#projects [role="tabpanel"] a',
         '#blog [class*="archiveLink"] span',
         '#blog [class*="featuredAction"] span',

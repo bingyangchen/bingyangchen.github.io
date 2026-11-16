@@ -65,7 +65,7 @@ test("SITE-R2.1 SITE-R2.2 SITE-R2.8 Document 取消 anchor 後保留選單與控
 test("SITE-R2.1 SITE-R2.2 導覽與自然捲動", async ({ page, server }) => {
   await openHome(page, server);
   const initialLength = await page.evaluate(() => window.history.length);
-  await page.locator('[class*="nav_links"] a[href="#about"]').click();
+  await page.locator('#home a[href="#about"]').click();
   await page.waitForFunction(
     () =>
       Math.abs(

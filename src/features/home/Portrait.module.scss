@@ -1,15 +1,24 @@
+@use "sass:string";
 @use "../../styles/tokens" as _;
+
+:export {
+  imageSizes: string.unquote(
+    "(min-width: #{_.$large}) #{_.$hero-portrait-size-large}, (min-width: #{_.$medium}) #{_.$hero-portrait-size-medium}, #{_.$hero-portrait-size-compact}"
+  );
+}
 
 .avatar_container {
   position: relative;
-  width: 160px;
-  height: 160px;
-  grid-column: 1;
-  grid-row: 1;
+  width: _.$hero-portrait-size-compact;
+  height: _.$hero-portrait-size-compact;
   @media (min-width: _.$medium) {
-    grid-column: unset;
-    grid-row: unset;
+    width: _.$hero-portrait-size-medium;
+    height: _.$hero-portrait-size-medium;
     flex-shrink: 0;
+  }
+  @media (min-width: _.$large) {
+    width: _.$hero-portrait-size-large;
+    height: _.$hero-portrait-size-large;
   }
   & > .avatar_button {
     position: relative;
@@ -59,8 +68,8 @@
   }
   & > .qr_avatar_fab {
     position: absolute;
-    right: 2px;
-    bottom: 2px;
+    right: -(_.$space-2);
+    bottom: -(_.$space-2);
     z-index: 4;
     color: _.$text-body;
     background-color: rgba(_.$neutral-0, 0.82);

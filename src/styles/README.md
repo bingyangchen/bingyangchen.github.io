@@ -39,7 +39,7 @@
 
 間距刻度、breakpoints、字級與共用 motion 時間由小到大排列，不同元件的時間留在各自的設定群組。Palette 使用 `$neutral-*` 與 `$olive-*`，數字越大代表顏色越深，只表示明暗順序，不代表色值的計算公式。`$black-translucent` 保留半透明黑色值；文字、背景與操作則透過 `$text-*`、`$surface-*`、`$action-*` 指定用途。
 
-語意 token 依文字、品牌與操作、背景與邊框、字型、間距、控制、圓角、motion 排列。名稱以用途類別或所屬元件開頭，再寫屬性，最後寫角色、狀態或尺寸變體，例如 `$font-family-body`、`$control-opacity-pressed`、`$hero-card-width-portrait`。固定的 CSS 屬性名稱保留原順序，例如 `line-height` 與 `z-index`；既有 `$small`、`$medium`、`$large`、`$extra-large` 保留為 breakpoint 名稱。
+語意 token 依文字、品牌與操作、背景與邊框、字型、間距、控制、圓角、motion 排列。名稱以用途類別或所屬元件開頭，再寫屬性，最後寫角色、狀態或尺寸變體，例如 `$font-family-body`、`$control-opacity-pressed`、`$hero-portrait-size-compact`。固定的 CSS 屬性名稱保留原順序，例如 `line-height` 與 `z-index`；既有 `$small`、`$medium`、`$large`、`$extra-large` 保留為 breakpoint 名稱。
 
 新增 token 時依以下用途選擇分組。
 
@@ -118,6 +118,8 @@ Scroll motion 的距離 token 使用 `px`，Hero 傾斜使用 `deg`，進度、�
 ```
 
 [`RoundButton`](../components/RoundButton/RoundButton.tsx) 用於執行操作的 icon button，`hintText` 同時提供 accessible name 與 tooltip 文字。[`Tooltip`](../components/Tooltip/Tooltip.tsx) 封裝 Radix Tooltip，讓 Escape 關閉、跨過間距的 hover 與視窗邊緣定位由同一套互動處理，控制本身仍須提供 accessible name。提示立即顯示，優先放在入口下方，必要時平移或翻轉位置；提示以 portal 放在 body，開啟 QR code dialog 時收起入口提示。
+
+Portrait 從同一組頭像尺寸 token 產生 CSS 尺寸與圖片的 `sizes`，讓 128、160 與 240 px 的顯示尺寸各自選取足夠解析度的素材，避免版面放大後仍下載較小的圖片。
 
 Tooltip 另外記錄鍵盤聚焦入口時的開啟狀態；入口仍有焦點時，即使 Radix 因游標離開或捲動而關閉提示，仍會維持提示顯示。按 Escape、啟用控制、點擊外部或移開焦點時，Tooltip 會清除此狀態。
 

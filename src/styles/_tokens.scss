@@ -109,9 +109,11 @@ $tooltip-z-index: 21;
 $header-height: 56px;
 $header-motion-duration: 180ms;
 
-$hero-card-width-portrait: 420px;
-$hero-card-width-landscape: 900px;
+$hero-content-width: 900px;
 $hero-page-padding: $space-4;
+$hero-portrait-size-compact: 128px;
+$hero-portrait-size-medium: 160px;
+$hero-portrait-size-large: 240px;
 
 $qr-dialog-motion-duration: 380ms;
 

@@ -1,13 +1,13 @@
-import { profile } from "../../data/profile";
 import { workExperienceIdToFacts } from "../../data/career";
-import { formatWorkExperienceFacts } from "../workExperience";
+import { profile } from "../../data/profile";
 import type { TranslationDictionary } from "../types";
+import { formatWorkExperienceFacts } from "../workExperience";
 
 export const traditionalChineseDictionary: TranslationDictionary = {
   name: profile.name["zh-TW"],
   home: {
     greeting:
-      "以前是個靠寫 code 維生的打工仔，現在是個使喚 AI 幫我寫 code 的打工仔。平常喜歡研究魔法史，還有一點經濟學！",
+      "以前是個靠寫 code 維生的打工仔，現在是個使喚 AI 寫 code 的打工仔。平常喜歡研究魔法史，還有一點經濟學！",
     role: `${profile.education.shortSchoolNameZhTw} ${profile.education.degree["zh-TW"]}`,
     flipAvatar: "翻轉頭像",
     downloadResume: "下載履歷",

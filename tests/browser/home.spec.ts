@@ -1,10 +1,119 @@
-import { openHome } from "../helpers/site";
 import assert from "node:assert/strict";
 import { test } from "../helpers/fixtures";
+import { openHome } from "../helpers/site";
+import { settleMotion } from "../helpers/motion";
 
 const DETAIL = '#projects [role="tabpanel"]:not([inert])';
 
 const TABS = '#projects [role="tab"]';
+
+test("SITE-R5.6 Hero 頁內操作與資訊層級", async ({ page, server }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openHome(page, server);
+  for (const language of ["en", "zh-TW"]) {
+    await page.evaluate(
+      (language) => localStorage.setItem("preferred_language", language),
+      language,
+    );
+    await page.reload({ waitUntil: "networkidle" });
+    for (const width of [390, 1440]) {
+      await page.setViewportSize({ width, height: 900 });
+      const project = page.locator('#home a[href="#projects"]');
+      assert.equal(await project.getAttribute("target"), null);
+      assert.equal(await project.locator("svg").count(), 0);
+      const order = await page
+        .locator('#home [data-scroll-motion="hero"]')
+        .evaluate((group) => {
+          const resume = group.querySelector("a[download]")!;
+          const education = group.querySelector(
+            'a[href="https://econo.nccu.edu.tw/"]',
+          )!;
+          const github = group.querySelector('a[aria-label="GitHub"]')!;
+          return (
+            Boolean(
+              resume.compareDocumentPosition(education) &
+              Node.DOCUMENT_POSITION_FOLLOWING,
+            ) &&
+            Boolean(
+              education.compareDocumentPosition(github) &
+              Node.DOCUMENT_POSITION_FOLLOWING,
+            )
+          );
+        });
+      assert.ok(order);
+      const role = page.locator("#home h1 + div");
+      const before = await role.evaluate((element) => ({
+        background: getComputedStyle(element).backgroundColor,
+        border: getComputedStyle(element).borderColor,
+      }));
+      await role.hover();
+      assert.deepEqual(
+        await role.evaluate((element) => ({
+          background: getComputedStyle(element).backgroundColor,
+          border: getComputedStyle(element).borderColor,
+        })),
+        before,
+      );
+      assert.equal(await role.locator("a,button").count(), 0);
+    }
+  }
+});
+
+test.describe("Compact Hero continuity", () => {
+  test.use({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+
+  test("SITE-R12.10 Hero 以清楚的 About 標題接續閱讀", async ({ page, server }) => {
+    await openHome(page, server);
+    for (const preference of ["no-preference", "reduce"] as const) {
+      await page.emulateMedia({ reducedMotion: preference });
+      for (const language of ["en", "zh-TW"]) {
+        await page.evaluate(
+          (language) => localStorage.setItem("preferred_language", language),
+          language,
+        );
+        await page.reload({ waitUntil: "networkidle" });
+        await settleMotion(page);
+        const continuation = await page.locator("#about h2").evaluate((heading) => {
+          const bounds = heading.getBoundingClientRect();
+          const style = getComputedStyle(heading);
+          return {
+            top: bounds.top,
+            bottom: bounds.bottom,
+            opacity: style.opacity,
+            transform: style.transform,
+            height: innerHeight,
+            heroHeight: document.getElementById("home")!.getBoundingClientRect().height,
+            overflow: document.documentElement.scrollWidth > innerWidth,
+          };
+        });
+        assert.ok(
+          continuation.top > 56 && continuation.bottom <= continuation.height,
+          JSON.stringify({ language, preference, continuation }),
+        );
+        assert.equal(continuation.opacity, "1");
+        assert.equal(continuation.transform, "none");
+        assert.ok(continuation.heroHeight < continuation.height);
+        assert.equal(continuation.overflow, false);
+        assert.equal(await page.locator('#home a[href="#about"]').isVisible(), false);
+        await page.locator("html").evaluate((element) => {
+          element.style.fontSize = "200%";
+        });
+        await settleMotion(page);
+        const enlarged = await page.locator("#home").evaluate((hero) => ({
+          fits: hero.scrollWidth === hero.clientWidth,
+          controls: [...hero.querySelectorAll<HTMLElement>("a,button,input")]
+            .filter((element) => element.getClientRects().length)
+            .map((element) => {
+              const bounds = element.getBoundingClientRect();
+              return bounds.left >= 0 && bounds.right <= innerWidth;
+            }),
+        }));
+        assert.ok(enlarged.fits && enlarged.controls.every(Boolean));
+        assert.ok(await page.locator("#home a[download]").isVisible());
+      }
+    }
+  });
+});
 
 test("SITE-R1.1 SITE-R1.2 SITE-R7.1 公開首頁與初始作品", async ({ page, server }) => {
   await openHome(page, server);
@@ -189,18 +298,15 @@ test("SITE-R5.2 問候完整顯示", async ({ page, server }) => {
   test.setTimeout(30000);
   await openHome(page, server);
   await page.waitForFunction(
-    () =>
-      !document.querySelector<HTMLElement>(
-        '[class*="greeting_card"] [class*="cursor"]',
-      )!,
+    () => !document.querySelector<HTMLElement>('#home p [class*="cursor"]')!,
     undefined,
     { timeout: 25000 },
   );
   assert.equal(
     await page
-      .locator('[class*="greeting_card"]')
+      .locator("#home p")
       .evaluate((element: HTMLElement) => element.textContent!),
-    "Software engineer focused on web apps that stay maintainable after launch.",
+    "I write code for a living. AI does some of the typing. Off the clock, I’m into the history of magic, with a little economics on the side.",
   );
 });
 

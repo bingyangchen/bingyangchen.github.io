@@ -31,13 +31,14 @@ test("SITE-R20.1 雙語正文、品牌按鈕及 hover 操作圖示的實際對�
         '#about [class*="company_name"]',
         '#about [class*="skills_inner"] > div',
         '#about [class*="degree_list"] a',
-        '#home [class*="scroll_down_hint"]',
         '#home [class*="email_link"]',
       ])
         await assertColorContrast(page, selector);
+      if (width >= 720)
+        await assertColorContrast(page, '#home [class*="scroll_down_hint"]');
       for (const selector of [
         "#home a[download]",
-        '#home a[class*="nav_ghost"]',
+        '#home a[href="#projects"]',
         TABS,
         `${DETAIL} a:not([href^="https://github.com/"])`,
         `${DETAIL} a[href^="https://github.com/"]`,

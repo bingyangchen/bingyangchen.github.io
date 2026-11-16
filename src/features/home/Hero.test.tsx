@@ -31,7 +31,9 @@ test("SITE-R13.1 完整問候", () => {
     </>,
   );
   expect(
-    within(view.container).getByText(englishDictionary.home.greeting),
+    within(view.container).getByText(englishDictionary.home.greeting, {
+      normalizer: (text) => text,
+    }),
   ).toBeInTheDocument();
   fireEvent.click(
     within(view.container).getByRole("button", {
@@ -39,10 +41,14 @@ test("SITE-R13.1 完整問候", () => {
     }),
   );
   expect(
-    within(view.container).getByText(traditionalChineseDictionary.home.greeting),
+    within(view.container).getByText(traditionalChineseDictionary.home.greeting, {
+      normalizer: (text) => text,
+    }),
   ).toBeInTheDocument();
   expect(
-    within(view.container).queryByText(englishDictionary.home.greeting),
+    within(view.container).queryByText(englishDictionary.home.greeting, {
+      normalizer: (text) => text,
+    }),
   ).not.toBeInTheDocument();
   expect(within(view.container).queryByText("|")).not.toBeInTheDocument();
   view.unmount();
@@ -59,4 +65,23 @@ test.each([
   expect(link).toHaveAttribute("href", "/resume.pdf");
   expect(link).toHaveAttribute("download", "Bing-Yang Chen - 陳秉洋.pdf");
   expect(within(container).queryByText("Career Summary")).not.toBeInTheDocument();
+});
+
+test("Hero 專案入口保持頁內導覽，主要行動先於學歷與聯絡資訊", () => {
+  const { container } = renderWithLanguage(<Hero />);
+  const content = within(container);
+  const project = content.getByRole("link", { name: "Projects" });
+  const resume = content.getByRole("link", { name: "Download Resume" });
+  const education = content.getByRole("link", { name: englishDictionary.home.role });
+  const contact = content.getByRole("link", { name: "GitHub" });
+  expect(project).toHaveAttribute("href", "#projects");
+  expect(project).not.toHaveAttribute("target");
+  expect(project.querySelector("svg")).toBeNull();
+  expect(
+    resume.compareDocumentPosition(education) & Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy();
+  expect(
+    education.compareDocumentPosition(contact) & Node.DOCUMENT_POSITION_FOLLOWING,
+  ).toBeTruthy();
+  expect(content.queryByRole("link", { name: "Blog" })).not.toBeInTheDocument();
 });

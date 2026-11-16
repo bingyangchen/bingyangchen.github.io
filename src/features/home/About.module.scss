@@ -3,11 +3,19 @@
 .main {
   display: flow-root;
   padding-bottom: 50px;
-  .title {
+  & > h2.title {
     margin: calc(_.$header-height + 30px) 0 _.$space-5;
     font-family: _.$font-family-heading;
     text-align: center;
     font-size: 2.8 * _.$base-font-size;
+    @media (max-width: _.$medium - 1px) {
+      margin-top: _.$space-6;
+
+      &[data-scroll-motion] {
+        transform: none;
+        opacity: 1;
+      }
+    }
     @media screen and (max-width: _.$small) {
       font-size: 2 * _.$base-font-size;
     }

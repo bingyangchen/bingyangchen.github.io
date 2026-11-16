@@ -66,7 +66,7 @@ export default function Portrait() {
             className={`${styles.avatar} ${styles.front}`}
             src={avatarFrontSmall}
             srcSet={`${avatarFrontSmall} 160w, ${avatarFrontMedium} 320w, ${avatarFrontLarge} 480w`}
-            sizes="160px"
+            sizes={styles.imageSizes}
             width={160}
             height={160}
             fetchPriority="high"
@@ -76,7 +76,7 @@ export default function Portrait() {
             className={`${styles.avatar} ${styles.back}`}
             src={avatarBackSmall}
             srcSet={`${avatarBackSmall} 160w, ${avatarBackMedium} 320w, ${avatarBackLarge} 480w`}
-            sizes="160px"
+            sizes={styles.imageSizes}
             width={160}
             height={160}
             alt={`${profile.name["zh-TW"]} (${profile.name.en})`}

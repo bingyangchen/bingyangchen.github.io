@@ -255,6 +255,8 @@ test("SITE-R12.1 SITE-R12.7 雙語短螢幕、橫向與分界的 Hero 完整可�
         [719, 568],
         [720, 568],
         [844, 390],
+        [1023, 768],
+        [1024, 768],
         [1440, 900],
       ]) {
         await page.setViewportSize({ width, height });
@@ -266,25 +268,21 @@ test("SITE-R12.1 SITE-R12.7 雙語短螢幕、橫向與分界的 Hero 完整可�
         const label = `${language} ${preference} ${width}x${height}`;
         const metrics = await page
           .locator('#home [data-scroll-motion="hero"]')
-          .evaluate((card: HTMLElement) => {
-            const bounds = card.getBoundingClientRect();
-            const inner = card.firstElementChild!;
-            const greeting = card.querySelector<HTMLElement>(
-              '[class*="greeting_card"]',
-            )!;
-            const greetingStyle = getComputedStyle(greeting.firstElementChild!);
+          .evaluate((group: HTMLElement) => {
+            const bounds = group.getBoundingClientRect();
+            const greeting = group.querySelector<HTMLElement>("p")!;
+            const greetingStyle = getComputedStyle(greeting);
             return {
               horizontal: document.documentElement.scrollWidth > window.innerWidth,
               clipped:
-                card.scrollHeight > card.clientHeight + 1 ||
-                card.scrollWidth > card.clientWidth + 1 ||
-                inner.scrollWidth > inner.clientWidth + 1,
+                group.scrollHeight > group.clientHeight + 1 ||
+                group.scrollWidth > group.clientWidth + 1,
               greetingScroll: greeting.scrollHeight > greeting.clientHeight + 1,
               greetingFontSize: parseFloat(greetingStyle.fontSize),
               greetingLineHeight: parseFloat(greetingStyle.lineHeight),
-              columns: getComputedStyle(inner).gridTemplateColumns.split(" ").length,
+              columns: getComputedStyle(group).gridTemplateColumns.split(" ").length,
               actions: Array.from(
-                card.querySelectorAll<HTMLAnchorElement>("a,button"),
+                group.querySelectorAll<HTMLAnchorElement>("a,button"),
                 (element) => {
                   const rect = element.getBoundingClientRect();
                   return {
@@ -304,8 +302,8 @@ test("SITE-R12.1 SITE-R12.7 雙語短螢幕、橫向與分界的 Hero 完整可�
         assert.equal(metrics.clipped, false, label);
         assert.equal(metrics.greetingScroll, false, label);
         if (width === 719 || width === 720) {
-          const expectedFontSize = width === 719 ? 14.72 : 14.4;
-          const expectedLineHeight = width === 719 ? 25.024 : 23.76;
+          const expectedFontSize = width === 719 ? 17 : 19;
+          const expectedLineHeight = expectedFontSize * 1.85;
           assert.ok(
             Math.abs(metrics.greetingFontSize - expectedFontSize) < 0.01,
             label,
@@ -316,7 +314,7 @@ test("SITE-R12.1 SITE-R12.7 雙語短螢幕、橫向與分界的 Hero 完整可�
           );
         }
         assert.equal(metrics.columns, width < 720 ? 1 : 2, label);
-        assert.equal(metrics.actions.length, 10, label);
+        assert.equal(metrics.actions.length, 8, label);
         assert.ok(
           metrics.actions.every(
             (action) => action.contained && action.width >= 44 && action.height >= 44,

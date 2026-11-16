@@ -6,13 +6,14 @@ The [local design system](../src/styles/README.md) documents the shared tokens, 
 
 ## Purpose and Audience
 
-[Bing-Yang Chen's personal site](https://byc1999.com/) presents professional background, selected side projects, and links to GitHub and the [external blog](https://blog.byc1999.com/). Recruiters, peers, and potential collaborators should be able to assess experience and work samples quickly.
+[Bing-Yang Chen's personal site](https://byc1999.com/) introduces the author through professional background, selected side projects, personal interests, and links to GitHub and the [external blog](https://blog.byc1999.com/). Its purpose is to market the author as a person. The audience includes recruiters, peers, potential collaborators, and general visitors arriving through search or shared links.
 
-Keep the site focused on one person's professional story. Long-form writing belongs on the external blog.
+Help visitors quickly understand who the author is and find a reason to learn more. Keep the site focused on one person's identity and work. Long-form writing belongs on the external blog.
 
 ## Main Experience
 
 - `/` is the main scrolling page, organized into Home, About, Projects, and Blog.
+- Hero aims to introduce the author within roughly five seconds and leave the impression that this is an interesting person worth getting to know. The name and current role provide basic identification; the greeting adds personality and invites further exploration.
 - About covers work experience, skills, and education.
 - Projects emphasizes each product's purpose and real interface imagery, with consistent neutral staging.
 - Blog introduces the author's thinking through one featured article and two additional reading selections, with a clear route to the full external publication. Keep long-form reading on GitBook.
@@ -30,6 +31,7 @@ Use the Header to change languages; close the QR code dialog before switching. R
 Language selection remains available when browser storage is blocked. Keep the visitor's choice for the current page without showing a storage warning; on reload, use a readable saved preference or the browser language.
 
 - Experience and education copy should be direct, professional, and specific about scope and outcomes. Distinguish personal projects from production work.
+- Hero copy uses conversational, self-deprecating humor and specific, unexpected interests to invite curiosity. Write each language for its audience, giving it natural phrasing, its own sentence rhythm and humor, and a comfortable degree of personal disclosure while preserving shared facts. The greeting should complement the visible name and role. Keep intriguing details open to discovery rather than explaining every reference or reducing the introduction to a list of traits.
 - Education groups the school name and earned degree above supplementary program study. Show the school name once, keep the program visually secondary, and use consistent degree names across the homepage and resume. School links lead to the department and current program introduction pages.
 - Projects and Blog may use a warmer, open, curious tone while keeping claims concrete.
 - Preserve shared facts across languages while allowing natural phrasing and different levels of detail. Chinese copy should use natural Traditional Chinese wording consistent with the existing site.
@@ -41,11 +43,13 @@ Language selection remains available when browser storage is blocked. Keep the v
 
 Maintain a calm, professional presentation with readable hierarchy and restrained accents.
 
-- **Palette:** Neutral backgrounds and dark text, with olive as an accent. Use a dedicated olive action color with white text for brand buttons, visually coordinated with the portrait. Keep the resume action label at the body UI scale with normal tracking so it stays clear without overpowering the card. Preserve a distinct lighter text color for dates and other supporting information. Choose the lightest neutral gray that maintains at least 4.5:1 contrast on the existing white and light gray surfaces; reserve paler gray for decoration. Use dark olive for text and action icons on light surfaces, including hover states.
+- **Palette:** Neutral backgrounds and dark text, with olive as an accent. Use a dedicated olive action color with white text for brand buttons, visually coordinated with the portrait. Keep the resume action label at the body UI scale with normal tracking so it stays clear without overpowering the introduction. Preserve a distinct lighter text color for dates and other supporting information. Choose the lightest neutral gray that maintains at least 4.5:1 contrast on the existing white and light gray surfaces; reserve paler gray for decoration. Use dark olive for text and action icons on light surfaces, including hover states.
 - **Consistency:** Equivalent roles and surfaces share visual rules. Vary color or treatment when contrast, hierarchy, or layout gives the difference a purpose.
 - **Typography:** Geneva/sans-serif for body and UI text; Georgia/Times/serif for established section titles and subtitles. The Footer pairs a serif contact headline with sans-serif descriptions, addresses, platform links, identity, and copyright. Preserve the existing hierarchy and spacing rhythm elsewhere.
 - **Shared section scale:** Projects and Blog use the same responsive container spacing, section titles, introductory text, metadata, and equivalent external-link sizes. The Footer contact headline shares their responsive title scale, using the dark surface to distinguish the page ending. Preserve each section's content hierarchy.
 - **Layout:** Keep sections distinct and reading widths comfortable. Align the header with the page's centered content bounds while allowing full-width surfaces. Adapt composition to the viewport and the surrounding layout.
+- **Hero:** Use an open composition without a card enclosure. On wider screens, a prominent portrait sits to the left of the name, current role, personal introduction, and primary actions. Compact screens stack the portrait above the identity and introduction. Keep education visually secondary after the actions, with email and social links below a subtle divider. Preserve the existing olive palette, serif name, conversational copy, portrait interactions, and QR code entry. This direction prioritizes personality and an inviting introduction while keeping resume export and project exploration easy to find.
+- **Hero continuity:** On compact screens, let the Hero end with its content and flow into About rather than filling the viewport with blank space. Keep the first About heading clearly visible as a continuation cue, using modest space at the boundary; keep the independent scroll hint on wider screens. The Hero Projects action is an underlined in-page link without an external-link arrow.
 - **Navigation:** Use the existing logo, readable mixed-case labels, and restrained indicators. A softly translucent, blurred header lets the white and gray page backgrounds show through while preserving foreground contrast. Keep separators subtle. Use solid surfaces for the expanded compact menu or when needed for accessibility.
 
 ## Interaction and Motion
@@ -53,7 +57,8 @@ Maintain a calm, professional presentation with readable hierarchy and restraine
 Motion should support reading and navigation, with a clear purpose and respect for reduced-motion preferences.
 
 - Keep section navigation and browser history predictable, and preserve focus continuity.
-- Let the Hero card grow with its content and use page scrolling on short screens. Keep the card still and fully opaque until the bottom of the Hero has entered the viewport, then apply its reversible exit motion.
+- Let the Hero content group grow with its content and use page scrolling on short screens. Keep the group still and fully opaque until the bottom of the Hero has entered the viewport, then apply its reversible exit motion.
+- On compact screens, keep the first About heading static and fully opaque so the next section remains recognizable when it enters the initial viewport. Subsequent About content and wider-screen headings retain the existing scroll motion.
 - Keep navigation, contact actions, and project details usable on smaller screens and with keyboard input. Focus preserves the scroll-driven position, scale, tilt, and opacity, including partially entered or exited content.
 - Keep body text selectable and copyable through native browser interactions, including descriptions inside article links. Keep buttons, navigation, and action labels unselectable.
 - Keep the viewport configured to disable user scaling. The PWA should retain stable interface proportions and predictable touch interactions, with interface sizing controlled by responsive layout rather than accidental whole-page zoom. Content that needs magnification should provide it within that content.
