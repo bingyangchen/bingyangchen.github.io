@@ -1,8 +1,5 @@
 import { workExperienceIdToFacts, type WorkExperienceFacts } from "../data/career";
-import { workExperienceItems } from "../data/workExperience";
-import { englishDictionary } from "./dictionaries/en";
-import { traditionalChineseDictionary } from "./dictionaries/zhtw";
-import { formatWorkExperienceFacts } from "./workExperience";
+import { formatWorkExperienceFacts, formatWorkIdentity } from "./workExperience";
 
 test.each([
   ["swag-2026", "Jan. 2026 – Present", "2026 年 1 月 – 至今"],
@@ -23,8 +20,12 @@ test.each([
   ],
   ["beida-2020", "2020 Spring Semester", "2020 年下學期"],
 ] as const)("中英文工作經歷共用日期與年資格式：%s", (id, english, chinese) => {
-  expect(englishDictionary.workExperiences[id].work_duration).toBe(english);
-  expect(traditionalChineseDictionary.workExperiences[id].work_duration).toBe(chinese);
+  expect(
+    formatWorkExperienceFacts(workExperienceIdToFacts[id], "en").work_duration,
+  ).toBe(english);
+  expect(
+    formatWorkExperienceFacts(workExperienceIdToFacts[id], "zh-TW").work_duration,
+  ).toBe(chinese);
 });
 
 test.each([
@@ -86,25 +87,14 @@ test.each([
   ).toThrow(/Invalid career month|Career ends before/);
 });
 
-test("職稱與公司翻譯缺漏或空白時保留英文共同事實", () => {
+test("SITE-R6.1 Hero 職稱與公司翻譯缺漏或空白時保留英文共同事實", () => {
   const facts: WorkExperienceFacts = {
     ...workExperienceIdToFacts["swag-2026"],
     company: { en: "Example Company", "zh-TW": " " },
     title: { en: "Staff Engineer" },
   };
-  expect(formatWorkExperienceFacts(facts, "zh-TW")).toMatchObject({
+  expect(formatWorkIdentity(facts, "zh-TW")).toEqual({
     company_name: "Example Company",
     job_title: "Staff Engineer",
   });
-});
-
-test("工作素材、雙語字典與共用事實涵蓋相同的固定 ID", () => {
-  const ids = Object.keys(workExperienceIdToFacts).sort();
-  expect(workExperienceItems.map(({ id }) => id).sort()).toEqual(ids);
-  for (const dictionary of [englishDictionary, traditionalChineseDictionary])
-    expect(Object.keys(dictionary.workExperiences).sort()).toEqual(ids);
-  for (const facts of Object.values(workExperienceIdToFacts)) {
-    for (const name of [facts.company, facts.title])
-      for (const value of Object.values(name)) expect(value.trim()).not.toBe("");
-  }
 });

@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { resolve, join } from "node:path";
+import type { Page } from "@playwright/test";
 import { openHome, selectProject, waitForSection, enterPreview } from "../helpers/site";
 import {
   moveMotionTarget,
@@ -14,7 +15,7 @@ import { setJavaScriptEnabled } from "../helpers/browser";
 import { getPrintResult } from "../helpers/resume";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { test } from "../helpers/fixtures";
+import { expect, test } from "../helpers/fixtures";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 
@@ -28,6 +29,12 @@ const PROJECTS_MOTION = '#projects > [data-scroll-motion="content"]';
 
 const BLOG_MOTION = '#blog > [data-scroll-motion="content"]';
 
+const ABOUT_CHAPTERS = "#about article[data-chapter]";
+
+const ABOUT_HEADINGS = `${ABOUT_CHAPTERS} h2`;
+
+const ABOUT_PHOTOS = '#about [data-chapter="curiosity"] [data-photo] img';
+
 const sharedLinks = [
   '#projects a[href="https://github.com/bingyangchen"]',
   '#blog a[class*="archiveLink"]',
@@ -39,6 +46,29 @@ const projectLinks = [
   `${DETAIL} a:not([href^="https://github.com/"])`,
   `${DETAIL} a[href^="https://github.com/"]`,
 ];
+
+async function assertStaticScrollMotion(page: Page) {
+  const layers = await page.locator("[data-scroll-motion]").evaluateAll((elements) =>
+    elements.map((element) => {
+      const style = getComputedStyle(element);
+      return {
+        kind: element.getAttribute("data-scroll-motion"),
+        opacity: style.opacity,
+        transform: style.transform,
+      };
+    }),
+  );
+  assert.deepEqual(layers.map((layer) => layer.kind).sort(), [
+    "atmosphere",
+    "content",
+    "content",
+    "hero",
+    "hint",
+  ]);
+  assert.ok(
+    layers.every(({ opacity, transform }) => opacity === "1" && transform === "none"),
+  );
+}
 
 test("SITE-R13.5 導覽減少動態", async ({ page, server }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
@@ -126,21 +156,11 @@ test("SITE-R13.3 完整減少動態與即時切換", async ({ page, server }) =>
         .evaluate((element: HTMLElement) => getComputedStyle(element).transform),
       "none",
     );
-    assert.equal(await page.$("[data-scroll-motion-active]"), null);
-    const states = await page
-      .locator("[data-scroll-motion]")
-      .evaluateAll((elements: HTMLElement[]) =>
-        elements
-          .filter((element) => !element.closest("[inert]"))
-          .map((element) => ({
-            opacity: getComputedStyle(element).opacity,
-            transform: getComputedStyle(element).transform,
-          })),
-      );
-    assert.ok(states.length > 30);
-    assert.ok(
-      states.every((state) => state.opacity === "1" && state.transform === "none"),
-    );
+    await assertStaticScrollMotion(page);
+    await expect(page.locator(ABOUT_HEADINGS)).toHaveCount(3);
+    for (const heading of await page.locator(ABOUT_HEADINGS).all())
+      await expect(heading).toHaveCSS("clip-path", "none");
+    await expect(page.locator(ABOUT_PHOTOS)).toHaveCount(4);
     assert.equal(
       await page
         .locator("#home *, #about *, #projects *, #blog *")
@@ -395,38 +415,6 @@ test("SITE-R13.2 Hero 往返動態", async ({ page, server }) => {
   assert.deepEqual(await getMotionState(page, hero), initial);
 });
 
-test("SITE-R13.7 各段落三次往返還原與停止", async ({ page, server }) => {
-  await openHome(page, server);
-  const selectors = ['#about [data-scroll-motion="content"]'];
-  for (const selector of selectors) {
-    await moveMotionTarget(page, selector, 700);
-    const entering = await getMotionState(page, selector);
-    assert.ok(entering.y > 10 && entering.opacity < 0.95, selector);
-    await moveMotionTarget(page, selector, 250);
-    const reading = await getMotionState(page, selector);
-    assert.equal(reading.opacity, 1, selector);
-    assert.equal(reading.y, 0, selector);
-    assert.equal(reading.scale, 1, selector);
-    const height = await page
-      .locator(selector)
-      .first()
-      .evaluate((element: HTMLElement) => element.offsetHeight);
-    for (let cycle = 0; cycle < 3; cycle++) {
-      await moveMotionTarget(page, selector, -height + 100);
-      const exiting = await getMotionState(page, selector);
-      assert.ok(exiting.opacity < 0.7 && exiting.y < 0, selector);
-      await moveMotionTarget(page, selector, 700);
-      assert.deepEqual(await getMotionState(page, selector), entering, selector);
-    }
-    await settleMotion(page);
-    assert.deepEqual(
-      await getMotionState(page, selector),
-      entering,
-      `${selector} holds when idle`,
-    );
-  }
-});
-
 test("SITE-R13.7 SITE-R13.8 專案與文章整組往返並維持相對位置", async ({
   page,
   server,
@@ -523,35 +511,45 @@ test("SITE-R13.7 SITE-R13.8 專案與文章整組往返並維持相對位置", a
   }
 });
 
-test("SITE-R13.8 長段落閱讀區", async ({ page, server }) => {
-  await page.setViewportSize({ width: 390, height: 844 });
+test("SITE-R13.8 訪談正文與照片維持原位", async ({ page, server }) => {
   await openHome(page, server);
-  const longContent =
-    '#about [data-scroll-timeline]:nth-child(2) [data-scroll-motion="content"]';
-  // Explicit lines keep this case taller than the viewport across fonts and copy changes.
-  await page.locator(longContent).evaluate((element: HTMLElement) => {
-    const description = element.lastElementChild!;
-    description.replaceChildren();
-    for (let line = 0; line < 40; line++)
-      description.append("Work experience detail.", document.createElement("br"));
-  });
-  for (const fontFamily of ["Arial, sans-serif", "monospace"]) {
-    await page.locator(longContent).evaluate((element: HTMLElement, font) => {
-      element.style.fontFamily = font;
-    }, fontFamily);
+  const curiosity = `${ABOUT_CHAPTERS}[data-chapter="curiosity"]`;
+  for (const viewport of [
+    { width: 1440, height: 900 },
+    { width: 390, height: 844 },
+  ]) {
+    await page.setViewportSize(viewport);
     await settleMotion(page);
     assert.ok(
       await page
-        .locator(longContent)
+        .locator(curiosity)
         .evaluate((element: HTMLElement) => element.offsetHeight > window.innerHeight),
-      `Long-content fixture must exceed the viewport with ${fontFamily}`,
     );
     for (const top of [100, -250]) {
-      await moveMotionTarget(page, longContent, top);
-      const state = await getMotionState(page, longContent);
-      assert.equal(state.opacity, 1, fontFamily);
-      assert.equal(state.y, 0, fontFamily);
-      assert.equal(state.scale, 1, fontFamily);
+      await moveMotionTarget(page, curiosity, top);
+      const bounds = await page.locator(curiosity).boundingBox();
+      assert.ok(bounds && Math.abs(bounds.y - top) < 2);
+      const reading = page.locator(
+        `${ABOUT_CHAPTERS}, ${ABOUT_CHAPTERS} p, ${ABOUT_PHOTOS}`,
+      );
+      const states = await reading.evaluateAll((elements) =>
+        elements.map((element) => {
+          const style = getComputedStyle(element);
+          return {
+            opacity: style.opacity,
+            transform: style.transform,
+            position: style.position,
+          };
+        }),
+      );
+      assert.ok(
+        states.every(
+          ({ opacity, transform, position }) =>
+            opacity === "1" &&
+            transform === "none" &&
+            (position === "static" || position === "relative"),
+        ),
+      );
     }
   }
 });
@@ -625,7 +623,7 @@ test("SITE-R13.8 聚焦維持整組進退場", async ({ page, server }) => {
 test("SITE-R13.9 Hash 直達與重載的動態狀態", async ({ page, server }) => {
   const selectors = {
     home: '#home [data-scroll-motion="hero"]',
-    about: '#about [data-scroll-motion="heading"]',
+    about: `${ABOUT_CHAPTERS}[data-chapter="origin"]`,
     projects: PROJECTS_MOTION,
     blog: BLOG_MOTION,
   };
@@ -634,6 +632,11 @@ test("SITE-R13.9 Hash 直達與重載的動態狀態", async ({ page, server }) 
     await openHome(page, server, `#${section}`);
     await waitForSection(page, section);
     await settleMotion(page);
+    if (section === "about")
+      await expect(page.locator('#about [aria-current="step"]')).toHaveAttribute(
+        "aria-controls",
+        (await page.locator(selector).getAttribute("id")) ?? "",
+      );
     const state = await getMotionState(page, selector);
     const top = await page.evaluate(() => window.scrollY);
     await page.reload({ waitUntil: "networkidle" });
@@ -643,14 +646,18 @@ test("SITE-R13.9 Hash 直達與重載的動態狀態", async ({ page, server }) 
       {},
     );
     await settleMotion(page);
+    if (section === "about")
+      await expect(page.locator('#about [aria-current="step"]')).toHaveAttribute(
+        "aria-controls",
+        (await page.locator(selector).getAttribute("id")) ?? "",
+      );
     assert.deepEqual(await getMotionState(page, selector), state, section);
   }
 });
 
 test("SITE-R13.9 雙語與尺寸重算", async ({ page, server }) => {
   await openHome(page, server);
-  const selector =
-    '#about [data-scroll-timeline]:nth-child(3) [data-scroll-motion="content"]';
+  const selector = PROJECTS_MOTION;
   for (const [language, width] of [
     ["en", 720],
     ["zh-TW", 721],
@@ -694,7 +701,7 @@ test("SITE-R13.9 雙語與尺寸重算", async ({ page, server }) => {
 
 test("SITE-R13.10 原生捲動與閒置更新", async ({ page, server }) => {
   await openHome(page, server);
-  await moveMotionTarget(page, '#about [data-scroll-motion="content"]', 500);
+  await moveMotionTarget(page, `${ABOUT_CHAPTERS}[data-chapter="origin"]`, 500);
   const before = await page.evaluate(() => window.scrollY);
   await page.mouse.wheel(0, 300);
   await page.waitForFunction(
@@ -734,23 +741,20 @@ test("SITE-R13.11 靜態內容與列印隔離", async ({ page, server }) => {
   assert.ok(!html.includes("--scroll-"));
   await setJavaScriptEnabled(page, false);
   await page.goto(server.origin, { waitUntil: "networkidle" });
-  const states = await page
-    .locator("[data-scroll-motion]:not([inert])")
-    .evaluateAll((elements: HTMLElement[]) =>
-      elements
-        .filter((element) => !element.closest("[inert]"))
-        .map((element) => ({
-          opacity: getComputedStyle(element).opacity,
-          transform: getComputedStyle(element).transform,
-        })),
-    );
-  assert.ok(states.length > 30);
-  assert.ok(
-    states.every((state) => state.opacity === "1" && state.transform === "none"),
-  );
+  await assertStaticScrollMotion(page);
+  await expect(page.locator(ABOUT_HEADINGS)).toHaveCount(3);
+  for (const heading of await page.locator(ABOUT_HEADINGS).all())
+    await expect(heading).toBeVisible();
+  await expect(page.locator(ABOUT_PHOTOS)).toHaveCount(4);
+  for (const photo of await page.locator(ABOUT_PHOTOS).all()) {
+    await photo.scrollIntoViewIfNeeded();
+    await expect
+      .poll(() => photo.evaluate((image: HTMLImageElement) => image.naturalWidth))
+      .toBeGreaterThan(0);
+  }
+  await expect(page.locator("#home a[download]")).toBeVisible();
   await setJavaScriptEnabled(page, true);
   await openHome(page, server);
-  assert.ok(await page.$("#home a[download]"));
   await enterPreview(page);
   const result = await getPrintResult(page);
   assert.equal(result.pages, 1);

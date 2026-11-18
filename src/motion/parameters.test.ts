@@ -65,7 +65,6 @@ test.each([
   ["long-content-end", "1.04", "entrance"],
   ["exit-end", "-0.24", "exit range"],
   ["hint-exit", "0", "hint exit"],
-  ["skill-stagger", "-0.025", "skill stagger"],
 ])("參數 %s 不得使進度區間無效", (name, value, error) => {
   const style = makeMotionStyle();
   style.setProperty(`--motion-${name}`, value);

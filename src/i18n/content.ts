@@ -1,19 +1,7 @@
-import type { ProjectCopy, WorkExperienceCopy } from "./types";
+import type { ProjectCopy } from "./types";
 
 function resolveText(fallback: string, translation: string | undefined): string {
   return translation?.trim() ? translation : fallback;
-}
-
-export function resolveWorkExperienceCopy(
-  fallback: WorkExperienceCopy,
-  translation: Partial<WorkExperienceCopy> | undefined,
-): WorkExperienceCopy {
-  return {
-    work_duration: resolveText(fallback.work_duration, translation?.work_duration),
-    job_title: resolveText(fallback.job_title, translation?.job_title),
-    company_name: resolveText(fallback.company_name, translation?.company_name),
-    description: resolveText(fallback.description, translation?.description),
-  };
 }
 
 export function resolveProjectCopy(

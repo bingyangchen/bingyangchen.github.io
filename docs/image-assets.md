@@ -6,7 +6,7 @@
 
 網站 Logo 的向量原檔為 [`logo.svg`](../src/assets/logo.svg)。WebP 與 favicon 使用透明背景，可見與半透明像素的 RGB 均為純黑；`src/assets/logo.webp` 與 `public/logo.webp` 保持一致，96 px 縮圖由完整 WebP 產生。
 
-更新原圖後執行 `npm run images:generate`，再檢查實際畫面並執行 `npm run check`。產生腳本使用 [libwebp 的 cwebp](https://developers.google.com/speed/webp/docs/cwebp) 與 dwebp，本次使用 1.6.0；一般開發、CI 與 production build 直接使用已提交的縮圖，不需要安裝這兩個工具。
+更新頭像、作品截圖、Logo 或社群預覽圖後，執行 `npm run images:generate`，再檢查實際畫面並執行 `npm run check`。產生腳本使用 [libwebp 的 cwebp](https://developers.google.com/speed/webp/docs/cwebp) 與 dwebp，本次使用 1.6.0。一般開發、CI 與 production build 直接使用 repo 內的縮圖。
 
 <!-- prettier-ignore -->
 | 素材 | 輸出尺寸與設定 |
@@ -17,11 +17,15 @@
 | Logo | 網站 Logo 寬度為 96 px、作品 Logo 為 78 px、需要縮小的公司 Logo 為 64 px，足以顯示目前構圖的 3 倍 DPR。 |
 | 社群預覽 | 寬度縮為 1200 px，保留比例，以 lossless WebP 暫存後輸出 PNG；不計入一般首頁圖片 request。 |
 
-除預覽圖外，WebP 品質使用 88、method 使用 6，並啟用 `sharp_yuv`。Alpha 維持 lossless，不裁切介面或頭像。預覽圖增加少量初始 JS 與 HTML，但讓作品在大圖下載期間已有正確的圖像。
+產生腳本的 WebP 品質為 88，使用 method 6 並啟用 `sharp_yuv`，作品預覽圖使用上表的品質設定。Alpha 維持 lossless，介面與頭像保留原始構圖。內嵌預覽圖讓作品在大圖下載期間已有正確的圖像。
+
+About 照片的原檔保留在 [`src/assets/about/photography/`](../src/assets/about/photography/)。更新時從原檔用 `cwebp` 縮至 480、960、1440 px 寬，保留構圖與長寬比，將 WebP 存入 [`web/`](../src/assets/about/web/)。各圖的來源檔與產生設定記錄在同目錄的 JSON 檔。街景的 1440 px 版本以 140,000 bytes 為編碼目標，其餘版本使用品質 84。更新後檢查實際畫面並重跑圖片預算測試。
 
 ## 載入與驗證
 
-作品面板的文字及展示框持續參與高度計算，只掛載選取作品的圖片，因為切換作品時必須保留最大自然高度。頭像與 Hero 品牌圖片立即載入；經歷、技能與教育圖片使用原生 lazy loading 並預留尺寸。
+作品面板的文字及展示框持續參與高度計算，只掛載選取作品的圖片，因為切換作品時必須保留最大自然高度。頭像與 Hero 品牌圖片立即載入。
+
+About 照片使用原生 lazy loading，讓支援 `sizes="auto"` 的瀏覽器依照片的顯示寬度選擇來源。每張照片依原始比例預留空間，並在螢幕上用 `content-visibility: auto` 延後處理尚未捲到的照片。列印時依序顯示所有照片。
 
 ```mermaid
 flowchart TD
@@ -73,3 +77,5 @@ JS 與 CSS 的 gzip 合計由 117,918 bytes 增為 123,958 bytes，首頁 HTML �
 保留支援標準 `fetchPriority` 與 boolean `inert` 的 React 19，將 JS 與 CSS 預算由 128 KiB 調整為 150 KiB。增加的 22 KiB 是將這次實測差異向上取整，剩餘空間由 5,994 bytes 變為 6,027 bytes；圖片及 HTML 預算維持原值。
 
 另以相同 Chromium、390 × 844、DPR 2、冷 cache、150 ms latency、每秒下載 200 KiB、4 倍 CPU throttling 及 reduced-motion 設定，交錯量測兩個版本各三次。React 18 的 LCP 為 1,420、1,352、1,348 ms，React 19 為 1,364、1,352、1,332 ms，中位數皆為 1,352 ms，六次 CLS 均為 0。這些桌面模擬結果未顯示 LCP 退步，不代表實機或其他網路條件下的效能。
+
+2026-11-18，About 加入四張照片後，以 Chromium 和 production 靜態 server 重跑圖片預算測試。九組視窗尺寸與 DPR 的初始圖片大小介於 49,894 到 195,496 bytes，全數低於 192 KiB。

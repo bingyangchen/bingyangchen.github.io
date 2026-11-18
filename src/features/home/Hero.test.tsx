@@ -3,7 +3,6 @@ import { LanguageSwitcher } from "../../components/LanguageSwitcher/LanguageSwit
 import { renderWithLanguage } from "../../test-utils/render";
 import { englishDictionary } from "../../i18n/dictionaries/en";
 import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";
-import { workExperienceItems } from "../../data/workExperience";
 import Hero from "./Hero";
 
 afterEach(() => {
@@ -17,10 +16,7 @@ test("SITE-R5.1 個人摘要", () => {
   expect(content.getByRole("heading", { level: 1 })).toHaveTextContent(
     englishDictionary.name,
   );
-  const firstWork = englishDictionary.workExperiences[workExperienceItems[0].id];
-  expect(
-    content.getByText(`${firstWork.job_title} @ ${firstWork.company_name}`),
-  ).toBeInTheDocument();
+  expect(content.getByText("Backend Engineer @ Swag")).toBeInTheDocument();
 });
 
 test("SITE-R13.1 完整問候", () => {

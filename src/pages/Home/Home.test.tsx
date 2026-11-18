@@ -23,6 +23,6 @@ test("首頁區塊保留順序、原生落點及共同的動態範圍", () => {
   );
   expect(sections[0]).toHaveAttribute("data-scroll-anchor");
   expect(scope.querySelectorAll('[data-scroll-motion="hero"]')).toHaveLength(1);
-  expect(scope.querySelectorAll("[data-scroll-timeline]")).not.toHaveLength(0);
+  expect(sections[1].querySelectorAll("article[data-chapter]")).toHaveLength(3);
   expect(container.querySelector('a[href="#about"]')).toBeInTheDocument();
 });

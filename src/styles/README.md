@@ -14,7 +14,7 @@
 | [`_motion.scss`](_motion.scss) | 定義 reduced motion 的全域處理，以及 scroll motion 的參數與 transform 套用方式。 |
 | [`index.scss`](index.scss) | 套用全域基礎樣式，並各套用一次 focus 與 reduced motion 預設值。 |
 | 元件旁的 `*.module.scss` | 定義元件外觀、狀態與 responsive layout，並使用共用 token 和 patterns。 |
-| [`print.scss`](print.scss) 與 [`ResumeSheet.module.scss`](../features/resume/ResumeSheet.module.scss) | 維護 A4 列印尺寸、履歷字型、頁面範圍與專用排版。 |
+| [`print.scss`](print.scss) 與 [`ResumeSheet.module.scss`](../features/resume/ResumeSheet.module.scss) | 維護履歷的 A4 列印尺寸、字型、頁面範圍與排版。首頁列印的訪談構圖由 About 的樣式維護。 |
 
 以底線開頭的檔案是 Sass partial，由其他 SCSS 透過 `@use` 載入。目前的 partial 定義 token 與 mixin，載入本身不會產生全域 CSS。`index.scss` 與 `print.scss` 則是由 `src/index.tsx` 載入的 CSS 入口。
 
@@ -22,7 +22,7 @@
 
 [`SiteLayout.module.scss`](../layouts/SiteLayout/SiteLayout.module.scss) 維護共用外框的排列、背景及主要內容的焦點樣式。
 
-[`Home.module.scss`](../pages/Home/Home.module.scss) 只維護整頁 motion scope、區塊高度、交錯背景及 anchor 焦點，不透過 `h2`、`h3` 或其他內容 selector 設定子功能的外觀。[`features/home`](../features/home/index.ts) 的 Hero、About、Portrait 與 QrCodeDialog 各自維護 CSS Module；About 的標題、subtitle、分隔線及內容間距跟隨 About，頭像及 dialog 的狀態外觀跟隨各自的互動實作。
+[`Home.module.scss`](../pages/Home/Home.module.scss) 維護首頁的動態作用範圍、區塊高度、交錯背景及區塊焦點。[`features/home`](../features/home/index.ts) 的 Hero、About、Portrait 與 QrCodeDialog 各自維護 CSS Module。About 的固定欄、曲面、問答、照片排列及靜態列印組成放在訪談樣式，頭像及 dialog 的狀態外觀跟隨各自的互動實作。
 
 [`Projects`](../features/projects/Projects.module.scss) 與 [`Blog`](../features/blog/Blog.module.scss) 沿用 `section` patterns，內部標題、正文與留白在相同寬度及字型下不依賴 Home 的父層規則。新增功能樣式時，將規則放在負責功能的 root class 內，依 DOM 順序排列；需要共用時，依相同用途擴充既有 pattern，避免重新加入頁面對子功能的內容 selector。
 
@@ -56,13 +56,13 @@
 | Motion | 共用回饋、箭頭與揭露效果使用 `$motion-duration-*`，元件專用時間使用各元件的 `*-motion-duration`；共用 easing 使用 `$motion-easing-emphasized`。Scroll motion 的參數集中在 `$scroll-motion`，窄版覆寫以 `-compact` 結尾並保留被覆寫的參數名稱。 |
 | Focus | 使用 `$focus-color-*`、`$focus-ring-width` 與兩種 offset；區域透過 `--focus-color` 指定焦點色。 |
 
-日期、公司、技能與履歷的次要資訊使用 `$text-muted`，保留與正文的明暗層次；選色採用在既有白色與淺灰背景均達到至少 4.5：1 的最淺一般十六進位灰階。`$text-secondary` 保留既有較深的文字角色，分隔線使用 `$border-default` 或對應元件的裝飾色。品牌按鈕使用獨立的 `$action-background` 橄欖綠底與 `$text-on-fill` 白字，與頭像的色調協調。履歷下載文字使用正文 UI 字級、600 字重與正常字距，淺底的文字與操作圖示在 hover 時使用 `$action-foreground`，保留淺橄欖色作為背景及裝飾。
+次要資訊使用 `$text-muted`，在白色與淺灰背景均達到至少 4.5：1 的對比，保留與正文的明暗層次。`$text-secondary` 保留既有較深的文字角色，分隔線使用 `$border-default` 或對應元件的裝飾色。品牌按鈕使用獨立的 `$action-background` 橄欖綠底與 `$text-on-fill` 白字，與頭像的色調協調。Hero 的履歷下載文字使用正文 UI 字級、600 字重與正常字距。淺底的文字與操作圖示在 hover 時使用 `$action-foreground`，淺橄欖色可用於背景及裝飾。
 
 相同數值只有在用途相同時才共用。圖片定位、裝飾漸層、局部陰影、光學微調，以及履歷列印的尺寸與字級保留在使用處，避免首頁的間距或字級調整改變 PDF 排版。Footer 的聯絡標題使用 Projects、Blog 共用的 `section.title`，保留深底文字色；說明、Email、平台、作者識別與版權使用 UI 字型，履歷保留專用字型。Footer 使用獨立的 `$footer-text-secondary` 與 `$footer-divider-color`，分開次要文字及裝飾分隔線。
 
-同一元件內需要同步修改的幾何值使用局部 Sass 變數。WorkExperience 的圓點尺寸與日期列最小高度共用 `$marker-size`、`$marker-size-compact`，將對齊關係保留在元件內。局部變數放在使用範圍的開頭，先定義基準，再定義變體及派生值。新增共用 token 前先查既有使用處，移除已無引用的 token，改名時同步更新使用處及文件。
+同一元件內需要同步修改的幾何值使用局部 Sass 變數。局部變數放在使用範圍的開頭，先定義基準，再定義變體及派生值。新增共用 token 前先查既有使用處，移除已無引用的 token，改名時同步更新使用處及文件。
 
-圓形按鈕、頭像與工作經歷圓點使用 `$radius-circle`，膠囊使用 `$radius-pill`。Button 的 hover 遮罩繼承按鈕本體的圓角，尺寸由各自的 `size` 規則設定。RoundButton 以 `$control-size-minimum` 設定相同寬高，避免 WebKit 在絕對定位時將自動尺寸算成橢圓，並維護基礎 padding；頭像上的 QR code 入口只保留桌面構圖所需的 padding 調整。QR code dialog 的關閉按鈕沿用 `controls.centered-target`，固定寬高仍由 dialog 維護。
+圓形按鈕與頭像使用 `$radius-circle`，膠囊使用 `$radius-pill`。Button 的 hover 遮罩繼承按鈕本體的圓角，尺寸由各自的 `size` 規則設定。RoundButton 以 `$control-size-minimum` 設定相同寬高，避免 WebKit 在絕對定位時將自動尺寸算成橢圓，並維護基礎 padding；頭像上的 QR code 入口只保留桌面構圖所需的 padding 調整。QR code dialog 的關閉按鈕沿用 `controls.centered-target`，固定寬高仍由 dialog 維護。
 
 `controls.centered-target` 同時供圖示與文字控制使用，維護置中及最小寬高，不設定 padding、外觀或固定尺寸。
 
@@ -130,14 +130,13 @@ Tooltip 保留 `$tooltip-*` 外觀 token，定位 API 所需的像素值由 CSS 
 - 一般連結與填色按鈕沿用所屬區域的 focus 色。
 - 文章卡片及作品展示區使用較寬的 surface offset。
 - 滿版導覽目標使用 `focus.inset-outline`。
+- About 的整區與段落目的地使用深橄欖綠及白色雙層內框，讓框線在曲面及淺色背景均可辨識。
 - `controls.unselectable` 只套用在控制與操作文字，正文保持可選取。
 - 局部 hover 位移與 scroll motion 須遵守 reduced motion 設定。
 
 ## 圖片與圖示語意
 
-公司 logo、技能圖示及校名圖片已有相鄰文字提供完整資訊，使用空 `alt`；具獨立資訊的圖片由使用處提供相符的替代文字。沿用 [W3C 裝飾圖片指引](https://www.w3.org/WAI/tutorials/images/decorative/) 判斷資訊用途，不以圖片格式決定是否隱藏，也不在共用 `BrandImage` 強制清空 `alt`。
-
-Safari 的實際 accessibility tree 在技能圖片使用空 `alt` 後，仍會列出外部 SVG 內的 `role`、`aria-label` 或 `title`。`Skill` 因此另以 `aria-hidden=true` 隱藏裝飾圖片，保留相鄰技能名稱；SVG 素材保留原有資訊，供其他用途使用。
+Hero 的公司標誌使用空 `alt`，由相鄰文字提供公司名稱。About 照片各自傳達畫面內容，提供雙語替代文字，並用原始比例的尺寸與響應式來源呈現。圖片語意依資訊用途判斷，各使用處負責提供適當的替代文字。[W3C 裝飾圖片指引](https://www.w3.org/WAI/tutorials/images/decorative/)
 
 [`asIcon`](../icons/IconLayout.tsx) 集中 SVG 外框設定，現有使用處均為裝飾用途，因此預設 `aria-hidden=true`，按鈕及連結提供自己的 accessible name。保留明確指定 `aria-hidden` 的能力；需要獨立表達資訊的 SVG 須另行提供 image 語意與名稱，不能只取消隱藏。人物照片的替代文字與 QR code 的內容仍由各自功能維護。
 
@@ -146,4 +145,5 @@ Safari 的實際 accessibility tree 在技能圖片使用空 `alt` 後，仍會�
 修改後執行 `npm run check`，其中包含 production build、瀏覽器互動與履歷 PDF 檢查，並依修改範圍補做以下檢查：
 
 - 調整共用樣式時，對照修改前後的桌面與窄版畫面、兩種語言、QR code dialog、focus 與 reduced motion 狀態。
+- 涉及 About 時，檢查三組問答、四張照片、快跳焦點及回到靜態閱讀的版面，包含首頁列印。
 - 涉及履歷時，檢查預覽與匯出的單頁 A4 PDF。

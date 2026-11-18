@@ -8,6 +8,7 @@ import { renderWithLanguage } from "../test-utils/render";
 vi.mock("./profile", async (importOriginal) => {
   const original = await importOriginal<typeof import("./profile")>();
   return {
+    ...original,
     profile: {
       ...original.profile,
       email: "updated@example.test",
@@ -101,13 +102,6 @@ test.each(["en", "zh-TW"] as const)(
     const jobTitle = language === "en" ? "Staff Engineer" : "主任工程師";
     const company = language === "en" ? "Example Labs" : "範例公司";
     expect(content.getByText(`${jobTitle} @ ${company}`)).toBeInTheDocument();
-    expect(
-      within(view.container.querySelector<HTMLElement>("#about")!).getByText(
-        language === "en"
-          ? "Aug. 2022 – Jul. 2024 (2 yrs)"
-          : "2022 年 8 月 – 2024 年 7 月 (2 年)",
-      ),
-    ).toBeInTheDocument();
     const resume = within(
       view.container.querySelector<HTMLElement>("[data-resume-root]")!,
     );

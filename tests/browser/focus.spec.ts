@@ -96,7 +96,7 @@ test("SITE-R18.1 依區域與控制尺寸共用鍵盤焦點框", async ({ page, 
         if (target.menu) await page.keyboard.press("Enter");
       }
       assert.equal(reached.header, width === 1440 ? 6 : 7);
-      assert.equal(reached.content, width === 1440 ? 20 : 19);
+      assert.equal(reached.content, width === 1440 ? 19 : 18);
       assert.equal(reached.footer, 5);
       assert.equal(reached.surfaces, 4);
       // Tabbing past the final link can move focus out of the document.
@@ -203,6 +203,12 @@ test("SITE-R18.2 深淺背景對比與滿版目的地的實際可見框線", asy
       );
       await assertFocusRing(page, "rgb(82, 92, 48)", -2);
       await assertVisibleEdges(page, [82, 92, 48]);
+      if (section === "about") {
+        const innerShadow = await page
+          .locator("#about")
+          .evaluate((element) => getComputedStyle(element, "::after").boxShadow);
+        assert.match(innerShadow, /rgb\(255, 255, 255\).* 4px inset/);
+      }
       assert.equal(
         await page.evaluate(
           () => document.documentElement.scrollWidth > window.innerWidth,
@@ -231,6 +237,9 @@ test("SITE-R18.3 強制色彩使用系統焦點色並保留外框", async ({ pag
   await page.keyboard.press("Tab");
   for (const [selector, offset] of [
     ["[data-language-switcher]", 3],
+    ["#about", -2],
+    ["#about [data-chapter]", -2],
+    ["#about a[download]", 3],
     [TABS, 3],
     [DETAIL, 5],
     [`${DETAIL} a`, 3],

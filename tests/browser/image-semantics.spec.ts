@@ -54,26 +54,9 @@ test("SITE-R6.7 雙語圖片不重複加入資訊並保留文字閱讀順序", a
     for (const [language, labels] of [
       [
         "en",
-        {
-          school: "National Chengchi University",
-          degree: "B.A. in Economics",
-          fintech: "Financial Technology Program",
-          open: "Show QR code",
-          close: "Close QR code",
-          portrait: "Flip portrait",
-        },
+        { open: "Show QR code", close: "Close QR code", portrait: "Flip portrait" },
       ],
-      [
-        "zh-TW",
-        {
-          school: "國立政治大學",
-          degree: "經濟學學士",
-          fintech: "金融科技專長學程",
-          open: "顯示 QR code",
-          close: "關閉 QR code",
-          portrait: "翻轉頭像",
-        },
-      ],
+      ["zh-TW", { open: "顯示 QR code", close: "關閉 QR code", portrait: "翻轉頭像" }],
     ] as const) {
       if ((await page.locator("html").getAttribute("lang")) !== language)
         await page
@@ -81,29 +64,27 @@ test("SITE-R6.7 雙語圖片不重複加入資訊並保留文字閱讀順序", a
           .evaluate((button: HTMLElement) => button.click());
       await expect(page.locator("html")).toHaveAttribute("lang", language);
       const content = await getAccessibleContent(page);
-      assert.ok(!content.some(({ role }) => role === "image"));
-      const expectedNames = [
-        "Swag",
-        "Python",
-        "TypeScript",
-        labels.school,
-        labels.degree,
-        labels.fintech,
-      ];
+      const about = page.locator("#about");
+      const questions = await about.locator("h2").allTextContents();
+      const alternatives = await about
+        .locator("[data-photo] img")
+        .evaluateAll((images: HTMLImageElement[]) => images.map((image) => image.alt));
+      assert.equal(questions.length, 3);
+      assert.equal(alternatives.length, 4);
+      assert.ok(content.every(({ role, name }) => role !== "article" || !name));
       assert.deepEqual(
-        content
-          .filter(
-            ({ role, name }) => role === "StaticText" && expectedNames.includes(name),
-          )
-          .map(({ name }) => name),
-        expectedNames,
+        content.filter(({ role }) => role === "heading" || role === "image"),
+        [
+          ...questions.map((question) => ({ role: "heading", name: question })),
+          ...alternatives.map((alternative) => ({ role: "image", name: alternative })),
+        ],
       );
-      await expect(
-        page.getByRole("link", {
-          name: `${labels.school} ${labels.degree}`,
-          exact: true,
-        }),
-      ).toHaveAttribute("href", "https://econo.nccu.edu.tw/");
+      for (const alternative of alternatives)
+        assert.ok(
+          !content.some(
+            ({ role, name }) => role === "StaticText" && name === alternative,
+          ),
+        );
       assert.deepEqual(
         await getControlAccessibility(page, '#home button[aria-haspopup="dialog"]'),
         { role: "button", name: labels.open, description: undefined },
@@ -153,6 +134,7 @@ test("SITE-R6.7 圖片載入失敗後仍保留同一份可讀資訊", async ({
   await page.locator("#about img").evaluateAll(async (images: HTMLImageElement[]) => {
     await Promise.all(
       images.map(async (image) => {
+        image.removeAttribute("srcset");
         image.src = "data:image/png;base64,AA==";
         await image.decode().then(
           () => {

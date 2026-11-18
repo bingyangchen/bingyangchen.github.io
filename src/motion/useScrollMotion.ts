@@ -1,21 +1,14 @@
 import { RefObject, useLayoutEffect } from "react";
-import {
-  calculatePose,
-  calculateTimeline,
-  parseMotionKind,
-  type MotionKind,
-} from "./calculation";
+import { calculatePose, parseMotionKind, type MotionKind } from "./calculation";
 import { parseMotionParameters, type MotionParameters } from "./parameters";
 
 type MotionTarget = {
   element: HTMLElement;
   anchor: HTMLElement;
   kind: MotionKind;
-  order: number;
   top: number;
   height: number;
 };
-type TimelineRow = { element: HTMLElement; top: number; height: number };
 const MOTION_PROPERTIES = ["y", "opacity", "scale", "tilt"] as const;
 
 function getDocumentTop(element: HTMLElement): number {
@@ -47,38 +40,26 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement | null>): void {
     let needsCollection = true;
     let needsMeasurement = true;
     let targets: MotionTarget[] = [];
-    let rows: TimelineRow[] = [];
     let parameters: MotionParameters;
     let headerBottom = 0;
 
     function collect() {
       targets = Array.from(
         scope.querySelectorAll<HTMLElement>("[data-scroll-motion]"),
-      ).map((element) => {
-        const kind = parseMotionKind(element.dataset.scrollMotion);
-        const order = Number(element.dataset.scrollOrder ?? 0);
-        if (!Number.isInteger(order) || order < 0)
-          throw new Error(`Invalid motion order: ${element.dataset.scrollOrder}`);
-        return {
-          element,
-          anchor: element.closest<HTMLElement>("[data-scroll-anchor]") ?? element,
-          kind,
-          order,
-          top: 0,
-          height: 0,
-        };
-      });
-      rows = Array.from(
-        scope.querySelectorAll<HTMLElement>("[data-scroll-timeline]"),
-      ).map((element) => ({ element, top: 0, height: 0 }));
+      ).map((element) => ({
+        element,
+        anchor: element.closest<HTMLElement>("[data-scroll-anchor]") ?? element,
+        kind: parseMotionKind(element.dataset.scrollMotion),
+        top: 0,
+        height: 0,
+      }));
       resizeObserver.disconnect();
       resizeObserver.observe(scope);
       const header = document.querySelector("header");
       if (header) resizeObserver.observe(header);
-      new Set([
-        ...targets.map((target) => target.anchor),
-        ...rows.map((row) => row.element),
-      ]).forEach((anchor) => resizeObserver.observe(anchor));
+      new Set(targets.map((target) => target.anchor)).forEach((anchor) =>
+        resizeObserver.observe(anchor),
+      );
       needsCollection = false;
       needsMeasurement = true;
     }
@@ -91,10 +72,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement | null>): void {
         target.top = getDocumentTop(target.anchor);
         target.height = target.anchor.offsetHeight;
       }
-      for (const row of rows) {
-        row.top = getDocumentTop(row.element);
-        row.height = row.element.offsetHeight;
-      }
       needsMeasurement = false;
     }
 
@@ -103,10 +80,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement | null>): void {
       for (const { element } of targets)
         for (const property of MOTION_PROPERTIES)
           element.style.removeProperty(`--scroll-${property}`);
-      for (const { element } of rows) {
-        element.style.removeProperty("--scroll-line-progress");
-        element.style.removeProperty("--scroll-dot-scale");
-      }
     }
 
     function render() {
@@ -130,7 +103,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement | null>): void {
         const poses = activeTargets.map((target) =>
           calculatePose(target, viewport, parameters),
         );
-        const lines = rows.map((row) => calculateTimeline(row, viewport, parameters));
 
         for (let index = 0; index < poses.length; index++) {
           const pose = poses[index];
@@ -147,12 +119,6 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement | null>): void {
               values[property]
             )
               element.style.setProperty(`--scroll-${property}`, values[property]);
-        }
-        for (let index = 0; index < lines.length; index++) {
-          const { progress, dotScale } = lines[index];
-          const element = rows[index].element;
-          element.style.setProperty("--scroll-line-progress", progress.toFixed(4));
-          element.style.setProperty("--scroll-dot-scale", dotScale.toFixed(4));
         }
         scope.dataset.scrollMotionActive = "";
       } catch (error) {

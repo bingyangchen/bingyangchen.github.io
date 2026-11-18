@@ -125,14 +125,6 @@ afterEach(() => {
 });
 
 test("先讀取全部參數再寫入，捲動合併為一個 frame 並重用量測", () => {
-  const row = document.createElement("div");
-  row.dataset.scrollTimeline = "";
-  scope.append(row);
-  const setProperty = row.style.setProperty.bind(row.style);
-  vi.spyOn(row.style, "setProperty").mockImplementation((...arguments_) => {
-    operations.push("write");
-    return setProperty(...arguments_);
-  });
   renderHook(() => useScrollMotion({ current: scope }));
   expect(operations.lastIndexOf("read")).toBeLessThan(operations.indexOf("write"));
   const reads = readParameter.mock.calls.length;
@@ -142,6 +134,7 @@ test("先讀取全部參數再寫入，捲動合併為一個 frame 並重用量�
   flushFrame();
   expect(readParameter).toHaveBeenCalledTimes(reads);
   operations = [];
+  Object.defineProperty(target, "offsetTop", { value: 600 });
   ResizeObserverStub.instances[0].notify();
   flushFrame();
   expect(readParameter).toHaveBeenCalledTimes(reads * 2);
@@ -173,7 +166,7 @@ test("字型與內容改變會重新量測，新增元素會重新收集並排�
   expect(frameIdToCallback.size).toBe(1);
   flushFrame();
   expect(readParameter).toHaveBeenCalledTimes(initialReads * 2);
-  const additional = addTarget("heading");
+  const additional = addTarget("hero");
   const hidden = addTarget();
   hidden.setAttribute("inert", "");
   MutationObserverStub.instances[0].notify([{ type: "childList" }]);

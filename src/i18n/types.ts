@@ -1,15 +1,8 @@
+import type { AboutPhoto, AboutTopic } from "../data/about";
 import type { BlogArticleId } from "../data/articles";
 import type { ProjectId } from "../data/projects";
-import type { WorkExperienceId } from "../data/career";
 
 export type Language = "en" | "zh-TW";
-
-export interface WorkExperienceCopy {
-  work_duration: string;
-  job_title: string;
-  company_name: string;
-  description: string;
-}
 
 export interface ProjectCopy {
   tags: readonly string[];
@@ -30,13 +23,15 @@ export interface TranslationDictionary {
   };
   navigation: { about: string; projects: string; blog: string };
   about: {
-    title: string;
-    subtitle: string;
-    workExperience: string;
-    skills: string;
-    education: string;
-    degree: string;
-    fintechProgram: string;
+    topics: Record<
+      AboutTopic,
+      { label: string; question: readonly string[]; answer: string }
+    >;
+    navigation: string;
+    jump: string;
+    resume: string;
+    continue: string;
+    photoAlt: Record<AboutPhoto, string>;
   };
   projects: { title: string; subtitle: string; visitGithub: string };
   blog: {
@@ -67,7 +62,6 @@ export interface TranslationDictionary {
     elsewhere: string;
     home: string;
   };
-  workExperiences: Record<WorkExperienceId, WorkExperienceCopy>;
   projectsData: Record<ProjectId, ProjectCopy>;
   projectCommon: {
     present: string;

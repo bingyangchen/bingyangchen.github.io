@@ -181,7 +181,7 @@ test("resource checks preserve console and JavaScript failures", async ({
   }
 });
 
-test("SITE-R6.5 local brand images reserve space in both languages and hide failed images", async ({
+test("SITE-R6.5 Hero brand image reserves space and hides a failed image", async ({
   createContext,
 }) => {
   const context = await createContext();
@@ -214,7 +214,7 @@ test("SITE-R6.5 local brand images reserve space in both languages and hide fail
               reserved: image.hasAttribute("width") && image.hasAttribute("height"),
             })),
           );
-        assert.equal(images.length, 7);
+        assert.equal(images.length, 1);
         assert.ok(
           images.every(
             (image) =>
@@ -228,7 +228,7 @@ test("SITE-R6.5 local brand images reserve space in both languages and hide fail
     }
     await resources.assertLoaded();
     const before = await page
-      .locator("#about [data-brand-image]")
+      .locator("#home [data-brand-image]")
       .first()
       .evaluate((image: HTMLImageElement) => {
         const bounds = image.getBoundingClientRect();
@@ -239,14 +239,14 @@ test("SITE-R6.5 local brand images reserve space in both languages and hide fail
         };
       });
     await page
-      .locator("#about [data-brand-image]")
+      .locator("#home [data-brand-image]")
       .first()
       .evaluate((image: HTMLImageElement) => {
         image.src = "/missing-brand.png";
       });
-    await expect(page.locator("#about [data-image-failed]").first()).toBeAttached();
+    await expect(page.locator("#home [data-image-failed]").first()).toBeAttached();
     const after = await page
-      .locator("#about [data-brand-image]")
+      .locator("#home [data-brand-image]")
       .first()
       .evaluate((image: HTMLImageElement) => {
         const bounds = image.getBoundingClientRect();

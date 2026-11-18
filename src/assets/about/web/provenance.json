@@ -1,0 +1,22 @@
+[
+  {
+    "id": "street",
+    "source": "src/assets/about/photography/P1001169.JPG",
+    "source_sha256": "622134ec4b6e0bfa6c1cc6ef7fc98f187265444f62647bd17e136258e2145ec8"
+  },
+  {
+    "id": "architecture",
+    "source": "src/assets/about/photography/P1000331.JPG",
+    "source_sha256": "76e44dfc74510ec020a2ea3261dc678b2c9bd1e1ba8046bcb7834e3e3c134233"
+  },
+  {
+    "id": "coast",
+    "source": "src/assets/about/photography/DSC01632.JPG",
+    "source_sha256": "12ecb63e95b2238e017daf94a57bed1f9240e626ab21bc34e6ab13c4e6c96bca"
+  },
+  {
+    "id": "passage",
+    "source": "src/assets/about/photography/P1000504.JPG",
+    "source_sha256": "1071abda3d81861dfc40179fd16e4079abbcf7df10efea621cd7cdf4320242db"
+  }
+]

@@ -32,6 +32,11 @@
       }
     }
   }
+  @media print {
+    & > .section {
+      min-height: 0;
+    }
+  }
   & > .blog {
     min-height: fit-content;
   }

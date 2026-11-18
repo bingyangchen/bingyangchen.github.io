@@ -1,7 +1,5 @@
-import { workExperienceIdToFacts } from "../../data/career";
 import { profile } from "../../data/profile";
 import type { TranslationDictionary } from "../types";
-import { formatWorkExperienceFacts } from "../workExperience";
 
 export const traditionalChineseDictionary: TranslationDictionary = {
   name: profile.name["zh-TW"],
@@ -13,16 +11,37 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     downloadResume: "下載履歷",
     scrollDown: "下滑了解更多",
   },
-  navigation: { about: "簡歷", projects: "專案", blog: "文章" },
+  navigation: { about: "關於", projects: "專案", blog: "文章" },
   about: {
-    title: "簡歷",
-    subtitle:
-      "具備經濟學背景，專注於軟體工程與產品開發。相信好的技術不必看起來像魔法，而是能穩定地解決問題，並留下真正有用的成果。",
-    workExperience: "工作經歷",
-    skills: "專業技能",
-    education: "學歷",
-    degree: profile.education.degree["zh-TW"],
-    fintechProgram: profile.education.fintechProgram["zh-TW"],
+    topics: {
+      origin: {
+        label: "從哪裡開始",
+        question: ["經濟學，", "怎麼走到", "寫程式？"],
+        answer:
+          "在那個還沒有 AI 的時代，我喜歡看著自己寫的程式第一次跑起來。經濟學告訴我們創造價值的重要性，而那時的我認為，能親手打造出替人解決問題的產品，是創造價值最直接的方式。",
+      },
+      work: {
+        label: "做過的產品",
+        question: ["你做過", "哪些產品？"],
+        answer:
+          "我曾在電商 Pinkoi 為了替顧客創造更好的購物體驗而絞盡腦汁，也曾從零到一和團隊打造企業 AI 知識平台。後來輾轉到了 Swag，致力於透過遊戲讓用戶享受除了直播外的豐富體驗。",
+      },
+      curiosity: {
+        label: "工作之外呢",
+        question: ["工作之外，", "你喜歡", "做什麼？"],
+        answer: "我喜歡心理學，平常也寫書法、拍照。",
+      },
+    },
+    navigation: "訪談段落",
+    jump: "跳到",
+    resume: "下載完整履歷",
+    continue: "接著往下看",
+    photoAlt: {
+      street: "兩位穿亮黃色外套的人站在畫面兩側，後方是灰牆與紅磚建築。",
+      architecture: "一名騎士從藍白曲面建築前騎過。",
+      coast: "海浪拍打岩岸，岸邊站著一個人，遠方是陡峭的山壁。",
+      passage: "兩人走過有樑柱與日光的長廊。",
+    },
   },
   projects: {
     title: "專案",
@@ -60,7 +79,7 @@ export const traditionalChineseDictionary: TranslationDictionary = {
   },
   header: {
     home: "回到首頁",
-    about: "簡歷",
+    about: "關於",
     projects: "專案",
     blog: "文章",
     navigationLabel: "主要導覽",
@@ -75,33 +94,6 @@ export const traditionalChineseDictionary: TranslationDictionary = {
     email: "寄送 Email",
     elsewhere: "其他平台",
     home: "回到首頁",
-  },
-  workExperiences: {
-    "swag-2026": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["swag-2026"], "zh-TW"),
-      description:
-        "從零開發合作平台後端，並建立支援依需求轉檔與影片重用的 Telegram 影音服務。在合作夥伴點數轉帳與遊戲錢包整合中，實作 API 簽章與防止重複交易的機制，並為遊戲交易建立 PostgreSQL 帳本與自動對帳流程。同時將網域可用性 API 由 Flask、MongoDB 遷移至非同步 FastAPI、PostgreSQL，加入 Redis cache，並導入 GrowthBook 支援功能發布與 A/B 測試。",
-    },
-    "gaia-2024": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["gaia-2024"], "zh-TW"),
-      description:
-        "主導設計與開發基於 LLM 的企業級知識管理平台，透過 RAG 架構與向量資料庫實現精準的語意搜尋，大幅簡化企業內部資訊檢索流程並提升客服效率，成功導入至捷安特 (Giant)、威剛科技 (ADATA) 等指標性企業。為符合企業級資安要求，實作完整的 RBAC 架構，確保機敏文件在向量檢索過程中的安全隔離。",
-    },
-    "pinkoi-2023": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["pinkoi-2023"], "zh-TW"),
-      description:
-        "設計並實作具備擴展性與高效能的 API；整合第三方服務；並與前端團隊緊密合作，交付穩健、生產級別的電商功能。重新設計資料庫 Schema，現代化跨服務通訊，並消除歷史遺留的效能瓶頸，大幅提升系統可靠性與吞吐量。建置並部署內部管理工具，自動化關鍵工作流程，加速業務營運並減少人工負擔。執行嚴格的程式碼審查並落實工程最佳實踐，以維持程式碼品質、確保系統可維護性，並推動長期的可擴展性。",
-    },
-    "sysfeather-2022": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["sysfeather-2022"], "zh-TW"),
-      description:
-        "開發具備多租戶架構的電商自動化開店系統後端。主導社群購物專案的 POC，整合 Facebook API 以實現留言管理與貼文抽獎功能，提升客戶的社群媒體管理體驗。",
-    },
-    "beida-2020": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["beida-2020"], "zh-TW"),
-      description:
-        "為了讓即將畢業的高中生更深入了解經濟學，我設計了一門為期 15 週的經濟學原理課程。課程內容涵蓋時事討論、基本原理以及進階個體經濟學理論。這段經歷磨練了我的簡報與投影片設計能力。",
-    },
   },
   projectsData: {
     taigu: {

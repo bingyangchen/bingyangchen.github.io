@@ -1,10 +1,9 @@
 import { ButtonLink, Tooltip } from "../../components";
 import BrandImage from "../../components/BrandImage/BrandImage";
-import { profile } from "../../data/profile";
-import { workExperienceItems } from "../../data/workExperience";
+import { profile, resumeDownload } from "../../data/profile";
+import { currentWorkExperience, workExperienceIdToFacts } from "../../data/career";
 import { useTranslation } from "../../i18n/context";
-import { resolveWorkExperienceCopy } from "../../i18n/content";
-import { englishDictionary } from "../../i18n/dictionaries/en";
+import { formatWorkIdentity } from "../../i18n/workExperience";
 import {
   IconChevronDoubleDown,
   IconCSquareFill,
@@ -17,11 +16,10 @@ import Portrait from "./Portrait";
 import styles from "./Hero.module.scss";
 
 export default function Hero() {
-  const { dictionary } = useTranslation();
-  const primaryWorkExperience = workExperienceItems[0];
-  const primaryWorkCopy = resolveWorkExperienceCopy(
-    englishDictionary.workExperiences[primaryWorkExperience.id],
-    dictionary.workExperiences[primaryWorkExperience.id],
+  const { dictionary, language } = useTranslation();
+  const currentWork = formatWorkIdentity(
+    workExperienceIdToFacts[currentWorkExperience.id],
+    language,
   );
 
   return (
@@ -39,13 +37,13 @@ export default function Hero() {
           <h1 className={styles.name}>{dictionary.name}</h1>
           <div className={styles.role}>
             <BrandImage
-              src={primaryWorkExperience.company_logo}
+              src={currentWorkExperience.logo}
               alt=""
               width={16}
               height={16}
               loading="eager"
             />
-            <span>{`${primaryWorkCopy.job_title} @ ${primaryWorkCopy.company_name}`}</span>
+            <span>{`${currentWork.job_title} @ ${currentWork.company_name}`}</span>
           </div>
           <p className={styles.greeting}>{dictionary.home.greeting}</p>
           <div className={styles.actions}>
@@ -53,8 +51,7 @@ export default function Hero() {
               variant="brand"
               size="extra-large"
               className={styles.resume_download}
-              href="/resume.pdf"
-              download={`${profile.name.en} - ${profile.name["zh-TW"]}.pdf`}
+              {...resumeDownload}
             >
               {dictionary.home.downloadResume}
             </ButtonLink>

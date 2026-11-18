@@ -1,13 +1,13 @@
 @use "tokens" as _;
 
 @media print {
-  @page {
+  @page resume {
     size: A4;
     margin: 0;
   }
 
-  html,
-  body {
+  html:has(.resume-print-area),
+  body:has(.resume-print-area) {
     background: _.$surface-page !important;
     height: 297mm !important;
     max-height: 297mm !important;
@@ -17,14 +17,18 @@
     overflow: hidden !important;
   }
 
-  #root {
+  body:has(.resume-print-area) #root {
     height: 297mm !important;
     max-height: 297mm !important;
     min-height: 0 !important;
     overflow: hidden !important;
   }
 
-  main {
+  body:has(.resume-print-area) {
+    page: resume;
+  }
+
+  body:has(.resume-print-area) main {
     min-height: 0 !important;
     height: 297mm !important;
     max-height: 297mm !important;
@@ -36,21 +40,21 @@
     display: none !important;
   }
 
-  .main-outlet-slot {
+  body:has(.resume-print-area) .main-outlet-slot {
     min-height: 0 !important;
     max-height: 297mm !important;
     overflow: hidden !important;
   }
 
-  .main-outlet-slot > div {
+  body:has(.resume-print-area) .main-outlet-slot > div {
     min-height: 0 !important;
   }
 
-  .main-outlet-slot > div > div {
+  body:has(.resume-print-area) .main-outlet-slot > div > div {
     min-height: 0 !important;
   }
 
-  body * {
+  body:where(:has(.resume-print-area)) * {
     visibility: hidden;
   }
 

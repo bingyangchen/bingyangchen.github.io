@@ -17,14 +17,13 @@ test("SITE-R6.7 圖片語意與雙語文字", async ({ page, server }) => {
     if (language === "zh-TW") await page.locator("[data-language-switcher]").click();
     await expect(page.locator("html")).toHaveAttribute("lang", language);
     const about = page.locator("#about");
-    await expect(about.getByRole("img")).toHaveCount(0);
-    for (const skill of ["TypeScript", "JavaScript", "FastAPI", "Cypress", "Meta API"])
-      await expect(about.getByText(skill, { exact: true })).toHaveCount(1);
-    const education = about.getByRole("link");
-    await expect(education).toHaveCount(2);
-    await expect(education.first()).toHaveAccessibleName(
-      /National Chengchi University|國立政治大學/,
+    await expect(about.getByRole("article")).toHaveCount(3);
+    await expect(about.getByRole("heading", { level: 2 })).toHaveCount(3);
+    await expect(about.getByRole("img")).toHaveCount(4);
+    await expect(about.getByRole("img").first()).toHaveAccessibleName(
+      language === "en" ? /bright yellow jackets/ : /亮黃色外套/,
     );
+    await expect(about.locator("a[download]")).toHaveAttribute("href", "/resume.pdf");
   }
 });
 

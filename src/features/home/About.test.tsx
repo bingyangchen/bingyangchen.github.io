@@ -1,52 +1,52 @@
-import { cleanup, within } from "@testing-library/react";
+import { cleanup, screen, within } from "@testing-library/react";
 import { renderWithLanguage } from "../../test-utils/render";
-import { englishDictionary } from "../../i18n/dictionaries/en";
-import { traditionalChineseDictionary } from "../../i18n/dictionaries/zhtw";
-import { homeSkillItems } from "../../data/skills";
-import { profile } from "../../data/profile";
-import { workExperienceItems } from "../../data/workExperience";
 import About from "./About";
 
-afterEach(() => {
-  cleanup();
-  localStorage.clear();
-});
+beforeEach(() => localStorage.clear());
+afterEach(cleanup);
 
 test.each([
-  ["en", englishDictionary],
-  ["zh-TW", traditionalChineseDictionary],
-] as const)("SITE-R6.1 工作與翻譯 %s", (language, dictionary) => {
-  const { container } = renderWithLanguage(<About />, language);
-  const content = within(container);
-  const descriptions = workExperienceItems.map(({ id }) =>
-    content.getByText(dictionary.workExperiences[id].description),
+  [
+    "en",
+    "About",
+    [
+      "Economics, then code. What changed?",
+      "What have you built?",
+      "What do you do outside of work?",
+    ],
+    "Download full resume",
+  ],
+  [
+    "zh-TW",
+    "關於",
+    ["經濟學，怎麼走到寫程式？", "你做過哪些產品？", "工作之外，你喜歡做什麼？"],
+    "下載完整履歷",
+  ],
+] as const)("SITE-R6.10 %s 依序顯示完整訪談", (language, title, questions, resume) => {
+  renderWithLanguage(<About />, language);
+  const about = screen.getByRole("region", { name: title });
+  const chapters = within(about).getAllByRole("article");
+  expect(chapters).toHaveLength(3);
+  expect(
+    chapters.map((chapter) => within(chapter).getByRole("heading").textContent),
+  ).toEqual(questions);
+  expect(chapters[0].textContent).toMatch(
+    language === "en"
+      ? /economics.*creating value.*solve a problem for someone else/
+      : /經濟學.*創造價值.*替人解決問題/,
   );
-  for (const [index, { id }] of workExperienceItems.entries()) {
-    const copy = dictionary.workExperiences[id];
-    expect(content.getByText(copy.work_duration)).toBeInTheDocument();
-    expect(
-      content.getAllByText(copy.job_title, { exact: true })[0],
-    ).toBeInTheDocument();
-    expect(content.getByText(copy.company_name, { exact: true })).toBeInTheDocument();
-    if (index > 0)
-      expect(descriptions[index - 1].compareDocumentPosition(descriptions[index])).toBe(
-        Node.DOCUMENT_POSITION_FOLLOWING,
-      );
-  }
-});
-
-test("SITE-R6.2 技能與教育", () => {
-  const { container } = renderWithLanguage(<About />);
-  for (const skill of homeSkillItems)
-    expect(within(container).getAllByText(skill.title)).toHaveLength(1);
-  expect(
-    within(container).getByRole("link", {
-      name: `${profile.education.school.en} ${englishDictionary.about.degree}`,
-    }),
-  ).toHaveAttribute("href", "https://econo.nccu.edu.tw/");
-  expect(
-    within(container).getByRole("link", {
-      name: englishDictionary.about.fintechProgram,
-    }),
-  ).toHaveAttribute("href", "https://www.ftrc.nccu.edu.tw/fintech/display/1");
+  expect(chapters[1].textContent).toMatch(
+    language === "en"
+      ? /Pinkoi.*AI knowledge platform.*games at Swag/
+      : /Pinkoi.*企業 AI 知識平台.*Swag.*遊戲/,
+  );
+  expect(chapters[2].textContent).toMatch(
+    language === "en" ? /psychology.*calligraphy.*photos/ : /心理學.*書法.*拍照/,
+  );
+  expect(within(chapters[1]).getByRole("link", { name: resume })).toHaveAttribute(
+    "href",
+    "/resume.pdf",
+  );
+  expect(within(chapters[2]).getAllByRole("img")).toHaveLength(4);
+  expect(within(chapters[2]).queryByRole("link")).toBeNull();
 });

@@ -1,9 +1,6 @@
 import { openHome, waitForSection } from "../helpers/site";
-import { moveMotionTarget } from "../helpers/motion";
 import assert from "node:assert/strict";
 import { test, expect } from "../helpers/fixtures";
-
-const PROJECTS_MOTION = '#projects > [data-scroll-motion="content"]';
 
 test("SITE-R2.1 修飾鍵開啟原生新分頁，來源頁保留閱讀位置及歷史", async ({
   page,
@@ -200,7 +197,7 @@ test("SITE-R2.7 目前區塊與語言切換", async ({ page, server }) => {
     await page
       .locator('header nav a[aria-current="location"]')
       .evaluate((element: HTMLAnchorElement) => element.textContent!),
-    "簡歷",
+    "關於",
   );
   assert.equal(
     await page
@@ -339,6 +336,7 @@ test("SITE-R2.8 SITE-R12.4 手機選單、焦點與收起入口", async ({ page,
 });
 
 test("SITE-R2.9 Header 對齊、觸控範圍與窄版組成", async ({ page, server }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await openHome(page, server);
   for (const language of ["en", "zh-TW"]) {
     if (
@@ -351,7 +349,6 @@ test("SITE-R2.9 Header 對齊、觸控範圍與窄版組成", async ({ page, ser
         .evaluate((element: HTMLElement) => element.click());
     for (const width of [320, 390, 720, 721, 1024, 1440, 1920, 2560]) {
       await page.setViewportSize({ width, height: 900 });
-      await moveMotionTarget(page, PROJECTS_MOTION, 0);
       if (width <= 720)
         await page.locator('header button[aria-controls="site-navigation"]').click();
       const metrics = await page.locator("header").evaluate((header: HTMLElement) => {

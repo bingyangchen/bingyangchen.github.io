@@ -1,17 +1,8 @@
 import type { MotionParameters } from "./parameters";
 
-const MOTION_KINDS = [
-  "content",
-  "heading",
-  "hero",
-  "atmosphere",
-  "hint",
-  "portrait",
-  "skill",
-] as const;
+const MOTION_KINDS = ["content", "hero", "atmosphere", "hint"] as const;
 
 export type MotionKind = (typeof MOTION_KINDS)[number];
-export type MotionGeometry = { top: number; height: number };
 export type MotionViewport = {
   height: number;
   scrollTop: number;
@@ -35,17 +26,13 @@ function smoothProgress(value: number): number {
 }
 
 export function calculatePose(
-  target: MotionGeometry & { kind: MotionKind; order: number },
+  target: { kind: MotionKind; top: number; height: number },
   viewport: MotionViewport,
   parameters: MotionParameters,
 ): MotionPose {
   const top = target.top - viewport.scrollTop;
   const bottom = top + target.height;
-  if (
-    target.kind === "hero" ||
-    target.kind === "atmosphere" ||
-    target.kind === "hint"
-  ) {
+  if (target.kind !== "content") {
     const readingDistance = Math.max(0, target.height - viewport.height);
     const progress = clamp(
       (-top - readingDistance) /
@@ -72,60 +59,26 @@ export function calculatePose(
   const entranceStart = viewport.height * parameters["entrance-start"];
   const entranceEnd =
     viewport.height *
-      parameters[
-        target.height > viewport.height * parameters["long-content-threshold"]
-          ? "long-content-end"
-          : "entrance-end"
-      ] -
-    (target.kind === "skill"
-      ? target.order * viewport.height * parameters["skill-stagger"]
-      : 0);
+    parameters[
+      target.height > viewport.height * parameters["long-content-threshold"]
+        ? "long-content-end"
+        : "entrance-end"
+    ];
   const exitStart = viewport.headerBottom + viewport.height * parameters["exit-start"];
   const exitEnd = viewport.headerBottom - viewport.height * parameters["exit-end"];
   const enter = smoothProgress((entranceStart - top) / (entranceStart - entranceEnd));
   const exit = smoothProgress((exitStart - bottom) / (exitStart - exitEnd));
-  const isArtwork = target.kind === "portrait" || target.kind === "skill";
-  const shrink =
-    target.kind === "heading"
-      ? parameters["heading-shrink"]
-      : isArtwork
-        ? parameters["artwork-shrink"]
-        : parameters["content-shrink"];
-  const exitShrink =
-    target.kind === "heading"
-      ? parameters["heading-exit-shrink"]
-      : isArtwork
-        ? parameters["artwork-exit-shrink"]
-        : parameters["content-exit-shrink"];
   return {
     y:
-      (1 - enter) *
-        parameters["content-distance"] *
-        (isArtwork ? parameters["artwork-distance-scale"] : 1) -
-      exit *
-        parameters["content-distance"] *
-        parameters[isArtwork ? "artwork-exit-distance-scale" : "exit-distance-scale"],
+      (1 - enter) * parameters["content-distance"] -
+      exit * parameters["content-distance"] * parameters["exit-distance-scale"],
     opacity:
       parameters["minimum-opacity"] +
       (1 - parameters["minimum-opacity"]) * enter * (1 - exit),
-    scale: 1 - (1 - enter) * shrink - exit * exitShrink,
+    scale:
+      1 -
+      (1 - enter) * parameters["content-shrink"] -
+      exit * parameters["content-exit-shrink"],
     tilt: 0,
-  };
-}
-
-export function calculateTimeline(
-  row: MotionGeometry,
-  viewport: MotionViewport,
-  parameters: MotionParameters,
-): { progress: number; dotScale: number } {
-  const progress = clamp(
-    (viewport.height * parameters["timeline-reading-line"] -
-      (row.top - viewport.scrollTop)) /
-      Math.max(1, row.height),
-  );
-  return {
-    progress,
-    dotScale:
-      parameters["timeline-dot-start"] + progress * parameters["timeline-dot-growth"],
   };
 }

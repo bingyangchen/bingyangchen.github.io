@@ -1,16 +1,4 @@
-import type { ProjectCopy, WorkExperienceCopy } from "../types";
-
-export function makeWorkExperienceCopy(
-  overrides: Partial<WorkExperienceCopy> = {},
-): WorkExperienceCopy {
-  return {
-    job_title: "Software Engineer",
-    company_name: "Example Company",
-    description: "Build reliable software.",
-    work_duration: "2020 to Present",
-    ...overrides,
-  };
-}
+import type { ProjectCopy } from "../types";
 
 export function makeProjectCopy(overrides: Partial<ProjectCopy> = {}): ProjectCopy {
   return {

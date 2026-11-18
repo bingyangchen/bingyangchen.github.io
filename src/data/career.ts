@@ -1,3 +1,6 @@
+// Source: https://swag.live/favicon.ico
+import swagLogo from "../assets/swag_logo.webp";
+
 export type YearMonth = { year: number; month: number };
 export type WorkPeriod =
   | { kind: "employment"; start: YearMonth; end: YearMonth | null }
@@ -56,3 +59,8 @@ export const workExperienceIdToFacts = {
 } as const satisfies Record<string, WorkExperienceFacts>;
 
 export type WorkExperienceId = keyof typeof workExperienceIdToFacts;
+
+export const currentWorkExperience = {
+  id: "swag-2026",
+  logo: swagLogo,
+} as const satisfies { id: WorkExperienceId; logo: string };

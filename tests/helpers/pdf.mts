@@ -15,6 +15,7 @@ export async function parsePdfMetadata(bytes: Uint8Array) {
     const links = new Set();
     const text = [];
     const pageSizes = [];
+    const paintedImageSizes: [number, number][] = [];
     let mediaBox;
     for (let index = 1; index <= document.numPages; index++) {
       const page = await document.getPage(index);
@@ -23,14 +24,19 @@ export async function parsePdfMetadata(bytes: Uint8Array) {
       mediaBox ??= page.view;
       const content = await page.getTextContent();
       text.push(
-        ...content.items
+        content.items
           .filter((item) => "str" in item)
-          .map((item) => item.str + (item.hasEOL ? "\n" : "")),
+          .map((item) => item.str + (item.hasEOL ? "\n" : ""))
+          .join(""),
       );
       const operators = await page.getOperatorList();
 
       // Inspect the fonts used by drawing operators with a parser independent of the build validator.
       for (let index = 0; index < operators.fnArray.length; index++) {
+        if (operators.fnArray[index] === OPS.paintImageXObject) {
+          const [, width, height] = operators.argsArray[index];
+          paintedImageSizes.push([width, height]);
+        }
         if (operators.fnArray[index] !== OPS.setFont) continue;
         const font = page.commonObjs.get(operators.argsArray[index][0]);
         if (!font.name) throw new Error("PDF.js did not expose the embedded font name");
@@ -44,9 +50,10 @@ export async function parsePdfMetadata(bytes: Uint8Array) {
       language: "Language" in metadata.info ? metadata.info.Language : undefined,
       mediaBox,
       pageSizes,
+      paintedImageSizes,
       fonts: Array.from(fonts).sort(),
       links: Array.from(links).sort(),
-      text: text.join(""),
+      text: text.join("\n"),
     };
   } finally {
     await task.destroy();

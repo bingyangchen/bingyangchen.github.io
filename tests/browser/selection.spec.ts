@@ -24,7 +24,7 @@ test("SITE-R12.5 正文可拖選並以原生複製取得文字", async ({ page, 
     for (const width of [1440, 390]) {
       await page.setViewportSize({ width, height: 900 });
       for (const selector of [
-        '#about [class*="description"]',
+        "#about [data-chapter] p",
         `${DETAIL} [class*="description"]`,
         '#blog [class*="featuredCopy"] p',
         '#blog [class*="reading"] p',
@@ -74,10 +74,7 @@ async function assertSelectionStyles(
       const bodySelectors = [
         "#home h1",
         '#home [class*="greeting"]',
-        '#about [class*="job_title"]',
-        '#about [class*="company_name"]',
-        '#about [class*="description"]',
-        '#about [class*="degree_list"] a',
+        "#about [data-chapter] p",
         '#projects [role="tabpanel"]:not([inert]) h3',
         '#projects [role="tabpanel"]:not([inert]) p span',
         '#blog [class*="featuredCopy"] h3',
@@ -90,6 +87,7 @@ async function assertSelectionStyles(
         "button span",
         "header nav a",
         '#home a[href="#projects"]',
+        "#about a[download]",
         '#projects [role="tabpanel"] a',
         '#blog [class*="archiveLink"] span',
         '#blog [class*="featuredAction"] span',

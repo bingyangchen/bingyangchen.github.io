@@ -1,7 +1,5 @@
-import { workExperienceIdToFacts } from "../../data/career";
 import { profile } from "../../data/profile";
 import type { TranslationDictionary } from "../types";
-import { formatWorkExperienceFacts } from "../workExperience";
 
 export const englishDictionary: TranslationDictionary = {
   name: profile.name["en"],
@@ -15,14 +13,39 @@ export const englishDictionary: TranslationDictionary = {
   },
   navigation: { about: "About", projects: "Projects", blog: "Blog" },
   about: {
-    title: "ABOUT",
-    subtitle:
-      "With a background in Economics, I focus on software engineering and product development. Good technology does not need to look like magic. It should solve real problems reliably and leave something genuinely useful behind.",
-    workExperience: "Work Experience",
-    skills: "Skills",
-    education: "Education",
-    degree: profile.education.degree.en,
-    fintechProgram: profile.education.fintechProgram.en,
+    topics: {
+      origin: {
+        label: "Where did it start?",
+        question: ["Economics,", "then code.", "What changed?"],
+        answer:
+          "I learned to code before AI tools came along, and I loved seeing a program I’d written run for the first time. Studying economics taught me why creating value matters. Back then, I figured the most direct way to do that was to build something that would solve a problem for someone else.",
+      },
+      work: {
+        label: "Products I’ve built",
+        question: ["What have", "you built?"],
+        answer:
+          "At Pinkoi, I spent a lot of time figuring out how to make online shopping better for customers. I went on to help build an AI knowledge platform for businesses from scratch. Now I work on games at Swag so people have more to do on the platform beyond watching live streams.",
+      },
+      curiosity: {
+        label: "And off the clock?",
+        question: ["What do you", "do outside", "of work?"],
+        answer:
+          "I’m interested in psychology. I also practice calligraphy and take photos.",
+      },
+    },
+    navigation: "Interview chapters",
+    jump: "Jump to",
+    resume: "Download full resume",
+    continue: "Keep scrolling",
+    photoAlt: {
+      street:
+        "Two people in bright yellow jackets stand on opposite sides of the frame, against concrete and red brick.",
+      architecture:
+        "A cyclist passes a building with blue glazing and sweeping white curves.",
+      coast:
+        "Waves break against a rocky shore beneath steep cliffs, with a lone figure by the water.",
+      passage: "Two people walk through a sunlit passage framed by beams.",
+    },
   },
   projects: {
     title: "Projects",
@@ -77,33 +100,6 @@ export const englishDictionary: TranslationDictionary = {
     email: "Send an email",
     elsewhere: "Elsewhere",
     home: "Back to home",
-  },
-  workExperiences: {
-    "swag-2026": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["swag-2026"], "en"),
-      description:
-        "I built the affiliate platform backend from scratch and developed a Telegram video service with on-demand transcoding and reuse of uploaded videos. For partner credit transfers and game wallet integration, I implemented signed APIs and duplicate-transaction handling, with a PostgreSQL game ledger and automated reconciliation. I also migrated domain availability APIs from Flask and MongoDB to async FastAPI and PostgreSQL with Redis caching, and integrated GrowthBook for targeted feature rollouts and A/B testing.",
-    },
-    "gaia-2024": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["gaia-2024"], "en"),
-      description:
-        "One of the projects I'm proudest of is an enterprise AI knowledge platform I architected from the ground up. I owned the backend design end to end, building it to support conversational AI, knowledge base management, RAG-powered retrieval, multimodal generation, and modular MCP integrations, along with the core platform capabilities the whole product stood on: authentication, SSO, RBAC, and file upload. Because it was customer-facing, performance mattered as much as features, so I optimized the database schemas and refactored the backend services, which brought chat loading time down by 67%. But the part I've come to value most wasn't the code itself. As the platform grew I put real effort into how the team worked, mentoring teammates, defining our coding standards, and systematizing code reviews, and it paid off in a way I could measure: new engineers went from a week to a single day to get up to speed.",
-    },
-    "pinkoi-2023": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["pinkoi-2023"], "en"),
-      description:
-        "On the e-commerce side, a lot of my work came down to removing friction in the buying flow. I designed and implemented guest shopping cart functionality so that non-registered users could move through checkout without being forced to sign up first. I also integrated Taiwan's Cultural Points program and ShopBack Hong Kong, which opened up new purchasing channels and drove order growth in the markets we were targeting. The piece I found most demanding was re-architecting the free-shipping eligibility computation pipeline: I brought the computation down by nearly half while keeping promotion accuracy intact even during high-traffic campaigns, when getting it wrong would have been most costly.",
-    },
-    "sysfeather-2022": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["sysfeather-2022"], "en"),
-      description:
-        "I built the backend services behind a multi-tenant e-commerce platform, and at the same time took the lead on the technical proof of concept for our social commerce integrations.",
-    },
-    "beida-2020": {
-      ...formatWorkExperienceFacts(workExperienceIdToFacts["beida-2020"], "en"),
-      description:
-        "To provide graduating high school students with a deeper understanding of economics, I designed a 15-week course covering the principles of economics. The course content included discussions on current events, basic principles, and advanced microeconomic theory. This experience sharpened my presentation and slide design skills.",
-    },
   },
   projectsData: {
     taigu: {

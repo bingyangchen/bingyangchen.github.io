@@ -146,67 +146,48 @@ test("SITE-R7.8 鍵盤操作作品", async ({ page, server }) => {
   );
 });
 
-test("SITE-R12.2 學歷跨 breakpoint 時立即套用字級", async ({ page, server }) => {
-  await page.setViewportSize({ width: 512, height: 844 });
+test("SITE-R12.2 小畫面作品分頁與產品圖分支", async ({ page, server }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
   await openHome(page, server);
   for (const language of ["en", "zh-TW"]) {
-    if (
-      (await page
-        .locator("html")
-        .evaluate((element: HTMLHtmlElement) => element.lang)) !== language
-    )
-      await page.evaluate(() =>
-        document.querySelector<HTMLElement>("[data-language-switcher]")!.click(),
-      );
-    for (const [width, fontSize, programFontSize] of [
-      [513, "18px", "16px"],
-      [512, "16px", "15px"],
+    if (language === "zh-TW")
+      await page
+        .locator("[data-language-switcher]")
+        .evaluate((element: HTMLElement) => element.click());
+    for (const [width, iconWidth, artworkCounts] of [
+      [512, 24, [1, 1, 1]],
+      [513, 26, [2, 1, 2]],
+      [512, 24, [1, 1, 1]],
     ] as const) {
       await page.setViewportSize({ width, height: 844 });
+      const tabs = await page.locator('#projects [role="tab"]').evaluateAll((buttons) =>
+        buttons.map((button) => {
+          const bounds = button.getBoundingClientRect();
+          return {
+            label: button.textContent!.trim(),
+            iconWidth: button
+              .querySelector('[aria-hidden="true"]')!
+              .getBoundingClientRect().width,
+            fits: bounds.left >= 0 && bounds.right <= innerWidth && bounds.height >= 44,
+          };
+        }),
+      );
       assert.deepEqual(
-        await page
-          .locator('#about [class*="degree_list"] > a')
-          .evaluateAll((elements: HTMLElement[]) =>
-            elements.map((element) => getComputedStyle(element).fontSize),
-          ),
-        [fontSize, programFontSize],
-        `education font size at ${width} ${language}`,
+        tabs,
+        ["Taigu", "Noads", "Leechai"].map((label) => ({
+          label,
+          iconWidth,
+          fits: true,
+        })),
+        `project tabs at ${width} ${language}`,
       );
-      const educationLinks = await page
-        .locator('#about [class*="degree_list"] > a')
-        .evaluateAll((elements: HTMLElement[]) =>
-          elements.map((element) => element.offsetHeight),
-        );
-      assert.ok(
-        educationLinks.every((height) => height >= 44),
-        `education target height at ${width} ${language}`,
-      );
-      const skills = await page
-        .locator('[data-scroll-motion="skill"]')
-        .evaluateAll((elements: HTMLElement[]) =>
-          elements.map((element) => ({
-            title: element.textContent!.trim(),
-            top: element.offsetTop,
-            width: element.offsetWidth,
-            height: element.offsetHeight,
-            display: getComputedStyle(element).display,
-          })),
-        );
-      assert.ok(skills.length > 10);
-      assert.equal(new Set(skills.map((skill) => skill.title)).size, skills.length);
-      assert.ok(new Set(skills.map((skill) => skill.top)).size > 1, "skills wrap");
-      assert.ok(
-        skills.every(
-          (skill) => skill.width > 0 && skill.height > 0 && skill.display !== "none",
-        ),
-      );
-      assert.ok(
-        await page
-          .locator('[class*="skills_inner"]')
-          .evaluate(
-            (element: HTMLElement) => element.scrollWidth <= element.clientWidth,
-          ),
-      );
+      for (let index = 0; index < artworkCounts.length; index += 1) {
+        await selectProject(page, index + 1);
+        const artwork = await page
+          .locator(`${DETAIL} [data-artwork-image]:visible`)
+          .count();
+        assert.equal(artwork, artworkCounts[index], `project ${index} at ${width}`);
+      }
     }
   }
 });

@@ -4,7 +4,7 @@ import type {
   WorkPeriod,
   YearMonth,
 } from "../data/career";
-import type { Language, WorkExperienceCopy } from "./types";
+import type { Language } from "./types";
 
 const MONTHS = [
   "Jan.",
@@ -68,17 +68,20 @@ function formatWorkPeriod(period: WorkPeriod, language: Language): string {
   return `${range} (${duration})`;
 }
 
-export function formatWorkExperienceFacts(
-  facts: WorkExperienceFacts,
-  language: Language,
-): Omit<WorkExperienceCopy, "description"> {
+export function formatWorkIdentity(facts: WorkExperienceFacts, language: Language) {
   const localize = (name: LocalizedWorkName) => {
     const translation = name[language];
     return translation?.trim() ? translation : name.en;
   };
+  return { company_name: localize(facts.company), job_title: localize(facts.title) };
+}
+
+export function formatWorkExperienceFacts(
+  facts: WorkExperienceFacts,
+  language: Language,
+) {
   return {
-    company_name: localize(facts.company),
-    job_title: localize(facts.title),
+    ...formatWorkIdentity(facts, language),
     work_duration: formatWorkPeriod(facts.period, language),
   };
 }

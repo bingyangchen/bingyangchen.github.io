@@ -19,9 +19,7 @@ export default function Home() {
       >
         <Hero />
       </div>
-      <div id="about" className={styles.section} tabIndex={-1}>
-        <About />
-      </div>
+      <About />
       <div id="projects" className={styles.section} tabIndex={-1}>
         <Projects />
       </div>

@@ -1,137 +1,405 @@
+@use "sass:math";
+@use "sass:string";
 @use "../../styles/tokens" as _;
+@use "../../styles/controls";
+@use "../../styles/focus";
+
+$header-offset: calc(#{_.$header-height} + env(safe-area-inset-top, 0px));
+$sticky-min-width: _.$large + 1px;
+$sticky-min-height: 651px;
+$question-rail-width: 49%;
+$question-rail-gutter: 2%;
+$thread-length: 1500;
+$linear-photo-width: calc(100vw - 2 * _.$space-6);
+$sticky-photo-media: "(min-width: #{$sticky-min-width}) and (min-height: #{$sticky-min-height}) and (prefers-reduced-motion: no-preference)";
+
+:export {
+  streetSizes: string.unquote(
+    "auto, #{$sticky-photo-media} 44vw, #{$linear-photo-width}"
+  );
+  pairSizes: string.unquote(
+    "auto, (max-width: #{_.$small}) #{$linear-photo-width}, #{$sticky-photo-media} 24vw, calc(50vw - #{math.div(3 * _.$space-6, 2)})"
+  );
+  passageSizes: string.unquote(
+    "auto, (max-width: #{_.$small}) #{$linear-photo-width}, #{$sticky-photo-media} 35vw, 80vw"
+  );
+}
+
+@mixin mixed-surface-focus {
+  @media screen {
+    &:focus-visible {
+      @include focus.inset-outline;
+      outline-color: _.$focus-color-content;
+      &::after {
+        box-shadow: inset 0 0 0 calc(2 * _.$focus-ring-width) _.$text-on-fill;
+      }
+    }
+  }
+  @media (forced-colors: active) {
+    &:focus-visible {
+      outline-color: Highlight;
+      &::after {
+        box-shadow: none;
+      }
+    }
+  }
+}
 
 .main {
-  display: flow-root;
-  padding-bottom: 50px;
-  & > h2.title {
-    margin: calc(_.$header-height + 30px) 0 _.$space-5;
-    font-family: _.$font-family-heading;
-    text-align: center;
-    font-size: 2.8 * _.$base-font-size;
-    @media (max-width: _.$medium - 1px) {
-      margin-top: _.$space-6;
+  --question-size: clamp(3rem, 6.1vw, 5.75rem);
 
-      &[data-scroll-motion] {
-        transform: none;
-        opacity: 1;
-      }
-    }
-    @media screen and (max-width: _.$small) {
-      font-size: 2 * _.$base-font-size;
-    }
+  container: about-story / inline-size;
+  @include mixed-surface-focus;
+
+  &[data-language="en"] {
+    --question-size: clamp(2.5rem, 4.7vw, 4.7rem);
   }
-  .subtitle {
-    margin: 30px auto;
-    padding: 0 50px;
-    text-align: center;
-    max-width: _.$medium;
-    line-height: 2.2 * _.$base-font-size;
-    font-size: 1.1 * _.$base-font-size;
-    letter-spacing: 0.8px;
-    font-family: _.$font-family-heading;
-    @media screen and (max-width: _.$small) {
-      padding: 0 30px;
-      font-size: _.$base-font-size;
+
+  .story {
+    position: relative;
+    isolation: isolate;
+    background: _.$surface-page;
+    color: _.$text-primary;
+    timeline-scope: --interview-progress;
+    view-timeline: --interview-progress block;
+    :where(*) {
+      letter-spacing: normal;
     }
-  }
-  .divider {
-    margin: 30px auto;
-    width: 150px;
-    border: none;
-    border-top: 2px solid _.$border-default;
-    border-radius: 5px;
-  }
-  .heading {
-    margin: calc(_.$header-height + 30px) 0 _.$space-5;
-    text-align: center;
-    font-size: 1.6 * _.$base-font-size;
-    font-weight: normal;
-    color: _.$text-strong;
-    @media screen and (max-width: _.$small) {
-      font-size: 1.4 * _.$base-font-size;
-    }
-  }
-  & > .work_experience_outer {
-    display: flex;
-    flex-direction: column;
-    width: min(100%, _.$large);
-    padding: 30px 30px 15vh;
-    margin: 0 auto;
-    @media (max-width: _.$small) {
-      padding-left: _.$space-5;
-    }
-  }
-  & > .skills_outer {
-    width: min(100%, _.$extra-large);
-    margin: 0 auto;
-    padding: 30px 0 20vh;
-    overflow: hidden;
-    & > .skills_inner {
-      display: flex;
-      width: 100%;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: _.$space-7 _.$space-9;
-      padding-inline: _.$space-6;
-    }
-  }
-  & > .education_outer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: _.$space-8;
-    padding: 30px 30px 20vh;
-    @media (max-width: _.$small) {
-      flex-direction: column;
-      gap: _.$space-6;
-    }
-    & > .school_logo {
-      width: min(260px, 30%);
-      height: auto;
-      @media (max-width: _.$small) {
-        width: 220px;
-      }
-    }
-    & > .degree_list {
-      display: flex;
-      flex-direction: column;
-      gap: _.$space-3;
-      font-size: 1.125 * _.$base-font-size;
-      @media (max-width: _.$small) {
-        font-size: _.$base-font-size;
-      }
-      & > .degree,
-      & > .program {
-        font-family: _.$font-family-body;
-        line-height: 1.5;
-        color: _.$text-body;
-        text-decoration: underline;
-        text-underline-offset: _.$link-underline-offset;
-        transition: color _.$motion-duration-feedback;
-        @media (hover: hover) {
-          &:hover {
-            color: _.$action-foreground;
+
+    .backdrop {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      .background_stage {
+        position: sticky;
+        top: $header-offset;
+        height: calc(100svh - #{$header-offset});
+        svg {
+          width: 100%;
+          height: 100%;
+          fill: _.$action-foreground;
+        }
+        .thread {
+          position: absolute;
+          inset: 0 auto 0 0;
+          width: $question-rail-width;
+          fill: none;
+          path {
+            stroke: rgba(_.$text-on-fill, 0.5);
+            stroke-width: 1;
+            stroke-dasharray: $thread-length;
+          }
+          circle {
+            fill: _.$brand-accent;
+          }
+          @media (prefers-reduced-motion: no-preference) {
+            @supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+              path {
+                animation: draw-thread auto linear both;
+                animation-timeline: --interview-progress;
+                animation-range: contain 0% contain 100%;
+              }
+            }
           }
         }
       }
-      & > .degree {
+    }
+    .question_rail {
+      display: none;
+      // Keep the stage measurable before enabling the sticky layout.
+      visibility: hidden;
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: $question-rail-width;
+      .question_stage {
+        position: sticky;
+        top: $header-offset;
         display: flex;
         flex-direction: column;
-        gap: _.$space-2;
-        .school_name {
-          font-weight: 600;
+        justify-content: center;
+        min-height: calc(100svh - #{$header-offset});
+        padding: _.$space-18 clamp(_.$space-8, 6.25vw, _.$space-24);
+        .visual_questions {
+          display: grid;
+          .visual_question {
+            grid-area: 1 / 1;
+            visibility: hidden;
+            opacity: 0;
+            color: _.$text-on-fill;
+            font-family: _.$font-family-heading;
+            font-size: var(--question-size);
+            font-weight: 400;
+            line-height: 1.25;
+            overflow-wrap: anywhere;
+            span {
+              display: block;
+            }
+            &[data-active="true"] {
+              visibility: inherit;
+              opacity: 1;
+            }
+            @media (prefers-reduced-motion: no-preference) {
+              transition: opacity _.$motion-duration-feedback;
+            }
+          }
         }
-      }
-      & > .program {
-        display: flex;
-        align-items: center;
-        min-height: _.$control-size-minimum;
-        color: _.$text-muted;
-        font-size: _.$base-font-size;
-        @media (max-width: _.$small) {
-          font-size: _.$font-size-body-small;
+        .chapter_navigation {
+          display: grid;
+          gap: _.$space-1;
+          margin-top: _.$space-12;
+          button {
+            @include controls.unselectable;
+            display: flex;
+            align-items: center;
+            width: fit-content;
+            max-width: 100%;
+            min-height: _.$control-size-minimum;
+            padding: _.$space-2 0;
+            border: 0;
+            background: none;
+            color: _.$text-on-fill;
+            font: inherit;
+            font-size: 1rem;
+            text-align: start;
+            cursor: pointer;
+            span {
+              text-underline-offset: _.$link-underline-offset;
+            }
+            &[aria-current="step"] span {
+              text-decoration: underline;
+            }
+            &:focus-visible {
+              outline: _.$focus-ring-width solid _.$text-on-fill;
+              outline-offset: _.$focus-ring-offset-default;
+              @media (forced-colors: active) {
+                outline-color: Highlight;
+              }
+            }
+          }
         }
       }
     }
+    .chapters {
+      .chapter {
+        position: relative;
+        padding: _.$space-18 _.$space-6;
+        scroll-margin-top: _.$space-8;
+        overflow-wrap: anywhere;
+        @include mixed-surface-focus;
+
+        .chapter_heading {
+          margin: 0 0 _.$space-9;
+          color: _.$action-foreground;
+          font-family: _.$font-family-heading;
+          font-size: clamp(2.4rem, 8vw, 4rem);
+          line-height: 1.25;
+          font-weight: 400;
+          letter-spacing: -0.02em;
+          text-wrap: balance;
+        }
+        .answer {
+          max-width: 65ch;
+          p {
+            margin: 0;
+            font-size: 1.4rem;
+            line-height: 1.65;
+            text-wrap: pretty;
+          }
+        }
+        .continue {
+          display: flex;
+          align-items: center;
+          gap: _.$space-4;
+          margin: _.$space-14 0 0;
+          color: _.$action-foreground;
+          font-size: _.$font-size-label;
+          svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.2;
+          }
+        }
+        .resume {
+          @include controls.unselectable;
+          display: inline-flex;
+          align-items: center;
+          gap: _.$space-3;
+          min-height: _.$control-size-minimum;
+          margin-top: _.$space-9;
+          color: _.$action-foreground;
+          span {
+            text-decoration: underline;
+            text-underline-offset: _.$link-underline-offset;
+          }
+        }
+        &:first-child {
+          scroll-margin-top: 0;
+          padding-top: _.$space-12;
+          color: _.$text-on-fill;
+          background: _.$action-foreground;
+          .chapter_heading,
+          .continue {
+            color: _.$text-on-fill;
+          }
+        }
+        &:last-child {
+          background: _.$surface-alternate;
+        }
+        .photographs {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          align-items: start;
+          gap: _.$space-6;
+          margin-top: _.$space-12;
+          .photograph {
+            min-width: 0;
+            margin: 0;
+            @media screen {
+              content-visibility: auto;
+            }
+            &[data-photo="street"] {
+              grid-column: 1 / -1;
+            }
+            &[data-photo="coast"] {
+              margin-top: _.$space-12;
+            }
+            &[data-photo="passage"] {
+              grid-column: 1 / -1;
+              justify-self: end;
+              width: 80%;
+              margin-top: _.$space-8;
+            }
+            img {
+              display: block;
+              width: 100%;
+              height: auto;
+            }
+            &[data-unavailable="true"] {
+              position: relative;
+              background: _.$surface-page;
+              img {
+                position: absolute;
+                inset: 0;
+                visibility: hidden;
+              }
+              figcaption {
+                padding: _.$space-4;
+                color: _.$text-primary;
+                line-height: 1.5;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media screen and (min-width: $sticky-min-width) and (min-height: $sticky-min-height) and (prefers-reduced-motion: no-preference) {
+    @container about-story (min-width: 55rem) {
+      .story .question_rail {
+        display: block;
+      }
+      &[data-enhanced="true"] .story {
+        .backdrop {
+          display: block;
+        }
+        .question_rail {
+          visibility: visible;
+        }
+        .chapters {
+          margin-left: $question-rail-width + $question-rail-gutter;
+          .chapter {
+            min-height: 82svh;
+            padding: clamp(_.$space-22, 10vw, 152px)
+              clamp(_.$space-8, 6.25vw, _.$space-24) _.$space-24 _.$space-4;
+            &:first-child,
+            &:last-child {
+              background: transparent;
+              color: _.$text-primary;
+            }
+            .chapter_heading {
+              position: absolute;
+              width: 1px;
+              height: 1px;
+              clip-path: inset(50%);
+              overflow: hidden;
+              margin: 0;
+            }
+            .answer p {
+              font-size: clamp(1.5rem, 2vw, 1.9rem);
+            }
+            .continue {
+              color: _.$action-foreground;
+            }
+            .photographs {
+              gap: _.$space-8;
+              margin-top: _.$space-18;
+              .photograph {
+                &[data-photo="coast"] {
+                  margin-top: _.$space-22;
+                }
+                &[data-photo="passage"] {
+                  width: 72%;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: _.$small) {
+    .story .chapters .chapter .photographs {
+      grid-template-columns: minmax(0, 1fr);
+      .photograph {
+        &[data-photo="coast"],
+        &[data-photo="passage"] {
+          margin-top: 0;
+        }
+        &[data-photo="passage"] {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  @media print {
+    .story .chapters .chapter {
+      padding: _.$space-8;
+      background: _.$surface-page;
+      color: _.$text-primary;
+      &:first-child,
+      &:last-child {
+        background: _.$surface-page;
+        color: _.$text-primary;
+        .chapter_heading {
+          color: _.$action-foreground;
+        }
+      }
+      .chapter_heading {
+        break-after: avoid;
+        break-inside: avoid;
+      }
+      .continue {
+        display: none;
+      }
+      .photograph {
+        break-inside: avoid;
+      }
+    }
+  }
+}
+
+@keyframes draw-thread {
+  from {
+    stroke-dashoffset: $thread-length;
+  }
+  to {
+    stroke-dashoffset: 0;
   }
 }
