@@ -1,13 +1,13 @@
-import { fileURLToPath } from "node:url";
-import { resolve, join } from "node:path";
-import { openHome, enterPreview } from "../helpers/site";
-import { settleMotion } from "../helpers/motion";
-import { setJavaScriptEnabled } from "../helpers/browser";
-import { getPrintResult } from "../helpers/resume";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+import { setJavaScriptEnabled } from "../helpers/browser";
 import { expect, test } from "../helpers/fixtures";
+import { settleMotion } from "../helpers/motion";
 import { parsePdfMetadata } from "../helpers/pdf.mts";
+import { getPrintResult } from "../helpers/resume";
+import { enterPreview, openHome } from "../helpers/site";
 
 const ROOT = fileURLToPath(new URL("../../", import.meta.url));
 
@@ -167,7 +167,7 @@ test("SITE-R10.7 停用 JavaScript 與直接請求 PDF", async ({ page, server }
   );
 });
 
-test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.3 SITE-R11.4 下載與預覽共用英文 A4", async ({
+test("SITE-R10.4 SITE-R11.1 SITE-R11.2 SITE-R11.3 SITE-R11.4 SITE-R21.6 下載與預覽共用英文 A4", async ({
   page,
   server,
 }) => {

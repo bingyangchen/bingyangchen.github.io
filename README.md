@@ -81,6 +81,8 @@ Preview serves the build over loopback HTTP without an SPA fallback. `/resume` r
 
 [`SiteLayout`](src/layouts/SiteLayout/SiteLayout.tsx) owns the shared Header, main landmark, route outlet, and Footer. Layouts live in `src/layouts/`; route pages live in `src/pages/` independently of their layout nesting.
 
+SiteLayout also cancels image context menus through React event bubbling, including SVG descendants and the QR dialog's portal. Global screen styles scope touch callout and selection suppression to `img` and inline SVG. Keep this behavior at the shared layout rather than adding handlers to each image; native text interactions and page scrolling remain available. Browser limits are recorded in [SITE-R21](docs/specs/site.md#site-r21-圖片的原生選單).
+
 [`Home`](src/pages/Home/Home.tsx) composes the four ordered anchor containers and registers one scroll-motion scope around all their content. Feature entry points provide complete behavior without requiring the page to coordinate private events or style internal headings.
 
 ```mermaid

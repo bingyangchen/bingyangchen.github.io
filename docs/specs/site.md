@@ -555,3 +555,23 @@ About 桌面版的白色問句與快跳控制顯示在深橄欖綠曲面上，�
 | --- | --- | --- |
 | SITE-R20.1 正文與按鈕對比 | 在雙語的閱讀狀態、一般及 hover 狀態，檢查 About 問句、正文、段落導覽與履歷連結，以及首頁原有下滑提示、履歷下載及內容控制。普通文字達 4.5：1，大字與必要操作圖示達 3：1。 | browser、manual |
 | SITE-R20.2 履歷次要資訊 | 預覽與產生的 PDF 中，工作日期、職稱分隔及教育次要資訊維持至少 4.5：1 的對比，內容、字型、A4 及單頁規則保持。 | browser、manual |
+
+### SITE-R21 圖片的原生選單
+
+JavaScript 啟動後，網站取消以 `img` 或可接收指標事件的行內 SVG 為目標的可取消 `contextmenu` 事件。事件目標在 SVG 內部時也適用。此規則涵蓋初始圖片、切換作品後的圖片及 portal 中的 QR code。
+
+圖片使用局部的 `-webkit-touch-callout: none` 與不可選取樣式，在支援的瀏覽器抑制長按選單。文字區域保留瀏覽器原生行為；圖片所在連結或按鈕的正常點按、鍵盤操作，以及從圖片起始的頁面捲動維持可用。網站以圖片上的選單事件處理右鍵，不取消 `touchstart` 或 `pointerdown`，讓頁面保留原生捲動與控制操作。
+
+限制以瀏覽器提供的事件與樣式能力為準。Firefox 的 Shift＋右鍵可能略過事件；瀏覽器設定、停用 JavaScript 或作業系統行為也可能讓選單出現。這項互動不保證圖片無法取得，實機長按結果須個別回報。桌面測試驗證事件取消，合成事件或 WebKit 模擬結果不能當成實機保證。
+
+技術依據：[MDN 的 Contextmenu 事件說明](https://developer.mozilla.org/en-US/docs/Web/API/Element/contextmenu_event)及 [Apple 的 Touch Callout 說明](https://developer.apple.com/library/archive/documentation/AppleApplications/Reference/SafariCSSRef/Articles/StandardCSSProperties.html)。
+
+<!-- prettier-ignore -->
+| 情境 | 條件、動作與結果 | 驗證方式 |
+| --- | --- | --- |
+| SITE-R21.1 圖片右鍵 | 在雙語、桌面及窄版首頁，對 Header、Footer、頭像、公司標誌、四張照片及三個作品的 Logo 與介面圖片操作右鍵，圖片的可取消選單事件均被取消；作品切換後仍適用。 | browser、manual |
+| SITE-R21.2 SVG 與 Portal | 在雙語下對行內圖示及新開啟的 QR code SVG 操作右鍵，包含 SVG 內部圖形，圖片的可取消選單事件均被取消；dialog 仍能正常關閉及再次開啟。 | browser、manual |
+| SITE-R21.3 手機長按 | 在 iOS Safari、iOS Chrome 與 Android Chrome 實機長按照片、頭像、Logo、作品圖片與 QR code，在支援的環境中不展開原生選單；逐一記錄裝置、瀏覽器版本及結果。 | manual |
+| SITE-R21.4 既有圖片操作 | 在雙語、桌面及觸控環境操作頭像、Logo、作品分頁與 QR code，既有結果及鍵盤操作維持；從照片或作品圖片開始滑動仍能捲動頁面。 | browser、manual |
+| SITE-R21.5 文字原生操作 | 在雙語、桌面及窄版首頁選取正文、Hero Email、Footer Email 與文章正文，仍可複製；在正文與文字連結開啟原生選單時，事件維持未取消。 | browser、manual |
+| SITE-R21.6 靜態內容與預覽 | 停用 JavaScript 後，首頁圖片與主要內容仍可閱讀，PDF 連結仍可操作；非公開履歷預覽中 Header、Footer 及履歷 SVG 的可取消選單事件依圖片規則處理，Chromium 匯出的 PDF 內容與版面維持。 | browser |

@@ -1,4 +1,11 @@
-import { openHome, waitForSection } from "../helpers/site";
+import {
+  dragText,
+  enterPreview,
+  openHome,
+  selectProject,
+  waitForSection,
+} from "../helpers/site";
+import { expectNativeContextMenu } from "../helpers/context-menu";
 import { expect, test } from "../helpers/fixtures";
 
 test("SITE-R1.1 SITE-R1.2 首頁完整內容及共用外框", async ({ page, server }) => {
@@ -208,4 +215,243 @@ test("SITE-R13.3 Reduced Motion 初始與即時切換", async ({ page, server })
     "transform",
     "none",
   );
+});
+
+test("SITE-R21.1 圖片右鍵與動態作品", async ({ page, server }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openHome(page, server);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const language of ["en", "zh-TW"]) {
+      if ((await page.locator("html").getAttribute("lang")) !== language)
+        await page
+          .locator("[data-language-switcher]")
+          .evaluate((button: HTMLElement) => button.click());
+      await expect(page.locator("html")).toHaveAttribute("lang", language);
+      for (const selector of [
+        "header img",
+        "#home button[aria-pressed] img:first-child",
+        "#home [data-brand-image]",
+        '#about [data-photo="street"] img',
+        '#about [data-photo="architecture"] img',
+        '#about [data-photo="coast"] img',
+        '#about [data-photo="passage"] img',
+        "footer img",
+      ])
+        await expectNativeContextMenu(page.locator(selector), true);
+      for (const index of [1, 2, 3]) {
+        await selectProject(page, index);
+        await expectNativeContextMenu(
+          page
+            .getByRole("tab")
+            .nth(index - 1)
+            .locator("img"),
+          true,
+        );
+        const artwork = page.locator(
+          '[role="tabpanel"]:not([inert]) [data-artwork-image]:visible',
+        );
+        await expect(artwork.first()).toBeVisible();
+        for (const image of await artwork.all())
+          await expectNativeContextMenu(image, true);
+      }
+      const results = await page.locator("img").evaluateAll((images) =>
+        images.map((image) => {
+          const event = new MouseEvent("contextmenu", {
+            bubbles: true,
+            cancelable: true,
+          });
+          image.dispatchEvent(event);
+          return {
+            canceled: event.defaultPrevented,
+            selection: getComputedStyle(image).userSelect,
+          };
+        }),
+      );
+      expect(results.length).toBeGreaterThan(10);
+      expect(
+        results.every(({ canceled, selection }) => canceled && selection === "none"),
+      ).toBe(true);
+    }
+  }
+});
+
+test("SITE-R21.2 SVG 子節點與 QR Code Portal", async ({ page, server }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openHome(page, server);
+  for (const language of ["en", "zh-TW"]) {
+    if (language === "zh-TW") await page.locator("[data-language-switcher]").click();
+    await expectNativeContextMenu(
+      page.locator('#home button[aria-haspopup="dialog"] svg'),
+      true,
+    );
+    for (let opening = 0; opening < 2; opening++) {
+      await page.locator('#home button[aria-haspopup="dialog"]').click();
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await expectNativeContextMenu(page.locator("dialog svg").last(), true);
+      const results = await page
+        .locator("dialog svg, dialog svg path")
+        .evaluateAll((elements) =>
+          elements.map((element) => {
+            const event = new MouseEvent("contextmenu", {
+              bubbles: true,
+              cancelable: true,
+            });
+            element.dispatchEvent(event);
+            return event.defaultPrevented;
+          }),
+        );
+      expect(results.length).toBeGreaterThan(2);
+      expect(results.every(Boolean)).toBe(true);
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("dialog")).toHaveCount(0);
+    }
+    const styles = await page
+      .locator("img, svg")
+      .evaluateAll((images) =>
+        images.map((image) => ({
+          selection: getComputedStyle(image).userSelect,
+          callout: getComputedStyle(image).getPropertyValue("-webkit-touch-callout"),
+          supportsCallout: CSS.supports("-webkit-touch-callout", "none"),
+        })),
+      );
+    expect(
+      styles.every(
+        ({ selection, callout, supportsCallout }) =>
+          selection === "none" && (!supportsCallout || callout === "none"),
+      ),
+    ).toBe(true);
+  }
+});
+
+test("SITE-R21.4 圖片規則保留觸控及鍵盤操作", async ({
+  createContext,
+  browserName,
+  server,
+}) => {
+  const context = await createContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+    reducedMotion: "reduce",
+  });
+  const page = await context.newPage();
+  await openHome(page, server);
+  for (const language of ["en", "zh-TW"]) {
+    if (language === "zh-TW") {
+      await page.locator('header button[aria-controls="site-navigation"]').tap();
+      await page.locator("[data-language-switcher]").tap();
+      await page.locator('header button[aria-controls="site-navigation"]').tap();
+    }
+    const portrait = page.locator("#home button[aria-pressed]");
+    await portrait.tap();
+    await expect(portrait).toHaveAttribute("aria-pressed", "true");
+    await portrait.focus();
+    await page.keyboard.press("Space");
+    await expect(portrait).toHaveAttribute("aria-pressed", "false");
+    const opener = page.locator('#home button[aria-haspopup="dialog"]');
+    await opener.tap();
+    await page.getByRole("dialog").getByRole("button").tap();
+    await expect(opener).toBeFocused();
+    await selectProject(page, 2);
+    await page.getByRole("tab").nth(1).focus();
+    await page.keyboard.press("End");
+    await expect(page.getByRole("tab").last()).toHaveAttribute("aria-selected", "true");
+    for (const target of [
+      page.locator('#about [data-photo="street"] img'),
+      page.locator('[role="tabpanel"]:not([inert]) [data-artwork-image]').first(),
+    ]) {
+      const canceled = await target.evaluate((image) =>
+        ["touchstart", "pointerdown", "touchmove", "pointermove"].map((type) => {
+          const event = new Event(type, { bubbles: true, cancelable: true });
+          image.dispatchEvent(event);
+          return event.defaultPrevented;
+        }),
+      );
+      expect(canceled).toEqual([false, false, false, false]);
+      if (browserName === "chromium") {
+        await target.scrollIntoViewIfNeeded();
+        const before = await page.evaluate(() => scrollY);
+        const session = await context.newCDPSession(page);
+        try {
+          const bounds = (await target.boundingBox())!;
+          const start = Math.min(bounds.y + bounds.height / 2, 700);
+          await session.send("Input.dispatchTouchEvent", {
+            type: "touchStart",
+            touchPoints: [{ x: bounds.x + bounds.width / 2, y: start }],
+          });
+          for (let step = 1; step <= 6; step++)
+            await session.send("Input.dispatchTouchEvent", {
+              type: "touchMove",
+              touchPoints: [{ x: bounds.x + bounds.width / 2, y: start - step * 30 }],
+            });
+          await session.send("Input.dispatchTouchEvent", {
+            type: "touchEnd",
+            touchPoints: [],
+          });
+        } finally {
+          await session.detach();
+        }
+        await expect
+          .poll(() => page.evaluate(() => scrollY))
+          .toBeGreaterThan(before + 50);
+      }
+    }
+    await page.locator("header img").tap();
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+    await page.locator("footer img").tap();
+    await expect.poll(() => page.evaluate(() => scrollY)).toBe(0);
+  }
+  await context.close();
+});
+
+test("SITE-R21.5 圖片以外保留原生選單與文字選取", async ({ page, server }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openHome(page, server);
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const language of ["en", "zh-TW"]) {
+      if ((await page.locator("html").getAttribute("lang")) !== language)
+        await page
+          .locator("[data-language-switcher]")
+          .evaluate((button: HTMLElement) => button.click());
+      for (const selector of [
+        "#about [data-chapter] p",
+        'footer a[href^="mailto:"] > span:first-child',
+        '#blog [class*="featuredCopy"] p',
+        '#blog [class*="reading"] p',
+      ]) {
+        await expectNativeContextMenu(page.locator(selector).first(), false);
+      }
+      const text = await dragText(page, "#about [data-chapter] p");
+      expect(await page.evaluate(() => getSelection()!.toString())).toContain(text);
+      const email = page.locator('#home [class*="email_link"] span');
+      await email.click();
+      expect(await page.evaluate(() => getSelection()!.toString())).toBe(
+        await email.innerText(),
+      );
+      await expectNativeContextMenu(email, false);
+      await expectNativeContextMenu(page.locator('#home a[href="#projects"]'), false);
+    }
+  }
+});
+
+test("SITE-R21.6 靜態圖片與非公開預覽", async ({ page, createContext, server }) => {
+  const context = await createContext({
+    javaScriptEnabled: false,
+    reducedMotion: "reduce",
+  });
+  const staticPage = await context.newPage();
+  await staticPage.goto(server.origin);
+  await expect(staticPage.locator("#about [data-photo] img")).toHaveCount(4);
+  await expect(staticPage.locator("#home a[download]")).toHaveAttribute(
+    "href",
+    "/resume.pdf",
+  );
+  await context.close();
+  await openHome(page, server);
+  await enterPreview(page);
+  await expect(page.locator("[data-resume-root]")).toBeVisible();
+  await expectNativeContextMenu(page.locator("header img"), true);
+  await expectNativeContextMenu(page.locator("footer img"), true);
+  await expectNativeContextMenu(page.locator("[data-resume-root] svg").first(), true);
 });

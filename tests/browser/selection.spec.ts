@@ -6,7 +6,11 @@ import { test } from "../helpers/fixtures";
 
 const DETAIL = '#projects [role="tabpanel"]:not([inert])';
 
-test("SITE-R12.5 正文可拖選並以原生複製取得文字", async ({ page, context, server }) => {
+test("SITE-R12.5 SITE-R21.5 正文可拖選並以原生複製取得文字", async ({
+  page,
+  context,
+  server,
+}) => {
   test.setTimeout(45000);
   await openHome(page, server);
   await context.grantPermissions(["clipboard-read", "clipboard-write"], {

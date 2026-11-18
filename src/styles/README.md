@@ -131,7 +131,7 @@ Tooltip 保留 `$tooltip-*` 外觀 token，定位 API 所需的像素值由 CSS 
 - 文章卡片及作品展示區使用較寬的 surface offset。
 - 滿版導覽目標使用 `focus.inset-outline`。
 - About 的整區與段落目的地使用深橄欖綠及白色雙層內框，讓框線在曲面及淺色背景均可辨識。
-- `controls.unselectable` 只套用在控制與操作文字，正文保持可選取。
+- `controls.unselectable` 套用在控制、操作文字與螢幕上的圖片，正文保持可選取。
 - 局部 hover 位移與 scroll motion 須遵守 reduced motion 設定。
 
 ## 圖片與圖示語意
@@ -139,6 +139,8 @@ Tooltip 保留 `$tooltip-*` 外觀 token，定位 API 所需的像素值由 CSS 
 Hero 的公司標誌使用空 `alt`，由相鄰文字提供公司名稱。About 照片各自傳達畫面內容，提供雙語替代文字，並用原始比例的尺寸與響應式來源呈現。圖片語意依資訊用途判斷，各使用處負責提供適當的替代文字。[W3C 裝飾圖片指引](https://www.w3.org/WAI/tutorials/images/decorative/)
 
 [`asIcon`](../icons/IconLayout.tsx) 集中 SVG 外框設定，現有使用處均為裝飾用途，因此預設 `aria-hidden=true`，按鈕及連結提供自己的 accessible name。保留明確指定 `aria-hidden` 的能力；需要獨立表達資訊的 SVG 須另行提供 image 語意與名稱，不能只取消隱藏。人物照片的替代文字與 QR code 的內容仍由各自功能維護。
+
+螢幕上的 `img` 與行內 SVG 共用不可選取及 `-webkit-touch-callout: none` 樣式，抑制支援環境的長按選單；設定限定於圖片，正文與文字連結保留原生操作。樣式只作用於螢幕，列印維持既有規則。右鍵事件由 SiteLayout 處理，產品規則與瀏覽器限制見[圖片的原生選單規格](../../docs/specs/site.md#site-r21-圖片的原生選單)。
 
 ## 修改後的驗證
 

@@ -533,18 +533,22 @@ test("SITE-R6.13 SITE-R12.12 照片載入失敗時可讀完整雙語說明", asy
     assert.ok(description);
     await expect(caption).toHaveText(description);
     await expect(photo).toHaveAccessibleName(description);
-    const fits = await caption.evaluate((element) => {
-      const figure = element.parentElement!.getBoundingClientRect();
-      const range = document.createRange();
-      range.selectNodeContents(element);
-      return (
-        figure.height >= (figure.width * 2) / 3 - 1 &&
-        [...range.getClientRects()].every(
-          (line) => line.right <= figure.right && line.bottom <= figure.bottom,
-        )
-      );
-    });
-    assert.ok(fits);
+    // Content visibility can defer fallback layout until a subsequent frame.
+    await expect
+      .poll(() =>
+        caption.evaluate((element) => {
+          const figure = element.parentElement!.getBoundingClientRect();
+          const range = document.createRange();
+          range.selectNodeContents(element);
+          return (
+            figure.height >= (figure.width * 2) / 3 - 1 &&
+            [...range.getClientRects()].every(
+              (line) => line.right <= figure.right && line.bottom <= figure.bottom,
+            )
+          );
+        }),
+      )
+      .toBe(true);
   }
 });
 
