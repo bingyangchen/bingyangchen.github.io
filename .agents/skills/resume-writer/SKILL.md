@@ -8,11 +8,7 @@ description: >-
 
 ## Project Sources
 
-Follow [the site design context](../../../docs/design.md) for audience, tone, and visual direction. Paths below are relative to the repository root; inspect only sources relevant to the task:
-
-- `src/features/resume/ResumeSheet.tsx`: English resume content, maintained separately from the site's dictionaries.
-- Shared facts: `src/data/profile.ts` owns personal names, contact details, destinations, and shared education facts; `src/data/career.ts` owns company names, job titles, and employment periods. `src/i18n/workExperience.ts` formats those periods for each language and for the resume. Homepage narratives remain in `src/i18n/dictionaries/en.ts` and `src/i18n/dictionaries/zhtw.ts`. For skill or project claims, also check `src/data/skills.ts` or `src/data/projects.ts` and their dictionary entries.
-- Layout and printing: `src/features/resume/ResumeSheet.module.scss`, `src/styles/print.scss`, and `src/features/resume/print.ts`.
+Follow [the site design context](../../../docs/design.md) for audience, tone, and visual direction. Use the [shared content sources](../../../docs/architecture.md#where-to-edit-content) when editing a fact that appears on the homepage and in the resume.
 
 ## Facts and Editorial Decisions
 
@@ -34,6 +30,6 @@ After changes to resume content, layout, or print behavior:
 
 1. Inspect the sheet on screen and export through the browser print flow at the intended paper size. Check the PDF for page count, clipping, missing content, wrapping, spacing, font rendering, and readability.
 2. Check extracted or copied text for completeness and reading order, and verify PDF contact and social links.
-3. The homepage export and `/resume` share `ResumeSheet`. Check both entry points when shared print behavior changes; copy-only edits require inspecting the exported sheet, without unrelated navigation checks.
+3. Check the homepage download and `/resume` preview when shared print behavior changes. For copy edits, inspect the exported sheet. [Print entry points](../../../docs/architecture.md#static-build-and-pdf)
 
 Use available PDF tooling for inspection. If export or inspection is unavailable, report the limitation and remaining checks. Guidance-only edits to this skill do not require PDF export.

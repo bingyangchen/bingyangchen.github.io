@@ -1,81 +1,37 @@
-# 圖片資源與載入
+# 更新圖片與檢查載入
 
-## 素材產生方式
+## 頭像、作品截圖與 Logo
 
-原始頭像、作品截圖及 Logo 保留在 [`src/assets/`](../src/assets/)，網站使用 [`src/assets/responsive/`](../src/assets/responsive/) 的縮圖。社群預覽圖的原始檔保留在 [`design/cover-source.png`](../design/cover-source.png)，輸出維持 [`public/cover.png`](../public/cover.png)。
+更新原圖後，備妥 `cwebp`、`dwebp` 及下節的社群預覽原圖，再執行 `npm run images:generate`。提交產生的縮圖，供一般開發與 build 直接使用。各尺寸、原圖與編碼設定以[產生腳本](../scripts/generate-images.mts)為準。
 
-網站 Logo 的向量原檔為 [`logo.svg`](../src/assets/logo.svg)。WebP 與 favicon 使用透明背景，可見與半透明像素的 RGB 均為純黑；`src/assets/logo.webp` 與 `public/logo.webp` 保持一致，96 px 縮圖由完整 WebP 產生。
+換 Logo 時，從向量原檔更新 `src/assets/logo.webp`、`public/logo.webp` 與 `public/favicon.ico`，保留透明底與純黑的可見像素。兩份 WebP 保持一致，並讓 manifest 符合公開 WebP 的格式及尺寸。產生腳本只從素材目錄的 WebP 產生縮圖。 [向量原檔](../src/assets/logo.svg) · [Manifest 來源](../src/siteMetadata.ts)
 
-更新頭像、作品截圖、Logo 或社群預覽圖後，執行 `npm run images:generate`，再檢查實際畫面並執行 `npm run check`。產生腳本使用 [libwebp 的 cwebp](https://developers.google.com/speed/webp/docs/cwebp) 與 dwebp，本次使用 1.6.0。一般開發、CI 與 production build 直接使用 repo 內的縮圖。
+## 社群預覽圖
 
-<!-- prettier-ignore -->
-| 素材 | 輸出尺寸與設定 |
-| --- | --- |
-| 頭像 | 輸出寬度為 160、320、480 px，保留比例，供 160 px 的顯示尺寸及不同 DPR 使用。 |
-| 作品大圖 | 輸出寬度為 240、480、720 px，保留比例，對應目前最大約 240 CSS px 的構圖及最高 3 倍 DPR。 |
-| 作品預覽 | 輸出寬度為 48 px，品質為 60，透過 Vite 的 `?inline` 放入 JS 與初始作品 HTML。 |
-| Logo | 網站 Logo 寬度為 96 px、作品 Logo 為 78 px、需要縮小的公司 Logo 為 64 px，足以顯示目前構圖的 3 倍 DPR。 |
-| 社群預覽 | 寬度縮為 1200 px，保留比例，以 lossless WebP 暫存後輸出 PNG；不計入一般首頁圖片 request。 |
+先把原圖放在 `design/cover-source.png`，再執行整批產生，因為腳本會先寫入其他縮圖。沿用目前的社群圖時，可從縮圖前的 commit 取出原圖。用 libwebp 1.6.0 重新產生的 PNG 與目前的發布版本相同。 [發布用 PNG](../public/cover.png)
 
-產生腳本的 WebP 品質為 88，使用 method 6 並啟用 `sharp_yuv`，作品預覽圖使用上表的品質設定。Alpha 維持 lossless，介面與頭像保留原始構圖。內嵌預覽圖讓作品在大圖下載期間已有正確的圖像。
-
-About 照片的原檔保留在 [`src/assets/about/photography/`](../src/assets/about/photography/)。更新時從原檔用 `cwebp` 縮至 480、960、1440 px 寬，保留構圖與長寬比，將 WebP 存入 [`web/`](../src/assets/about/web/)。各圖的來源檔與產生設定記錄在同目錄的 JSON 檔。街景的 1440 px 版本以 140,000 bytes 為編碼目標，其餘版本使用品質 84。更新後檢查實際畫面並重跑圖片預算測試。
-
-## 載入與驗證
-
-作品面板的文字及展示框持續參與高度計算，只掛載選取作品的圖片，因為切換作品時必須保留最大自然高度。頭像與 Hero 品牌圖片立即載入。
-
-About 照片使用原生 lazy loading，讓支援 `sizes="auto"` 的瀏覽器依照片的顯示寬度選擇來源。每張照片依原始比例預留空間，並在螢幕上用 `content-visibility: auto` 延後處理尚未捲到的照片。列印時依序顯示所有照片。
-
-```mermaid
-flowchart TD
-  selected[選取作品] --> preview[立即顯示內嵌預覽]
-  selected --> picture[原生 picture 與 srcset]
-  picture -->|主畫面或寬版第二張| full[下載適合 DPR 的圖片]
-  picture -->|窄版第二張| inline[選取內嵌來源]
-  full --> loaded[完整圖片取代預覽]
+```sh
+cover_source_ref=96b1e888870f95c3b92c37a2a3a26f031b5bc088:public/cover.png
+git cat-file -e "$cover_source_ref" &&
+  mkdir -p design &&
+  (set -C; git show "$cover_source_ref" > design/cover-source.png)
 ```
 
-第二張圖片的 media query 由 Sass 的 `$small` 匯出，與顯示規則共用 breakpoint。CSS 隱藏不能阻止下載，因此以原生 `picture` 選取來源。作品大圖的 `sizes` 使用 240 px 的構圖上限，避免圖片尚未完成 layout 時因 `auto` 的暫時尺寸下載多個版本。
+命令會保護已有的原圖。更換社群圖時，在該路徑放新原圖。
 
-Prerender 逐一驗證作品及每個 `srcset` 版本，再還原第一個作品並移除預覽的暫時載入完成標記。資源檢查會暫時載入 lazy 圖片後還原屬性；圖片來源被取代造成的 `ERR_ABORTED` 由目前圖片的 decode 結果判斷，HTTP、連線、解碼及非預期外連錯誤仍使檢查失敗。
+## About 照片
 
-## 資源預算
+從攝影原檔產生各尺寸的 WebP，保留構圖與比例。依衍生圖旁的 JSON 更新原圖與編碼紀錄，並同步檢查資料內的尺寸、兩份字典的替代文字及列印畫面。 [原圖](../src/assets/about/photography/) · [衍生圖與設定](../src/assets/about/web/) · [照片資料](../src/data/about.ts)
 
-<!-- prettier-ignore -->
-| 檢查 | 上限與涵蓋範圍 |
-| --- | --- |
-| 初始圖片 | [`tests/browser/images.spec.ts`](../tests/browser/images.spec.ts) 檢查 390 到 1440 px、DPR 1 到 3 的指定組合，Resource Timing 的圖片 `decodedBodySize` 合計不得超過 192 KiB。 |
-| 單張輸出 | 產生腳本與瀏覽器檢查限制作品大圖及頭像的單張檔案不超過 64 KiB。 |
-| 內嵌成本 | 同一個瀏覽器測試檔限制所有 JS 與 CSS 的 gzip 合計不超過 150 KiB，首頁 HTML 的 gzip 不超過 16 KiB，涵蓋內嵌預覽的成本。 |
-| 延後載入 | 首次載入不能請求未選作品的大圖，窄版不能請求第二張 App 大圖；直接 hash 與無 JavaScript 也要符合。 |
+## 載入與預算
 
-這些 bytes 是壓縮圖片檔案的 response body 大小，不是圖片在記憶體中的解碼大小。內嵌預覽計入 JS 與 HTML，不能因沒有獨立 request 而忽略其成本。調整構圖、加入新作品或更新圖片時，需重新量測並說明預算調整原因。
+窄版的第二張 App 圖片要在 `picture` 切換來源，因為單用 CSS 隱藏仍可能送出 request。讓媒體查詢和顯示規則共用 breakpoint。作品大圖的 `sizes` 採構圖上限，避免版面穩定前多下載一張。 [作品圖片](../src/features/projects/ProjectImage.tsx)
 
-## 量測紀錄
+產生腳本會逐一檢查頭像與作品縮圖的檔案大小。更換圖片後目視檢查桌面與窄版，並用新 build 跑[圖片測試](../tests/browser/images.spec.ts)，確認初始載入、內嵌成本及延後下載符合預算。
 
-2026-11-08，以 Chromium、全新 browser context、production 靜態 server 量測首次開啟首頁且尚未切換作品的結果。修改前的程式來自 `96b1e888870f95c3b92c37a2a3a26f031b5bc088`，修改後為本次工作目錄。
+```sh
+npm run build
+npm run test:browser -- --project=chromium tests/browser/images.spec.ts
+```
 
-<!-- prettier-ignore -->
-| Viewport 與 DPR | 修改前圖片 bytes | 修改後圖片 bytes |
-| --- | --- | --- |
-| 390 × 844、DPR 1 | 2,189,522 | 85,946 |
-| 390 × 844、DPR 2 | 2,189,522 | 116,652 |
-| 1440 × 900、DPR 1 | 2,189,522 | 97,102 |
-| 1440 × 900、DPR 2 | 2,189,522 | 140,640 |
-
-390 px、DPR 2 的圖片 body 減少約 94.7%。社群預覽另由 1,296,531 bytes 降為 127,076 bytes，尺寸由 3840 × 1924 改為 1200 × 602。
-
-2026-11-09 的圖片預算檢查使用最新素材，相同 390 × 844、DPR 2 的圖片 body 為 117,300 bytes，約 114.6 KiB，比修改前減少約 94.6%。
-
-JS 與 CSS 的 gzip 合計由 117,918 bytes 增為 123,958 bytes，首頁 HTML 的 gzip 由 10,871 bytes 增為 13,144 bytes，這些差異包含預覽及載入處理。
-
-另以相同的 390 × 844、DPR 2、冷 cache、150 ms latency、每秒下載 200 KiB 與 4 倍 CPU throttling，各執行三次。Chromium 版本為 156.0.8078.47，LCP 的中位數由 2,228 ms 改為 1,348 ms，六次的 CLS 均為 0。這些量測屬於桌面 Chromium 模擬，不代表真實手機或行動網路。
-
-2026-11-16，比較原始 commit `7790082dfc2cffa6f9820e21483e1cc318ecefc4` 的 React 18.2.0 與升級後的 React 19.3.1，兩者皆使用 Node 22.23.5、npm 12.2.2 執行 `npm ci` 與 `npm run build`。JS 與 CSS 的 gzip 合計由 125,078 bytes 增為 147,573 bytes，增加 22,495 bytes（約 18.0%）；CSS 均為 10,979 bytes，首頁 HTML 的 gzip 由 13,079 bytes 變為 13,076 bytes。
-
-保留支援標準 `fetchPriority` 與 boolean `inert` 的 React 19，將 JS 與 CSS 預算由 128 KiB 調整為 150 KiB。增加的 22 KiB 是將這次實測差異向上取整，剩餘空間由 5,994 bytes 變為 6,027 bytes；圖片及 HTML 預算維持原值。
-
-另以相同 Chromium、390 × 844、DPR 2、冷 cache、150 ms latency、每秒下載 200 KiB、4 倍 CPU throttling 及 reduced-motion 設定，交錯量測兩個版本各三次。React 18 的 LCP 為 1,420、1,352、1,348 ms，React 19 為 1,364、1,352、1,332 ms，中位數皆為 1,352 ms，六次 CLS 均為 0。這些桌面模擬結果未顯示 LCP 退步，不代表實機或其他網路條件下的效能。
-
-2026-11-18，About 加入四張照片後，以 Chromium 和 production 靜態 server 重跑圖片預算測試。九組視窗尺寸與 DPR 的初始圖片大小介於 49,894 到 195,496 bytes，全數低於 192 KiB。
+圖片預算使用 Resource Timing 的 `decodedBodySize`。內嵌圖則計入 JS 與 HTML 預算。調整預算時，記錄同條件下的差異與原因。 [歷史量測與預算理由](https://github.com/bingyangchen/bingyangchen.github.io/blob/c7c61138274b25f205697bf5be707eb9cf622e4f/docs/image-assets.md#量測紀錄)

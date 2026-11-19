@@ -11,13 +11,16 @@ description: Spec-driven workflow for changes to this personal website. Use befo
 | [Design context](../../../docs/design.md) | Product direction, audience, tone, main sections, and shared visual principles. |
 | [Site spec](../../../docs/specs/site.md) | Current behavior rules, requirements, scenarios, and necessary rationale. Link unresolved issues to the roadmap. |
 | [Roadmap](../../../docs/roadmap.md) | Future requirement goals under `需求願景`, known issues, and questions awaiting investigation or product decisions, with evidence, related requirement IDs, and links to follow-up plans when needed. |
-| [Engineering instructions](../../../AGENTS.md), [README](../../../README.md) | Engineering constraints, commands, and workflow entry points. |
+| [README](../../../README.md), [Project instructions](../../../AGENTS.md) | Local setup, document index, and repository-wide conventions. |
+| [Architecture](../../../docs/architecture.md), [Verification](../../../docs/verification.md) | Content ownership, implementation decisions, and how to run and interpret checks. |
 | `docs/plans/NNNN-slug.md` | Draft or approved unfinished plans, including proposed spec changes, designs, and verification methods. |
 | `docs/plans/archive/` | Completed or abandoned plans and attachments, for historical reference only. |
 | [Manual checks](../../../tests/manual/site.md) | Scenarios needing human judgment, repeatable steps, and expected results. |
 | `design/` | Designs or prototypes reviewed with a plan; behavior rules still belong in the plan and spec. |
 
-Start with one site spec; split a growing section through a plan when needed. Keep the roadmap as a simple list; leave `需求願景` empty when no agreed items exist. Record dependencies directly in plans. When archiving or abandoning plans, update their roadmap links and retain unresolved items. Do not copy content data or verbatim product copy into the spec.
+Write the information the reader needs to make a decision or complete the document's task. Keep requirements, trade-offs, verification criteria, and maintenance procedures where readers use them. For details a reader can reliably find in one source file or from the directory structure, leave the details at their source. Add a direct link when it saves a search or points to a dependency that spans files.
+
+Keep the roadmap as a simple list and leave `需求願景` empty when no agreed items exist. Record dependencies in plans. Update roadmap links when archiving or abandoning plans and keep unresolved items.
 
 ## Choose the Entry Point
 

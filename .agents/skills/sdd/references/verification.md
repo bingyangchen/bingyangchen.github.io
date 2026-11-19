@@ -16,8 +16,7 @@ Use the [spec template](../templates/spec.md). The frontmatter of `docs/specs/si
 
 Verification levels are `unit`, `browser`, and `manual`. Separate multiple levels with `、`; each declared level needs its own coverage. Put IDs in a literal title of an executable `test` or `it`, separated from other text by spaces. A title may reference several IDs.
 
-- `unit` scans `*.test.*` and `*.spec.*` under `src/`, with extensions limited to `.js`, `.jsx`, `.ts`, and `.tsx`, matching Vitest configuration.
-- `browser` uses `**/*.spec.ts` under `tests/browser/`, excluding `fixtures` and `__fixtures__`, matching Playwright Test and the shared discovery rules in `scripts/test-files.mts`. Run against a fresh production build. Chromium runs the complete suite; Firefox and WebKit run the core journeys in `cross-browser.spec.ts`. CDP and PDF generation run only in Chromium; actual Safari, devices, and OS printing remain manual checks.
+- Put scenario tests where their runner discovers them. Keep discovery consistent with the checker. [Vitest config](../../../../vite.config.mts) · [Browser discovery](../../../../scripts/test-files.mts) · [Browser checks](../../../../docs/verification.md#browser-checks)
 - Disabled tests or suites, todos, `fixme`, runtime `test.skip` or `test.fixme` annotations, comments, example strings, and fixture directories do not count as coverage. Conditional runtime disabling is conservatively excluded; an explicit `false` annotation remains executable. `.only` fails validation.
 - Declare tests directly in a file or a `describe` or `suite` callback, not inside helpers, conditionals, or loops. Do not alias test functions or generate IDs dynamically. Parameterized tests may use `test.each`, with literal IDs in the title.
 - Several tests may cover one scenario; requirement and scenario declarations must remain unique in the spec.
@@ -40,9 +39,7 @@ In `tests/manual/site.md`, use a level-two heading with the exact scenario ID an
 預期結果：對應規格的結果。
 ```
 
-Put shared setup before the first scenario, without a separate level-two heading.
-
-Keep verification methods and coverage requirements in the manual document's preface. Link relevant scenarios to their [roadmap](../../../../docs/roadmap.md) issues.
+Put shared setup and navigation before the first scenario. Reserve level-two headings for scenarios. Link related [roadmap](../../../../docs/roadmap.md) issues from the relevant checks.
 
 ## Results and Reporting
 
@@ -52,4 +49,4 @@ Record check results and manual execution results in the commit body and deliver
 
 For documentation-only changes, run at least `npm run check:scenarios`.
 
-The scenario checker reads current specs, not unimplemented plans. It validates format and coverage links, not test assertions.
+The scenario checker validates the format of the current spec and checks its links to declared coverage. Read the assertions when evaluating test quality.

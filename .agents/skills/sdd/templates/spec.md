@@ -10,6 +10,7 @@ Reference the design context and state applicable conditions.
 
 Behavior rule and lasting rationale.
 
+<!-- prettier-ignore -->
 | 情境 | 條件、動作與結果 | 驗證方式 |
 | --- | --- | --- |
 | SITE-R1.1 情境名稱 | Scenario details. | unit、manual |

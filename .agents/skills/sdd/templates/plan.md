@@ -37,6 +37,7 @@ Include only engineering impacts or hard-to-reverse actions the user must know b
 
 ## 驗證方式
 
+<!-- prettier-ignore -->
 | 情境 | 驗證方式 |
 | --- | --- |
 | ID and name of an added or modified scenario | One or more of unit、browser、manual |
