@@ -402,7 +402,7 @@ test("SITE-R6.13 真實作品保留比例、替代文字與靜態語意", async 
 });
 
 test("SITE-R12.12 訪談與作品適應窄版、短畫面及文字放大", async ({ page, server }) => {
-  await openHome(page, server, "#about");
+  await openHome(page, server);
   const about = page.locator("#about");
   for (const language of ["en", "zh-TW"] as const) {
     await setLanguage(page, language);

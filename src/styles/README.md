@@ -70,7 +70,7 @@ Header 的標誌、選單與導覽各自保留對齊及寬度規則，不套用 
 
 Scroll motion 的距離 token 使用 `px`，Hero 傾斜使用 `deg`，進度、比例與縮放使用無單位數值。`perspective` 保留 CSS 長度，由 transform 直接使用；其他參數的名稱與單位由 [`parameters.ts`](../motion/parameters.ts) 驗證。驗證失敗時，`useScrollMotion` 會停止當次更新、清除動態樣式並釋放瀏覽器資源。
 
-每次準備更新 scroll motion 時，以當下的減少動態與列印查詢為準。若偏好已禁止動態，立即取消待處理的 frame 並清除既有姿態，讓靜態內容完整呈現；媒體查詢可能先更新而尚未送達 `change` 回呼，因此不能只在回呼中清理。
+`useScrollMotion` 每次準備更新動態時，都須檢查當下的減少動態與列印查詢結果。若目前應停用動態，就立即取消待處理的 frame 並清除既有動態樣式，讓靜態內容完整呈現。這項檢查不能只放在 `change` 回呼，因為媒體查詢結果可能先更新，回呼卻尚未收到事件。
 
 調整 `$scroll-motion` 或 compact token 時，一併執行 `src/motion/parameters.test.ts`，確認實際 Sass 輸出與 TypeScript 的參數約定一致。參數只在重新量測時讀取，純計算使用已驗證的數值；所有計算完成後才寫入樣式，避免在寫入期間讀取 computed style。
 
