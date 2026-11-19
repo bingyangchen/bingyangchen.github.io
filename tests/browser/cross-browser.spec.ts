@@ -346,7 +346,8 @@ test("SITE-R21.4 圖片規則保留觸控及鍵盤操作", async ({
     await portrait.tap();
     await expect(portrait).toHaveAttribute("aria-pressed", "true");
     await portrait.focus();
-    await page.keyboard.press("Space");
+    await expect(portrait).toBeFocused();
+    await portrait.press("Space");
     await expect(portrait).toHaveAttribute("aria-pressed", "false");
     const opener = page.locator('#home button[aria-haspopup="dialog"]');
     await opener.tap();
@@ -384,10 +385,26 @@ test("SITE-R21.4 圖片規則保留觸控及鍵盤操作", async ({
               type: "touchMove",
               touchPoints: [{ x: bounds.x + bounds.width / 2, y: start - step * 30 }],
             });
+
+          // A tap during the remaining fling stops scrolling instead of activating its target.
+          await page.evaluate(() => {
+            delete document.documentElement.dataset.testScrollEnded;
+            document.addEventListener(
+              "scrollend",
+              () => {
+                document.documentElement.dataset.testScrollEnded = "";
+              },
+              { once: true },
+            );
+          });
           await session.send("Input.dispatchTouchEvent", {
             type: "touchEnd",
             touchPoints: [],
           });
+          await expect(page.locator("html")).toHaveAttribute(
+            "data-test-scroll-ended",
+            "",
+          );
         } finally {
           await session.detach();
         }

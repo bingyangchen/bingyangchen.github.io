@@ -518,6 +518,9 @@ test("SITE-R6.13 SITE-R12.12 照片載入失敗時可讀完整雙語說明", asy
   await openHome(page, server, "#about");
   await page.locator("html").evaluate((element) => (element.style.fontSize = "200%"));
 
+  // Hash restoration yields to user input, not programmatic scrolling.
+  await page.keyboard.press("PageDown");
+  await expect(page.locator("html")).not.toHaveAttribute("data-restoring-scroll");
   const photo = page.locator('#about [data-photo="street"]');
   await photo.scrollIntoViewIfNeeded();
   await photo.locator("img").evaluate((image: HTMLImageElement) => {
@@ -533,7 +536,7 @@ test("SITE-R6.13 SITE-R12.12 照片載入失敗時可讀完整雙語說明", asy
     assert.ok(description);
     await expect(caption).toHaveText(description);
     await expect(photo).toHaveAccessibleName(description);
-    // Content visibility can defer fallback layout until a subsequent frame.
+    await scrollToReadingPosition(photo);
     await expect
       .poll(() =>
         caption.evaluate((element) => {

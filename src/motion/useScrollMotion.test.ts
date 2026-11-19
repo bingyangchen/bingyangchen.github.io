@@ -159,6 +159,27 @@ test("偏好與列印即時清除動態，恢復時使用目前位置", () => {
   expect(target.style.getPropertyValue("--scroll-opacity")).toBe("");
 });
 
+test.each([
+  ["reduce", false],
+  ["reduce", true],
+  ["print", false],
+  ["print", true],
+] as const)(
+  "SITE-R13.3 %s 查詢先更新而未送出 change 事件時清除動態（已排程 frame：%s）",
+  (preference, hasPendingFrame) => {
+    renderHook(() => useScrollMotion({ current: scope }));
+    expect(scope).toHaveAttribute("data-scroll-motion-active");
+    if (hasPendingFrame) window.dispatchEvent(new Event("scroll"));
+    expect(frameIdToCallback.size).toBe(hasPendingFrame ? 1 : 0);
+    const mediaQuery = preference === "reduce" ? reducedMotion : printMedia;
+    mediaQuery.matches = true;
+    ResizeObserverStub.instances[0].notify();
+    expect(scope).not.toHaveAttribute("data-scroll-motion-active");
+    expect(target.style.cssText).toBe("");
+    expect(frameIdToCallback.size).toBe(0);
+  },
+);
+
 test("字型與內容改變會重新量測，新增元素會重新收集並排除 inert 內容", async () => {
   renderHook(() => useScrollMotion({ current: scope }));
   const initialReads = readParameter.mock.calls.length;

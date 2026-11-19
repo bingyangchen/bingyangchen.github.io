@@ -128,14 +128,15 @@ export function useScrollMotion(scopeRef: RefObject<HTMLElement | null>): void {
     }
 
     function schedule() {
-      if (
-        !disposed &&
-        !document.hidden &&
-        !reducedMotion.matches &&
-        !printMedia.matches &&
-        !frame
-      )
-        frame = requestAnimationFrame(render);
+      if (disposed) return;
+      if (reducedMotion.matches || printMedia.matches) {
+        // Respect the current query even when its change event has not reached this hook.
+        cancelAnimationFrame(frame);
+        frame = 0;
+        if (scope.hasAttribute("data-scroll-motion-active")) reset();
+        return;
+      }
+      if (!document.hidden && !frame) frame = requestAnimationFrame(render);
     }
     function invalidate() {
       needsMeasurement = true;
